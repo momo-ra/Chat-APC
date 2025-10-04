@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Drawer,
@@ -8,6 +8,7 @@ import {
   ListItemButton,
   ListItemText,
   Button,
+  Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
@@ -15,8 +16,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import ChevronRight from '@mui/icons-material/ChevronRight';
+import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import { SidebarItem } from '../../data/layout/sidebarData';
 import chatAPCLogo from '../../assets/chatAPC-logo-light-mode.png';
+import chatAPCLogoDark from '../../assets/chatAPC-logo.png';
 
 interface AppSidebarProps {
   items: SidebarItem[];
@@ -31,8 +34,78 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
   const [navigationStack, setNavigationStack] = useState<{ label: string; items: SidebarItem[] }[]>([]);
   const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('left');
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isLightMode, setIsLightMode] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [sectionColors, setSectionColors] = useState({
+    primary: '#009BE4',
+    text: 'rgba(255, 255, 255, 0.85)',
+    textSecondary: 'rgba(255, 255, 255, 0.6)',
+    border: 'rgba(255, 255, 255, 0.1)',
+    hover: 'rgba(255, 255, 255, 0.05)',
+  });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  
+  const collapsedWidth = 0;
+  const expandedWidth = width;
+
+  // Detect section colors dynamically based on scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      // Get all sections with data-section-theme attribute
+      const sections = document.querySelectorAll('[data-section-theme]');
+      const sidebarRect = { top: 0, bottom: window.innerHeight, height: window.innerHeight };
+      
+      let maxOverlap = 0;
+      let dominantSection: Element | null = null;
+
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        
+        // Calculate overlap between sidebar area and section
+        const overlapTop = Math.max(sidebarRect.top, rect.top);
+        const overlapBottom = Math.min(sidebarRect.bottom, rect.bottom);
+        const overlapHeight = Math.max(0, overlapBottom - overlapTop);
+        
+        if (overlapHeight > maxOverlap) {
+          maxOverlap = overlapHeight;
+          dominantSection = section;
+        }
+      });
+
+      if (dominantSection) {
+        const theme = dominantSection.getAttribute('data-section-theme');
+        const primaryColor = dominantSection.getAttribute('data-section-primary') || '#009BE4';
+        const textColor = dominantSection.getAttribute('data-section-text');
+        
+        // Set light/dark mode
+        setIsLightMode(theme === 'light');
+        
+        // Set dynamic colors based on section
+        if (theme === 'light') {
+          setSectionColors({
+            primary: primaryColor,
+            text: textColor || 'rgba(0, 0, 0, 0.8)',
+            textSecondary: 'rgba(0, 0, 0, 0.6)',
+            border: 'rgba(0, 0, 0, 0.1)',
+            hover: 'rgba(0, 0, 0, 0.05)',
+          });
+        } else {
+          setSectionColors({
+            primary: primaryColor,
+            text: textColor || 'rgba(255, 255, 255, 0.85)',
+            textSecondary: 'rgba(255, 255, 255, 0.6)',
+            border: 'rgba(255, 255, 255, 0.1)',
+            hover: 'rgba(255, 255, 255, 0.05)',
+          });
+        }
+      }
+    };
+
+    handleScroll(); // Initial check
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Function to check if item is active
   const isItemActive = (item: SidebarItem): boolean => {
@@ -96,6 +169,10 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
     }
   };
 
+  const handleToggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   const drawer = (
     <Box
       sx={{
@@ -105,35 +182,58 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
         position: 'relative',
       }}
     >
-      {/* Logo Section - Desktop Only */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '30px',
-          left: 0,
-          right: 0,
-          display: { xs: 'none', md: 'flex' }, // Only show on desktop
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1,
-          transition: 'transform 0.3s ease',
-          '&:hover': {
-            transform: 'scale(1.03)',
-          },
-        }}
-      >
-        <Box
-          component="img"
-          src={chatAPCLogo}
-          alt="ChatAPC Logo"
-          sx={{
-            height: '36px',
-            width: 'auto',
-            objectFit: 'contain',
-            filter: 'brightness(1.1)',
-          }}
-        />
-      </Box>
+        {/* Mobile Drawer Header - Logo & Close Button */}
+        {isMobile && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '12px 16px',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              backgroundColor: 'rgba(10, 14, 46, 0.98)',
+            }}
+          >
+            {/* Logo */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                transition: 'transform 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.03)',
+                },
+              }}
+            >
+              <Box
+                component="img"
+                src={chatAPCLogo}
+                alt="ChatAPC Logo"
+                sx={{
+                  height: '32px',
+                  width: 'auto',
+                  objectFit: 'contain',
+                  filter: 'brightness(1.1)',
+                }}
+              />
+            </Box>
+
+            {/* Close Button */}
+            <IconButton
+              onClick={handleDrawerToggle}
+              sx={{
+                color: 'rgba(255, 255, 255, 0.9)',
+                padding: '8px',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  color: 'rgba(255, 255, 255, 1)',
+                },
+              }}
+            >
+              <CloseIcon sx={{ fontSize: 24 }} />
+            </IconButton>
+          </Box>
+        )}
 
       {/* Menu Items - Centered in full height */}
       <Box
@@ -144,7 +244,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
           justifyContent: 'center',
           padding: { xs: '0 8px', md: '0 12px' },
           paddingBottom: { xs: '140px', md: 0 }, // Space for mobile auth buttons
-          paddingTop: { xs: '20px', md: 0 }, // Add top padding for mobile
+          paddingTop: { xs: '20px', md: '100px' }, // Add space for fixed logo/icon
           overflowY: 'auto',
           overflowX: 'hidden',
           position: 'relative',
@@ -195,7 +295,12 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
               sx={{
                 mb: 3,
                 pb: 2,
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                borderBottom: isMobile 
+                  ? '1px solid rgba(255, 255, 255, 0.1)'
+                  : (isLightMode 
+                    ? '1px solid rgba(0, 0, 0, 0.1)' 
+                    : '1px solid rgba(255, 255, 255, 0.1)'),
+                transition: 'border-color 0.3s ease',
               }}
             >
               <ListItemButton
@@ -203,9 +308,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                 sx={{
                   borderRadius: '6px',
                   padding: '12px 8px',
-                  transition: 'all 0.2s ease',
+                  transition: 'all 0.3s ease',
                   '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                    backgroundColor: isMobile 
+                      ? 'rgba(255, 255, 255, 0.05)'
+                      : (isLightMode ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.05)'),
                   },
                 }}
               >
@@ -221,7 +328,10 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                     component="span"
                     sx={{
                       fontSize: '1rem',
-                      color: 'rgba(255, 255, 255, 0.7)',
+                      color: isMobile 
+                        ? 'rgba(255, 255, 255, 0.8)'
+                        : (isLightMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.8)'),
+                      transition: 'color 0.3s ease',
                     }}
                   >
                     ←
@@ -231,9 +341,12 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                     primaryTypographyProps={{
                       sx: {
                         fontSize: { xs: '0.625rem', md: '0.8125rem' },
-                        fontWeight: 400,
-                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontWeight: 500,
+                        color: isMobile 
+                          ? 'rgba(255, 255, 255, 0.7)'
+                          : (isLightMode ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)'),
                         textAlign: 'left',
+                        transition: 'color 0.3s ease',
                       },
                     }}
                   />
@@ -270,7 +383,8 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                     borderRadius: '6px',
                     padding: '12px 8px',
                     position: 'relative',
-                    transition: 'all 0.2s ease',
+                    transition: 'all 0.3s ease',
+                    minHeight: 40,
                     '&::before': {
                       content: '""',
                       position: 'absolute',
@@ -279,31 +393,40 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                       transform: 'translateY(-50%)',
                       width: '3px',
                       height: isItemActive(item) ? '70%' : '0%',
-                      backgroundColor: '#009BE4',
-                      transition: 'height 0.2s ease',
+                      backgroundColor: sectionColors.primary,
+                      transition: 'all 0.3s ease',
+                      borderRadius: '0 2px 2px 0',
                     },
+                  '&:hover': {
+                    backgroundColor: isMobile 
+                      ? 'rgba(255, 255, 255, 0.05)'
+                      : sectionColors.hover,
+                    '&::before': {
+                      height: '50%',
+                    },
+                  },
+                  '&.Mui-selected': {
+                    backgroundColor: isMobile 
+                      ? 'rgba(0, 155, 228, 0.1)'
+                      : `${sectionColors.primary}1A`,
                     '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.02)',
-                      '&::before': {
-                        height: '50%',
-                      },
+                      backgroundColor: isMobile 
+                        ? 'rgba(0, 155, 228, 0.15)'
+                        : `${sectionColors.primary}26`,
                     },
-                    '&.Mui-selected': {
-                      backgroundColor: 'rgba(0, 155, 228, 0.08)',
-                      '&:hover': {
-                        backgroundColor: 'rgba(0, 155, 228, 0.12)',
-                      },
-                    },
+                  },
                   }}
                 >
                   <ListItemText
                     primary={item.label}
                     primaryTypographyProps={{
                       sx: {
-                        fontSize: { xs: '0.625rem', md: '0.8125rem' },
+                        fontSize: { xs: '0.75rem', md: '0.8125rem' },
                         fontWeight: isItemActive(item) ? 600 : 500,
-                        color: isItemActive(item) ? '#009BE4' : 'rgba(255, 255, 255, 0.7)',
-                        transition: 'color 0.2s ease',
+                        color: isItemActive(item) 
+                          ? (isMobile ? '#009BE4' : sectionColors.primary)
+                          : (isMobile ? 'rgba(255, 255, 255, 0.85)' : sectionColors.text),
+                        transition: 'color 0.3s ease',
                         textAlign: { xs: 'center', md: 'left' },
                       },
                     }}
@@ -312,8 +435,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                     <ChevronRight 
                       sx={{ 
                         fontSize: 16, 
-                        color: 'rgba(255, 255, 255, 0.5)',
+                        color: isMobile 
+                          ? 'rgba(255, 255, 255, 0.6)'
+                          : sectionColors.textSecondary,
                         ml: 'auto',
+                        transition: 'color 0.3s ease',
                       }} 
                     />
                   )}
@@ -333,7 +459,8 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
             left: 0,
             right: 0,
             padding: 3,
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            backgroundColor: 'rgba(10, 14, 46, 0.98)',
           }}
         >
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -344,14 +471,14 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
               }}
               variant="text"
               sx={{
-                padding: '10px 24px',
-                color: 'rgba(255, 255, 255, 0.7)',
+                padding: '12px 24px',
+                color: 'rgba(255, 255, 255, 0.9)',
                 fontSize: '0.875rem',
-                fontWeight: 400,
+                fontWeight: 500,
                 borderRadius: 2,
                 textTransform: 'none',
                 '&:hover': {
-                  color: 'rgba(255, 255, 255, 0.95)',
+                  color: '#FFFFFF',
                   backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 },
               }}
@@ -363,19 +490,19 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                 navigate('/signup');
                 handleDrawerToggle();
               }}
-              variant="outlined"
+              variant="contained"
               sx={{
-                padding: '10px 24px',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                color: 'rgba(255, 255, 255, 0.7)',
+                padding: '12px 24px',
+                background: 'linear-gradient(135deg, #009BE4 0%, #0084C7 100%)',
+                color: '#FFFFFF',
                 fontSize: '0.875rem',
-                fontWeight: 400,
+                fontWeight: 600,
                 borderRadius: 2,
                 textTransform: 'none',
+                boxShadow: '0 4px 12px rgba(0, 155, 228, 0.2)',
                 '&:hover': {
-                  color: 'rgba(255, 255, 255, 0.95)',
-                  borderColor: 'rgba(255, 255, 255, 0.25)',
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  background: 'linear-gradient(135deg, #0084C7 0%, #006FA9 100%)',
+                  boxShadow: '0 6px 16px rgba(0, 155, 228, 0.3)',
                 },
               }}
             >
@@ -389,54 +516,132 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
 
   return (
     <>
-      {/* Logo - Always Visible on Mobile */}
-      {isMobile && (
+      {/* Logo and Toggle Button - Always Visible on Desktop */}
+      {!isMobile && (
         <Box
           sx={{
             position: 'fixed',
-            top: 20,
-            left: 16,
+            top: '30px',
+            left: '16px',
             zIndex: 1300,
-            transition: 'transform 0.3s ease',
-            '&:hover': {
-              transform: 'scale(1.03)',
-            },
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
           }}
         >
+          {/* Logo */}
           <Box
-            component="img"
-            src={chatAPCLogo}
-            alt="ChatAPC Logo"
             sx={{
-              height: '32px',
-              width: 'auto',
-              objectFit: 'contain',
-              filter: 'brightness(1.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'transform 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.03)',
+              },
             }}
-          />
+          >
+            <Box
+              component="img"
+              src={isLightMode ? chatAPCLogoDark : chatAPCLogo}
+              alt="ChatAPC Logo"
+              sx={{
+                height: '36px',
+                width: 'auto',
+                objectFit: 'contain',
+                filter: isLightMode ? 'none' : 'brightness(1.1)',
+                transition: 'all 0.3s ease',
+              }}
+            />
+          </Box>
+
+          {/* Collapse/Expand Toggle Button */}
+          <IconButton
+            onClick={handleToggleCollapse}
+            sx={{
+              color: isLightMode ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.6)',
+              padding: '6px',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                color: isLightMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+                backgroundColor: isLightMode ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.05)',
+              },
+            }}
+          >
+            <ViewSidebarIcon sx={{ fontSize: 20 }} />
+          </IconButton>
         </Box>
       )}
 
-      {/* Menu Toggle Button - Mobile Only */}
-      {isMobile && (
-        <IconButton
-          onClick={handleDrawerToggle}
+      {/* Mobile Header Bar - Logo & Menu Button - Only when sidebar is closed */}
+      {isMobile && !mobileOpen && (
+        <Box
           sx={{
             position: 'fixed',
-            top: 16,
-            right: 16,
+            top: 0,
+            left: 0,
+            right: 0,
             zIndex: 1300,
-            color: 'rgba(255, 255, 255, 0.7)',
-            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            '&:hover': {
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              color: 'rgba(255, 255, 255, 0.9)',
-            },
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '12px 16px',
+            backgroundColor: isLightMode 
+              ? 'rgba(255, 255, 255, 0.95)' 
+              : 'rgba(10, 14, 46, 0.95)',
+            backdropFilter: 'blur(12px)',
+            borderBottom: isLightMode 
+              ? '1px solid rgba(0, 0, 0, 0.08)' 
+              : '1px solid rgba(255, 255, 255, 0.08)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+            transition: 'all 0.3s ease',
           }}
         >
-          {mobileOpen ? <CloseIcon /> : <MenuIcon />}
-        </IconButton>
+          {/* Logo - Clickable to open sidebar */}
+          <Box
+            onClick={handleDrawerToggle}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer',
+              transition: 'transform 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.03)',
+              },
+            }}
+          >
+            <Box
+              component="img"
+              src={isLightMode ? chatAPCLogoDark : chatAPCLogo}
+              alt="ChatAPC Logo"
+              sx={{
+                height: '32px',
+                width: 'auto',
+                objectFit: 'contain',
+                filter: isLightMode ? 'none' : 'brightness(1.1)',
+                transition: 'all 0.3s ease',
+              }}
+            />
+          </Box>
+
+          {/* Menu Toggle Button */}
+          <IconButton
+            onClick={handleDrawerToggle}
+            sx={{
+              color: isLightMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.8)',
+              padding: '8px',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: isLightMode 
+                  ? 'rgba(0, 0, 0, 0.05)' 
+                  : 'rgba(255, 255, 255, 0.1)',
+                color: isLightMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 1)',
+              },
+            }}
+          >
+            <MenuIcon sx={{ fontSize: 24 }} />
+          </IconButton>
+        </Box>
       )}
 
       {/* Desktop Drawer - Permanent */}
@@ -444,13 +649,16 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
         <Drawer
           variant="permanent"
           sx={{
-            width: width,
+            width: isCollapsed ? collapsedWidth : expandedWidth,
             flexShrink: 0,
+            transition: 'width 0.3s ease',
             '& .MuiDrawer-paper': {
-              width: width,
+              width: isCollapsed ? collapsedWidth : expandedWidth,
               boxSizing: 'border-box',
               backgroundColor: 'transparent',
-              border: 'none',
+              borderRight: 'none',
+              transition: 'width 0.3s ease',
+              overflow: 'hidden',
             },
           }}
         >
@@ -474,6 +682,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
               backgroundColor: 'rgba(10, 14, 46, 0.98)',
               backdropFilter: 'blur(20px)',
               border: 'none',
+              boxShadow: '-4px 0 24px rgba(0, 0, 0, 0.3)',
             },
           }}
         >

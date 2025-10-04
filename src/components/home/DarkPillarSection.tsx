@@ -107,6 +107,7 @@ const DarkPillarSection: React.FC = () => {
   return (
     <Box
       ref={sectionRef}
+      data-section-theme="dark"
       sx={{
         width: '100%',
         py: { xs: 10, md: 15 },

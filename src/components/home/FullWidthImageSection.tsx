@@ -49,6 +49,7 @@ const FullWidthImageSection: React.FC = () => {
   return (
     <Box
       ref={sectionRef}
+      data-section-theme="dark"
       sx={{
         width: '100%',
         position: 'relative',

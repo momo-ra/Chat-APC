@@ -70,6 +70,7 @@ const SplitImageSection: React.FC = () => {
   return (
     <Box
       ref={sectionRef}
+      data-section-theme="dark"
       sx={{
         width: '100%',
         py: { xs: 8, md: 12 },

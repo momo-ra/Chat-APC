@@ -13,7 +13,10 @@ import {
   AlternatingFeatureSection,
   FullWidthImageSection,
   SplitImageSection,
-  ContactSection
+  ContactSection,
+  LightFeatureSection,
+  LightStatsSection,
+  InteractiveFeaturesSection
 } from '../components/home';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { heroQuestions, partnerCompanies } from '../data/home/chatHeroData';
@@ -32,6 +35,7 @@ const HomePage: React.FC = () => {
   
       {/* Hero Section - Simplified */}
       <Box
+        data-section-theme="dark"
         sx={{
           position: 'relative',
           minHeight: '100vh',
@@ -62,8 +66,17 @@ const HomePage: React.FC = () => {
         {/* Examples Section */}
         <ExamplesSection />
 
+        {/* Interactive Features Section - NEW */}
+        <InteractiveFeaturesSection />
+
+        {/* Light Feature Section - WHITE BACKGROUND */}
+        <LightFeatureSection />
+
         {/* Dark Feature Section */}
         <DarkFeatureSection />
+
+        {/* Light Stats Section - WHITE BACKGROUND */}
+        <LightStatsSection />
 
         {/* Full Width Image Section */}
         <FullWidthImageSection />

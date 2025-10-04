@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, Button, Typography, TextField, CircularProgress } from '@mui/material';
+import { Box, Button, Typography, TextField, CircularProgress, useTheme, useMediaQuery } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 interface Message {
@@ -21,7 +21,10 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showFloatingInput, setShowFloatingInput] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   // Animated placeholder effect (only show when no messages)
   useEffect(() => {
@@ -69,6 +72,29 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [messages, isLoading]);
+
+  // Scroll detection for floating input (mobile only)
+  useEffect(() => {
+    if (!isMobile) {
+      setShowFloatingInput(false);
+      return;
+    }
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const heroSectionHeight = window.innerHeight * 0.8; // Approximate hero section height
+      
+      // Show floating input after scrolling down 300px or past hero section
+      if (scrollY > Math.min(300, heroSectionHeight)) {
+        setShowFloatingInput(true);
+      } else {
+        setShowFloatingInput(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMobile]);
 
   // Sample suggestion buttons
   const suggestions = [
@@ -167,7 +193,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
   return (
     <Box
       sx={{
-        minHeight: '90vh',
+        minHeight: { xs: '80vh', md: '90vh' },
         display: 'flex',
         flexDirection: 'column',
         justifyContent: hasMessages ? 'flex-start' : 'center',
@@ -175,22 +201,23 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
         textAlign: 'center',
         position: 'relative',
         zIndex: 5,
-        padding: { xs: '40px 20px', md: '60px 40px' },
+        padding: { xs: '20px 16px', sm: '40px 20px', md: '60px 40px' },
         maxWidth: 900,
         margin: '0 auto',
         width: '100%',
-        paddingTop: hasMessages ? { xs: '80px', md: '100px' } : { xs: '40px', md: '60px' },
+        paddingTop: hasMessages ? { xs: '100px', md: '100px' } : { xs: '80px', sm: '60px', md: '60px' },
       }}
     >
       {/* Main Title - Only show when no messages */}
       {!hasMessages && (
         <Typography
           sx={{
-            fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+            fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem' },
             fontWeight: 500,
             color: 'rgba(255, 255, 255, 0.95)',
-            marginBottom: 6,
+            marginBottom: { xs: 4, sm: 5, md: 6 },
             letterSpacing: '-0.02em',
+            px: { xs: 2, sm: 0 },
           }}
         >
           What can I help with?
@@ -205,11 +232,11 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
             width: '100%',
             flex: 1,
             overflowY: 'auto',
-            marginBottom: 3,
+            marginBottom: { xs: 2, md: 3 },
             display: 'flex',
             flexDirection: 'column',
-            gap: 3,
-            maxHeight: 'calc(90vh - 200px)',
+            gap: { xs: 2, md: 3 },
+            maxHeight: { xs: 'calc(80vh - 180px)', md: 'calc(90vh - 200px)' },
             scrollBehavior: 'smooth',
             '&::-webkit-scrollbar': {
               width: '8px',
@@ -238,15 +265,15 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
             >
               <Box
                 sx={{
-                  maxWidth: '75%',
-                  padding: '12px 18px',
+                  maxWidth: { xs: '85%', sm: '80%', md: '75%' },
+                  padding: { xs: '10px 14px', sm: '12px 16px', md: '12px 18px' },
                   borderRadius: 3,
                   background: message.role === 'user'
                     ? 'linear-gradient(135deg, #009BE4 0%, #0077B6 100%)'
                     : 'rgba(255, 255, 255, 0.08)',
                   color: 'rgba(255, 255, 255, 0.95)',
                   textAlign: 'left',
-                  fontSize: '1rem',
+                  fontSize: { xs: '0.9rem', sm: '0.95rem', md: '1rem' },
                   lineHeight: 1.6,
                   border: message.role === 'assistant' 
                     ? '1px solid rgba(255, 255, 255, 0.12)' 
@@ -294,11 +321,12 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
           sx={{
             display: 'flex',
             flexWrap: 'wrap',
-            gap: 1.5,
+            gap: { xs: 1, sm: 1.5 },
             justifyContent: 'center',
             maxWidth: 680,
             width: '100%',
-            marginBottom: 3,
+            marginBottom: { xs: 2, sm: 3 },
+            px: { xs: 1, sm: 0 },
           }}
         >
           {suggestions.map((suggestion, index) => (
@@ -310,12 +338,13 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
                 border: '1px solid rgba(255, 255, 255, 0.15)',
                 color: 'rgba(255, 255, 255, 0.85)',
                 borderRadius: 3,
-                padding: '10px 18px',
-                fontSize: '0.9rem',
+                padding: { xs: '8px 14px', sm: '10px 16px', md: '10px 18px' },
+                fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
                 fontWeight: 400,
                 textTransform: 'none',
                 transition: 'all 0.2s ease',
                 background: 'rgba(255, 255, 255, 0.03)',
+                minHeight: { xs: '36px', sm: '40px' },
                 '&:hover': {
                   borderColor: 'rgba(255, 255, 255, 0.25)',
                   background: 'rgba(255, 255, 255, 0.08)',
@@ -335,7 +364,8 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
           width: '100%',
           maxWidth: 680,
           position: hasMessages ? 'sticky' : 'relative',
-          bottom: hasMessages ? 20 : 'auto',
+          bottom: hasMessages ? { xs: 10, sm: 15, md: 20 } : 'auto',
+          px: { xs: 1, sm: 0 },
         }}
       >
         <Box
@@ -344,9 +374,9 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
             width: '100%',
             background: 'rgba(255, 255, 255, 0.05)',
             border: '1px solid rgba(255, 255, 255, 0.12)',
-            borderRadius: 4,
+            borderRadius: { xs: 3, md: 4 },
             transition: 'all 0.2s ease',
-            minHeight: '56px',
+            minHeight: { xs: '48px', sm: '52px', md: '56px' },
             display: 'flex',
             alignItems: 'center',
             '&:hover': {
@@ -377,9 +407,9 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
               flex: 1,
               '& .MuiInputBase-root': {
                 color: 'rgba(255, 255, 255, 0.95)',
-                fontSize: '1.05rem',
-                padding: '16px 20px',
-                paddingRight: '56px',
+                fontSize: { xs: '0.95rem', sm: '1rem', md: '1.05rem' },
+                padding: { xs: '12px 16px', sm: '14px 18px', md: '16px 20px' },
+                paddingRight: { xs: '48px', md: '56px' },
               },
               '& textarea': {
                 lineHeight: 1.5,
@@ -394,13 +424,13 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
             onClick={handleSendMessage}
             sx={{
               position: 'absolute',
-              right: 12,
-              bottom: 12,
+              right: { xs: 8, sm: 10, md: 12 },
+              bottom: { xs: 8, sm: 10, md: 12 },
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: 32,
-              height: 32,
+              width: { xs: 28, sm: 30, md: 32 },
+              height: { xs: 28, sm: 30, md: 32 },
               borderRadius: '50%',
               background: inputValue.trim() && !isLoading
                 ? 'rgba(255, 255, 255, 0.9)' 
@@ -415,13 +445,109 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
           >
             <ArrowUpwardIcon 
               sx={{ 
-                fontSize: '1.1rem', 
+                fontSize: { xs: '1rem', sm: '1.05rem', md: '1.1rem' }, 
                 color: inputValue.trim() && !isLoading ? '#0a0e2e' : 'rgba(255, 255, 255, 0.4)',
               }} 
             />
           </Box>
         </Box>
       </Box>
+
+      {/* Floating Input Box - Mobile Only */}
+      {isMobile && showFloatingInput && (
+        <Box
+          sx={{
+            position: 'fixed',
+            bottom: 20,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 'calc(100% - 32px)',
+            maxWidth: '500px',
+            zIndex: 1200,
+            animation: 'slideUp 0.3s ease-out',
+            '@keyframes slideUp': {
+              '0%': {
+                transform: 'translateX(-50%) translateY(100px)',
+                opacity: 0,
+              },
+              '100%': {
+                transform: 'translateX(-50%) translateY(0)',
+                opacity: 1,
+              },
+            },
+          }}
+        >
+          <Box
+            sx={{
+              position: 'relative',
+              background: 'rgba(52, 64, 84, 0.95)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: 4,
+              padding: '12px 16px',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+            }}
+          >
+            <TextField
+              fullWidth
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Ask ChatAPC"
+              variant="standard"
+              disabled={isLoading}
+              InputProps={{
+                disableUnderline: true,
+              }}
+              sx={{
+                flex: 1,
+                '& .MuiInputBase-root': {
+                  color: 'rgba(255, 255, 255, 0.95)',
+                  fontSize: '0.95rem',
+                },
+                '& input': {
+                  padding: 0,
+                  '&::placeholder': {
+                    color: 'rgba(255, 255, 255, 0.45)',
+                    opacity: 1,
+                  },
+                },
+              }}
+            />
+            <Box
+              onClick={handleSendMessage}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 36,
+                height: 36,
+                borderRadius: '50%',
+                background: inputValue.trim() && !isLoading
+                  ? 'rgba(255, 255, 255, 0.9)' 
+                  : 'rgba(255, 255, 255, 0.2)',
+                cursor: inputValue.trim() && !isLoading ? 'pointer' : 'default',
+                transition: 'all 0.2s ease',
+                flexShrink: 0,
+                '&:hover': inputValue.trim() && !isLoading ? {
+                  background: 'rgba(255, 255, 255, 1)',
+                  transform: 'scale(1.05)',
+                } : {},
+              }}
+            >
+              <ArrowUpwardIcon 
+                sx={{ 
+                  fontSize: '1.1rem', 
+                  color: inputValue.trim() && !isLoading ? '#0a0e2e' : 'rgba(255, 255, 255, 0.4)',
+                }} 
+              />
+            </Box>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };

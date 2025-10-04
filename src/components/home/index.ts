@@ -12,4 +12,7 @@ export { default as FullWidthCTASection } from './FullWidthCTASection';
 export { default as AlternatingFeatureSection } from './AlternatingFeatureSection';
 export { default as CompanySlider } from './CompanySlider';
 export { default as ContactSection } from './ContactSection';
+export { default as LightFeatureSection } from './LightFeatureSection';
+export { default as LightStatsSection } from './LightStatsSection';
+export { default as InteractiveFeaturesSection } from './InteractiveFeaturesSection';
 
