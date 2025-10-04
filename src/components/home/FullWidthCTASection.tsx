@@ -1,0 +1,178 @@
+import React, { useEffect, useRef } from 'react';
+import { Box, Typography, Button, Container } from '@mui/material';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const FullWidthCTASection: React.FC = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      if (contentRef.current) {
+        gsap.from(contentRef.current, {
+          scrollTrigger: {
+            trigger: contentRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none none',
+          },
+          y: 80,
+          opacity: 0,
+          scale: 0.95,
+          duration: 1.2,
+          ease: 'power3.out',
+        });
+      }
+
+      // Parallax background
+      if (sectionRef.current) {
+        gsap.to(sectionRef.current, {
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 2,
+          },
+          backgroundPosition: '50% 100%',
+          ease: 'none',
+        });
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <Box
+      ref={sectionRef}
+      sx={{
+        width: '100%',
+        py: { xs: 12, md: 18 },
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'linear-gradient(135deg, rgba(0, 155, 228, 0.15) 0%, rgba(106, 17, 203, 0.12) 50%, rgba(0, 155, 228, 0.08) 100%)',
+        backgroundSize: '200% 200%',
+        backgroundPosition: '50% 0%',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'radial-gradient(circle at 30% 50%, rgba(0, 155, 228, 0.2) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(106, 17, 203, 0.15) 0%, transparent 50%)',
+          pointerEvents: 'none',
+        },
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '150%',
+          height: '150%',
+          background: 'radial-gradient(circle, rgba(0, 155, 228, 0.05) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        },
+      }}
+    >
+      <Container maxWidth="lg">
+        <Box
+          ref={contentRef}
+          sx={{
+            textAlign: 'center',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: { xs: '2.5rem', md: '4rem' },
+              fontWeight: 700,
+              color: 'rgba(255, 255, 255, 0.98)',
+              mb: 3,
+              lineHeight: 1.2,
+            }}
+          >
+            Transparent AI you can trust in critical operations
+          </Typography>
+          
+          <Typography
+            sx={{
+              fontSize: { xs: '1.2rem', md: '1.5rem' },
+              color: 'rgba(255, 255, 255, 0.75)',
+              mb: 6,
+              maxWidth: 800,
+              mx: 'auto',
+              lineHeight: 1.6,
+            }}
+          >
+            Experience the power of AI built specifically for industrial process control
+          </Typography>
+
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 3,
+              justifyContent: 'center',
+              flexDirection: { xs: 'column', sm: 'row' },
+              alignItems: 'center',
+            }}
+          >
+            <Button
+              variant="contained"
+              endIcon={<ArrowForwardIcon />}
+              sx={{
+                background: 'linear-gradient(135deg, #009BE4 0%, #0077B6 100%)',
+                color: '#fff',
+                borderRadius: 3,
+                padding: '18px 48px',
+                fontSize: '1.2rem',
+                fontWeight: 600,
+                textTransform: 'none',
+                boxShadow: '0 8px 32px rgba(0, 155, 228, 0.4)',
+                transition: 'all 0.3s ease',
+                width: { xs: '100%', sm: 'auto' },
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #0077B6 0%, #005A87 100%)',
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 12px 40px rgba(0, 155, 228, 0.5)',
+                },
+              }}
+            >
+              Request a Demo
+            </Button>
+
+            <Button
+              variant="outlined"
+              sx={{
+                border: '2px solid rgba(255, 255, 255, 0.3)',
+                color: 'rgba(255, 255, 255, 0.95)',
+                borderRadius: 3,
+                padding: '18px 48px',
+                fontSize: '1.2rem',
+                fontWeight: 500,
+                textTransform: 'none',
+                transition: 'all 0.3s ease',
+                width: { xs: '100%', sm: 'auto' },
+                '&:hover': {
+                  borderColor: 'rgba(255, 255, 255, 0.6)',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  transform: 'translateY(-4px)',
+                },
+              }}
+            >
+              Download One-Pager
+            </Button>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
+  );
+};
+
+export default FullWidthCTASection;
+
