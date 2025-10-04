@@ -3,6 +3,7 @@ import { Box, Typography, Container, Grid } from '@mui/material';
 import { Security, Speed, Psychology } from '@mui/icons-material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useThemeMode } from '../../contexts/ThemeContext';
 import industrialAI from '../../assets/hero-industrial-ai.jpg';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -29,6 +30,7 @@ const AlternatingFeatureSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const itemsRef = useRef<HTMLDivElement[]>([]);
   const imageRef = useRef<HTMLDivElement>(null);
+  const { isDark } = useThemeMode();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -85,12 +87,16 @@ const AlternatingFeatureSection: React.FC = () => {
   return (
     <Box
       ref={sectionRef}
-      data-section-theme="dark"
+      data-section-theme={isDark ? 'dark' : 'light'}
+      data-section-primary={isDark ? '#009BE4' : '#2563EB'}
       sx={{
         width: '100%',
         py: { xs: 10, md: 16 },
         position: 'relative',
-        background: 'linear-gradient(180deg, rgba(10, 14, 46, 0.8) 0%, rgba(13, 24, 66, 0.6) 50%, rgba(10, 14, 46, 0.8) 100%)',
+        background: isDark 
+          ? 'linear-gradient(180deg, rgba(10, 14, 46, 0.8) 0%, rgba(13, 24, 66, 0.6) 50%, rgba(10, 14, 46, 0.8) 100%)'
+          : 'linear-gradient(180deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 50%, rgba(248, 250, 252, 0.8) 100%)',
+        transition: 'background 0.3s ease',
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -98,7 +104,9 @@ const AlternatingFeatureSection: React.FC = () => {
           left: 0,
           right: 0,
           height: '100%',
-          background: 'linear-gradient(90deg, transparent 0%, rgba(0, 155, 228, 0.03) 50%, transparent 100%)',
+          background: isDark 
+            ? 'linear-gradient(90deg, transparent 0%, rgba(0, 155, 228, 0.03) 50%, transparent 100%)'
+            : 'linear-gradient(90deg, transparent 0%, rgba(37, 99, 235, 0.08) 50%, transparent 100%)',
           pointerEvents: 'none',
         },
       }}
@@ -110,8 +118,9 @@ const AlternatingFeatureSection: React.FC = () => {
             sx={{
               fontSize: { xs: '2.5rem', md: '3.5rem' },
               fontWeight: 600,
-              color: 'rgba(255, 255, 255, 0.95)',
+              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
               mb: 2,
+              transition: 'color 0.3s ease',
             }}
           >
             Not just another AI tool — this one knows your plant
@@ -119,9 +128,10 @@ const AlternatingFeatureSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: { xs: '1.1rem', md: '1.25rem' },
-              color: 'rgba(255, 255, 255, 0.6)',
+              color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
               maxWidth: 800,
               mx: 'auto',
+              transition: 'color 0.3s ease',
             }}
           >
             ChatAPC was built by people who've spent decades in control rooms and optimization design — not just AI labs.
@@ -140,8 +150,13 @@ const AlternatingFeatureSection: React.FC = () => {
             mb: 12,
             borderRadius: 4,
             overflow: 'hidden',
-            border: '1px solid rgba(106, 17, 203, 0.2)',
-            boxShadow: '0 25px 70px rgba(106, 17, 203, 0.25)',
+            border: isDark 
+              ? '1px solid rgba(106, 17, 203, 0.2)' 
+              : '1px solid rgba(37, 99, 235, 0.2)',
+            boxShadow: isDark 
+              ? '0 25px 70px rgba(106, 17, 203, 0.25)' 
+              : '0 25px 70px rgba(37, 99, 235, 0.15)',
+            transition: 'all 0.3s ease',
             '&::after': {
               content: '""',
               position: 'absolute',
@@ -149,7 +164,9 @@ const AlternatingFeatureSection: React.FC = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'linear-gradient(135deg, rgba(106, 17, 203, 0.35) 0%, rgba(13, 24, 66, 0.5) 100%)',
+              background: isDark 
+                ? 'linear-gradient(135deg, rgba(106, 17, 203, 0.35) 0%, rgba(13, 24, 66, 0.5) 100%)'
+                : 'linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(241, 245, 249, 0.3) 100%)',
               pointerEvents: 'none',
             },
           }}
@@ -190,17 +207,31 @@ const AlternatingFeatureSection: React.FC = () => {
                     gap: { xs: 4, md: 8 },
                     padding: { xs: 3, md: 6 },
                     borderRadius: 4,
-                    background: isEven
-                      ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.05) 0%, rgba(13, 24, 66, 0.3) 100%)'
-                      : 'linear-gradient(135deg, rgba(106, 17, 203, 0.05) 0%, rgba(13, 24, 66, 0.3) 100%)',
-                    border: '1px solid rgba(255, 255, 255, 0.06)',
+                    background: isDark 
+                      ? (isEven
+                          ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.05) 0%, rgba(13, 24, 66, 0.3) 100%)'
+                          : 'linear-gradient(135deg, rgba(106, 17, 203, 0.05) 0%, rgba(13, 24, 66, 0.3) 100%)')
+                      : (isEven
+                          ? 'linear-gradient(135deg, rgba(37, 99, 235, 0.04) 0%, rgba(255, 255, 255, 0.8) 100%)'
+                          : 'linear-gradient(135deg, rgba(99, 102, 241, 0.04) 0%, rgba(255, 255, 255, 0.8) 100%)'),
+                    border: isDark 
+                      ? '1px solid rgba(255, 255, 255, 0.06)' 
+                      : '1px solid rgba(0, 0, 0, 0.08)',
                     transition: 'all 0.3s ease',
+                    boxShadow: isDark ? 'none' : '0 4px 20px rgba(0, 0, 0, 0.06)',
                     '&:hover': {
-                      background: isEven
-                        ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.08) 0%, rgba(13, 24, 66, 0.4) 100%)'
-                        : 'linear-gradient(135deg, rgba(106, 17, 203, 0.08) 0%, rgba(13, 24, 66, 0.4) 100%)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      background: isDark 
+                        ? (isEven
+                            ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.08) 0%, rgba(13, 24, 66, 0.4) 100%)'
+                            : 'linear-gradient(135deg, rgba(106, 17, 203, 0.08) 0%, rgba(13, 24, 66, 0.4) 100%)')
+                        : (isEven
+                            ? 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(255, 255, 255, 0.95) 100%)'
+                            : 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(255, 255, 255, 0.95) 100%)'),
+                      border: isDark 
+                        ? '1px solid rgba(255, 255, 255, 0.1)' 
+                        : '1px solid rgba(37, 99, 235, 0.2)',
                       transform: 'translateY(-8px)',
+                      boxShadow: isDark ? 'none' : '0 12px 40px rgba(37, 99, 235, 0.15)',
                     },
                   }}
                 >
@@ -210,19 +241,29 @@ const AlternatingFeatureSection: React.FC = () => {
                       minWidth: { xs: 80, md: 120 },
                       height: { xs: 80, md: 120 },
                       borderRadius: 3,
-                      background: isEven
-                        ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.15) 0%, rgba(0, 155, 228, 0.05) 100%)'
-                        : 'linear-gradient(135deg, rgba(106, 17, 203, 0.15) 0%, rgba(106, 17, 203, 0.05) 100%)',
+                      background: isDark 
+                        ? (isEven
+                            ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.15) 0%, rgba(0, 155, 228, 0.05) 100%)'
+                            : 'linear-gradient(135deg, rgba(106, 17, 203, 0.15) 0%, rgba(106, 17, 203, 0.05) 100%)')
+                        : (isEven
+                            ? 'linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(37, 99, 235, 0.04) 100%)'
+                            : 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(99, 102, 241, 0.04) 100%)'),
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      border: `1px solid ${isEven ? 'rgba(0, 155, 228, 0.2)' : 'rgba(106, 17, 203, 0.2)'}`,
+                      border: isDark 
+                        ? `1px solid ${isEven ? 'rgba(0, 155, 228, 0.2)' : 'rgba(106, 17, 203, 0.2)'}`
+                        : `1px solid ${isEven ? 'rgba(37, 99, 235, 0.2)' : 'rgba(99, 102, 241, 0.2)'}`,
+                      transition: 'all 0.3s ease',
                     }}
                   >
                     <Icon
                       sx={{
                         fontSize: { xs: 40, md: 56 },
-                        color: isEven ? '#009BE4' : '#6A11CB',
+                        color: isDark 
+                          ? (isEven ? '#009BE4' : '#6A11CB')
+                          : (isEven ? '#2563EB' : '#6366F1'),
+                        transition: 'color 0.3s ease',
                       }}
                     />
                   </Box>
@@ -233,8 +274,9 @@ const AlternatingFeatureSection: React.FC = () => {
                       sx={{
                         fontSize: { xs: '1.5rem', md: '2rem' },
                         fontWeight: 600,
-                        color: 'rgba(255, 255, 255, 0.95)',
+                        color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
                         mb: 2,
+                        transition: 'color 0.3s ease',
                       }}
                     >
                       {feature.title}
@@ -242,8 +284,9 @@ const AlternatingFeatureSection: React.FC = () => {
                     <Typography
                       sx={{
                         fontSize: { xs: '1rem', md: '1.15rem' },
-                        color: 'rgba(255, 255, 255, 0.65)',
+                        color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
                         lineHeight: 1.8,
+                        transition: 'color 0.3s ease',
                       }}
                     >
                       {feature.description}

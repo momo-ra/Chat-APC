@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, Button, Typography, TextField, CircularProgress, useTheme, useMediaQuery } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import { useThemeMode } from '../../contexts/ThemeContext';
 
 interface Message {
   id: string;
@@ -25,6 +26,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { isDark } = useThemeMode();
 
   // Animated placeholder effect (only show when no messages)
   useEffect(() => {
@@ -214,10 +216,11 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
           sx={{
             fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem' },
             fontWeight: 500,
-            color: 'rgba(255, 255, 255, 0.95)',
+            color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
             marginBottom: { xs: 4, sm: 5, md: 6 },
             letterSpacing: '-0.02em',
             px: { xs: 2, sm: 0 },
+            transition: 'color 0.3s ease',
           }}
         >
           What can I help with?
@@ -242,14 +245,14 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
               width: '8px',
             },
             '&::-webkit-scrollbar-track': {
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
               borderRadius: 4,
             },
             '&::-webkit-scrollbar-thumb': {
-              background: 'rgba(255, 255, 255, 0.2)',
+              background: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
               borderRadius: 4,
               '&:hover': {
-                background: 'rgba(255, 255, 255, 0.3)',
+                background: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)',
               },
             },
           }}
@@ -269,15 +272,22 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
                   padding: { xs: '10px 14px', sm: '12px 16px', md: '12px 18px' },
                   borderRadius: 3,
                   background: message.role === 'user'
-                    ? 'linear-gradient(135deg, #009BE4 0%, #0077B6 100%)'
-                    : 'rgba(255, 255, 255, 0.08)',
-                  color: 'rgba(255, 255, 255, 0.95)',
+                    ? (isDark 
+                      ? 'linear-gradient(135deg, #009BE4 0%, #0077B6 100%)'
+                      : 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)')
+                    : (isDark 
+                      ? 'rgba(255, 255, 255, 0.08)'
+                      : 'rgba(0, 0, 0, 0.05)'),
+                  color: message.role === 'user' 
+                    ? 'rgba(255, 255, 255, 0.95)'
+                    : (isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.87)'),
                   textAlign: 'left',
                   fontSize: { xs: '0.9rem', sm: '0.95rem', md: '1rem' },
                   lineHeight: 1.6,
                   border: message.role === 'assistant' 
-                    ? '1px solid rgba(255, 255, 255, 0.12)' 
+                    ? (isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(0, 0, 0, 0.12)')
                     : 'none',
+                  transition: 'all 0.3s ease',
                 }}
               >
                 {message.content}
@@ -335,19 +345,29 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
               variant="outlined"
               onClick={() => handleSuggestionClick(suggestion)}
               sx={{
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                color: 'rgba(255, 255, 255, 0.85)',
+                border: isDark 
+                  ? '1px solid rgba(255, 255, 255, 0.15)' 
+                  : '1px solid rgba(0, 0, 0, 0.15)',
+                color: isDark 
+                  ? 'rgba(255, 255, 255, 0.85)' 
+                  : 'rgba(0, 0, 0, 0.7)',
                 borderRadius: 3,
                 padding: { xs: '8px 14px', sm: '10px 16px', md: '10px 18px' },
                 fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
                 fontWeight: 400,
                 textTransform: 'none',
                 transition: 'all 0.2s ease',
-                background: 'rgba(255, 255, 255, 0.03)',
+                background: isDark 
+                  ? 'rgba(255, 255, 255, 0.03)' 
+                  : 'rgba(0, 0, 0, 0.02)',
                 minHeight: { xs: '36px', sm: '40px' },
                 '&:hover': {
-                  borderColor: 'rgba(255, 255, 255, 0.25)',
-                  background: 'rgba(255, 255, 255, 0.08)',
+                  borderColor: isDark 
+                    ? 'rgba(255, 255, 255, 0.25)' 
+                    : 'rgba(0, 0, 0, 0.3)',
+                  background: isDark 
+                    ? 'rgba(255, 255, 255, 0.08)' 
+                    : 'rgba(0, 0, 0, 0.05)',
                   transform: 'translateY(-1px)',
                 },
               }}
@@ -372,21 +392,35 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
           sx={{
             position: 'relative',
             width: '100%',
-            background: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
+            background: isDark 
+              ? 'rgba(255, 255, 255, 0.05)' 
+              : 'rgba(0, 0, 0, 0.03)',
+            border: isDark 
+              ? '1px solid rgba(255, 255, 255, 0.12)' 
+              : '1px solid rgba(0, 0, 0, 0.12)',
             borderRadius: { xs: 3, md: 4 },
             transition: 'all 0.2s ease',
             minHeight: { xs: '48px', sm: '52px', md: '56px' },
             display: 'flex',
             alignItems: 'center',
             '&:hover': {
-              background: 'rgba(255, 255, 255, 0.08)',
-              border: '1px solid rgba(255, 255, 255, 0.18)',
+              background: isDark 
+                ? 'rgba(255, 255, 255, 0.08)' 
+                : 'rgba(0, 0, 0, 0.05)',
+              border: isDark 
+                ? '1px solid rgba(255, 255, 255, 0.18)' 
+                : '1px solid rgba(0, 0, 0, 0.18)',
             },
             '&:focus-within': {
-              background: 'rgba(255, 255, 255, 0.08)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 0 0 3px rgba(0, 155, 228, 0.15)',
+              background: isDark 
+                ? 'rgba(255, 255, 255, 0.08)' 
+                : 'rgba(0, 0, 0, 0.05)',
+              border: isDark 
+                ? '1px solid rgba(255, 255, 255, 0.2)' 
+                : '1px solid rgba(0, 0, 0, 0.3)',
+              boxShadow: isDark 
+                ? '0 0 0 3px rgba(0, 155, 228, 0.15)' 
+                : '0 0 0 3px rgba(37, 99, 235, 0.15)',
             },
           }}
         >
@@ -406,7 +440,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
             sx={{
               flex: 1,
               '& .MuiInputBase-root': {
-                color: 'rgba(255, 255, 255, 0.95)',
+                color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.87)',
                 fontSize: { xs: '0.95rem', sm: '1rem', md: '1.05rem' },
                 padding: { xs: '12px 16px', sm: '14px 18px', md: '16px 20px' },
                 paddingRight: { xs: '48px', md: '56px' },
@@ -414,7 +448,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
               '& textarea': {
                 lineHeight: 1.5,
                 '&::placeholder': {
-                  color: 'rgba(255, 255, 255, 0.45)',
+                  color: isDark ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.4)',
                   opacity: 1,
                 },
               },
@@ -433,12 +467,18 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
               height: { xs: 28, sm: 30, md: 32 },
               borderRadius: '50%',
               background: inputValue.trim() && !isLoading
-                ? 'rgba(255, 255, 255, 0.9)' 
-                : 'rgba(255, 255, 255, 0.2)',
+                ? (isDark 
+                  ? 'rgba(255, 255, 255, 0.9)' 
+                  : '#2563EB')
+                : (isDark 
+                  ? 'rgba(255, 255, 255, 0.2)' 
+                  : 'rgba(0, 0, 0, 0.15)'),
               cursor: inputValue.trim() && !isLoading ? 'pointer' : 'default',
               transition: 'all 0.2s ease',
               '&:hover': inputValue.trim() && !isLoading ? {
-                background: 'rgba(255, 255, 255, 1)',
+                background: isDark 
+                  ? 'rgba(255, 255, 255, 1)' 
+                  : '#1E40AF',
                 transform: 'scale(1.05)',
               } : {},
             }}
@@ -446,7 +486,9 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
             <ArrowUpwardIcon 
               sx={{ 
                 fontSize: { xs: '1rem', sm: '1.05rem', md: '1.1rem' }, 
-                color: inputValue.trim() && !isLoading ? '#0a0e2e' : 'rgba(255, 255, 255, 0.4)',
+                color: inputValue.trim() && !isLoading 
+                  ? (isDark ? '#0a0e2e' : '#FFFFFF')
+                  : (isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.3)'),
               }} 
             />
           </Box>

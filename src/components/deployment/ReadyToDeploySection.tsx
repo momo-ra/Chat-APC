@@ -2,11 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import { Box, Container, Typography, Grid } from '@mui/material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useThemeMode } from '../../contexts/ThemeContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const ReadyToDeploySection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const { isDark } = useThemeMode();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -25,7 +27,7 @@ const ReadyToDeploySection: React.FC = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isDark]);
 
   const readyFeatures = [
     {
@@ -57,9 +59,10 @@ const ReadyToDeploySection: React.FC = () => {
             sx={{
               fontSize: { xs: '2rem', md: '3rem' },
               fontWeight: 700,
-              color: '#fff',
+              color: isDark ? '#fff' : 'rgba(0, 0, 0, 0.9)',
               mb: 8,
               textAlign: 'center',
+              transition: 'color 0.3s ease',
             }}
           >
             Ready to Deploy in Your Environment
@@ -71,19 +74,21 @@ const ReadyToDeploySection: React.FC = () => {
                 <Box
                   className="ready-card"
                   sx={{
-                    background: 'rgba(255, 255, 255, 0.03)',
+                    background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.95)',
                     backdropFilter: 'blur(20px)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
                     borderRadius: 4,
                     padding: 4,
                     height: '100%',
                     opacity: 0,
+                    boxShadow: isDark ? 'none' : '0 8px 32px rgba(0, 0, 0, 0.08)',
+                    transition: 'all 0.3s ease',
                     transform: 'translateY(40px)',
                     transition: 'all 0.3s ease',
                     '&:hover': {
                       transform: 'translateY(-8px)',
-                      borderColor: 'rgba(0, 155, 228, 0.3)',
-                      boxShadow: '0 12px 40px rgba(0, 155, 228, 0.15)',
+                      borderColor: isDark ? 'rgba(0, 155, 228, 0.3)' : 'rgba(37, 99, 235, 0.3)',
+                      boxShadow: isDark ? '0 12px 40px rgba(0, 155, 228, 0.15)' : '0 16px 48px rgba(37, 99, 235, 0.15)',
                     },
                   }}
                 >
@@ -92,8 +97,9 @@ const ReadyToDeploySection: React.FC = () => {
                     sx={{
                       fontSize: { xs: '1.3rem', md: '1.5rem' },
                       fontWeight: 600,
-                      color: '#fff',
+                      color: isDark ? '#fff' : 'rgba(0, 0, 0, 0.9)',
                       mb: 2,
+                      transition: 'color 0.3s ease',
                     }}
                   >
                     {feature.title}
@@ -101,8 +107,9 @@ const ReadyToDeploySection: React.FC = () => {
                   <Typography
                     sx={{
                       fontSize: '1rem',
-                      color: 'rgba(255, 255, 255, 0.65)',
+                      color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
                       lineHeight: 1.7,
+                      transition: 'color 0.3s ease',
                     }}
                   >
                     {feature.description}

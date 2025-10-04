@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Button, Container } from '@mui/material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useThemeMode } from '../../contexts/ThemeContext';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -9,6 +10,7 @@ gsap.registerPlugin(ScrollTrigger);
 const FullWidthCTASection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const { isDark } = useThemeMode();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -48,15 +50,19 @@ const FullWidthCTASection: React.FC = () => {
   return (
     <Box
       ref={sectionRef}
-      data-section-theme="dark"
+      data-section-theme={isDark ? 'dark' : 'light'}
+      data-section-primary={isDark ? '#009BE4' : '#2563EB'}
       sx={{
         width: '100%',
         py: { xs: 12, md: 18 },
         position: 'relative',
         overflow: 'hidden',
-        background: 'linear-gradient(135deg, rgba(0, 155, 228, 0.15) 0%, rgba(106, 17, 203, 0.12) 50%, rgba(0, 155, 228, 0.08) 100%)',
+        background: isDark 
+          ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.15) 0%, rgba(106, 17, 203, 0.12) 50%, rgba(0, 155, 228, 0.08) 100%)'
+          : 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(99, 102, 241, 0.06) 50%, rgba(37, 99, 235, 0.04) 100%)',
         backgroundSize: '200% 200%',
         backgroundPosition: '50% 0%',
+        transition: 'background 0.3s ease',
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -93,9 +99,10 @@ const FullWidthCTASection: React.FC = () => {
             sx={{
               fontSize: { xs: '2.5rem', md: '4rem' },
               fontWeight: 700,
-              color: 'rgba(255, 255, 255, 0.98)',
+              color: isDark ? 'rgba(255, 255, 255, 0.98)' : 'rgba(0, 0, 0, 0.9)',
               mb: 3,
               lineHeight: 1.2,
+              transition: 'color 0.3s ease',
             }}
           >
             Transparent AI you can trust in critical operations
@@ -104,11 +111,12 @@ const FullWidthCTASection: React.FC = () => {
           <Typography
             sx={{
               fontSize: { xs: '1.2rem', md: '1.5rem' },
-              color: 'rgba(255, 255, 255, 0.75)',
+              color: isDark ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 0, 0, 0.7)',
               mb: 6,
               maxWidth: 800,
               mx: 'auto',
               lineHeight: 1.6,
+              transition: 'color 0.3s ease',
             }}
           >
             Experience the power of AI built specifically for industrial process control

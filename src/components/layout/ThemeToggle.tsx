@@ -1,0 +1,77 @@
+import React from 'react';
+import { IconButton, Tooltip, Box, useMediaQuery, useTheme } from '@mui/material';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import { useThemeMode } from '../../contexts/ThemeContext';
+
+const ThemeToggle: React.FC = () => {
+  const { isDark, toggleTheme } = useThemeMode();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  // Hide in mobile as it's now in the sidebar
+  if (isMobile) {
+    return null;
+  }
+
+  return (
+    <Tooltip title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
+      <IconButton
+        onClick={toggleTheme}
+        sx={{
+          position: 'fixed',
+          bottom: 32,
+          right: 32,
+          zIndex: 1400,
+          width: 52,
+          height: 52,
+          backgroundColor: isDark 
+            ? 'rgba(255, 255, 255, 0.08)' 
+            : 'rgba(0, 0, 0, 0.04)',
+          backdropFilter: 'blur(10px)',
+          border: isDark 
+            ? '1px solid rgba(255, 255, 255, 0.15)' 
+            : '1px solid rgba(0, 0, 0, 0.08)',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            backgroundColor: isDark 
+              ? 'rgba(255, 255, 255, 0.12)' 
+              : 'rgba(0, 0, 0, 0.08)',
+            transform: 'scale(1.08)',
+            borderColor: isDark
+              ? 'rgba(255, 255, 255, 0.25)'
+              : 'rgba(0, 0, 0, 0.15)',
+          },
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'transform 0.3s ease',
+          }}
+        >
+          {isDark ? (
+            <LightModeIcon 
+              sx={{ 
+                fontSize: 20,
+                color: '#FDB813',
+              }} 
+            />
+          ) : (
+            <DarkModeIcon 
+              sx={{ 
+                fontSize: 20,
+                color: '#475569',
+              }} 
+            />
+          )}
+        </Box>
+      </IconButton>
+    </Tooltip>
+  );
+};
+
+export default ThemeToggle;
+

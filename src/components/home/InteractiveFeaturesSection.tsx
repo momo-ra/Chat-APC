@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { gsap } from 'gsap';
+import { useThemeMode } from '../../contexts/ThemeContext';
 
 interface Feature {
   id: string;
@@ -58,6 +59,7 @@ const InteractiveFeaturesSection: React.FC = () => {
   const [activeFeature, setActiveFeature] = useState<Feature>(features[0]);
   const imageRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const { isDark } = useThemeMode();
 
   useEffect(() => {
     if (imageRef.current) {
@@ -91,16 +93,17 @@ const InteractiveFeaturesSection: React.FC = () => {
   return (
     <Box
       ref={sectionRef}
-      data-section-theme="dark"
+      data-section-theme={isDark ? 'dark' : 'light'}
       data-section-primary={activeFeature.color}
       sx={{
+        width: '100%',
         minHeight: '100vh',
         background: 'transparent',
         display: 'flex',
         alignItems: 'center',
         py: { xs: 8, md: 12 },
         position: 'relative',
-        overflow: 'hidden',
+        overflow: 'visible',
       }}
     >
       {/* Animated Background Layers */}
@@ -118,6 +121,7 @@ const InteractiveFeaturesSection: React.FC = () => {
         }}
       />
       
+      {/* Content Container with max-width */}
       <Box sx={{ 
         width: '100%', 
         maxWidth: '1350px',
@@ -148,9 +152,10 @@ const InteractiveFeaturesSection: React.FC = () => {
               sx={{
                 fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' },
                 fontWeight: 700,
-                color: '#FFFFFF',
+                color: isDark ? '#FFFFFF' : '#0F172A',
                 mb: 1.5,
                 lineHeight: 1.2,
+                transition: 'color 0.3s ease',
               }}
             >
               Experience the Power
@@ -158,9 +163,10 @@ const InteractiveFeaturesSection: React.FC = () => {
             <Typography
               sx={{
                 fontSize: { xs: '0.9375rem', md: '1rem' },
-                color: 'rgba(255, 255, 255, 0.7)',
+                color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
                 mb: { xs: 3, md: 4 },
                 lineHeight: 1.6,
+                transition: 'color 0.3s ease',
               }}
             >
               Discover how ChatAPC transforms industrial process control with cutting-edge AI technology
@@ -190,21 +196,31 @@ const InteractiveFeaturesSection: React.FC = () => {
                     overflow: 'hidden',
                     background:
                       activeFeature.id === feature.id
-                        ? 'rgba(255, 255, 255, 0.1)'
-                        : 'rgba(255, 255, 255, 0.03)',
+                        ? (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.04)')
+                        : (isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)'),
                     backdropFilter: 'blur(10px)',
                     border:
                       activeFeature.id === feature.id
                         ? `2px solid ${feature.color}`
-                        : '2px solid rgba(255, 255, 255, 0.1)',
+                        : (isDark ? '2px solid rgba(255, 255, 255, 0.1)' : '2px solid rgba(0, 0, 0, 0.08)'),
                     boxShadow:
                       activeFeature.id === feature.id
-                        ? `0 8px 24px ${feature.color}33`
+                        ? `
+                          0 4px 16px -2px ${feature.color}40,
+                          0 8px 32px -3px ${feature.color}30,
+                          0 16px 48px -5px ${feature.color}20,
+                          0 24px 64px -8px ${feature.color}10
+                        `
                         : 'none',
                     '&:hover': {
-                      background: 'rgba(255, 255, 255, 0.08)',
+                      background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
                       transform: 'translateX(8px)',
-                      boxShadow: `0 8px 24px ${feature.color}22`,
+                      boxShadow: `
+                        0 4px 16px -2px ${feature.color}35,
+                        0 8px 32px -3px ${feature.color}25,
+                        0 16px 48px -5px ${feature.color}15,
+                        0 24px 64px -8px ${feature.color}08
+                      `,
                       borderColor: feature.color,
                     },
                     '&::before': {
@@ -225,11 +241,12 @@ const InteractiveFeaturesSection: React.FC = () => {
                       sx={{
                         fontSize: { xs: '1rem', md: '1.125rem' },
                         fontWeight: 600,
-                        color: '#FFFFFF',
+                        color: isDark ? '#FFFFFF' : '#0F172A',
                         mb: 0.5,
                         display: 'flex',
                         alignItems: 'center',
                         gap: 1,
+                        transition: 'color 0.3s ease',
                       }}
                     >
                       {feature.title}
@@ -250,8 +267,9 @@ const InteractiveFeaturesSection: React.FC = () => {
                       <Typography
                         sx={{
                           fontSize: '0.8125rem',
-                          color: 'rgba(255, 255, 255, 0.6)',
+                          color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.5)',
                           fontWeight: 500,
+                          transition: 'color 0.3s ease',
                         }}
                       >
                         {feature.subtitle}
@@ -281,8 +299,8 @@ const InteractiveFeaturesSection: React.FC = () => {
                 width: { xs: '300px', md: '400px', lg: '500px' },
                 height: { xs: '300px', md: '400px', lg: '500px' },
                 borderRadius: '50%',
-                background: `radial-gradient(circle, ${activeFeature.color}18 0%, transparent 70%)`,
-                filter: 'blur(50px)',
+                background: `radial-gradient(circle, ${activeFeature.color}12 0%, transparent 70%)`,
+                filter: 'blur(60px)',
                 transition: 'all 0.8s ease',
                 zIndex: 0,
               }}
@@ -299,11 +317,17 @@ const InteractiveFeaturesSection: React.FC = () => {
                 aspectRatio: '16/10',
                 borderRadius: 4,
                 overflow: 'hidden',
-                boxShadow: `0 15px 50px ${activeFeature.color}35, 0 0 0 1px ${activeFeature.color}25`,
+                boxShadow: `
+                  0 20px 60px -10px ${activeFeature.color}40,
+                  0 30px 80px -20px ${activeFeature.color}30,
+                  0 40px 100px -30px ${activeFeature.color}20,
+                  0 0 0 1px ${activeFeature.color}25
+                `,
                 border: `3px solid ${activeFeature.color}`,
                 background: '#000',
                 perspective: '1000px',
                 transformStyle: 'preserve-3d',
+                transition: 'box-shadow 0.8s ease',
               }}
             >
               <Box
@@ -372,8 +396,8 @@ const InteractiveFeaturesSection: React.FC = () => {
                 width: { xs: '120px', md: '150px', lg: '180px' },
                 height: { xs: '120px', md: '150px', lg: '180px' },
                 borderRadius: '50%',
-                background: `${activeFeature.color}12`,
-                filter: 'blur(35px)',
+                background: `${activeFeature.color}08`,
+                filter: 'blur(40px)',
                 transition: 'all 0.8s ease',
                 zIndex: 0,
               }}
@@ -386,8 +410,8 @@ const InteractiveFeaturesSection: React.FC = () => {
                 width: { xs: '100px', md: '130px', lg: '160px' },
                 height: { xs: '100px', md: '130px', lg: '160px' },
                 borderRadius: '50%',
-                background: `${activeFeature.color}12`,
-                filter: 'blur(35px)',
+                background: `${activeFeature.color}08`,
+                filter: 'blur(40px)',
                 transition: 'all 0.8s ease',
                 zIndex: 0,
               }}

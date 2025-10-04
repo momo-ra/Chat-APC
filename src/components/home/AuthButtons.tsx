@@ -1,9 +1,11 @@
 import React from 'react';
 import { Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useThemeMode } from '../../contexts/ThemeContext';
 
 const AuthButtons: React.FC = () => {
   const navigate = useNavigate();
+  const { isDark } = useThemeMode();
 
   return (
     <Box
@@ -25,15 +27,17 @@ const AuthButtons: React.FC = () => {
             padding: '10px 24px',
             border: '1px solid transparent',
             background: 'transparent',
-            color: 'rgba(255, 255, 255, 0.7)',
+            color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
             fontSize: '0.875rem',
             fontWeight: 400,
             borderRadius: 2,
             textTransform: 'none',
             transition: 'all 0.2s ease',
             '&:hover': {
-              color: 'rgba(255, 255, 255, 0.95)',
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
+              backgroundColor: isDark 
+                ? 'rgba(255, 255, 255, 0.05)' 
+                : 'rgba(0, 0, 0, 0.04)',
             },
           }}
         >
@@ -44,18 +48,24 @@ const AuthButtons: React.FC = () => {
           variant="outlined"
           sx={{
             padding: '10px 24px',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
+            border: isDark 
+              ? '1px solid rgba(255, 255, 255, 0.15)' 
+              : '1px solid rgba(0, 0, 0, 0.15)',
             background: 'transparent',
-            color: 'rgba(255, 255, 255, 0.7)',
+            color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)',
             fontSize: '0.875rem',
             fontWeight: 400,
             borderRadius: 2,
             textTransform: 'none',
             transition: 'all 0.2s ease',
             '&:hover': {
-              color: 'rgba(255, 255, 255, 0.95)',
-              borderColor: 'rgba(255, 255, 255, 0.25)',
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
+              borderColor: isDark 
+                ? 'rgba(255, 255, 255, 0.25)' 
+                : 'rgba(0, 0, 0, 0.3)',
+              backgroundColor: isDark 
+                ? 'rgba(255, 255, 255, 0.05)' 
+                : 'rgba(0, 0, 0, 0.04)',
             },
           }}
         >

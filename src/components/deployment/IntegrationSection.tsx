@@ -2,11 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import { Box, Container, Typography, Grid } from '@mui/material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useThemeMode } from '../../contexts/ThemeContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const IntegrationSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const { isDark } = useThemeMode();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -25,7 +27,7 @@ const IntegrationSection: React.FC = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isDark]);
 
   const dataSources = [
     'OPC-UA: Standard industrial protocol connectivity',
@@ -58,9 +60,10 @@ const IntegrationSection: React.FC = () => {
             sx={{
               fontSize: { xs: '2rem', md: '3rem' },
               fontWeight: 700,
-              color: '#fff',
+              color: isDark ? '#fff' : 'rgba(0, 0, 0, 0.9)',
               mb: 2,
               textAlign: 'center',
+              transition: 'color 0.3s ease',
             }}
           >
             Comprehensive Integration Ecosystem
@@ -68,11 +71,12 @@ const IntegrationSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: { xs: '1rem', md: '1.1rem' },
-              color: 'rgba(255, 255, 255, 0.65)',
+              color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
               textAlign: 'center',
               mb: 8,
               maxWidth: 800,
               mx: 'auto',
+              transition: 'color 0.3s ease',
             }}
           >
             Future-Ready Architecture: Built-in support for emerging third-party real-time databases and external applications ensures your investment remains valuable as technology evolves.
@@ -84,14 +88,16 @@ const IntegrationSection: React.FC = () => {
               <Box
                 className="integration-column"
                 sx={{
-                  background: 'rgba(255, 255, 255, 0.03)',
+                  background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.95)',
                   backdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
                   borderRadius: 4,
                   padding: 4,
                   height: '100%',
                   opacity: 0,
                   transform: 'translateY(50px)',
+                  boxShadow: isDark ? 'none' : '0 8px 32px rgba(0, 0, 0, 0.08)',
+                  transition: 'all 0.3s ease',
                 }}
               >
                 <Typography
@@ -99,8 +105,9 @@ const IntegrationSection: React.FC = () => {
                   sx={{
                     fontSize: { xs: '1.5rem', md: '1.8rem' },
                     fontWeight: 600,
-                    color: '#009BE4',
+                    color: isDark ? '#009BE4' : '#2563EB',
                     mb: 4,
+                    transition: 'color 0.3s ease',
                   }}
                 >
                   Data Sources
@@ -120,16 +127,18 @@ const IntegrationSection: React.FC = () => {
                           width: 6,
                           height: 6,
                           borderRadius: '50%',
-                          backgroundColor: '#009BE4',
+                          backgroundColor: isDark ? '#009BE4' : '#2563EB',
                           flexShrink: 0,
                           mt: 1,
+                          transition: 'background-color 0.3s ease',
                         }}
                       />
                       <Typography
                         sx={{
                           fontSize: '1rem',
-                          color: 'rgba(255, 255, 255, 0.75)',
+                          color: isDark ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 0, 0, 0.7)',
                           lineHeight: 1.6,
+                          transition: 'color 0.3s ease',
                         }}
                       >
                         {source}
@@ -145,14 +154,16 @@ const IntegrationSection: React.FC = () => {
               <Box
                 className="integration-column"
                 sx={{
-                  background: 'rgba(255, 255, 255, 0.03)',
+                  background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.95)',
                   backdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
                   borderRadius: 4,
                   padding: 4,
                   height: '100%',
                   opacity: 0,
                   transform: 'translateY(50px)',
+                  boxShadow: isDark ? 'none' : '0 8px 32px rgba(0, 0, 0, 0.08)',
+                  transition: 'all 0.3s ease',
                 }}
               >
                 <Typography
@@ -160,8 +171,9 @@ const IntegrationSection: React.FC = () => {
                   sx={{
                     fontSize: { xs: '1.5rem', md: '1.8rem' },
                     fontWeight: 600,
-                    color: '#009BE4',
+                    color: isDark ? '#009BE4' : '#2563EB',
                     mb: 4,
+                    transition: 'color 0.3s ease',
                   }}
                 >
                   Data Outputs
@@ -181,16 +193,18 @@ const IntegrationSection: React.FC = () => {
                           width: 6,
                           height: 6,
                           borderRadius: '50%',
-                          backgroundColor: '#009BE4',
+                          backgroundColor: isDark ? '#009BE4' : '#2563EB',
                           flexShrink: 0,
                           mt: 1,
+                          transition: 'background-color 0.3s ease',
                         }}
                       />
                       <Typography
                         sx={{
                           fontSize: '1rem',
-                          color: 'rgba(255, 255, 255, 0.75)',
+                          color: isDark ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 0, 0, 0.7)',
                           lineHeight: 1.6,
+                          transition: 'color 0.3s ease',
                         }}
                       >
                         {output}

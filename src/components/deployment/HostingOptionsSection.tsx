@@ -6,11 +6,13 @@ import CloudIcon from '@mui/icons-material/Cloud';
 import StorageIcon from '@mui/icons-material/Storage';
 import HubIcon from '@mui/icons-material/Hub';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { useThemeMode } from '../../contexts/ThemeContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const HostingOptionsSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const { isDark } = useThemeMode();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -85,9 +87,10 @@ const HostingOptionsSection: React.FC = () => {
             sx={{
               fontSize: { xs: '2rem', md: '3rem' },
               fontWeight: 700,
-              color: '#fff',
+              color: isDark ? '#fff' : '#0F172A',
               mb: 2,
               textAlign: 'center',
+              transition: 'color 0.3s ease',
             }}
           >
             Flexible Hosting Options
@@ -95,11 +98,12 @@ const HostingOptionsSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: { xs: '1rem', md: '1.1rem' },
-              color: 'rgba(255, 255, 255, 0.65)',
+              color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.6)',
               textAlign: 'center',
               mb: 8,
               maxWidth: 700,
               mx: 'auto',
+              transition: 'color 0.3s ease',
             }}
           >
             Choose what works best for your IT policies and operational requirements. Our deployment experts work with your team to ensure optimal configuration for your specific environment.
@@ -111,9 +115,13 @@ const HostingOptionsSection: React.FC = () => {
                 <Box
                   className="hosting-card"
                   sx={{
-                    background: 'rgba(255, 255, 255, 0.03)',
+                    background: isDark 
+                      ? 'rgba(255, 255, 255, 0.03)' 
+                      : 'rgba(255, 255, 255, 0.8)',
                     backdropFilter: 'blur(20px)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    border: isDark 
+                      ? '1px solid rgba(255, 255, 255, 0.1)' 
+                      : '1px solid rgba(0, 0, 0, 0.08)',
                     borderRadius: 4,
                     padding: 0,
                     height: '100%',
@@ -123,10 +131,17 @@ const HostingOptionsSection: React.FC = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     transition: 'all 0.3s ease',
+                    boxShadow: isDark 
+                      ? 'none' 
+                      : '0 4px 20px rgba(0, 0, 0, 0.08)',
                     '&:hover': {
                       transform: 'translateY(-8px)',
-                      borderColor: 'rgba(0, 155, 228, 0.3)',
-                      boxShadow: '0 12px 40px rgba(0, 155, 228, 0.15)',
+                      borderColor: isDark 
+                        ? 'rgba(0, 155, 228, 0.3)' 
+                        : 'rgba(37, 99, 235, 0.4)',
+                      boxShadow: isDark 
+                        ? '0 12px 40px rgba(0, 155, 228, 0.15)' 
+                        : '0 16px 48px rgba(37, 99, 235, 0.2)',
                     },
                   }}
                 >
@@ -137,13 +152,18 @@ const HostingOptionsSection: React.FC = () => {
                       height: 180,
                       borderRadius: 3,
                       mb: 3,
-                      background: 'linear-gradient(135deg, rgba(0, 155, 228, 0.1) 0%, rgba(0, 155, 228, 0.05) 100%)',
+                      background: isDark 
+                        ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.1) 0%, rgba(0, 155, 228, 0.05) 100%)'
+                        : 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(37, 99, 235, 0.03) 100%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       position: 'relative',
                       overflow: 'hidden',
-                      border: '1px solid rgba(0, 155, 228, 0.15)',
+                      border: isDark 
+                        ? '1px solid rgba(0, 155, 228, 0.15)' 
+                        : '1px solid rgba(37, 99, 235, 0.12)',
+                      transition: 'all 0.3s ease',
                       '&::after': {
                         content: '""',
                         position: 'absolute',
@@ -151,11 +171,17 @@ const HostingOptionsSection: React.FC = () => {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        background: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M30 0L30 60M0 30L60 30\' stroke=\'rgba(0,155,228,0.1)\' stroke-width=\'1\'/%3E%3C/svg%3E")',
+                        background: isDark 
+                          ? 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M30 0L30 60M0 30L60 30\' stroke=\'rgba(0,155,228,0.1)\' stroke-width=\'1\'/%3E%3C/svg%3E")'
+                          : 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M30 0L30 60M0 30L60 30\' stroke=\'rgba(37,99,235,0.08)\' stroke-width=\'1\'/%3E%3C/svg%3E")',
                       },
                     }}
                   >
-                    <Box sx={{ color: 'rgba(0, 155, 228, 0.3)', zIndex: 1 }}>
+                    <Box sx={{ 
+                      color: isDark ? 'rgba(0, 155, 228, 0.3)' : 'rgba(37, 99, 235, 0.25)',
+                      zIndex: 1,
+                      transition: 'color 0.3s ease',
+                    }}>
                       {option.icon}
                     </Box>
                   </Box>
@@ -175,15 +201,23 @@ const HostingOptionsSection: React.FC = () => {
                         width: 64,
                         height: 64,
                         borderRadius: 3,
-                        background: 'linear-gradient(135deg, rgba(0, 155, 228, 0.15) 0%, rgba(0, 155, 228, 0.05) 100%)',
+                        background: isDark 
+                          ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.15) 0%, rgba(0, 155, 228, 0.05) 100%)'
+                          : 'linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(37, 99, 235, 0.04) 100%)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         mb: 3,
-                        border: '1px solid rgba(0, 155, 228, 0.2)',
+                        border: isDark 
+                          ? '1px solid rgba(0, 155, 228, 0.2)' 
+                          : '1px solid rgba(37, 99, 235, 0.15)',
+                        transition: 'all 0.3s ease',
                       }}
                     >
-                      <Box sx={{ color: '#009BE4' }}>
+                      <Box sx={{ 
+                        color: isDark ? '#009BE4' : '#2563EB',
+                        transition: 'color 0.3s ease',
+                      }}>
                         {option.icon}
                       </Box>
                     </Box>
@@ -193,8 +227,9 @@ const HostingOptionsSection: React.FC = () => {
                       sx={{
                         fontSize: { xs: '1.3rem', md: '1.5rem' },
                         fontWeight: 600,
-                        color: '#fff',
+                        color: isDark ? '#fff' : '#0F172A',
                         mb: 2,
+                        transition: 'color 0.3s ease',
                       }}
                     >
                       {option.title}
@@ -202,9 +237,10 @@ const HostingOptionsSection: React.FC = () => {
                     <Typography
                       sx={{
                         fontSize: '0.95rem',
-                        color: 'rgba(255, 255, 255, 0.65)',
+                        color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.6)',
                         lineHeight: 1.7,
                         mb: 3,
+                        transition: 'color 0.3s ease',
                       }}
                     >
                       {option.description}
@@ -224,15 +260,17 @@ const HostingOptionsSection: React.FC = () => {
                           <CheckCircleOutlineIcon 
                             sx={{ 
                               fontSize: 18, 
-                              color: '#009BE4',
+                              color: isDark ? '#009BE4' : '#2563EB',
                               flexShrink: 0,
+                              transition: 'color 0.3s ease',
                             }} 
                           />
                           <Typography
                             sx={{
                               fontSize: '0.875rem',
-                              color: 'rgba(255, 255, 255, 0.7)',
+                              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.65)',
                               lineHeight: 1.5,
+                              transition: 'color 0.3s ease',
                             }}
                           >
                             {benefit}

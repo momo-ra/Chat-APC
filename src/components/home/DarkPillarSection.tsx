@@ -8,6 +8,7 @@ import {
 } from '@mui/icons-material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useThemeMode } from '../../contexts/ThemeContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -44,6 +45,7 @@ const DarkPillarSection: React.FC = () => {
   const pillarsRef = useRef<HTMLDivElement[]>([]);
   const headerRef = useRef<HTMLDivElement>(null);
   const visualRef = useRef<HTMLDivElement>(null);
+  const { isDark } = useThemeMode();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -107,13 +109,17 @@ const DarkPillarSection: React.FC = () => {
   return (
     <Box
       ref={sectionRef}
-      data-section-theme="dark"
+      data-section-theme={isDark ? 'dark' : 'light'}
+      data-section-primary={isDark ? '#009BE4' : '#2563EB'}
       sx={{
         width: '100%',
         py: { xs: 10, md: 15 },
         position: 'relative',
         zIndex: 2,
-        background: 'linear-gradient(180deg, rgba(13, 24, 66, 0.4) 0%, rgba(106, 17, 203, 0.05) 30%, rgba(0, 155, 228, 0.04) 70%, rgba(10, 14, 46, 0.5) 100%)',
+        background: isDark 
+          ? 'linear-gradient(180deg, rgba(13, 24, 66, 0.4) 0%, rgba(106, 17, 203, 0.05) 30%, rgba(0, 155, 228, 0.04) 70%, rgba(10, 14, 46, 0.5) 100%)'
+          : 'transparent',
+        transition: 'background 0.3s ease',
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -133,8 +139,9 @@ const DarkPillarSection: React.FC = () => {
             sx={{
               fontSize: { xs: '2.5rem', md: '3.5rem' },
               fontWeight: 600,
-              color: 'rgba(255, 255, 255, 0.95)',
+              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
               mb: 2,
+              transition: 'color 0.3s ease',
             }}
           >
             From question to answer — clear, fast, and explainable
@@ -142,9 +149,10 @@ const DarkPillarSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: { xs: '1.1rem', md: '1.25rem' },
-              color: 'rgba(255, 255, 255, 0.6)',
+              color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
               maxWidth: 700,
               mx: 'auto',
+              transition: 'color 0.3s ease',
             }}
           >
             No black boxes. Every answer shows its work.
@@ -203,17 +211,19 @@ const DarkPillarSection: React.FC = () => {
                   sx={{
                     padding: 4,
                     borderRadius: 4,
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid rgba(255, 255, 255, 0.06)',
+                    background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.9)',
+                    border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.08)',
                     backdropFilter: 'blur(10px)',
                     transition: 'all 0.3s ease',
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
+                    boxShadow: isDark ? 'none' : '0 4px 20px rgba(0, 0, 0, 0.06)',
                     '&:hover': {
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px solid rgba(0, 155, 228, 0.2)',
+                      background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.95)',
+                      border: isDark ? '1px solid rgba(0, 155, 228, 0.2)' : '1px solid rgba(37, 99, 235, 0.3)',
                       transform: 'translateY(-8px)',
+                      boxShadow: isDark ? 'none' : '0 12px 40px rgba(37, 99, 235, 0.15)',
                     },
                   }}
                 >
@@ -223,18 +233,20 @@ const DarkPillarSection: React.FC = () => {
                       width: 56,
                       height: 56,
                       borderRadius: 3,
-                      background: 'rgba(0, 155, 228, 0.15)',
+                      background: isDark ? 'rgba(0, 155, 228, 0.15)' : 'rgba(37, 99, 235, 0.12)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       mb: 3,
+                      transition: 'background 0.3s ease',
                     }}
                   >
                     <Typography
                       sx={{
                         fontSize: '2rem',
                         fontWeight: 700,
-                        color: '#009BE4',
+                        color: isDark ? '#009BE4' : '#2563EB',
+                        transition: 'color 0.3s ease',
                       }}
                     >
                       {pillar.emoji}
@@ -246,9 +258,10 @@ const DarkPillarSection: React.FC = () => {
                     sx={{
                       fontSize: { xs: '1.25rem', md: '1.4rem' },
                       fontWeight: 600,
-                      color: 'rgba(255, 255, 255, 0.95)',
+                      color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
                       mb: 2,
                       lineHeight: 1.3,
+                      transition: 'color 0.3s ease',
                     }}
                   >
                     {pillar.title}
@@ -258,9 +271,10 @@ const DarkPillarSection: React.FC = () => {
                   <Typography
                     sx={{
                       fontSize: '1rem',
-                      color: 'rgba(255, 255, 255, 0.65)',
+                      color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
                       lineHeight: 1.7,
                       mb: pillar.features ? 3 : 0,
+                      transition: 'color 0.3s ease',
                     }}
                   >
                     {pillar.description}
@@ -281,17 +295,19 @@ const DarkPillarSection: React.FC = () => {
                         <CheckCircle
                           sx={{
                             fontSize: 20,
-                            color: '#009BE4',
+                            color: isDark ? '#009BE4' : '#2563EB',
                             mr: 1,
                             mt: 0.25,
                             flexShrink: 0,
+                            transition: 'color 0.3s ease',
                           }}
                         />
                         <Typography
                           sx={{
                             fontSize: '0.875rem',
-                            color: 'rgba(255, 255, 255, 0.7)',
+                            color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.65)',
                             lineHeight: 1.5,
+                            transition: 'color 0.3s ease',
                           }}
                         >
                           {feature}

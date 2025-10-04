@@ -11,12 +11,16 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  Tooltip,
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import ChevronRight from '@mui/icons-material/ChevronRight';
 import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import { useThemeMode } from '../../contexts/ThemeContext';
 import { SidebarItem } from '../../data/layout/sidebarData';
 import chatAPCLogo from '../../assets/chatAPC-logo-light-mode.png';
 import chatAPCLogoDark from '../../assets/chatAPC-logo.png';
@@ -45,6 +49,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
   });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { isDark: isSystemDark, toggleTheme } = useThemeMode();
   
   const collapsedWidth = 0;
   const expandedWidth = width;
@@ -105,7 +110,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
     handleScroll(); // Initial check
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isSystemDark]); // Re-run when theme changes
 
   // Function to check if item is active
   const isItemActive = (item: SidebarItem): boolean => {
@@ -182,7 +187,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
         position: 'relative',
       }}
     >
-        {/* Mobile Drawer Header - Logo & Close Button */}
+        {/* Mobile Drawer Header - Logo, Theme Toggle & Close Button */}
         {isMobile && (
           <Box
             sx={{
@@ -190,8 +195,13 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '12px 16px',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-              backgroundColor: 'rgba(10, 14, 46, 0.98)',
+              borderBottom: isSystemDark 
+                ? '1px solid rgba(255, 255, 255, 0.1)'
+                : '1px solid rgba(0, 0, 0, 0.1)',
+              backgroundColor: isSystemDark 
+                ? 'rgba(10, 14, 46, 0.98)'
+                : 'rgba(248, 250, 252, 0.98)',
+              transition: 'all 0.3s ease',
             }}
           >
             {/* Logo */}
@@ -207,31 +217,70 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
             >
               <Box
                 component="img"
-                src={chatAPCLogo}
+                src={isSystemDark ? chatAPCLogo : chatAPCLogoDark}
                 alt="ChatAPC Logo"
                 sx={{
                   height: '32px',
                   width: 'auto',
                   objectFit: 'contain',
-                  filter: 'brightness(1.1)',
+                  filter: isSystemDark ? 'brightness(1.1)' : 'none',
+                  transition: 'all 0.3s ease',
                 }}
               />
             </Box>
 
-            {/* Close Button */}
-            <IconButton
-              onClick={handleDrawerToggle}
-              sx={{
-                color: 'rgba(255, 255, 255, 0.9)',
-                padding: '8px',
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  color: 'rgba(255, 255, 255, 1)',
-                },
-              }}
-            >
-              <CloseIcon sx={{ fontSize: 24 }} />
-            </IconButton>
+            {/* Right Side: Theme Toggle & Close Button */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {/* Theme Toggle Button */}
+              <Tooltip title={isSystemDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
+                <IconButton
+                  onClick={toggleTheme}
+                  sx={{
+                    color: isSystemDark 
+                      ? 'rgba(255, 255, 255, 0.8)' 
+                      : 'rgba(0, 0, 0, 0.7)',
+                    padding: '8px',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: isSystemDark 
+                        ? 'rgba(255, 255, 255, 0.1)' 
+                        : 'rgba(0, 0, 0, 0.08)',
+                      color: isSystemDark 
+                        ? 'rgba(255, 255, 255, 1)' 
+                        : 'rgba(0, 0, 0, 0.9)',
+                    },
+                  }}
+                >
+                  {isSystemDark ? (
+                    <LightModeIcon sx={{ fontSize: 20, color: '#FDB813' }} />
+                  ) : (
+                    <DarkModeIcon sx={{ fontSize: 20, color: '#475569' }} />
+                  )}
+                </IconButton>
+              </Tooltip>
+
+              {/* Close Button */}
+              <IconButton
+                onClick={handleDrawerToggle}
+                sx={{
+                  color: isSystemDark 
+                    ? 'rgba(255, 255, 255, 0.9)' 
+                    : 'rgba(0, 0, 0, 0.7)',
+                  padding: '8px',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    backgroundColor: isSystemDark 
+                      ? 'rgba(255, 255, 255, 0.1)' 
+                      : 'rgba(0, 0, 0, 0.08)',
+                    color: isSystemDark 
+                      ? 'rgba(255, 255, 255, 1)' 
+                      : 'rgba(0, 0, 0, 0.9)',
+                  },
+                }}
+              >
+                <CloseIcon sx={{ fontSize: 24 }} />
+              </IconButton>
+            </Box>
           </Box>
         )}
 
@@ -296,7 +345,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                 mb: 3,
                 pb: 2,
                 borderBottom: isMobile 
-                  ? '1px solid rgba(255, 255, 255, 0.1)'
+                  ? (isSystemDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)')
                   : (isLightMode 
                     ? '1px solid rgba(0, 0, 0, 0.1)' 
                     : '1px solid rgba(255, 255, 255, 0.1)'),
@@ -311,7 +360,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                   transition: 'all 0.3s ease',
                   '&:hover': {
                     backgroundColor: isMobile 
-                      ? 'rgba(255, 255, 255, 0.05)'
+                      ? (isSystemDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)')
                       : (isLightMode ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.05)'),
                   },
                 }}
@@ -329,7 +378,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                     sx={{
                       fontSize: '1rem',
                       color: isMobile 
-                        ? 'rgba(255, 255, 255, 0.8)'
+                        ? (isSystemDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)')
                         : (isLightMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.8)'),
                       transition: 'color 0.3s ease',
                     }}
@@ -343,7 +392,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                         fontSize: { xs: '0.625rem', md: '0.8125rem' },
                         fontWeight: 500,
                         color: isMobile 
-                          ? 'rgba(255, 255, 255, 0.7)'
+                          ? (isSystemDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)')
                           : (isLightMode ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)'),
                         textAlign: 'left',
                         transition: 'color 0.3s ease',
@@ -399,7 +448,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                     },
                   '&:hover': {
                     backgroundColor: isMobile 
-                      ? 'rgba(255, 255, 255, 0.05)'
+                      ? (isSystemDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)')
                       : sectionColors.hover,
                     '&::before': {
                       height: '50%',
@@ -407,11 +456,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                   },
                   '&.Mui-selected': {
                     backgroundColor: isMobile 
-                      ? 'rgba(0, 155, 228, 0.1)'
+                      ? (isSystemDark ? 'rgba(0, 155, 228, 0.1)' : 'rgba(37, 99, 235, 0.1)')
                       : `${sectionColors.primary}1A`,
                     '&:hover': {
                       backgroundColor: isMobile 
-                        ? 'rgba(0, 155, 228, 0.15)'
+                        ? (isSystemDark ? 'rgba(0, 155, 228, 0.15)' : 'rgba(37, 99, 235, 0.15)')
                         : `${sectionColors.primary}26`,
                     },
                   },
@@ -424,8 +473,8 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                         fontSize: { xs: '0.75rem', md: '0.8125rem' },
                         fontWeight: isItemActive(item) ? 600 : 500,
                         color: isItemActive(item) 
-                          ? (isMobile ? '#009BE4' : sectionColors.primary)
-                          : (isMobile ? 'rgba(255, 255, 255, 0.85)' : sectionColors.text),
+                          ? (isMobile ? (isSystemDark ? '#009BE4' : '#2563EB') : sectionColors.primary)
+                          : (isMobile ? (isSystemDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.8)') : sectionColors.text),
                         transition: 'color 0.3s ease',
                         textAlign: { xs: 'center', md: 'left' },
                       },
@@ -436,7 +485,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                       sx={{ 
                         fontSize: 16, 
                         color: isMobile 
-                          ? 'rgba(255, 255, 255, 0.6)'
+                          ? (isSystemDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.5)')
                           : sectionColors.textSecondary,
                         ml: 'auto',
                         transition: 'color 0.3s ease',
@@ -459,8 +508,13 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
             left: 0,
             right: 0,
             padding: 3,
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-            backgroundColor: 'rgba(10, 14, 46, 0.98)',
+            borderTop: isSystemDark 
+              ? '1px solid rgba(255, 255, 255, 0.1)'
+              : '1px solid rgba(0, 0, 0, 0.1)',
+            backgroundColor: isSystemDark 
+              ? 'rgba(10, 14, 46, 0.98)'
+              : 'rgba(248, 250, 252, 0.98)',
+            transition: 'all 0.3s ease',
           }}
         >
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -472,14 +526,15 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
               variant="text"
               sx={{
                 padding: '12px 24px',
-                color: 'rgba(255, 255, 255, 0.9)',
+                color: isSystemDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
                 fontSize: '0.875rem',
                 fontWeight: 500,
                 borderRadius: 2,
                 textTransform: 'none',
+                transition: 'all 0.3s ease',
                 '&:hover': {
-                  color: '#FFFFFF',
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  color: isSystemDark ? '#FFFFFF' : 'rgba(0, 0, 0, 0.95)',
+                  backgroundColor: isSystemDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
                 },
               }}
             >
@@ -493,16 +548,25 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
               variant="contained"
               sx={{
                 padding: '12px 24px',
-                background: 'linear-gradient(135deg, #009BE4 0%, #0084C7 100%)',
+                background: isSystemDark 
+                  ? 'linear-gradient(135deg, #009BE4 0%, #0084C7 100%)'
+                  : 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)',
                 color: '#FFFFFF',
                 fontSize: '0.875rem',
                 fontWeight: 600,
                 borderRadius: 2,
                 textTransform: 'none',
-                boxShadow: '0 4px 12px rgba(0, 155, 228, 0.2)',
+                boxShadow: isSystemDark 
+                  ? '0 4px 12px rgba(0, 155, 228, 0.2)'
+                  : '0 4px 12px rgba(37, 99, 235, 0.2)',
+                transition: 'all 0.3s ease',
                 '&:hover': {
-                  background: 'linear-gradient(135deg, #0084C7 0%, #006FA9 100%)',
-                  boxShadow: '0 6px 16px rgba(0, 155, 228, 0.3)',
+                  background: isSystemDark 
+                    ? 'linear-gradient(135deg, #0084C7 0%, #006FA9 100%)'
+                    : 'linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)',
+                  boxShadow: isSystemDark 
+                    ? '0 6px 16px rgba(0, 155, 228, 0.3)'
+                    : '0 6px 16px rgba(37, 99, 235, 0.3)',
                 },
               }}
             >
@@ -679,10 +743,15 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
             '& .MuiDrawer-paper': {
               width: 260,
               boxSizing: 'border-box',
-              backgroundColor: 'rgba(10, 14, 46, 0.98)',
+              backgroundColor: isSystemDark 
+                ? 'rgba(10, 14, 46, 0.98)'
+                : 'rgba(248, 250, 252, 0.98)',
               backdropFilter: 'blur(20px)',
               border: 'none',
-              boxShadow: '-4px 0 24px rgba(0, 0, 0, 0.3)',
+              boxShadow: isSystemDark 
+                ? '-4px 0 24px rgba(0, 0, 0, 0.3)'
+                : '-4px 0 24px rgba(0, 0, 0, 0.12)',
+              transition: 'all 0.3s ease',
             },
           }}
         >

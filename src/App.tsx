@@ -1,8 +1,9 @@
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider as MUIThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { theme } from './theme';
+import { ThemeProvider } from './contexts/ThemeContext';
 import Index from "./pages/Index";
 import Demo from "./pages/Demo";
 import Test from "./pages/Test";
@@ -14,20 +15,22 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/demo" element={<Demo />} />
-          <Route path="/test" element={<Test />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/product/deployment" element={<DeploymentPage />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+    <ThemeProvider>
+      <MUIThemeProvider theme={theme}>
+        <CssBaseline />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/demo" element={<Demo />} />
+            <Route path="/test" element={<Test />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/product/deployment" element={<DeploymentPage />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </MUIThemeProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );

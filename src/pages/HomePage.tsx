@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { AppSidebar, Footer } from '../components/layout';
+import { AppSidebar, Footer, ThemeToggle } from '../components/layout';
 import { 
   CompanySlider, 
   HeroSearchSection, 
@@ -20,22 +20,30 @@ import {
 } from '../components/home';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { heroQuestions, partnerCompanies } from '../data/home/chatHeroData';
+import { useThemeMode } from '../contexts/ThemeContext';
 
 const HomePage: React.FC = () => {
+  const { isDark } = useThemeMode();
+
   return (
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(to bottom, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)',
+        background: isDark 
+          ? 'linear-gradient(to bottom, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
+          : 'linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
         position: 'relative',
         overflowX: 'hidden',
+        transition: 'background 0.3s ease',
       }}
     >
       <AppSidebar items={sidebarItems} />
+      <ThemeToggle />
   
       {/* Hero Section - Simplified */}
       <Box
-        data-section-theme="dark"
+        data-section-theme={isDark ? 'dark' : 'light'}
+        data-section-primary={isDark ? '#009BE4' : '#2563EB'}
         sx={{
           position: 'relative',
           minHeight: '100vh',

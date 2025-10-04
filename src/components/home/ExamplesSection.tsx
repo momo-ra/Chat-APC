@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Grid, Container, Button } from '@mui/material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useThemeMode } from '../../contexts/ThemeContext';
 import industrialAI from '../../assets/hero-industrial-ai.jpg';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -29,6 +30,7 @@ const ExamplesSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement[]>([]);
   const imageRef = useRef<HTMLDivElement>(null);
+  const { isDark } = useThemeMode();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -100,19 +102,23 @@ const ExamplesSection: React.FC = () => {
   return (
     <Box
       ref={sectionRef}
-      data-section-theme="dark"
+      data-section-theme={isDark ? 'dark' : 'light'}
+      data-section-primary={isDark ? '#009BE4' : '#2563EB'}
       sx={{
         width: '100%',
         py: { xs: 12, md: 16 },
         position: 'relative',
         zIndex: 2,
-        background: 'linear-gradient(180deg, rgba(13, 24, 66, 0.4) 0%, rgba(0, 155, 228, 0.06) 30%, rgba(10, 14, 46, 0.5) 70%, rgba(13, 24, 66, 0.4) 100%)',
+        background: isDark 
+          ? 'linear-gradient(180deg, rgba(13, 24, 66, 0.4) 0%, rgba(0, 155, 228, 0.06) 30%, rgba(10, 14, 46, 0.5) 70%, rgba(13, 24, 66, 0.4) 100%)'
+          : 'transparent',
+        transition: 'background 0.3s ease',
         '&::before': {
           content: '""',
           position: 'absolute',
           top: 0,
-          left: '10%',
-          right: '10%',
+          left: 0,
+          right: 0,
           height: '100%',
           background: 'radial-gradient(ellipse at center, rgba(0, 155, 228, 0.08) 0%, transparent 70%)',
           pointerEvents: 'none',
@@ -126,8 +132,9 @@ const ExamplesSection: React.FC = () => {
             sx={{
               fontSize: { xs: '2rem', md: '3rem' },
               fontWeight: 600,
-              color: 'rgba(255, 255, 255, 0.95)',
+              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
               mb: 2,
+              transition: 'color 0.3s ease',
             }}
           >
             Instant answers to your everyday questions
@@ -135,9 +142,10 @@ const ExamplesSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: { xs: '1.1rem', md: '1.25rem' },
-              color: 'rgba(255, 255, 255, 0.6)',
+              color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
               maxWidth: 800,
               mx: 'auto',
+              transition: 'color 0.3s ease',
             }}
           >
             No more hunting through trends, alarms, and reports. Just ask and get clear explanations — in seconds.
@@ -198,14 +206,29 @@ const ExamplesSection: React.FC = () => {
                 sx={{
                   padding: 4,
                   borderRadius: 3,
-                  background: 'rgba(255, 255, 255, 0.02)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  background: isDark 
+                    ? 'rgba(255, 255, 255, 0.02)' 
+                    : 'rgba(255, 255, 255, 0.7)',
+                  border: isDark 
+                    ? '1px solid rgba(255, 255, 255, 0.06)' 
+                    : '1px solid rgba(0, 0, 0, 0.08)',
                   height: '100%',
                   transition: 'all 0.3s ease',
+                  backdropFilter: 'blur(10px)',
+                  boxShadow: isDark 
+                    ? 'none' 
+                    : '0 4px 20px rgba(0, 0, 0, 0.06)',
                   '&:hover': {
-                    background: 'rgba(255, 255, 255, 0.04)',
-                    border: '1px solid rgba(0, 155, 228, 0.15)',
+                    background: isDark 
+                      ? 'rgba(255, 255, 255, 0.04)' 
+                      : 'rgba(255, 255, 255, 0.95)',
+                    border: isDark 
+                      ? '1px solid rgba(0, 155, 228, 0.15)' 
+                      : '1px solid rgba(37, 99, 235, 0.2)',
                     transform: 'translateY(-4px)',
+                    boxShadow: isDark 
+                      ? 'none' 
+                      : '0 8px 32px rgba(37, 99, 235, 0.15)',
                   },
                 }}
               >
@@ -214,9 +237,10 @@ const ExamplesSection: React.FC = () => {
                   sx={{
                     fontSize: { xs: '1.1rem', md: '1.25rem' },
                     fontWeight: 600,
-                    color: '#009BE4',
+                    color: isDark ? '#009BE4' : '#2563EB',
                     mb: 2,
                     lineHeight: 1.4,
+                    transition: 'color 0.3s ease',
                   }}
                 >
                   {example.question}
@@ -226,8 +250,9 @@ const ExamplesSection: React.FC = () => {
                 <Typography
                   sx={{
                     fontSize: '1rem',
-                    color: 'rgba(255, 255, 255, 0.7)',
+                    color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)',
                     lineHeight: 1.7,
+                    transition: 'color 0.3s ease',
                   }}
                 >
                   {example.answer}
@@ -242,8 +267,10 @@ const ExamplesSection: React.FC = () => {
           <Button
             variant="outlined"
             sx={{
-              border: '1px solid rgba(0, 155, 228, 0.3)',
-              color: '#009BE4',
+              border: isDark 
+                ? '1px solid rgba(0, 155, 228, 0.3)' 
+                : '1px solid rgba(37, 99, 235, 0.3)',
+              color: isDark ? '#009BE4' : '#2563EB',
               borderRadius: 3,
               padding: '14px 36px',
               fontSize: '1rem',
@@ -251,8 +278,10 @@ const ExamplesSection: React.FC = () => {
               textTransform: 'none',
               transition: 'all 0.3s ease',
               '&:hover': {
-                borderColor: '#009BE4',
-                background: 'rgba(0, 155, 228, 0.08)',
+                borderColor: isDark ? '#009BE4' : '#2563EB',
+                background: isDark 
+                  ? 'rgba(0, 155, 228, 0.08)' 
+                  : 'rgba(37, 99, 235, 0.08)',
                 transform: 'translateY(-2px)',
               },
             }}

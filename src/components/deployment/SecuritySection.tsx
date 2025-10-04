@@ -6,11 +6,13 @@ import SecurityIcon from '@mui/icons-material/Security';
 import LockIcon from '@mui/icons-material/Lock';
 import IntegrationInstructionsIcon from '@mui/icons-material/IntegrationInstructions';
 import ShieldIcon from '@mui/icons-material/Shield';
+import { useThemeMode } from '../../contexts/ThemeContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const SecuritySection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const { isDark } = useThemeMode();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -29,7 +31,7 @@ const SecuritySection: React.FC = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isDark]);
 
   const securityFeatures = [
     {
@@ -57,10 +59,17 @@ const SecuritySection: React.FC = () => {
   return (
     <Box
       sx={{
-        width: '100%',
-        background: 'linear-gradient(180deg, rgba(0, 155, 228, 0.05) 0%, transparent 100%)',
-        py: { xs: 8, md: 12 },
+        width: '100vw',
         position: 'relative',
+        left: '50%',
+        right: '50%',
+        marginLeft: '-50vw',
+        marginRight: '-50vw',
+        background: isDark 
+          ? 'linear-gradient(180deg, rgba(0, 155, 228, 0.05) 0%, transparent 100%)'
+          : 'linear-gradient(180deg, rgba(37, 99, 235, 0.03) 0%, transparent 100%)',
+        py: { xs: 8, md: 12 },
+        transition: 'background 0.3s ease',
       }}
     >
       <Container maxWidth="lg">
@@ -70,9 +79,10 @@ const SecuritySection: React.FC = () => {
             sx={{
               fontSize: { xs: '2rem', md: '3rem' },
               fontWeight: 700,
-              color: '#fff',
+              color: isDark ? '#fff' : 'rgba(0, 0, 0, 0.9)',
               mb: 8,
               textAlign: 'center',
+              transition: 'color 0.3s ease',
             }}
           >
             Enterprise-Grade Security
@@ -86,24 +96,27 @@ const SecuritySection: React.FC = () => {
                   sx={{
                     display: 'flex',
                     gap: 3,
-                    background: 'rgba(255, 255, 255, 0.02)',
+                    background: isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.9)',
                     backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)',
                     borderRadius: 3,
                     padding: 3,
                     opacity: 0,
                     transform: 'translateX(-50px)',
                     transition: 'all 0.3s ease',
+                    boxShadow: isDark ? 'none' : '0 4px 20px rgba(0, 0, 0, 0.06)',
                     '&:hover': {
-                      background: 'rgba(255, 255, 255, 0.04)',
-                      borderColor: 'rgba(0, 155, 228, 0.2)',
+                      background: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.95)',
+                      borderColor: isDark ? 'rgba(0, 155, 228, 0.2)' : 'rgba(37, 99, 235, 0.3)',
+                      boxShadow: isDark ? 'none' : '0 8px 32px rgba(37, 99, 235, 0.12)',
                     },
                   }}
                 >
                   <Box
                     sx={{
-                      color: '#009BE4',
+                      color: isDark ? '#009BE4' : '#2563EB',
                       flexShrink: 0,
+                      transition: 'color 0.3s ease',
                     }}
                   >
                     {feature.icon}
@@ -114,8 +127,9 @@ const SecuritySection: React.FC = () => {
                       sx={{
                         fontSize: { xs: '1.1rem', md: '1.25rem' },
                         fontWeight: 600,
-                        color: '#fff',
+                        color: isDark ? '#fff' : 'rgba(0, 0, 0, 0.9)',
                         mb: 1.5,
+                        transition: 'color 0.3s ease',
                       }}
                     >
                       {feature.title}
@@ -123,8 +137,9 @@ const SecuritySection: React.FC = () => {
                     <Typography
                       sx={{
                         fontSize: '0.95rem',
-                        color: 'rgba(255, 255, 255, 0.65)',
+                        color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
                         lineHeight: 1.7,
+                        transition: 'color 0.3s ease',
                       }}
                     >
                       {feature.description}

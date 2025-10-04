@@ -1,24 +1,31 @@
 import React from 'react';
 import { Box, Typography, Container } from '@mui/material';
+import { useThemeMode } from '../../contexts/ThemeContext';
 
 interface CompanySliderProps {
   companies: string[];
 }
 
 const CompanySlider: React.FC<CompanySliderProps> = ({ companies }) => {
+  const { isDark } = useThemeMode();
   // Duplicate companies for seamless loop
   const allCompanies = [...companies, ...companies];
 
   return (
     <Box
+      data-section-theme={isDark ? 'dark' : 'light'}
+      data-section-primary={isDark ? '#009BE4' : '#2563EB'}
       sx={{
         width: '100%',
         py: { xs: 6, md: 10 },
         position: 'relative',
         zIndex: 2,
-        background: 'linear-gradient(180deg, rgba(10, 14, 46, 0.5) 0%, rgba(0, 155, 228, 0.04) 50%, rgba(10, 14, 46, 0.6) 100%)',
-        borderTop: '1px solid rgba(255, 255, 255, 0.04)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+        background: isDark 
+          ? 'linear-gradient(180deg, rgba(10, 14, 46, 0.5) 0%, rgba(0, 155, 228, 0.04) 50%, rgba(10, 14, 46, 0.6) 100%)'
+          : 'transparent',
+        borderTop: isDark ? '1px solid rgba(255, 255, 255, 0.04)' : '1px solid rgba(0, 0, 0, 0.06)',
+        borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.04)' : '1px solid rgba(0, 0, 0, 0.06)',
+        transition: 'background 0.3s ease',
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -26,7 +33,9 @@ const CompanySlider: React.FC<CompanySliderProps> = ({ companies }) => {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'radial-gradient(ellipse at 50% 50%, rgba(0, 155, 228, 0.06) 0%, transparent 60%)',
+          background: isDark 
+            ? 'radial-gradient(ellipse at 50% 50%, rgba(0, 155, 228, 0.06) 0%, transparent 60%)'
+            : 'radial-gradient(ellipse at 50% 50%, rgba(37, 99, 235, 0.03) 0%, transparent 60%)',
           pointerEvents: 'none',
         },
       }}
@@ -38,9 +47,10 @@ const CompanySlider: React.FC<CompanySliderProps> = ({ companies }) => {
             sx={{
               fontSize: { xs: '1.25rem', md: '1.5rem' },
               fontWeight: 500,
-              color: 'rgba(255, 255, 255, 0.4)',
+              color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
               letterSpacing: '0.05em',
               textTransform: 'uppercase',
+              transition: 'color 0.3s ease',
             }}
           >
             Trusted by Industry Leaders
@@ -81,13 +91,13 @@ const CompanySlider: React.FC<CompanySliderProps> = ({ companies }) => {
                   sx={{
                     fontSize: { xs: '0.85rem', md: '1rem' },
                     fontWeight: 500,
-                    color: 'rgba(255, 255, 255, 0.25)',
+                    color: isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.25)',
                     letterSpacing: '1px',
                     transition: 'all 0.3s ease',
                     cursor: 'pointer',
                     flexShrink: 0,
                     '&:hover': {
-                      color: 'rgba(255, 255, 255, 0.5)',
+                      color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
                     },
                   }}
                 >

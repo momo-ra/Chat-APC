@@ -6,10 +6,13 @@ import {
   GitHub, 
   YouTube 
 } from '@mui/icons-material';
+import { useThemeMode } from '../../contexts/ThemeContext';
 import chatAPCLogo from '../../assets/chatAPC-logo-light-mode.png';
+import chatAPCLogoDark from '../../assets/ChatAPC-logo.png';
 import alphaProcessLogo from '../../assets/AlphaProcess-logo.png';
 
 const Footer: React.FC = () => {
+  const { isDark } = useThemeMode();
   const footerLinks = {
     product: [
       { label: 'Features', href: '#' },
@@ -49,8 +52,12 @@ const Footer: React.FC = () => {
       component="footer"
       sx={{
         width: '100%',
-        background: 'linear-gradient(180deg, rgba(10, 14, 46, 0.8) 0%, #0a0e2e 100%)',
-        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+        background: isDark 
+          ? 'linear-gradient(180deg, rgba(10, 14, 46, 0.8) 0%, #0a0e2e 100%)'
+          : 'linear-gradient(180deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.98) 100%)',
+        borderTop: isDark 
+          ? '1px solid rgba(255, 255, 255, 0.08)'
+          : '1px solid rgba(0, 0, 0, 0.08)',
         position: 'relative',
         zIndex: 2,
         '&::before': {
@@ -60,7 +67,9 @@ const Footer: React.FC = () => {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'radial-gradient(circle at 50% 0%, rgba(0, 155, 228, 0.05) 0%, transparent 50%)',
+          background: isDark
+            ? 'radial-gradient(circle at 50% 0%, rgba(0, 155, 228, 0.05) 0%, transparent 50%)'
+            : 'radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.03) 0%, transparent 50%)',
           pointerEvents: 'none',
         },
       }}
@@ -74,19 +83,19 @@ const Footer: React.FC = () => {
               <Box sx={{ mb: 3 }}>
                 <Box
                   component="img"
-                  src={chatAPCLogo}
+                  src={isDark ? chatAPCLogo : chatAPCLogoDark}
                   alt="ChatAPC Logo"
                   sx={{
                     height: '40px',
                     width: 'auto',
                     mb: 3,
-                    filter: 'brightness(1.1)',
+                    filter: isDark ? 'brightness(1.1)' : 'none',
                   }}
                 />
                 <Typography
                   sx={{
                     fontSize: '0.95rem',
-                    color: 'rgba(255, 255, 255, 0.6)',
+                    color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                     lineHeight: 1.7,
                     mb: 3,
                   }}
@@ -105,12 +114,14 @@ const Footer: React.FC = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         sx={{
-                          color: 'rgba(255, 255, 255, 0.5)',
-                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+                          border: isDark 
+                            ? '1px solid rgba(255, 255, 255, 0.1)' 
+                            : '1px solid rgba(0, 0, 0, 0.1)',
                           transition: 'all 0.3s ease',
                           '&:hover': {
-                            color: '#009BE4',
-                            borderColor: '#009BE4',
+                            color: isDark ? '#009BE4' : '#2563EB',
+                            borderColor: isDark ? '#009BE4' : '#2563EB',
                             transform: 'translateY(-2px)',
                           },
                         }}
@@ -129,7 +140,7 @@ const Footer: React.FC = () => {
                 sx={{
                   fontSize: '0.9rem',
                   fontWeight: 600,
-                  color: 'rgba(255, 255, 255, 0.9)',
+                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
                   mb: 2,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -143,12 +154,12 @@ const Footer: React.FC = () => {
                     key={link.label}
                     href={link.href}
                     sx={{
-                      color: 'rgba(255, 255, 255, 0.6)',
+                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                       textDecoration: 'none',
                       fontSize: '0.9rem',
                       transition: 'all 0.2s ease',
                       '&:hover': {
-                        color: '#009BE4',
+                        color: isDark ? '#009BE4' : '#2563EB',
                         transform: 'translateX(4px)',
                       },
                     }}
@@ -164,7 +175,7 @@ const Footer: React.FC = () => {
                 sx={{
                   fontSize: '0.9rem',
                   fontWeight: 600,
-                  color: 'rgba(255, 255, 255, 0.9)',
+                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
                   mb: 2,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -178,12 +189,12 @@ const Footer: React.FC = () => {
                     key={link.label}
                     href={link.href}
                     sx={{
-                      color: 'rgba(255, 255, 255, 0.6)',
+                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                       textDecoration: 'none',
                       fontSize: '0.9rem',
                       transition: 'all 0.2s ease',
                       '&:hover': {
-                        color: '#009BE4',
+                        color: isDark ? '#009BE4' : '#2563EB',
                         transform: 'translateX(4px)',
                       },
                     }}
@@ -199,7 +210,7 @@ const Footer: React.FC = () => {
                 sx={{
                   fontSize: '0.9rem',
                   fontWeight: 600,
-                  color: 'rgba(255, 255, 255, 0.9)',
+                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
                   mb: 2,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -213,12 +224,12 @@ const Footer: React.FC = () => {
                     key={link.label}
                     href={link.href}
                     sx={{
-                      color: 'rgba(255, 255, 255, 0.6)',
+                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                       textDecoration: 'none',
                       fontSize: '0.9rem',
                       transition: 'all 0.2s ease',
                       '&:hover': {
-                        color: '#009BE4',
+                        color: isDark ? '#009BE4' : '#2563EB',
                         transform: 'translateX(4px)',
                       },
                     }}
@@ -234,7 +245,7 @@ const Footer: React.FC = () => {
                 sx={{
                   fontSize: '0.9rem',
                   fontWeight: 600,
-                  color: 'rgba(255, 255, 255, 0.9)',
+                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
                   mb: 2,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -248,12 +259,12 @@ const Footer: React.FC = () => {
                     key={link.label}
                     href={link.href}
                     sx={{
-                      color: 'rgba(255, 255, 255, 0.6)',
+                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                       textDecoration: 'none',
                       fontSize: '0.9rem',
                       transition: 'all 0.2s ease',
                       '&:hover': {
-                        color: '#009BE4',
+                        color: isDark ? '#009BE4' : '#2563EB',
                         transform: 'translateX(4px)',
                       },
                     }}
@@ -269,7 +280,9 @@ const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <Box
           sx={{
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            borderTop: isDark 
+              ? '1px solid rgba(255, 255, 255, 0.08)' 
+              : '1px solid rgba(0, 0, 0, 0.08)',
             py: 4,
             display: 'flex',
             flexDirection: { xs: 'column', md: 'row' },
@@ -290,7 +303,7 @@ const Footer: React.FC = () => {
             <Typography
               sx={{
                 fontSize: '0.875rem',
-                color: 'rgba(255, 255, 255, 0.5)',
+                color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
               }}
             >
               © {new Date().getFullYear()} ChatAPC. All rights reserved.
@@ -299,12 +312,12 @@ const Footer: React.FC = () => {
               <Link
                 href="#"
                 sx={{
-                  color: 'rgba(255, 255, 255, 0.5)',
+                  color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
                   textDecoration: 'none',
                   fontSize: '0.875rem',
                   transition: 'color 0.2s ease',
                   '&:hover': {
-                    color: '#009BE4',
+                    color: isDark ? '#009BE4' : '#2563EB',
                   },
                 }}
               >
@@ -313,12 +326,12 @@ const Footer: React.FC = () => {
               <Link
                 href="#"
                 sx={{
-                  color: 'rgba(255, 255, 255, 0.5)',
+                  color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
                   textDecoration: 'none',
                   fontSize: '0.875rem',
                   transition: 'color 0.2s ease',
                   '&:hover': {
-                    color: '#009BE4',
+                    color: isDark ? '#009BE4' : '#2563EB',
                   },
                 }}
               >
@@ -327,12 +340,12 @@ const Footer: React.FC = () => {
               <Link
                 href="#"
                 sx={{
-                  color: 'rgba(255, 255, 255, 0.5)',
+                  color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
                   textDecoration: 'none',
                   fontSize: '0.875rem',
                   transition: 'color 0.2s ease',
                   '&:hover': {
-                    color: '#009BE4',
+                    color: isDark ? '#009BE4' : '#2563EB',
                   },
                 }}
               >
@@ -352,7 +365,7 @@ const Footer: React.FC = () => {
             <Typography
               sx={{
                 fontSize: '0.875rem',
-                color: 'rgba(255, 255, 255, 0.5)',
+                color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
               }}
             >
               Powered by

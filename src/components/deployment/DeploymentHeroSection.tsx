@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, Container, Typography } from '@mui/material';
 import { gsap } from 'gsap';
+import { useThemeMode } from '../../contexts/ThemeContext';
 
 const DeploymentHeroSection: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
+  const { isDark } = useThemeMode();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -19,7 +21,7 @@ const DeploymentHeroSection: React.FC = () => {
     }, heroRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isDark]);
 
   return (
     <Box
@@ -37,9 +39,10 @@ const DeploymentHeroSection: React.FC = () => {
             sx={{
               fontSize: { xs: '2.5rem', md: '4rem' },
               fontWeight: 700,
-              color: '#fff',
+              color: isDark ? '#fff' : 'rgba(0, 0, 0, 0.9)',
               mb: 3,
               lineHeight: 1.2,
+              transition: 'color 0.3s ease',
             }}
           >
             Deploy ChatAPC Anywhere
@@ -47,10 +50,11 @@ const DeploymentHeroSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: { xs: '1.1rem', md: '1.3rem' },
-              color: 'rgba(255, 255, 255, 0.75)',
+              color: isDark ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 0, 0, 0.65)',
               lineHeight: 1.8,
               maxWidth: 800,
               mx: 'auto',
+              transition: 'color 0.3s ease',
             }}
           >
             Every plant is different. That's why ChatAPC is built to fit your infrastructure, whether you run on-premise, in the cloud, or in a hybrid setup. Our flexible deployment options ensure seamless integration with your existing systems while maintaining the security and reliability standards your operations demand.

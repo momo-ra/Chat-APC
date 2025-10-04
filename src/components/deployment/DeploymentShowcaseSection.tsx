@@ -2,12 +2,14 @@ import React, { useEffect, useRef } from 'react';
 import { Box, Container, Typography, Grid } from '@mui/material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useThemeMode } from '../../contexts/ThemeContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const DeploymentShowcaseSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
+  const { isDark } = useThemeMode();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -40,7 +42,7 @@ const DeploymentShowcaseSection: React.FC = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isDark]);
 
   return (
     <Box
@@ -102,9 +104,10 @@ const DeploymentShowcaseSection: React.FC = () => {
               sx={{
                 fontSize: { xs: '2rem', md: '2.5rem' },
                 fontWeight: 700,
-                color: '#fff',
+                color: isDark ? '#fff' : 'rgba(0, 0, 0, 0.9)',
                 mb: 3,
                 lineHeight: 1.3,
+                transition: 'color 0.3s ease',
               }}
             >
               Proven at Scale
@@ -112,9 +115,10 @@ const DeploymentShowcaseSection: React.FC = () => {
             <Typography
               sx={{
                 fontSize: { xs: '1rem', md: '1.1rem' },
-                color: 'rgba(255, 255, 255, 0.7)',
+                color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.65)',
                 lineHeight: 1.7,
                 mb: 5,
+                transition: 'color 0.3s ease',
               }}
             >
               Trusted by leading industrial companies worldwide to manage their most critical process operations with confidence and reliability.
@@ -131,17 +135,19 @@ const DeploymentShowcaseSection: React.FC = () => {
                   <Box
                     className="stat-box"
                     sx={{
-                      background: 'rgba(255, 255, 255, 0.03)',
+                      background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.95)',
                       backdropFilter: 'blur(10px)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
                       borderRadius: 3,
                       padding: 3,
                       textAlign: 'center',
                       opacity: 0,
                       transition: 'all 0.3s ease',
+                      boxShadow: isDark ? 'none' : '0 4px 20px rgba(0, 0, 0, 0.06)',
                       '&:hover': {
-                        borderColor: 'rgba(0, 155, 228, 0.3)',
+                        borderColor: isDark ? 'rgba(0, 155, 228, 0.3)' : 'rgba(37, 99, 235, 0.3)',
                         transform: 'translateY(-4px)',
+                        boxShadow: isDark ? 'none' : '0 8px 32px rgba(37, 99, 235, 0.12)',
                       },
                     }}
                   >
@@ -149,9 +155,10 @@ const DeploymentShowcaseSection: React.FC = () => {
                       sx={{
                         fontSize: { xs: '2rem', md: '2.5rem' },
                         fontWeight: 700,
-                        color: '#009BE4',
+                        color: isDark ? '#009BE4' : '#2563EB',
                         mb: 1,
                         lineHeight: 1,
+                        transition: 'color 0.3s ease',
                       }}
                     >
                       {stat.value}
@@ -159,8 +166,9 @@ const DeploymentShowcaseSection: React.FC = () => {
                     <Typography
                       sx={{
                         fontSize: '0.875rem',
-                        color: 'rgba(255, 255, 255, 0.6)',
+                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                         fontWeight: 500,
+                        transition: 'color 0.3s ease',
                       }}
                     >
                       {stat.label}
