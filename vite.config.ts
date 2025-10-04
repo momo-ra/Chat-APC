@@ -6,7 +6,7 @@ import path from "path";
 export default defineConfig({
   server: {
     host: "::",
-    allowedHosts: ["3a62f798ce77.ngrok-free.app", "oafan9-ip-151-84-208-157.tunnelmole.net"],
+    allowedHosts: ["3a62f798ce77.ngrok-free.app", "oafan9-ip-151-84-208-157.tunnelmole.net","cesshp-ip-151-84-208-157.tunnelmole.net","localhost"],
     port: 8080,
   },
   plugins: [react()],
