@@ -2,7 +2,6 @@ import React from 'react';
 import { Box } from '@mui/material';
 import { AppSidebar, Footer } from '../components/layout';
 import { 
-  FloatingFeatureCard, 
   CompanySlider, 
   HeroSearchSection, 
   AuthButtons,
@@ -17,7 +16,7 @@ import {
   ContactSection
 } from '../components/home';
 import { sidebarItems } from '../data/layout/sidebarData';
-import { heroQuestions, featureCards, partnerCompanies } from '../data/home/chatHeroData';
+import { heroQuestions, partnerCompanies } from '../data/home/chatHeroData';
 
 const HomePage: React.FC = () => {
   return (
@@ -31,7 +30,7 @@ const HomePage: React.FC = () => {
     >
       <AppSidebar items={sidebarItems} />
   
-      {/* Hero Section with Floating Cards - Fixed to viewport */}
+      {/* Hero Section - Simplified */}
       <Box
         sx={{
           position: 'relative',
@@ -39,20 +38,10 @@ const HomePage: React.FC = () => {
           width: '100%',
         }}
       >
-        {/* Floating Feature Cards */}
-        {featureCards.map((feature, index) => (
-          <FloatingFeatureCard
-            key={index}
-            content={feature.content}
-            position={feature.position}
-            delay={feature.delay}
-          />
-        ))}
-
         {/* Auth Buttons */}
         <AuthButtons />
 
-        {/* Hero Search Section */}
+        {/* Hero Chat Section */}
         <HeroSearchSection questions={heroQuestions} />
       
       {/* Companies Slider - Fixed at Bottom */}
