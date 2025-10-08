@@ -31,7 +31,7 @@ interface AppSidebarProps {
   width?: number;
 }
 
-const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
+const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 185 }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -48,7 +48,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
   useEffect(() => {
     const checkScreenSize = () => {
       const width = window.innerWidth;
-      setIsMediumScreen(width >= 960 && width <= 1366);
+      setIsMediumScreen(width >= 960 && width <= 1549);
     };
     
     checkScreenSize();
@@ -56,27 +56,12 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
   
-  // Auto-collapse for medium screens (1024-1280px)
+  // Load initial sidebar state from localStorage - no auto-collapse
   useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-      // Auto-collapse for screens between 960px and 1366px (tablets and small laptops)
-      if (width >= 960 && width <= 1366) {
-        const newState = true;
-        setIsCollapsed(newState);
-        localStorage.setItem('sidebarCollapsed', String(newState));
-        window.dispatchEvent(new CustomEvent('sidebarToggle', { detail: { collapsed: newState } }));
-      } else if (width > 1366) {
-        const newState = false;
-        setIsCollapsed(newState);
-        localStorage.setItem('sidebarCollapsed', String(newState));
-        window.dispatchEvent(new CustomEvent('sidebarToggle', { detail: { collapsed: newState } }));
-      }
-    };
-    
-    handleResize(); // Initial check
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const stored = localStorage.getItem('sidebarCollapsed');
+    if (stored !== null) {
+      setIsCollapsed(stored === 'true');
+    }
   }, []);
   const [sectionColors, setSectionColors] = useState({
     primary: '#009BE4',
@@ -460,7 +445,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
               <ListItemButton
                 onClick={handleBack}
                 sx={{
-                  borderRadius: '6px',
+                  borderRadius: '4px',
                   padding: '12px 8px',
                   transition: 'all 0.3s ease',
                   '&:hover': {
@@ -534,7 +519,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                   selected={isItemActive(item)}
                   onClick={() => handleItemClick(item)}
                   sx={{
-                    borderRadius: '6px',
+                    borderRadius: '4px',
                     padding: '12px 8px',
                     position: 'relative',
                     transition: 'all 0.3s ease',
@@ -549,7 +534,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                       height: isItemActive(item) ? '70%' : '0%',
                       backgroundColor: sectionColors.primary,
                       transition: 'all 0.3s ease',
-                      borderRadius: '0 2px 2px 0',
+                      borderRadius: '0 4px 4px 0',
                     },
                   '&:hover': {
                     backgroundColor: isMobile 
@@ -632,7 +617,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                 color: isSystemDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
                 fontSize: '0.875rem',
                 fontWeight: 500,
-                borderRadius: 2,
+                borderRadius: 4,
                 textTransform: 'none',
                 transition: 'all 0.3s ease',
                 '&:hover': {
@@ -657,7 +642,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                 color: '#FFFFFF',
                 fontSize: '0.875rem',
                 fontWeight: 600,
-                borderRadius: 2,
+                borderRadius: 4,
                 textTransform: 'none',
                 boxShadow: isSystemDark 
                   ? '0 4px 12px rgba(0, 155, 228, 0.2)'

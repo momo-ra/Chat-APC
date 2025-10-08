@@ -70,9 +70,27 @@ const SecuritySection: React.FC = () => {
           : 'linear-gradient(180deg, rgba(37, 99, 235, 0.03) 0%, transparent 100%)',
         py: { xs: 8, md: 12 },
         transition: 'background 0.3s ease',
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 10,
+        },
+        '@media (min-width: 1550px)': {
+          py: 12,
+        },
       }}
     >
-      <Container maxWidth="lg">
+      <Container 
+        maxWidth="lg"
+        sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
         <Box ref={sectionRef}>
           <Typography
             variant="h2"
@@ -83,6 +101,14 @@ const SecuritySection: React.FC = () => {
               mb: 8,
               textAlign: 'center',
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '2.6rem',
+                mb: 6,
+              },
+              '@media (min-width: 1550px)': {
+                fontSize: '3rem',
+                mb: 8,
+              },
             }}
           >
             Enterprise-Grade Security
@@ -99,12 +125,16 @@ const SecuritySection: React.FC = () => {
                     background: isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.9)',
                     backdropFilter: 'blur(10px)',
                     border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)',
-                    borderRadius: 3,
+                    borderRadius: 4,
                     padding: 3,
                     opacity: 0,
                     transform: 'translateX(-50px)',
                     transition: 'all 0.3s ease',
                     boxShadow: isDark ? 'none' : '0 4px 20px rgba(0, 0, 0, 0.06)',
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      gap: 2.5,
+                      padding: 2.5,
+                    },
                     '&:hover': {
                       background: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.95)',
                       borderColor: isDark ? 'rgba(0, 155, 228, 0.2)' : 'rgba(37, 99, 235, 0.3)',
@@ -130,6 +160,9 @@ const SecuritySection: React.FC = () => {
                         color: isDark ? '#fff' : 'rgba(0, 0, 0, 0.9)',
                         mb: 1.5,
                         transition: 'color 0.3s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '1.15rem',
+                        },
                       }}
                     >
                       {feature.title}
@@ -140,6 +173,9 @@ const SecuritySection: React.FC = () => {
                         color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
                         lineHeight: 1.7,
                         transition: 'color 0.3s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '0.9rem',
+                        },
                       }}
                     >
                       {feature.description}

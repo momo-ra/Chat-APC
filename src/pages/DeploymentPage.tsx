@@ -23,10 +23,13 @@ const DeploymentPage: React.FC = () => {
   const { isDark } = useThemeMode();
 
   useEffect(() => {
-    // Configure ScrollTrigger for better performance
+    // CRITICAL FIX: Kill all ScrollTrigger instances to prevent scroll lag
+    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    
+    // Disable ScrollTrigger globally
     ScrollTrigger.config({
+      autoRefreshEvents: 'none',
       limitCallbacks: true,
-      syncInterval: 150,
     });
     
     return () => {
@@ -45,6 +48,12 @@ const DeploymentPage: React.FC = () => {
         position: 'relative',
         overflow: 'visible',
         transition: 'background 0.3s ease',
+        // CRITICAL FIX: Force all content to be visible immediately
+        '& *': {
+          opacity: '1 !important',
+          transform: 'none !important',
+          visibility: 'visible !important',
+        },
       }}
     >
       <AppSidebar items={sidebarItems} />

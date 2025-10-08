@@ -105,9 +105,9 @@ const ContactSection: React.FC = () => {
   const textFieldSx = {
     '& .MuiOutlinedInput-root': {
       background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-      borderRadius: 2,
+      borderRadius: '4px',
       '& fieldset': {
-        border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.15)',
+        border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.12)',
       },
       '&:hover fieldset': {
         border: isDark ? '1px solid rgba(0, 155, 228, 0.3)' : '1px solid rgba(37, 99, 235, 0.4)',
@@ -117,13 +117,13 @@ const ContactSection: React.FC = () => {
       },
     },
     '& .MuiInputLabel-root': {
-      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 0.8)',
       '&.Mui-focused': {
         color: isDark ? '#009BE4' : '#2563EB',
       },
     },
     '& .MuiInputBase-input': {
-      color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
+      color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(15, 23, 42, 0.9)',
     },
   };
 
@@ -139,9 +139,16 @@ const ContactSection: React.FC = () => {
         zIndex: 2,
         background: isDark 
           ? 'linear-gradient(180deg, rgba(10, 14, 46, 0.5) 0%, rgba(0, 155, 228, 0.04) 50%, rgba(10, 14, 46, 0.6) 100%)'
-          : 'transparent',
+          : 'linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(254, 254, 254, 0.95) 30%, rgba(252, 252, 252, 0.9) 70%, rgba(250, 250, 250, 0.8) 100%)',
         borderTop: isDark ? '1px solid rgba(255, 255, 255, 0.04)' : '1px solid rgba(0, 0, 0, 0.06)',
         transition: 'background 0.3s ease',
+        // Special scaling for medium screens where sidebar causes issues
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 12,
+        },
+        '@media (min-width: 1550px)': {
+          py: 16,
+        },
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -151,20 +158,44 @@ const ContactSection: React.FC = () => {
           bottom: 0,
           background: isDark 
             ? 'radial-gradient(circle at 30% 50%, rgba(0, 155, 228, 0.08) 0%, transparent 50%)'
-            : 'radial-gradient(circle at 30% 50%, rgba(37, 99, 235, 0.04) 0%, transparent 50%)',
+            : 'radial-gradient(circle at 30% 50%, rgba(37, 99, 235, 0.06) 0%, transparent 50%)',
           pointerEvents: 'none',
         },
       }}
     >
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-        <Box sx={{ textAlign: 'center', mb: 10 }}>
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          position: 'relative', 
+          zIndex: 1,
+          px: { xs: 2, md: 3 },
+          // Reduce width on medium screens where sidebar is present
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+          },
+        }}
+      >
+        <Box sx={{ 
+          textAlign: 'center', 
+          mb: 10,
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            mb: 8,
+          },
+        }}>
           <Typography
             sx={{
               fontSize: { xs: '2.5rem', md: '3.5rem' },
               fontWeight: 600,
-              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
+              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)',
               mb: 2,
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '2.8rem',
+                mb: 1.5,
+              },
             }}
           >
             Get in Touch
@@ -172,33 +203,43 @@ const ContactSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: { xs: '1.1rem', md: '1.25rem' },
-              color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+              color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(71, 85, 105, 0.8)',
               maxWidth: 700,
               mx: 'auto',
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '1.15rem',
+                maxWidth: 650,
+              },
             }}
           >
             Ready to transform your industrial processes? Let's talk about how ChatAPC can help.
           </Typography>
         </Box>
 
-        <Grid container spacing={6} alignItems="stretch">
+        <Grid container spacing={6} alignItems="stretch" sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+          },
+        }}>
           <Grid item xs={12} md={7}>
             <Box
               ref={formRef}
               component="form"
               onSubmit={handleSubmit}
               sx={{
-                background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.9)',
+                background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.95)',
                 backdropFilter: 'blur(20px)',
                 border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
-                borderRadius: 4,
+                borderRadius: '4px',
                 padding: { xs: 3, md: 4 },
-                boxShadow: isDark ? '0 20px 60px rgba(0, 0, 0, 0.3)' : '0 8px 32px rgba(0, 0, 0, 0.1)',
+                boxShadow: isDark ? '0 20px 60px rgba(0, 0, 0, 0.3)' : '0 12px 40px rgba(0, 0, 0, 0.08)',
                 transition: 'all 0.3s ease',
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                  padding: 3,
+                },
               }}
             >
               <Typography
@@ -208,12 +249,16 @@ const ContactSection: React.FC = () => {
                   color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
                   mb: 3,
                   transition: 'color 0.3s ease',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '1.3rem',
+                    mb: 2.5,
+                  },
                 }}
               >
                 Send us a message
               </Typography>
 
-              <Grid container spacing={2} sx={{ flex: 1 }}>
+              <Grid container spacing={1} rowSpacing={0.5} sx={{ flex: 1 }}>
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
@@ -329,11 +374,16 @@ const ContactSection: React.FC = () => {
                   color: '#fff',
                   fontSize: '1rem',
                   fontWeight: 500,
-                  borderRadius: 2,
+                  borderRadius: '4px',
                   textTransform: 'none',
                   boxShadow: isDark 
                     ? '0 8px 24px rgba(0, 155, 228, 0.3)'
                     : '0 8px 24px rgba(37, 99, 235, 0.3)',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    mt: 2.5,
+                    padding: '12px 28px',
+                    fontSize: '0.95rem',
+                  },
                   '&:hover': {
                     background: isDark 
                       ? 'linear-gradient(135deg, #0084C7 0%, #006FA9 100%)'
@@ -357,6 +407,8 @@ const ContactSection: React.FC = () => {
                 flexDirection: 'column',
                 gap: 3,
                 height: '100%',
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                },
               }}
             >
               {contactInfo.map((info, index) => {
@@ -371,13 +423,17 @@ const ContactSection: React.FC = () => {
                       alignItems: 'flex-start',
                       gap: 2,
                       padding: 3,
-                      background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.8)',
+                      background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.9)',
                       border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)',
-                      borderRadius: 3,
+                      borderRadius: '4px',
                       transition: 'all 0.3s ease',
                       textDecoration: 'none',
                       cursor: info.link ? 'pointer' : 'default',
-                      boxShadow: isDark ? 'none' : '0 4px 16px rgba(0, 0, 0, 0.06)',
+                      boxShadow: isDark ? 'none' : '0 4px 20px rgba(0, 0, 0, 0.08)',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        padding: 2.5,
+                        gap: 1.5,
+                      },
                       '&:hover': {
                         background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.95)',
                         border: isDark ? '1px solid rgba(0, 155, 228, 0.2)' : '1px solid rgba(37, 99, 235, 0.2)',
@@ -390,7 +446,7 @@ const ContactSection: React.FC = () => {
                       sx={{
                         width: 48,
                         height: 48,
-                        borderRadius: 2,
+                        borderRadius: '4px',
                         background: isDark 
                           ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.15) 0%, rgba(0, 155, 228, 0.05) 100%)'
                           : 'linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(37, 99, 235, 0.04) 100%)',
@@ -398,12 +454,19 @@ const ContactSection: React.FC = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         flexShrink: 0,
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          width: 44,
+                          height: 44,
+                        },
                       }}
                     >
                       <IconComponent sx={{ 
                         fontSize: 24, 
                         color: isDark ? '#009BE4' : '#2563EB',
                         transition: 'color 0.3s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: 22,
+                        },
                       }} />
                     </Box>
                     <Box>
@@ -416,6 +479,9 @@ const ContactSection: React.FC = () => {
                           textTransform: 'uppercase',
                           letterSpacing: 1,
                           transition: 'color 0.3s ease',
+                          '@media (min-width: 960px) and (max-width: 1549px)': {
+                            fontSize: '0.825rem',
+                          },
                         }}
                       >
                         {info.title}
@@ -426,6 +492,9 @@ const ContactSection: React.FC = () => {
                           color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
                           fontWeight: 500,
                           transition: 'color 0.3s ease',
+                          '@media (min-width: 960px) and (max-width: 1549px)': {
+                            fontSize: '0.975rem',
+                          },
                         }}
                       >
                         {info.content}
@@ -445,8 +514,11 @@ const ContactSection: React.FC = () => {
                   border: isDark 
                     ? '1px solid rgba(0, 155, 228, 0.15)' 
                     : '1px solid rgba(37, 99, 235, 0.12)',
-                  borderRadius: 3,
+                  borderRadius: '4px',
                   transition: 'all 0.3s ease',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    padding: 3,
+                  },
                 }}
               >
                 <Typography
@@ -456,6 +528,10 @@ const ContactSection: React.FC = () => {
                     mb: 2,
                     fontWeight: 500,
                     transition: 'color 0.3s ease',
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      fontSize: '1.025rem',
+                      mb: 1.5,
+                    },
                   }}
                 >
                   Business Hours
@@ -466,6 +542,9 @@ const ContactSection: React.FC = () => {
                     color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.65)',
                     lineHeight: 1.8,
                     transition: 'color 0.3s ease',
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      fontSize: '0.9rem',
+                    },
                   }}
                 >
                   Monday - Friday: 9:00 AM - 6:00 PM CET<br />
@@ -479,6 +558,7 @@ const ContactSection: React.FC = () => {
                   </Box>
                 </Typography>
               </Box>
+
             </Box>
           </Grid>
         </Grid>

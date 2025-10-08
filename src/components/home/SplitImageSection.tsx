@@ -267,7 +267,7 @@ const SplitImageSection: React.FC = () => {
           <Box
             sx={{
               width: '100%',
-              borderRadius: 2,
+              borderRadius: 4,
               overflow: 'hidden',
               boxShadow: '0 10px 30px rgba(0, 0, 0, 0.4)',
               mb: 3,
@@ -294,7 +294,7 @@ const SplitImageSection: React.FC = () => {
                 ? 'rgba(45, 55, 72, 0.95)'
                 : 'rgba(255, 255, 255, 0.95)',
               backdropFilter: 'blur(10px)',
-              borderRadius: 3,
+              borderRadius: 4,
               padding: { xs: 3, sm: 4 },
               boxShadow: isDark 
                 ? '0 10px 30px rgba(0, 0, 0, 0.5)'

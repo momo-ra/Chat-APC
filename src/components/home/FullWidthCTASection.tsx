@@ -59,10 +59,17 @@ const FullWidthCTASection: React.FC = () => {
         overflow: 'hidden',
         background: isDark 
           ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.15) 0%, rgba(106, 17, 203, 0.12) 50%, rgba(0, 155, 228, 0.08) 100%)'
-          : 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(99, 102, 241, 0.06) 50%, rgba(37, 99, 235, 0.04) 100%)',
+          : 'linear-gradient(135deg, rgba(37, 99, 235, 0.03) 0%, rgba(99, 102, 241, 0.02) 50%, rgba(37, 99, 235, 0.015) 100%)',
         backgroundSize: '200% 200%',
         backgroundPosition: '50% 0%',
         transition: 'background 0.3s ease',
+        // Special scaling for medium screens where sidebar causes issues
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 14,
+        },
+        '@media (min-width: 1550px)': {
+          py: 18,
+        },
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -70,7 +77,9 @@ const FullWidthCTASection: React.FC = () => {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'radial-gradient(circle at 30% 50%, rgba(0, 155, 228, 0.2) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(106, 17, 203, 0.15) 0%, transparent 50%)',
+          background: isDark 
+            ? 'radial-gradient(circle at 30% 50%, rgba(0, 155, 228, 0.2) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(106, 17, 203, 0.15) 0%, transparent 50%)'
+            : 'radial-gradient(circle at 30% 50%, rgba(37, 99, 235, 0.15) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(99, 102, 241, 0.12) 0%, transparent 50%)',
           pointerEvents: 'none',
         },
         '&::after': {
@@ -81,12 +90,28 @@ const FullWidthCTASection: React.FC = () => {
           transform: 'translate(-50%, -50%)',
           width: '150%',
           height: '150%',
-          background: 'radial-gradient(circle, rgba(0, 155, 228, 0.05) 0%, transparent 70%)',
+          background: isDark 
+            ? 'radial-gradient(circle, rgba(0, 155, 228, 0.05) 0%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%)',
           pointerEvents: 'none',
         },
       }}
     >
-      <Container maxWidth="lg">
+      <Container 
+        maxWidth="lg"
+        sx={{
+          px: { xs: 2, md: 3 },
+          // Reduce width on medium screens where sidebar is present
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
         <Box
           ref={contentRef}
           sx={{
@@ -103,6 +128,10 @@ const FullWidthCTASection: React.FC = () => {
               mb: 3,
               lineHeight: 1.2,
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '3rem',
+                mb: 2.5,
+              },
             }}
           >
             Transparent AI you can trust in critical operations
@@ -117,6 +146,11 @@ const FullWidthCTASection: React.FC = () => {
               mx: 'auto',
               lineHeight: 1.6,
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '1.3rem',
+                mb: 5,
+                maxWidth: 700,
+              },
             }}
           >
             Experience the power of AI built specifically for industrial process control
@@ -129,6 +163,9 @@ const FullWidthCTASection: React.FC = () => {
               justifyContent: 'center',
               flexDirection: { xs: 'column', sm: 'row' },
               alignItems: 'center',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                gap: 2.5,
+              },
             }}
           >
             <Button
@@ -137,7 +174,7 @@ const FullWidthCTASection: React.FC = () => {
               sx={{
                 background: 'linear-gradient(135deg, #009BE4 0%, #0077B6 100%)',
                 color: '#fff',
-                borderRadius: 3,
+                borderRadius: '4px',
                 padding: '18px 48px',
                 fontSize: '1.2rem',
                 fontWeight: 600,
@@ -145,6 +182,10 @@ const FullWidthCTASection: React.FC = () => {
                 boxShadow: '0 8px 32px rgba(0, 155, 228, 0.4)',
                 transition: 'all 0.3s ease',
                 width: { xs: '100%', sm: 'auto' },
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                  padding: '16px 40px',
+                  fontSize: '1.1rem',
+                },
                 '&:hover': {
                   background: 'linear-gradient(135deg, #0077B6 0%, #005A87 100%)',
                   transform: 'translateY(-4px)',
@@ -160,13 +201,17 @@ const FullWidthCTASection: React.FC = () => {
               sx={{
                 border: '2px solid rgba(255, 255, 255, 0.3)',
                 color: 'rgba(255, 255, 255, 0.95)',
-                borderRadius: 3,
+                borderRadius: '4px',
                 padding: '18px 48px',
                 fontSize: '1.2rem',
                 fontWeight: 500,
                 textTransform: 'none',
                 transition: 'all 0.3s ease',
                 width: { xs: '100%', sm: 'auto' },
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                  padding: '16px 40px',
+                  fontSize: '1.1rem',
+                },
                 '&:hover': {
                   borderColor: 'rgba(255, 255, 255, 0.6)',
                   background: 'rgba(255, 255, 255, 0.08)',

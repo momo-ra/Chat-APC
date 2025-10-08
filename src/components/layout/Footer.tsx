@@ -102,13 +102,42 @@ const Footer: React.FC = () => {
         },
       }}
     >
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          position: 'relative', 
+          zIndex: 1,
+          px: { xs: 2, md: 3 },
+          // Reduce width on medium screens where sidebar is present
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
         {/* Main Footer Content */}
-        <Box sx={{ py: { xs: 8, md: 10 } }}>
-          <Grid container spacing={4}>
+        <Box sx={{ 
+          py: { xs: 8, md: 10 },
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            py: 8,
+          },
+        }}>
+          <Grid container spacing={4} sx={{
+            '@media (min-width: 960px) and (max-width: 1549px)': {
+            },
+          }}>
             {/* Brand Section */}
             <Grid item xs={12} md={4}>
-              <Box sx={{ mb: 3 }}>
+              <Box sx={{ 
+                mb: 3,
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                  mb: 2.5,
+                },
+              }}>
                 <Box
                   component="img"
                   src={isDark ? chatAPCLogo : chatAPCLogoDark}
@@ -118,6 +147,10 @@ const Footer: React.FC = () => {
                     width: 'auto',
                     mb: 3,
                     filter: isDark ? 'brightness(1.1)' : 'none',
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      height: '36px',
+                      mb: 2.5,
+                    },
                   }}
                 />
                 <Typography
@@ -126,13 +159,22 @@ const Footer: React.FC = () => {
                     color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                     lineHeight: 1.7,
                     mb: 3,
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      fontSize: '0.9rem',
+                      mb: 2.5,
+                    },
                   }}
                 >
                   Your AI advisor for smarter process operations. Built by process engineers, for process engineers.
                 </Typography>
 
                 {/* Social Links */}
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                <Box sx={{ 
+                  display: 'flex', 
+                  gap: 1,
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                  },
+                }}>
                   {socialLinks.map((social) => {
                     const Icon = social.icon;
                     return (
@@ -154,7 +196,12 @@ const Footer: React.FC = () => {
                           },
                         }}
                       >
-                        <Icon sx={{ fontSize: 20 }} />
+                        <Icon sx={{ 
+                          fontSize: 20,
+                          '@media (min-width: 960px) and (max-width: 1549px)': {
+                            fontSize: 18,
+                          },
+                        }} />
                       </IconButton>
                     );
                   })}
@@ -177,11 +224,22 @@ const Footer: React.FC = () => {
                   mb: 2,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '0.85rem',
+                    mb: 1.5,
+                  },
                 }}
               >
                 Product
               </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: 1.5,
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                  gap: 1.25,
+                },
+              }}>
                 {footerLinks.product.map((link) => (
                   <Link
                     key={link.label}
@@ -191,6 +249,9 @@ const Footer: React.FC = () => {
                       textDecoration: 'none',
                       fontSize: '0.9rem',
                       transition: 'all 0.2s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '0.85rem',
+                      },
                       '&:hover': {
                         color: isDark ? '#009BE4' : '#2563EB',
                         transform: 'translateX(4px)',
@@ -217,11 +278,22 @@ const Footer: React.FC = () => {
                   mb: 2,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '0.85rem',
+                    mb: 1.5,
+                  },
                 }}
               >
                 Solutions
               </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: 1.5,
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                  gap: 1.25,
+                },
+              }}>
                 {footerLinks.solutions.map((link) => (
                   <Link
                     key={link.label}
@@ -231,6 +303,9 @@ const Footer: React.FC = () => {
                       textDecoration: 'none',
                       fontSize: '0.9rem',
                       transition: 'all 0.2s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '0.85rem',
+                      },
                       '&:hover': {
                         color: isDark ? '#009BE4' : '#2563EB',
                         transform: 'translateX(4px)',
@@ -257,11 +332,22 @@ const Footer: React.FC = () => {
                   mb: 2,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '0.85rem',
+                    mb: 1.5,
+                  },
                 }}
               >
                 Company
               </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: 1.5,
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                  gap: 1.25,
+                },
+              }}>
                 {footerLinks.company.map((link) => (
                   <Link
                     key={link.label}
@@ -271,6 +357,9 @@ const Footer: React.FC = () => {
                       textDecoration: 'none',
                       fontSize: '0.9rem',
                       transition: 'all 0.2s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '0.85rem',
+                      },
                       '&:hover': {
                         color: isDark ? '#009BE4' : '#2563EB',
                         transform: 'translateX(4px)',
@@ -297,11 +386,22 @@ const Footer: React.FC = () => {
                   mb: 2,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '0.85rem',
+                    mb: 1.5,
+                  },
                 }}
               >
                 Resources
               </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: 1.5,
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                  gap: 1.25,
+                },
+              }}>
                 {footerLinks.resources.map((link) => (
                   <Link
                     key={link.label}
@@ -311,6 +411,9 @@ const Footer: React.FC = () => {
                       textDecoration: 'none',
                       fontSize: '0.9rem',
                       transition: 'all 0.2s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '0.85rem',
+                      },
                       '&:hover': {
                         color: isDark ? '#009BE4' : '#2563EB',
                         transform: 'translateX(4px)',
@@ -337,6 +440,9 @@ const Footer: React.FC = () => {
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: 3,
+            '@media (min-width: 960px) and (max-width: 1549px)': {
+              py: 3,
+            },
           }}
         >
           {/* Copyright & Legal Links */}
@@ -346,17 +452,28 @@ const Footer: React.FC = () => {
               flexDirection: { xs: 'column', sm: 'row' },
               alignItems: 'center',
               gap: { xs: 2, sm: 4 },
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+              },
             }}
           >
             <Typography
               sx={{
                 fontSize: '0.875rem',
                 color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                  fontSize: '0.825rem',
+                },
               }}
             >
               © {new Date().getFullYear()} ChatAPC. All rights reserved.
             </Typography>
-            <Box sx={{ display: 'flex', gap: 3 }}>
+            <Box sx={{ 
+              display: 'flex', 
+              gap: 3,
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                gap: 2.5,
+              },
+            }}>
               <Link
                 href="#"
                 sx={{
@@ -364,6 +481,9 @@ const Footer: React.FC = () => {
                   textDecoration: 'none',
                   fontSize: '0.875rem',
                   transition: 'color 0.2s ease',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '0.825rem',
+                  },
                   '&:hover': {
                     color: isDark ? '#009BE4' : '#2563EB',
                   },
@@ -378,6 +498,9 @@ const Footer: React.FC = () => {
                   textDecoration: 'none',
                   fontSize: '0.875rem',
                   transition: 'color 0.2s ease',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '0.825rem',
+                  },
                   '&:hover': {
                     color: isDark ? '#009BE4' : '#2563EB',
                   },
@@ -392,6 +515,9 @@ const Footer: React.FC = () => {
                   textDecoration: 'none',
                   fontSize: '0.875rem',
                   transition: 'color 0.2s ease',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '0.825rem',
+                  },
                   '&:hover': {
                     color: isDark ? '#009BE4' : '#2563EB',
                   },
@@ -408,12 +534,17 @@ const Footer: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               gap: 2,
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+              },
             }}
           >
             <Typography
               sx={{
                 fontSize: '0.875rem',
                 color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                  fontSize: '0.825rem',
+                },
               }}
             >
               Powered by
@@ -440,6 +571,9 @@ const Footer: React.FC = () => {
                   width: 'auto',
                   opacity: 0.7,
                   transition: 'opacity 0.3s ease',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    height: '22px',
+                  },
                   '&:hover': {
                     opacity: 1,
                   },

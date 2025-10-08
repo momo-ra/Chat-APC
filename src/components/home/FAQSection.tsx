@@ -162,7 +162,7 @@ const FAQSection: React.FC = () => {
                 onChange={handleChange(`panel${index}`)}
                 sx={{
                   background: '#FFFFFF',
-                  borderRadius: '16px !important',
+                  borderRadius: '4px !important',
                   border: '2px solid',
                   borderColor: expanded === `panel${index}` ? '#2563EB' : '#E2E8F0',
                   boxShadow: expanded === `panel${index}` 
@@ -203,7 +203,7 @@ const FAQSection: React.FC = () => {
                       sx={{
                         minWidth: 40,
                         height: 40,
-                        borderRadius: 2,
+                        borderRadius: 4,
                         background: expanded === `panel${index}` 
                           ? 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)' 
                           : 'rgba(37, 99, 235, 0.08)',

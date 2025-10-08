@@ -63,7 +63,7 @@ const FloatingFeatureCard: React.FC<FloatingFeatureCardProps> = ({
         display: { xs: 'none', md: 'block' }, // Hide on mobile and tablet
         width: 300,
         height: 220,
-        borderRadius: 2.5,
+        borderRadius: 4,
         overflow: 'hidden',
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
         border: '1px solid rgba(255, 255, 255, 0.08)',

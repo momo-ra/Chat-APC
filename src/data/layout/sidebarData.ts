@@ -70,6 +70,7 @@ export const sidebarItems: SidebarItem[] = [
   { 
     label: 'Resources',
     children: [
+      { label: 'FAQ', path: '/resources/faq' },
       { label: 'Whitepapers', path: '/resources/whitepapers' },
       { label: 'Blog', path: '/resources/blog' },
     ]
@@ -77,6 +78,7 @@ export const sidebarItems: SidebarItem[] = [
   { 
     label: 'Company',
     children: [
+      { label: 'About Us', path: '/company/about' },
       { label: 'Mission', path: '/company/mission' },
       { label: 'Team', path: '/company/team' },
       { label: 'Careers', path: '/company/careers' },

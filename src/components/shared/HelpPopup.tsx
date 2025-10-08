@@ -30,7 +30,7 @@ const HelpPopup: React.FC<HelpPopupProps> = ({ isOpen, title, message, descripti
         left: position?.left || 20,
         zIndex: 10000,
         backgroundColor: 'rgba(255, 255, 255, 0.98)',
-        borderRadius: 3,
+        borderRadius: 4,
         boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
         padding: 3,
         maxWidth: 400,
@@ -59,7 +59,7 @@ const HelpPopup: React.FC<HelpPopupProps> = ({ isOpen, title, message, descripti
             sx={{
               flex: 1,
               padding: '12px 24px',
-              borderRadius: 2,
+              borderRadius: 4,
               border: index === 0 ? '2px solid #009BE4' : '1px solid #ddd',
               background: index === 0 ? '#009BE4' : 'white',
               color: index === 0 ? 'white' : '#333',

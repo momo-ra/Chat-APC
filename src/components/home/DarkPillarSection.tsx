@@ -100,8 +100,15 @@ const DarkPillarSection: React.FC = () => {
       sx={{
         width: '100%',
         py: { xs: 12, md: 16 },
+        // Special scaling for medium screens where sidebar causes issues
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 12,
+        },
+        '@media (min-width: 1550px)': {
+          py: 16,
+        },
         position: 'relative',
-        background: 'linear-gradient(180deg, #E2E8F0 0%, #F1F5F9 50%, #E2E8F0 100%)',
+        background: 'linear-gradient(180deg, #FEFEFE 0%, #FCFCFC 30%, #FAFAFA 70%, #F8F8F8 100%)',
         overflow: 'hidden',
         '&::before': {
           content: '""',
@@ -111,14 +118,36 @@ const DarkPillarSection: React.FC = () => {
           transform: 'translate(-50%, -50%)',
           width: '1000px',
           height: '1000px',
-          background: 'radial-gradient(circle, rgba(0, 155, 228, 0.06) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%)',
           pointerEvents: 'none',
         },
       }}
     >
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          position: 'relative', 
+          zIndex: 1,
+          px: { xs: 2, md: 3 },
+          // Reduce width on medium screens where sidebar is present
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
         {/* Section Header */}
-        <Box ref={headerRef} sx={{ textAlign: 'center', mb: 10 }}>
+        <Box ref={headerRef} sx={{ 
+          textAlign: 'center', 
+          mb: { xs: 10, md: 10 },
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            mb: 8,
+          },
+        }}>
           <Typography
             sx={{
               fontSize: { xs: '2.5rem', md: '3.5rem' },
@@ -126,6 +155,9 @@ const DarkPillarSection: React.FC = () => {
               color: '#1E293B',
               mb: 3,
               lineHeight: 1.2,
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '2.8rem',
+              },
             }}
           >
             From question to answer — clear, fast, and explainable
@@ -137,6 +169,10 @@ const DarkPillarSection: React.FC = () => {
               maxWidth: 700,
               mx: 'auto',
               lineHeight: 1.7,
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '1.15rem',
+                maxWidth: 650,
+              },
             }}
           >
             No black boxes. Every answer shows its work.
@@ -149,19 +185,25 @@ const DarkPillarSection: React.FC = () => {
           sx={{
             position: 'relative',
             width: '100%',
-            maxWidth: 900,
+            maxWidth: { xs: 900, md: 900 },
             height: { xs: 180, md: 250 },
             mx: 'auto',
-            mb: 8,
-            borderRadius: 4,
+            mb: { xs: 8, md: 8 },
+            borderRadius: '4px',
             overflow: 'hidden',
             background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(16, 185, 129, 0.05) 100%)',
             border: '2px solid #E2E8F0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 4,
+            gap: { xs: 3, md: 4 },
             boxShadow: '0 4px 20px rgba(0, 0, 0, 0.06)',
+            '@media (min-width: 960px) and (max-width: 1549px)': {
+              maxWidth: 800,
+              height: 220,
+              mb: 6,
+              gap: 3,
+            },
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -179,7 +221,10 @@ const DarkPillarSection: React.FC = () => {
         </Box>
 
         {/* Pillars Grid */}
-        <Grid container spacing={4}>
+        <Grid container spacing={{ xs: 3, md: 4 }} sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+          },
+        }}>
           {pillars.map((pillar, index) => {
             const Icon = pillar.icon;
             return (
@@ -194,8 +239,8 @@ const DarkPillarSection: React.FC = () => {
               >
                 <Box
                   sx={{
-                    padding: 4,
-                    borderRadius: 4,
+                    padding: { xs: 3, md: 4 },
+                    borderRadius: '4px',
                     background: '#FFFFFF',
                     border: '2px solid #E2E8F0',
                     transition: 'all 0.3s ease',
@@ -203,6 +248,9 @@ const DarkPillarSection: React.FC = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.06)',
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      padding: 3,
+                    },
                     '&:hover': {
                       background: '#FFFFFF',
                       border: '2px solid rgba(0, 155, 228, 0.5)',
@@ -214,21 +262,29 @@ const DarkPillarSection: React.FC = () => {
                   {/* Number Badge */}
                   <Box
                     sx={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 3,
+                      width: { xs: 52, md: 56 },
+                      height: { xs: 52, md: 56 },
+                      borderRadius: '4px',
                       background: 'rgba(37, 99, 235, 0.12)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       mb: 3,
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        width: 52,
+                        height: 52,
+                        mb: 2.5,
+                      },
                     }}
                   >
                     <Typography
                       sx={{
-                        fontSize: '2rem',
+                        fontSize: { xs: '1.8rem', md: '2rem' },
                         fontWeight: 700,
                         color: '#2563EB',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '1.8rem',
+                        },
                       }}
                     >
                       {pillar.emoji}
@@ -243,6 +299,9 @@ const DarkPillarSection: React.FC = () => {
                       color: '#1E293B',
                       mb: 2,
                       lineHeight: 1.3,
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '1.25rem',
+                      },
                     }}
                   >
                     {pillar.title}
@@ -251,10 +310,14 @@ const DarkPillarSection: React.FC = () => {
                   {/* Description */}
                   <Typography
                     sx={{
-                      fontSize: '1rem',
+                      fontSize: { xs: '0.95rem', md: '1rem' },
                       color: '#475569',
                       lineHeight: 1.7,
                       mb: pillar.features ? 3 : 0,
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '0.95rem',
+                        mb: pillar.features ? 2.5 : 0,
+                      },
                     }}
                   >
                     {pillar.description}
@@ -269,23 +332,32 @@ const DarkPillarSection: React.FC = () => {
                         sx={{
                           display: 'flex',
                           alignItems: 'flex-start',
-                          mb: 1.5,
+                          mb: { xs: 1.5, md: 1.5 },
+                          '@media (min-width: 960px) and (max-width: 1549px)': {
+                            mb: 1.25,
+                          },
                         }}
                       >
                         <CheckCircle
                           sx={{
-                            fontSize: 20,
+                            fontSize: { xs: 18, md: 20 },
                             color: '#2563EB',
                             mr: 1,
                             mt: 0.25,
                             flexShrink: 0,
+                            '@media (min-width: 960px) and (max-width: 1549px)': {
+                              fontSize: 18,
+                            },
                           }}
                         />
                         <Typography
                           sx={{
-                            fontSize: '0.875rem',
+                            fontSize: { xs: '0.85rem', md: '0.875rem' },
                             color: '#475569',
                             lineHeight: 1.5,
+                            '@media (min-width: 960px) and (max-width: 1549px)': {
+                              fontSize: '0.85rem',
+                            },
                           }}
                         >
                           {feature}

@@ -30,10 +30,37 @@ const DeploymentHeroSection: React.FC = () => {
         pt: { xs: 12, md: 16 },
         pb: { xs: 8, md: 12 },
         position: 'relative',
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          pt: 14,
+          pb: 10,
+        },
+        '@media (min-width: 1550px)': {
+          pt: 16,
+          pb: 12,
+        },
       }}
     >
-      <Container maxWidth="lg">
-        <Box ref={heroRef} sx={{ textAlign: 'center', maxWidth: 900, mx: 'auto' }}>
+      <Container 
+        maxWidth="lg"
+        sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
+        <Box ref={heroRef} sx={{ 
+          textAlign: 'center', 
+          maxWidth: 900, 
+          mx: 'auto',
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: 800,
+          },
+        }}>
           <Typography
             variant="h1"
             sx={{
@@ -43,6 +70,13 @@ const DeploymentHeroSection: React.FC = () => {
               mb: 3,
               lineHeight: 1.2,
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '3.2rem',
+                mb: 2.5,
+              },
+              '@media (min-width: 1550px)': {
+                fontSize: '4rem',
+              },
             }}
           >
             Deploy ChatAPC Anywhere
@@ -55,6 +89,13 @@ const DeploymentHeroSection: React.FC = () => {
               maxWidth: 800,
               mx: 'auto',
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '1.2rem',
+                maxWidth: 700,
+              },
+              '@media (min-width: 1550px)': {
+                fontSize: '1.3rem',
+              },
             }}
           >
             Every plant is different. That's why ChatAPC is built to fit your infrastructure, whether you run on-premise, in the cloud, or in a hybrid setup. Our flexible deployment options ensure seamless integration with your existing systems while maintaining the security and reliability standards your operations demand.

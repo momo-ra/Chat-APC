@@ -92,11 +92,18 @@ const DarkFeatureSection: React.FC = () => {
       sx={{
         width: '100%',
         py: { xs: 10, md: 15 },
+        // Special scaling for medium screens where sidebar causes issues
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 12,
+        },
+        '@media (min-width: 1550px)': {
+          py: 15,
+        },
         position: 'relative',
         zIndex: 2,
         background: isDark 
           ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.03) 0%, rgba(10, 14, 46, 0.5) 50%, rgba(13, 24, 66, 0.4) 100%)'
-          : 'linear-gradient(135deg, rgba(124, 58, 237, 0.03) 0%, rgba(255, 255, 255, 0.95) 30%, rgba(248, 250, 252, 0.9) 70%, rgba(241, 245, 249, 0.8) 100%)',
+          : 'linear-gradient(135deg, rgba(124, 58, 237, 0.02) 0%, rgba(255, 255, 255, 0.99) 20%, rgba(254, 254, 254, 0.98) 50%, rgba(252, 252, 252, 0.95) 80%, rgba(250, 250, 250, 0.9) 100%)',
         transition: 'background 0.3s ease',
         '&::before': {
           content: '""',
@@ -124,9 +131,31 @@ const DarkFeatureSection: React.FC = () => {
         },
       }}
     >
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          position: 'relative', 
+          zIndex: 1,
+          px: { xs: 2, md: 3 },
+          // Reduce width on medium screens where sidebar is present
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
         {/* Section Header */}
-        <Box ref={textRef} sx={{ textAlign: 'center', mb: 10 }}>
+        <Box ref={textRef} sx={{ 
+          textAlign: 'center', 
+          mb: { xs: 10, md: 10 },
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            mb: 8,
+          },
+        }}>
           <Typography
             sx={{
               fontSize: { xs: '2.5rem', md: '3.5rem' },
@@ -134,6 +163,9 @@ const DarkFeatureSection: React.FC = () => {
               color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
               mb: 2,
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '2.8rem',
+              },
             }}
           >
             Stop reacting. Start understanding.
@@ -145,6 +177,10 @@ const DarkFeatureSection: React.FC = () => {
               maxWidth: 700,
               mx: 'auto',
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '1.15rem',
+                maxWidth: 650,
+              },
             }}
           >
             Every plant faces the same challenges. ChatAPC solves them.
@@ -157,11 +193,11 @@ const DarkFeatureSection: React.FC = () => {
           sx={{
             position: 'relative',
             width: '100%',
-            maxWidth: 850,
+            maxWidth: { xs: 850, md: 850 },
             height: { xs: 220, md: 320 },
             mx: 'auto',
-            mb: 8,
-            borderRadius: 4,
+            mb: { xs: 8, md: 8 },
+            borderRadius: '4px',
             overflow: 'hidden',
             border: isDark 
               ? '1px solid rgba(0, 155, 228, 0.25)' 
@@ -171,6 +207,11 @@ const DarkFeatureSection: React.FC = () => {
               : '0 20px 70px rgba(124, 58, 237, 0.15)',
             zIndex: 0,
             transition: 'all 0.3s ease',
+            '@media (min-width: 960px) and (max-width: 1549px)': {
+              maxWidth: 750,
+              height: 280,
+              mb: 6,
+            },
             '&::after': {
               content: '""',
               position: 'absolute',
@@ -198,7 +239,10 @@ const DarkFeatureSection: React.FC = () => {
         </Box>
 
         {/* Feature Grid */}
-        <Grid container spacing={4}>
+        <Grid container spacing={{ xs: 3, md: 4 }} sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+          },
+        }}>
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
@@ -213,8 +257,8 @@ const DarkFeatureSection: React.FC = () => {
               >
                 <Box
                   sx={{
-                    padding: 4,
-                    borderRadius: 4,
+                    padding: { xs: 3, md: 4 },
+                    borderRadius: '4px',
                     background: isDark 
                       ? 'rgba(255, 255, 255, 0.02)' 
                       : 'rgba(255, 255, 255, 0.98)',
@@ -227,6 +271,9 @@ const DarkFeatureSection: React.FC = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     boxShadow: isDark ? 'none' : '0 8px 32px rgba(124, 58, 237, 0.08)',
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      padding: 3,
+                    },
                     '&:hover': {
                       background: isDark 
                         ? 'rgba(255, 255, 255, 0.04)' 
@@ -242,9 +289,9 @@ const DarkFeatureSection: React.FC = () => {
                   {/* Icon */}
                   <Box
                     sx={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 2.5,
+                      width: { xs: 52, md: 56 },
+                      height: { xs: 52, md: 56 },
+                      borderRadius: '4px',
                       background: isDark 
                         ? 'rgba(0, 155, 228, 0.1)' 
                         : 'rgba(124, 58, 237, 0.12)',
@@ -253,6 +300,11 @@ const DarkFeatureSection: React.FC = () => {
                       justifyContent: 'center',
                       mb: 3,
                       transition: 'background 0.3s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        width: 52,
+                        height: 52,
+                        mb: 2.5,
+                      },
                       '&:hover': {
                         background: isDark 
                           ? 'rgba(0, 155, 228, 0.15)' 
@@ -262,9 +314,12 @@ const DarkFeatureSection: React.FC = () => {
                     }}
                   >
                     <Icon sx={{ 
-                      fontSize: 32, 
+                      fontSize: { xs: 28, md: 32 },
                       color: isDark ? '#009BE4' : '#7C3AED',
                       transition: 'all 0.3s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: 28,
+                      },
                     }} />
                   </Box>
 
@@ -277,6 +332,9 @@ const DarkFeatureSection: React.FC = () => {
                       mb: 2,
                       lineHeight: 1.3,
                       transition: 'color 0.3s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '1.25rem',
+                      },
                     }}
                   >
                     {feature.title}
@@ -285,10 +343,13 @@ const DarkFeatureSection: React.FC = () => {
                   {/* Description */}
                   <Typography
                     sx={{
-                      fontSize: '1rem',
+                      fontSize: { xs: '0.95rem', md: '1rem' },
                       color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
                       lineHeight: 1.7,
                       transition: 'color 0.3s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '0.95rem',
+                      },
                     }}
                   >
                     {feature.description}

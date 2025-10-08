@@ -202,7 +202,7 @@ const ChatSidebar: React.FC = () => {
       onClick={onClick}
       selected={isActive}
       sx={{
-        borderRadius: 2,
+        borderRadius: 4,
         mb: 0.5,
         py: 1.5,
         px: 2,
@@ -246,7 +246,7 @@ const ChatSidebar: React.FC = () => {
         sx={{
           py: 0.75,
           px: 2,
-          borderRadius: 1,
+          borderRadius: 4,
           mb: 0.25,
           '&.Mui-selected': {
             backgroundColor: 'action.selected'
@@ -297,7 +297,7 @@ const ChatSidebar: React.FC = () => {
         sx={{
           py: 0.75,
           px: 2,
-          borderRadius: 1,
+          borderRadius: 4,
           mb: 0.25,
           '&:hover': {
             backgroundColor: 'action.hover'
@@ -788,7 +788,7 @@ const ChatSidebar: React.FC = () => {
         <ListItemButton
           onClick={handleUserMenuOpen}
           sx={{ 
-            borderRadius: 1,
+            borderRadius: 4,
             py: 1,
             '&:hover': {
               backgroundColor: 'action.hover'

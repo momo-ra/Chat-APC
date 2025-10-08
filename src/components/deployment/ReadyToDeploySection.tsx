@@ -50,9 +50,27 @@ const ReadyToDeploySection: React.FC = () => {
         width: '100%',
         py: { xs: 8, md: 12 },
         position: 'relative',
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 10,
+        },
+        '@media (min-width: 1550px)': {
+          py: 12,
+        },
       }}
     >
-      <Container maxWidth="lg">
+      <Container 
+        maxWidth="lg"
+        sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
         <Box ref={sectionRef}>
           <Typography
             variant="h2"
@@ -63,6 +81,10 @@ const ReadyToDeploySection: React.FC = () => {
               mb: 8,
               textAlign: 'center',
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '2.6rem',
+                mb: 6,
+              },
             }}
           >
             Ready to Deploy in Your Environment
@@ -84,7 +106,9 @@ const ReadyToDeploySection: React.FC = () => {
                     boxShadow: isDark ? 'none' : '0 8px 32px rgba(0, 0, 0, 0.08)',
                     transition: 'all 0.3s ease',
                     transform: 'translateY(40px)',
-                    transition: 'all 0.3s ease',
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      padding: 3,
+                    },
                     '&:hover': {
                       transform: 'translateY(-8px)',
                       borderColor: isDark ? 'rgba(0, 155, 228, 0.3)' : 'rgba(37, 99, 235, 0.3)',
@@ -100,6 +124,9 @@ const ReadyToDeploySection: React.FC = () => {
                       color: isDark ? '#fff' : 'rgba(0, 0, 0, 0.9)',
                       mb: 2,
                       transition: 'color 0.3s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '1.35rem',
+                      },
                     }}
                   >
                     {feature.title}
@@ -110,6 +137,9 @@ const ReadyToDeploySection: React.FC = () => {
                       color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
                       lineHeight: 1.7,
                       transition: 'color 0.3s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '0.95rem',
+                      },
                     }}
                   >
                     {feature.description}

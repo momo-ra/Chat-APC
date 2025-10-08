@@ -78,9 +78,16 @@ const LightFeatureSection: React.FC = () => {
       data-section-theme="light"
       sx={{
         width: '100%',
-        py: { xs: 12, md: 16 },
+        py: { xs: 6, sm: 8, md: 10, lg: 8, xl: 10 },
+        // Special scaling for medium screens where sidebar causes issues
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 8,
+        },
+        '@media (min-width: 1550px)': {
+          py: 10,
+        },
         position: 'relative',
-        background: 'linear-gradient(180deg, #F1F5F9 0%, #E2E8F0 100%)',
+        background: 'linear-gradient(180deg, #FFFFFF 0%, #FEFEFE 30%, #FCFCFC 70%, #FAFAFA 100%)',
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -88,7 +95,7 @@ const LightFeatureSection: React.FC = () => {
           left: '5%',
           width: '400px',
           height: '400px',
-          background: 'radial-gradient(circle, rgba(0, 155, 228, 0.12) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%)',
           pointerEvents: 'none',
         },
         '&::after': {
@@ -98,33 +105,60 @@ const LightFeatureSection: React.FC = () => {
           right: '8%',
           width: '350px',
           height: '350px',
-          background: 'radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%)',
           pointerEvents: 'none',
         },
       }}
     >
-      <Container maxWidth="lg">
+      <Container 
+        maxWidth="lg"
+        sx={{
+          px: { xs: 2, md: 3 },
+          // Reduce width on medium screens where sidebar is present
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
         {/* Section Header */}
-        <Box ref={headerRef} sx={{ textAlign: 'center', mb: 10 }}>
+        <Box ref={headerRef} sx={{ 
+          textAlign: 'center', 
+          mb: { xs: 6, md: 8 },
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            mb: 6,
+          },
+        }}>
           <Typography
             sx={{
-              fontSize: { xs: '2.5rem', md: '3.5rem' },
+              fontSize: { xs: '2rem', md: '3.5rem' },
               fontWeight: 600,
               color: '#1E293B',
               mb: 2,
               lineHeight: 1.2,
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '2.8rem',
+              },
             }}
           >
             Typical ROI in under 6 months
           </Typography>
           <Typography
             sx={{
-              fontSize: { xs: '1.1rem', md: '1.25rem' },
+              fontSize: { xs: '1rem', md: '1.25rem' },
               color: '#475569',
               maxWidth: 800,
               mx: 'auto',
               mb: 1,
               lineHeight: 1.7,
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '1.15rem',
+                maxWidth: 700,
+              },
             }}
           >
             Here's what plants can achieve with ChatAPC:
@@ -132,7 +166,10 @@ const LightFeatureSection: React.FC = () => {
         </Box>
 
         {/* ROI Grid */}
-        <Grid container spacing={4}>
+        <Grid container spacing={{ xs: 3, md: 4 }} sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+          },
+        }}>
           {roiItems.map((item, index) => {
             const Icon = item.icon;
             return (
@@ -144,16 +181,23 @@ const LightFeatureSection: React.FC = () => {
                 ref={(el) => {
                   if (el) cardsRef.current[index] = el as HTMLDivElement;
                 }}
+                sx={{
+                  // Ensure Grid item takes proper width
+                  flex: { xs: '1 1 100%', md: '1 1 calc(33.333% - 1.5rem)' },
+                }}
               >
                 <Box
                   sx={{
-                    padding: 4,
-                    borderRadius: 4,
+                    padding: { xs: 3, md: 4 },
+                    borderRadius: '4px',
                     background: '#FFFFFF',
                     border: '1px solid rgba(226, 232, 240, 1)',
                     height: '100%',
                     transition: 'all 0.3s ease',
                     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      padding: 3,
+                    },
                     '&:hover': {
                       transform: 'translateY(-8px)',
                       background: '#FFFFFF',
@@ -165,27 +209,41 @@ const LightFeatureSection: React.FC = () => {
                   {/* Icon */}
                   <Box
                     sx={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: 3,
+                      width: { xs: 56, md: 64 },
+                      height: { xs: 56, md: 64 },
+                      borderRadius: '4px',
                       background: item.gradient,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       mb: 3,
                       boxShadow: '0 8px 20px rgba(37, 99, 235, 0.2)',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        width: 58,
+                        height: 58,
+                        mb: 2.5,
+                      },
                     }}
                   >
-                    <Icon sx={{ fontSize: 32, color: '#FFFFFF' }} />
+                    <Icon sx={{ 
+                      fontSize: { xs: 28, md: 32 },
+                      color: '#FFFFFF',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: 29,
+                      },
+                    }} />
                   </Box>
 
                   {/* Amount */}
                   <Typography
                     sx={{
-                      fontSize: '2.5rem',
+                      fontSize: { xs: '2rem', md: '2.5rem' },
                       fontWeight: 700,
                       color: '#2563EB',
                       mb: 1,
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '2.2rem',
+                      },
                     }}
                   >
                     {item.amount}
@@ -194,11 +252,14 @@ const LightFeatureSection: React.FC = () => {
                   {/* Title */}
                   <Typography
                     sx={{
-                      fontSize: '1.25rem',
+                      fontSize: { xs: '1.1rem', md: '1.25rem' },
                       fontWeight: 600,
                       color: '#1E293B',
                       mb: 2,
                       lineHeight: 1.3,
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '1.15rem',
+                      },
                     }}
                   >
                     {item.title}
@@ -207,9 +268,12 @@ const LightFeatureSection: React.FC = () => {
                   {/* Description */}
                   <Typography
                     sx={{
-                      fontSize: '0.95rem',
+                      fontSize: { xs: '0.9rem', md: '0.95rem' },
                       color: '#475569',
                       lineHeight: 1.7,
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '0.9rem',
+                      },
                     }}
                   >
                     {item.description}
@@ -221,12 +285,21 @@ const LightFeatureSection: React.FC = () => {
         </Grid>
 
         {/* Total Value */}
-        <Box sx={{ textAlign: 'center', mt: 8 }}>
+        <Box sx={{ 
+          textAlign: 'center', 
+          mt: { xs: 6, md: 8 },
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            mt: 6,
+          },
+        }}>
           <Typography
             sx={{
-              fontSize: { xs: '1.25rem', md: '1.5rem' },
+              fontSize: { xs: '1.2rem', md: '1.5rem' },
               fontWeight: 600,
               color: '#475569',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '1.35rem',
+              },
             }}
           >
             Total potential value: <Box component="span" sx={{ color: '#2563EB' }}>$1M - $4M+ per year</Box>

@@ -54,9 +54,10 @@ const FloatingInput: React.FC<FloatingInputProps> = ({
         left: 16,
         right: 16,
         width: 'auto',
-        maxWidth: '480px',
+        maxWidth: 'calc(100vw - 32px)',
         margin: '0 auto',
         zIndex: 1200,
+        boxSizing: 'border-box',
         animation: 'slideUp 0.3s ease-out',
         '@keyframes slideUp': {
           '0%': {
@@ -77,7 +78,7 @@ const FloatingInput: React.FC<FloatingInputProps> = ({
             ? 'rgba(52, 64, 84, 0.95)' 
             : 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(20px)',
-          borderRadius: 4,
+          borderRadius: '4px',
           padding: '10px 14px',
           boxShadow: isDark 
             ? '0 8px 32px rgba(0, 0, 0, 0.3)' 

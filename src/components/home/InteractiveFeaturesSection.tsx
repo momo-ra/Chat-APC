@@ -181,7 +181,7 @@ const InteractiveFeaturesSection: React.FC = () => {
                     textAlign: 'left',
                     justifyContent: 'flex-start',
                     padding: { xs: '12px 16px', md: '14px 18px', lg: '16px 20px' },
-                    borderRadius: { xs: 2, md: 3 },
+                    borderRadius: '4px',
                     textTransform: 'none',
                     transition: 'all 0.3s ease',
                     position: 'relative',
@@ -309,7 +309,7 @@ const InteractiveFeaturesSection: React.FC = () => {
                 width: '100%',
                 maxWidth: { xs: '380px', sm: '500px', md: '100%', lg: '750px', xl: '850px' },
                 aspectRatio: '16/10',
-                borderRadius: { xs: 3, md: 4 },
+                borderRadius: '4px',
                 overflow: 'hidden',
                 boxShadow: `
                   0 20px 60px -10px ${activeFeature.color}40,

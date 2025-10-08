@@ -14,38 +14,39 @@ const IntegrationArchitectureSection: React.FC = () => {
   const { isDark } = useThemeMode();
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Diagram animation
-      if (diagramRef.current) {
-        gsap.from(diagramRef.current, {
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 70%',
-          },
-          scale: 0.8,
-          opacity: 0,
-          duration: 1,
-          ease: 'power2.out',
-        });
-      }
+    // Animations disabled to prevent content from hiding
+    // const ctx = gsap.context(() => {
+    //   // Diagram animation
+    //   if (diagramRef.current) {
+    //     gsap.from(diagramRef.current, {
+    //       scrollTrigger: {
+    //         trigger: sectionRef.current,
+    //         start: 'top 70%',
+    //       },
+    //       scale: 0.8,
+    //       opacity: 0,
+    //       duration: 1,
+    //       ease: 'power2.out',
+    //     });
+    //   }
 
-      // Content animation
-      if (contentRef.current) {
-        gsap.from(contentRef.current.children, {
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 70%',
-          },
-          x: 50,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: 'power2.out',
-        });
-      }
-    }, sectionRef);
+    //   // Content animation
+    //   if (contentRef.current) {
+    //     gsap.from(contentRef.current.children, {
+    //       scrollTrigger: {
+    //         trigger: sectionRef.current,
+    //         start: 'top 70%',
+    //       },
+    //       x: 50,
+    //       opacity: 0,
+    //       duration: 0.8,
+    //       stagger: 0.15,
+    //       ease: 'power2.out',
+    //     });
+    //   }
+    // }, sectionRef);
 
-    return () => ctx.revert();
+    // return () => ctx.revert();
   }, [isDark]);
 
   const features = [
@@ -71,6 +72,12 @@ const IntegrationArchitectureSection: React.FC = () => {
           ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.02) 0%, transparent 100%)'
           : 'linear-gradient(135deg, rgba(37, 99, 235, 0.02) 0%, rgba(255, 255, 255, 0.95) 30%, rgba(248, 250, 252, 0.9) 70%, rgba(241, 245, 249, 0.8) 100%)',
         transition: 'background 0.3s ease',
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 11,
+        },
+        '@media (min-width: 1550px)': {
+          py: 14,
+        },
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -97,8 +104,26 @@ const IntegrationArchitectureSection: React.FC = () => {
         },
       }}
     >
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-        <Grid container spacing={6} alignItems="center">
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          position: 'relative', 
+          zIndex: 1,
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
+        <Grid container spacing={6} alignItems="center" sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            spacing: 4,
+          },
+        }}>
           {/* Left side - Architecture Diagram Placeholder */}
           <Grid item xs={12} md={6}>
             <Box
@@ -182,6 +207,10 @@ const IntegrationArchitectureSection: React.FC = () => {
                   mb: 3,
                   lineHeight: 1.2,
                   transition: 'color 0.3s ease',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '2.4rem',
+                    mb: 2.5,
+                  },
                 }}
               >
                 Seamless System Integration
@@ -193,6 +222,10 @@ const IntegrationArchitectureSection: React.FC = () => {
                   lineHeight: 1.8,
                   mb: 4,
                   transition: 'color 0.3s ease',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '1.05rem',
+                    mb: 3.5,
+                  },
                 }}
               >
                 Our proven integration framework connects with your existing infrastructure without disrupting operations. ChatAPC acts as a transparent layer that enhances your systems without replacing them.
@@ -213,9 +246,13 @@ const IntegrationArchitectureSection: React.FC = () => {
                       border: isDark 
                         ? '1px solid rgba(255, 255, 255, 0.08)' 
                         : '1px solid rgba(0, 0, 0, 0.08)',
-                      borderRadius: 2,
+                      borderRadius: 4,
                       transition: 'all 0.2s ease',
                       boxShadow: isDark ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.04)',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        padding: 1.75,
+                        gap: 1.75,
+                      },
                       '&:hover': {
                         background: isDark 
                           ? 'rgba(255, 255, 255, 0.04)' 
@@ -249,6 +286,9 @@ const IntegrationArchitectureSection: React.FC = () => {
                         color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.75)',
                         fontWeight: 500,
                         transition: 'color 0.3s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '0.95rem',
+                        },
                       }}
                     >
                       {feature}

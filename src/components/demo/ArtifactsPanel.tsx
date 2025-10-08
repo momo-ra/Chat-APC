@@ -91,7 +91,7 @@ const ArtifactsPanel: React.FC = () => {
               <Box sx={{ 
                 height: 400, 
                 backgroundColor: 'grey.50',
-                borderRadius: 1,
+                borderRadius: 4,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
@@ -105,7 +105,7 @@ const ArtifactsPanel: React.FC = () => {
             {activeArtifact.type === 'data' && (
               <Box sx={{ 
                 backgroundColor: 'grey.50',
-                borderRadius: 1,
+                borderRadius: 4,
                 p: 2
               }}>
                 <pre style={{ margin: 0, overflow: 'auto' }}>
@@ -118,7 +118,7 @@ const ArtifactsPanel: React.FC = () => {
               <Box sx={{ 
                 backgroundColor: 'grey.900',
                 color: 'grey.50',
-                borderRadius: 1,
+                borderRadius: 4,
                 p: 2,
                 fontFamily: 'monospace'
               }}>

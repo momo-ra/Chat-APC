@@ -81,8 +81,15 @@ const AlternatingFeatureSection: React.FC = () => {
         position: 'relative',
         background: isDark 
           ? 'linear-gradient(180deg, rgba(10, 14, 46, 0.8) 0%, rgba(13, 24, 66, 0.6) 50%, rgba(10, 14, 46, 0.8) 100%)'
-          : 'linear-gradient(180deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 50%, rgba(248, 250, 252, 0.8) 100%)',
+          : 'linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(254, 254, 254, 0.95) 30%, rgba(252, 252, 252, 0.9) 70%, rgba(250, 250, 250, 0.8) 100%)',
         transition: 'background 0.3s ease',
+        // Special scaling for medium screens where sidebar causes issues
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 12,
+        },
+        '@media (min-width: 1550px)': {
+          py: 16,
+        },
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -92,14 +99,36 @@ const AlternatingFeatureSection: React.FC = () => {
           height: '100%',
           background: isDark 
             ? 'linear-gradient(90deg, transparent 0%, rgba(0, 155, 228, 0.03) 50%, transparent 100%)'
-            : 'linear-gradient(90deg, transparent 0%, rgba(37, 99, 235, 0.08) 50%, transparent 100%)',
+            : 'linear-gradient(90deg, transparent 0%, rgba(37, 99, 235, 0.06) 50%, transparent 100%)',
           pointerEvents: 'none',
         },
       }}
     >
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          position: 'relative', 
+          zIndex: 1,
+          px: { xs: 2, md: 3 },
+          // Reduce width on medium screens where sidebar is present
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
         {/* Section Header */}
-        <Box sx={{ textAlign: 'center', mb: 8 }}>
+        <Box sx={{ 
+          textAlign: 'center', 
+          mb: 8,
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            mb: 6,
+          },
+        }}>
           <Typography
             sx={{
               fontSize: { xs: '2.5rem', md: '3.5rem' },
@@ -107,6 +136,10 @@ const AlternatingFeatureSection: React.FC = () => {
               color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
               mb: 2,
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '2.8rem',
+                mb: 1.5,
+              },
             }}
           >
             Not just another AI tool — this one knows your plant
@@ -118,6 +151,10 @@ const AlternatingFeatureSection: React.FC = () => {
               maxWidth: 800,
               mx: 'auto',
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '1.15rem',
+                maxWidth: 700,
+              },
             }}
           >
             ChatAPC was built by people who've spent decades in control rooms and optimization design — not just AI labs.
@@ -134,7 +171,7 @@ const AlternatingFeatureSection: React.FC = () => {
             height: { xs: 180, md: 280 },
             mx: 'auto',
             mb: 12,
-            borderRadius: 4,
+            borderRadius: '4px',
             overflow: 'hidden',
             border: isDark 
               ? '1px solid rgba(106, 17, 203, 0.2)' 
@@ -143,6 +180,11 @@ const AlternatingFeatureSection: React.FC = () => {
               ? '0 25px 70px rgba(106, 17, 203, 0.25)' 
               : '0 25px 70px rgba(37, 99, 235, 0.15)',
             transition: 'all 0.3s ease',
+            '@media (min-width: 960px) and (max-width: 1549px)': {
+              maxWidth: 850,
+              height: 240,
+              mb: 4,
+            },
             '&::after': {
               content: '""',
               position: 'absolute',
@@ -171,7 +213,10 @@ const AlternatingFeatureSection: React.FC = () => {
         </Box>
 
         {/* Features */}
-        <Grid container spacing={8}>
+        <Grid container spacing={8} sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+          },
+        }}>
           {features.map((feature, index) => {
             const Icon = feature.icon;
             const isEven = index % 2 === 0;
@@ -192,7 +237,11 @@ const AlternatingFeatureSection: React.FC = () => {
                     alignItems: 'center',
                     gap: { xs: 4, md: 8 },
                     padding: { xs: 3, md: 6 },
-                    borderRadius: 4,
+                    borderRadius: '4px',
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      gap: 5,
+                      padding: 4.5,
+                    },
                     background: isDark 
                       ? (isEven
                           ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.05) 0%, rgba(13, 24, 66, 0.3) 100%)'
@@ -226,7 +275,7 @@ const AlternatingFeatureSection: React.FC = () => {
                     sx={{
                       minWidth: { xs: 80, md: 120 },
                       height: { xs: 80, md: 120 },
-                      borderRadius: 3,
+                      borderRadius: '4px',
                       background: isDark 
                         ? (isEven
                             ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.15) 0%, rgba(0, 155, 228, 0.05) 100%)'
@@ -241,6 +290,10 @@ const AlternatingFeatureSection: React.FC = () => {
                         ? `1px solid ${isEven ? 'rgba(0, 155, 228, 0.2)' : 'rgba(106, 17, 203, 0.2)'}`
                         : `1px solid ${isEven ? 'rgba(37, 99, 235, 0.2)' : 'rgba(99, 102, 241, 0.2)'}`,
                       transition: 'all 0.3s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        minWidth: 100,
+                        height: 100,
+                      },
                     }}
                   >
                     <Icon
@@ -250,6 +303,9 @@ const AlternatingFeatureSection: React.FC = () => {
                           ? (isEven ? '#009BE4' : '#6A11CB')
                           : (isEven ? '#2563EB' : '#6366F1'),
                         transition: 'color 0.3s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: 48,
+                        },
                       }}
                     />
                   </Box>
@@ -263,6 +319,10 @@ const AlternatingFeatureSection: React.FC = () => {
                         color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
                         mb: 2,
                         transition: 'color 0.3s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '1.7rem',
+                          mb: 1.5,
+                        },
                       }}
                     >
                       {feature.title}
@@ -273,6 +333,9 @@ const AlternatingFeatureSection: React.FC = () => {
                         color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
                         lineHeight: 1.8,
                         transition: 'color 0.3s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '1.05rem',
+                        },
                       }}
                     >
                       {feature.description}

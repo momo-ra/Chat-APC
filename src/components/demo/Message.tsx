@@ -67,7 +67,7 @@ const Message: React.FC<MessageProps> = ({ index, sender, textData }) => {
           maxWidth: '70%',
           px: 2,
           py: 1.5,
-          borderRadius: 2,
+          borderRadius: 4,
           backgroundColor: isUser ? 'primary.main' : 'background.paper',
           color: isUser ? 'primary.contrastText' : 'text.primary',
           borderTopLeftRadius: isUser ? 2 : 0.5,

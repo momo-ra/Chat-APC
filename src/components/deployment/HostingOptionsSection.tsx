@@ -78,9 +78,27 @@ const HostingOptionsSection: React.FC = () => {
         width: '100%',
         py: { xs: 8, md: 12 },
         position: 'relative',
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 10,
+        },
+        '@media (min-width: 1550px)': {
+          py: 12,
+        },
       }}
     >
-      <Container maxWidth="lg">
+      <Container 
+        maxWidth="lg"
+        sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
         <Box ref={sectionRef}>
           <Typography
             variant="h2"
@@ -91,6 +109,12 @@ const HostingOptionsSection: React.FC = () => {
               mb: 2,
               textAlign: 'center',
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '2.6rem',
+              },
+              '@media (min-width: 1550px)': {
+                fontSize: '3rem',
+              },
             }}
           >
             Flexible Hosting Options
@@ -104,12 +128,25 @@ const HostingOptionsSection: React.FC = () => {
               maxWidth: 700,
               mx: 'auto',
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '1.05rem',
+                maxWidth: 650,
+                mb: 6,
+              },
+              '@media (min-width: 1550px)': {
+                fontSize: '1.1rem',
+                mb: 8,
+              },
             }}
           >
             Choose what works best for your IT policies and operational requirements. Our deployment experts work with your team to ensure optimal configuration for your specific environment.
           </Typography>
 
-          <Grid container spacing={4}>
+          <Grid container spacing={4} sx={{
+            '@media (min-width: 960px) and (max-width: 1549px)': {
+              spacing: 3,
+            },
+          }}>
             {hostingOptions.map((option, index) => (
               <Grid item xs={12} md={4} key={index}>
                 <Box
@@ -150,7 +187,7 @@ const HostingOptionsSection: React.FC = () => {
                     sx={{
                       width: '100%',
                       height: 180,
-                      borderRadius: 3,
+                      borderRadius: 4,
                       mb: 3,
                       background: isDark 
                         ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.1) 0%, rgba(0, 155, 228, 0.05) 100%)'
@@ -193,6 +230,9 @@ const HostingOptionsSection: React.FC = () => {
                       display: 'flex',
                       flexDirection: 'column',
                       flex: 1,
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        padding: 3,
+                      },
                     }}
                   >
                     {/* Icon Badge */}
@@ -200,7 +240,7 @@ const HostingOptionsSection: React.FC = () => {
                       sx={{
                         width: 64,
                         height: 64,
-                        borderRadius: 3,
+                        borderRadius: 4,
                         background: isDark 
                           ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.15) 0%, rgba(0, 155, 228, 0.05) 100%)'
                           : 'linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(37, 99, 235, 0.04) 100%)',
@@ -212,6 +252,11 @@ const HostingOptionsSection: React.FC = () => {
                           ? '1px solid rgba(0, 155, 228, 0.2)' 
                           : '1px solid rgba(37, 99, 235, 0.15)',
                         transition: 'all 0.3s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          width: 56,
+                          height: 56,
+                          mb: 2.5,
+                        },
                       }}
                     >
                       <Box sx={{ 
@@ -230,6 +275,9 @@ const HostingOptionsSection: React.FC = () => {
                         color: isDark ? '#fff' : '#0F172A',
                         mb: 2,
                         transition: 'color 0.3s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '1.35rem',
+                        },
                       }}
                     >
                       {option.title}
@@ -241,6 +289,9 @@ const HostingOptionsSection: React.FC = () => {
                         lineHeight: 1.7,
                         mb: 3,
                         transition: 'color 0.3s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '0.9rem',
+                        },
                       }}
                     >
                       {option.description}

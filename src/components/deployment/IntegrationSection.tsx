@@ -51,9 +51,27 @@ const IntegrationSection: React.FC = () => {
         width: '100%',
         py: { xs: 8, md: 12 },
         position: 'relative',
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 10,
+        },
+        '@media (min-width: 1550px)': {
+          py: 12,
+        },
       }}
     >
-      <Container maxWidth="lg">
+      <Container 
+        maxWidth="lg"
+        sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
         <Box ref={sectionRef}>
           <Typography
             variant="h2"
@@ -64,6 +82,9 @@ const IntegrationSection: React.FC = () => {
               mb: 2,
               textAlign: 'center',
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '2.6rem',
+              },
             }}
           >
             Comprehensive Integration Ecosystem
@@ -77,6 +98,11 @@ const IntegrationSection: React.FC = () => {
               maxWidth: 800,
               mx: 'auto',
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '1.05rem',
+                mb: 6,
+                maxWidth: 700,
+              },
             }}
           >
             Future-Ready Architecture: Built-in support for emerging third-party real-time databases and external applications ensures your investment remains valuable as technology evolves.
@@ -98,6 +124,9 @@ const IntegrationSection: React.FC = () => {
                   transform: 'translateY(50px)',
                   boxShadow: isDark ? 'none' : '0 8px 32px rgba(0, 0, 0, 0.08)',
                   transition: 'all 0.3s ease',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    padding: 3,
+                  },
                 }}
               >
                 <Typography
@@ -108,6 +137,10 @@ const IntegrationSection: React.FC = () => {
                     color: isDark ? '#009BE4' : '#2563EB',
                     mb: 4,
                     transition: 'color 0.3s ease',
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      fontSize: '1.65rem',
+                      mb: 3,
+                    },
                   }}
                 >
                   Data Sources
@@ -164,6 +197,9 @@ const IntegrationSection: React.FC = () => {
                   transform: 'translateY(50px)',
                   boxShadow: isDark ? 'none' : '0 8px 32px rgba(0, 0, 0, 0.08)',
                   transition: 'all 0.3s ease',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    padding: 3,
+                  },
                 }}
               >
                 <Typography
@@ -174,6 +210,10 @@ const IntegrationSection: React.FC = () => {
                     color: isDark ? '#009BE4' : '#2563EB',
                     mb: 4,
                     transition: 'color 0.3s ease',
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      fontSize: '1.65rem',
+                      mb: 3,
+                    },
                   }}
                 >
                   Data Outputs

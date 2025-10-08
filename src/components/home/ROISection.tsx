@@ -146,7 +146,7 @@ const ROISection: React.FC = () => {
                 <Box
                   sx={{
                     padding: 4,
-                    borderRadius: 4,
+                    borderRadius: '4px',
                     background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.9)',
                     border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)',
                     height: '100%',
@@ -166,7 +166,7 @@ const ROISection: React.FC = () => {
                     sx={{
                       width: 64,
                       height: 64,
-                      borderRadius: 3,
+                      borderRadius: '4px',
                       background: isDark ? 'rgba(0, 155, 228, 0.15)' : 'rgba(37, 99, 235, 0.12)',
                       display: 'flex',
                       alignItems: 'center',

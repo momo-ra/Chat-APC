@@ -36,7 +36,7 @@ const AuthButtons: React.FC = () => {
             color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
             fontSize: '0.875rem',
             fontWeight: 400,
-            borderRadius: 2,
+            borderRadius: '4px',
             textTransform: 'none',
             transition: 'all 0.2s ease',
             '&:hover': {
@@ -61,7 +61,7 @@ const AuthButtons: React.FC = () => {
             color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)',
             fontSize: '0.875rem',
             fontWeight: 400,
-            borderRadius: 2,
+            borderRadius: '4px',
             textTransform: 'none',
             transition: 'all 0.2s ease',
             '&:hover': {

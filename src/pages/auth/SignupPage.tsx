@@ -95,7 +95,7 @@ const SignupPage: React.FC = () => {
   const getTextFieldStyles = () => ({
     '& .MuiOutlinedInput-root': {
       background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-      borderRadius: 3,
+      borderRadius: '4px',
       '& fieldset': {
         border: isDark 
           ? '1px solid rgba(255, 255, 255, 0.1)'
@@ -219,7 +219,7 @@ const SignupPage: React.FC = () => {
               border: isDark 
                 ? '1px solid rgba(255, 255, 255, 0.1)'
                 : '1px solid rgba(0, 0, 0, 0.08)',
-              borderRadius: 4,
+              borderRadius: '4px',
               padding: { xs: 3, md: 4 },
               boxShadow: isDark 
                 ? '0 20px 60px rgba(0, 0, 0, 0.3)'
@@ -429,7 +429,7 @@ const SignupPage: React.FC = () => {
               sx={{
                 background: 'linear-gradient(135deg, #009BE4 0%, #0077B6 100%)',
                 color: '#fff',
-                borderRadius: 3,
+                borderRadius: '4px',
                 padding: '16px',
                 fontSize: '1.1rem',
                 fontWeight: 600,

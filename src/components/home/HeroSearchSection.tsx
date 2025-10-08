@@ -481,10 +481,10 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'scroll',
-          opacity: isDark ? 0.4 : 0.25,
+          opacity: isDark ? 0.4 : 0.15,
           filter: isDark 
             ? 'brightness(0.8) contrast(1.2) saturate(1.3)'
-            : 'brightness(1.1) contrast(0.9) saturate(0.8)',
+            : 'brightness(1.3) contrast(1.1) saturate(1.2)',
           zIndex: 0,
           transition: 'opacity 0.3s ease',
           transform: 'translateZ(0)',
@@ -500,7 +500,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
           bottom: 0,
           background: isDark 
             ? 'linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.75) 50%, rgba(51, 65, 85, 0.8) 100%)'
-            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 50%, rgba(241, 245, 249, 0.95) 100%)',
+            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(254, 254, 254, 0.95) 50%, rgba(252, 252, 252, 0.98) 100%)',
           zIndex: 1,
           pointerEvents: 'none',
         },
@@ -532,7 +532,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
           },
           '&::-webkit-scrollbar-thumb': {
             background: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
-            borderRadius: 3,
+            borderRadius: 4,
           },
         }}
       >
@@ -563,7 +563,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
               width: '50px',
               height: '2px',
               background: 'linear-gradient(90deg, #3B82F6 0%, #10B981 100%)',
-              borderRadius: '2px',
+              borderRadius: '4px',
             },
             transition: 'all 0.3s ease',
           }}
@@ -599,7 +599,9 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
           }}
         >
           <Box component="span" sx={{
-            background: 'linear-gradient(135deg, #2563EB 0%, #10B981 100%)',
+            background: isDark 
+              ? 'linear-gradient(135deg, #2563EB 0%, #10B981 100%)'
+              : 'linear-gradient(135deg, #1E40AF 0%, #059669 100%)',
             backgroundClip: 'text',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
@@ -632,7 +634,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
           display: 'flex',
           flexDirection: 'column',
           gap: { xs: 1.5, sm: 2, md: 2 },
-          height: { xs: '320px', sm: '350px', md: '380px', lg: '480px' }, // More responsive heights
+          height: { xs: '450px', sm: '350px', md: '380px', lg: '480px' }, // More responsive heights
           overflowY: 'auto',
           overflowX: 'hidden',
           scrollBehavior: 'smooth',
@@ -645,7 +647,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
           },
           '&::-webkit-scrollbar-thumb': {
             background: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
-            borderRadius: 3,
+            borderRadius: 4,
             '&:hover': {
               background: isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.25)',
             },
@@ -670,7 +672,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
               >
               <Box
                 sx={{
-                  maxWidth: '75%',
+                  maxWidth: '100%',
                   padding: { xs: '10px 12px', sm: '12px 14px', md: '14px 16px' },
                   borderRadius: '4px',
                   background: isDark 
@@ -818,7 +820,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
               // User message with avatar inside the box
               <Box
                 sx={{
-                  maxWidth: '75%',
+                  maxWidth: '100%',
                   padding: { xs: '10px 12px', sm: '12px 14px', md: '14px 16px' },
                   borderRadius: '4px',
                   background: isDark 
@@ -875,16 +877,16 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
           }}>
             <Box
               sx={{
-                maxWidth: '75%',
+                maxWidth: '100%',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 1,
+                gap: 0.5,
               }}
             >
               <Box
                 sx={{
-                  width: 8,
-                  height: 8,
+                  width: 6,
+                  height: 6,
                   borderRadius: '50%',
                   background: isDark ? '#009BE4' : '#2563EB',
                   animation: 'bounce 1.4s infinite ease-in-out',
@@ -897,8 +899,8 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
               />
               <Box
                 sx={{
-                  width: 8,
-                  height: 8,
+                  width: 6,
+                  height: 6,
                   borderRadius: '50%',
                   background: isDark ? '#009BE4' : '#2563EB',
                   animation: 'bounce 1.4s infinite ease-in-out',
@@ -911,8 +913,8 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
               />
               <Box
                 sx={{
-                  width: 8,
-                  height: 8,
+                  width: 6,
+                  height: 6,
                   borderRadius: '50%',
                   background: isDark ? '#009BE4' : '#2563EB',
                   animation: 'bounce 1.4s infinite ease-in-out',
@@ -926,8 +928,8 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({ questions }) => {
               <Typography sx={{ 
                 fontSize: { xs: '0.85rem', sm: '0.875rem' },
                 color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(15, 23, 42, 0.7)',
-                fontWeight: 500,
-                ml: 1
+                fontWeight: { xs: 400, sm: 500 },
+                ml: 0.5,
               }}>
                 {processingStages[currentStage]}
               </Typography>

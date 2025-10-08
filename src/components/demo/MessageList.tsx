@@ -33,7 +33,7 @@ const MessageList: React.FC<MessageListProps> = ({ messageList }) => {
               p: 2,
               mt: 1,
               backgroundColor: 'background.paper',
-              borderRadius: 2,
+              borderRadius: 4,
               border: 1,
               borderColor: 'divider'
             }}

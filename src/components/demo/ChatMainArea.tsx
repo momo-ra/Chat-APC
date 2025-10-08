@@ -369,13 +369,13 @@ const ChatMainArea: React.FC = () => {
             }}
             sx={{
               '& .MuiOutlinedInput-root': {
-                borderRadius: 1,
+                borderRadius: 4,
               }
             }}
           />
         </Paper>
 
-        {/* Messages Area - Modified for bottom-first layout */}
+        {/* Messages Area - Fixed layout to prevent input overlap */}
         <Box 
           ref={messagesContainerRef}
           sx={{ 
@@ -383,13 +383,19 @@ const ChatMainArea: React.FC = () => {
             overflow: 'auto',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'flex-end', // This pushes content to bottom
             p: 3,
-            minHeight: 0
+            minHeight: 0,
+            paddingBottom: 0 // Remove bottom padding to prevent overlap
           }}
         >
           {/* Messages container */}
-          <Box>
+          <Box sx={{ 
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+            minHeight: 0
+          }}>
             {/* Show initial greeting if no messages */}
             {(!activeChat.messages || activeChat.messages.length === 0) && (
               <InitialGreeting onSuggestionClick={handleSuggestionClick} />
@@ -443,7 +449,7 @@ const ChatMainArea: React.FC = () => {
                     backgroundColor: 'background.paper',
                     px: 2,
                     py: 1.5,
-                    borderRadius: 2,
+                    borderRadius: 4,
                     boxShadow: 1
                   }}>
                     <CircularProgress size={16} />
@@ -466,13 +472,14 @@ const ChatMainArea: React.FC = () => {
               elevation={3}
               sx={{
                 position: 'absolute',
-                bottom: 100,
-                left: '10%',
+                bottom: 120, // Increased from 100 to provide more space above input
+                left: '50%',
                 transform: 'translateX(-50%)',
                 width: '80%',
+                maxWidth: 400,
                 p: 2,
                 backgroundColor: '#e6f7fe',
-                borderRadius: 1,
+                borderRadius: 4,
                 zIndex: 10
               }}
             >
@@ -503,7 +510,17 @@ const ChatMainArea: React.FC = () => {
         )}
 
         {/* Input Area */}
-        <Box sx={{ p: 3, flexShrink: 0, backgroundColor: 'background.paper', borderTop: 1, borderColor: 'divider' }}>
+        <Box sx={{ 
+          p: 3, 
+          pt: 2, // Reduce top padding to prevent overlap
+          flexShrink: 0, 
+          backgroundColor: 'background.paper', 
+          borderTop: 1, 
+          borderColor: 'divider',
+          position: 'sticky',
+          bottom: 0,
+          zIndex: 1
+        }}>
           <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-end', maxWidth: '100%' }}>
             <Paper
               elevation={0}
@@ -513,7 +530,7 @@ const ChatMainArea: React.FC = () => {
                 alignItems: 'flex-end',
                 border: 1,
                 borderColor: 'divider',
-                borderRadius: 3,
+                borderRadius: 4,
                 p: 1.5,
                 backgroundColor: 'background.default',
                 '&:focus-within': {
@@ -559,7 +576,7 @@ const ChatMainArea: React.FC = () => {
                 height: 48,
                 backgroundColor: 'primary.main',
                 color: 'primary.contrastText',
-                borderRadius: 2,
+                borderRadius: 4,
                 '&:hover': {
                   backgroundColor: 'primary.dark',
                   transform: 'scale(1.05)'
@@ -598,7 +615,7 @@ const ChatMainArea: React.FC = () => {
           width: '100%',
           maxWidth: 700,
           p: 5,
-          borderRadius: 3,
+          borderRadius: 4,
           backgroundColor: 'background.paper',
           border: 1,
           borderColor: 'divider',
@@ -626,7 +643,7 @@ const ChatMainArea: React.FC = () => {
           }}
           sx={{
             '& .MuiOutlinedInput-root': {
-              borderRadius: 1,
+              borderRadius: 4,
             },
             mb: 4
           }}
@@ -700,7 +717,7 @@ const ChatMainArea: React.FC = () => {
               alignItems: 'flex-end',
               border: 1,
               borderColor: 'divider',
-              borderRadius: 2,
+              borderRadius: 4,
               p: 1
             }}
           >
@@ -822,7 +839,7 @@ const InitialGreeting: React.FC<InitialGreetingProps> = ({ onSuggestionClick }) 
                   sx={{
                     border: 1,
                     borderColor: 'divider',
-                    borderRadius: 1,
+                    borderRadius: 4,
                     py: 1,
                     '&:hover': {
                       backgroundColor: 'action.hover',
@@ -875,7 +892,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLast, onSugges
         <Box sx={{ 
           width: 32, 
           height: 32,
-          borderRadius: 2,
+          borderRadius: 4,
           backgroundColor: isUser ? 'primary.main' : 'none',
           display: 'flex',
           alignItems: 'center',
@@ -951,7 +968,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLast, onSugges
                 py: 1.5,
                 backgroundColor: 'background.paper',
                 color: 'text.primary',
-                borderRadius: 2,
+                borderRadius: 4,
                 boxShadow: 1,
                 borderTopRightRadius: isUser ? 0 : 16,
                 borderTopLeftRadius: isUser ? 16 : 0,

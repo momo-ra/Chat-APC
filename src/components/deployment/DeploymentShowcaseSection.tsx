@@ -52,10 +52,32 @@ const DeploymentShowcaseSection: React.FC = () => {
         py: { xs: 8, md: 12 },
         position: 'relative',
         overflow: 'hidden',
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 10,
+        },
+        '@media (min-width: 1550px)': {
+          py: 12,
+        },
       }}
     >
-      <Container maxWidth="lg">
-        <Grid container spacing={6} alignItems="center">
+      <Container 
+        maxWidth="lg"
+        sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
+        <Grid container spacing={6} alignItems="center" sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            spacing: 4,
+          },
+        }}>
           {/* Left side - Image Placeholder */}
           <Grid item xs={12} md={6}>
             <Box
@@ -108,6 +130,10 @@ const DeploymentShowcaseSection: React.FC = () => {
                 mb: 3,
                 lineHeight: 1.3,
                 transition: 'color 0.3s ease',
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                  fontSize: '2.2rem',
+                  mb: 2.5,
+                },
               }}
             >
               Proven at Scale
@@ -119,6 +145,10 @@ const DeploymentShowcaseSection: React.FC = () => {
                 lineHeight: 1.7,
                 mb: 5,
                 transition: 'color 0.3s ease',
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                  fontSize: '1.05rem',
+                  mb: 4,
+                },
               }}
             >
               Trusted by leading industrial companies worldwide to manage their most critical process operations with confidence and reliability.
@@ -138,12 +168,15 @@ const DeploymentShowcaseSection: React.FC = () => {
                       background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.95)',
                       backdropFilter: 'blur(10px)',
                       border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
-                      borderRadius: 3,
+                      borderRadius: 4,
                       padding: 3,
                       textAlign: 'center',
                       opacity: 0,
                       transition: 'all 0.3s ease',
                       boxShadow: isDark ? 'none' : '0 4px 20px rgba(0, 0, 0, 0.06)',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        padding: 2.5,
+                      },
                       '&:hover': {
                         borderColor: isDark ? 'rgba(0, 155, 228, 0.3)' : 'rgba(37, 99, 235, 0.3)',
                         transform: 'translateY(-4px)',
@@ -159,6 +192,9 @@ const DeploymentShowcaseSection: React.FC = () => {
                         mb: 1,
                         lineHeight: 1,
                         transition: 'color 0.3s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '2.2rem',
+                        },
                       }}
                     >
                       {stat.value}
@@ -169,6 +205,9 @@ const DeploymentShowcaseSection: React.FC = () => {
                         color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                         fontWeight: 500,
                         transition: 'color 0.3s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '0.85rem',
+                        },
                       }}
                     >
                       {stat.label}

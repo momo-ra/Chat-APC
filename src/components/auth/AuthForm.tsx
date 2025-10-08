@@ -69,7 +69,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, loading = false }) 
               flex: 1,
               '& .MuiOutlinedInput-root': {
                 background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: 3,
+                borderRadius: '4px',
                 '& fieldset': {
                   border: '1px solid rgba(255, 255, 255, 0.1)',
                 },
@@ -105,7 +105,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, loading = false }) 
               flex: 1,
               '& .MuiOutlinedInput-root': {
                 background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: 3,
+                borderRadius: '4px',
                 '& fieldset': {
                   border: '1px solid rgba(255, 255, 255, 0.1)',
                 },
@@ -139,7 +139,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, loading = false }) 
         sx={{
           '& .MuiOutlinedInput-root': {
             background: 'rgba(255, 255, 255, 0.05)',
-            borderRadius: 3,
+            borderRadius: '4px',
             '& fieldset': {
               border: '1px solid rgba(255, 255, 255, 0.1)',
             },
@@ -178,7 +178,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, loading = false }) 
         sx={{
           '& .MuiOutlinedInput-root': {
             background: 'rgba(255, 255, 255, 0.05)',
-            borderRadius: 3,
+            borderRadius: '4px',
             '& fieldset': {
               border: '1px solid rgba(255, 255, 255, 0.1)',
             },
@@ -229,7 +229,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, loading = false }) 
           sx={{
             '& .MuiOutlinedInput-root': {
               background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: 3,
+              borderRadius: '4px',
               '& fieldset': {
                 border: '1px solid rgba(255, 255, 255, 0.1)',
               },
@@ -277,7 +277,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, loading = false }) 
         sx={{
           background: 'linear-gradient(135deg, #009BE4 0%, #0077B6 100%)',
           color: '#fff',
-          borderRadius: 3,
+              borderRadius: '4px',
           padding: '16px',
           fontSize: '1.1rem',
           fontWeight: 600,

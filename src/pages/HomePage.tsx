@@ -16,8 +16,7 @@ import {
   ContactSection,
   LightFeatureSection,
   LightStatsSection,
-  InteractiveFeaturesSection,
-  FAQSection
+  InteractiveFeaturesSection
 } from '../components/home';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { heroQuestions, partnerCompanies } from '../data/home/chatHeroData';
@@ -43,18 +42,12 @@ const HomePage: React.FC = () => {
     
     const handleResize = () => {
       const width = window.innerWidth;
-      // Detect if we're on medium screen (960-1366px)
-      const isMedium = width >= 960 && width <= 1366;
+      // Detect if we're on medium screen (960-1549px)
+      const isMedium = width >= 960 && width <= 1549;
       setIsMediumScreen(isMedium);
       
-      // Sidebar is collapsed for screens between 960px and 1366px
-      if (isMedium) {
-        setSidebarCollapsed(true);
-      } else if (width > 1366) {
-        setSidebarCollapsed(false);
-      } else {
-        setSidebarCollapsed(true); // Mobile always collapsed
-      }
+      // Sidebar no longer auto-collapses - user controls it manually
+      // Keep sidebar state from localStorage or user interaction
     };
     
     const handleSidebarToggle = (event: CustomEvent) => {
@@ -91,7 +84,7 @@ const HomePage: React.FC = () => {
         height: 'auto',
         background: isDark 
           ? 'linear-gradient(to bottom, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
-          : 'linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
+          : 'linear-gradient(to bottom, #FFFFFF 0%, #FEFEFE 30%, #FCFCFC 70%, #FAFAFA 100%)',
         position: 'relative',
         overflow: 'visible',
         transition: 'background 0.3s ease',
@@ -105,6 +98,10 @@ const HomePage: React.FC = () => {
         sx={{
           width: '100%',
           height: 'auto',
+          maxWidth: '100vw',
+          overflow: 'hidden',
+          // Adjust margin for sidebar when expanded on larger screens
+          marginLeft: sidebarCollapsed ? 0 : (isMediumScreen ? 0 : 0),
           // No padding here - sections will handle their own margins
           transition: 'all 0.3s ease',
           position: 'relative',
@@ -118,9 +115,10 @@ const HomePage: React.FC = () => {
           sx={{
             position: 'relative',
             width: '100%',
+            maxWidth: '100vw',
             margin: 0,
             padding: 0,
-            overflow: 'visible',
+            overflow: 'hidden',
             height: 'auto',
           }}
         >
@@ -131,13 +129,14 @@ const HomePage: React.FC = () => {
         <HeroSearchSection questions={heroQuestions} />
       
         {/* Companies Slider - Fixed at Bottom */}
-        <CompanySlider companies={partnerCompanies} />
+        {/* <CompanySlider companies={partnerCompanies} /> */}
       </Box>
 
       {/* Content Sections - Below Hero */}
       <Box
         sx={{
           width: '100%',
+          maxWidth: '100vw',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -145,14 +144,14 @@ const HomePage: React.FC = () => {
           zIndex: 2,
           marginLeft: 0,
           paddingLeft: 0,
-          overflow: 'visible', // Prevent scroll interference
+          overflow: 'hidden', // Prevent horizontal overflow
         }}
       >
         {/* Examples Section */}
         <ExamplesSection />
 
         {/* Interactive Features Section - NEW */}
-        <InteractiveFeaturesSection />
+        {/* <InteractiveFeaturesSection /> */}
 
         {/* Light Feature Section - WHITE BACKGROUND */}
         <LightFeatureSection />
@@ -164,7 +163,7 @@ const HomePage: React.FC = () => {
         {/* <LightStatsSection /> */}
 
         {/* Full Width Image Section */}
-        <FullWidthImageSection />
+        {/* <FullWidthImageSection /> */}
 
         {/* ROI Section */}
         {/* <ROISection /> */}
@@ -181,8 +180,8 @@ const HomePage: React.FC = () => {
         {/* Alternating Feature Section - "Not just another AI tool" */}
         <AlternatingFeatureSection />
 
-        {/* FAQ Section */}
-        <FAQSection />
+        {/* FAQ Section - Moved to /resources/faq */}
+        {/* <FAQSection /> */}
 
         {/* Contact Section */}
         <ContactSection />

@@ -143,7 +143,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
               background: 'rgba(255, 255, 255, 0.03)',
               backdropFilter: 'blur(20px)',
               border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: 4,
+              borderRadius: '4px',
               padding: { xs: 3, md: 4 },
               boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
             }}

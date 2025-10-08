@@ -58,9 +58,27 @@ const ScalableArchitectureSection: React.FC = () => {
         py: { xs: 8, md: 12 },
         position: 'relative',
         transition: 'background 0.3s ease',
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 10,
+        },
+        '@media (min-width: 1550px)': {
+          py: 12,
+        },
       }}
     >
-      <Container maxWidth="lg">
+      <Container 
+        maxWidth="lg"
+        sx={{
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '950px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '1200px',
+            px: 3,
+          },
+        }}
+      >
         <Box ref={sectionRef}>
           <Typography
             variant="h2"
@@ -71,6 +89,9 @@ const ScalableArchitectureSection: React.FC = () => {
               mb: 2,
               textAlign: 'center',
               transition: 'color 0.3s ease',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '2.6rem',
+              },
             }}
           >
             Scalable Architecture for Growth
@@ -84,6 +105,11 @@ const ScalableArchitectureSection: React.FC = () => {
               transition: 'color 0.3s ease',
               maxWidth: 800,
               mx: 'auto',
+              '@media (min-width: 960px) and (max-width: 1549px)': {
+                fontSize: '1.05rem',
+                mb: 6,
+                maxWidth: 700,
+              },
             }}
           >
             Performance engineered for high-speed, real-time data streams processing thousands of tags per second without compromising system responsiveness or data integrity.
@@ -107,6 +133,9 @@ const ScalableArchitectureSection: React.FC = () => {
                     transform: 'scale(0.9)',
                     transition: 'all 0.3s ease',
                     boxShadow: isDark ? 'none' : '0 8px 32px rgba(0, 0, 0, 0.08)',
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      padding: 3,
+                    },
                     '&:hover': {
                       transform: 'translateY(-8px)',
                       borderColor: isDark ? 'rgba(0, 155, 228, 0.3)' : 'rgba(37, 99, 235, 0.3)',
@@ -121,6 +150,9 @@ const ScalableArchitectureSection: React.FC = () => {
                       fontWeight: 700,
                       color: isDark ? 'rgba(0, 155, 228, 0.1)' : 'rgba(37, 99, 235, 0.08)',
                       lineHeight: 1,
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '3.5rem',
+                      },
                     },
                   }}
                 >
@@ -132,6 +164,9 @@ const ScalableArchitectureSection: React.FC = () => {
                       color: isDark ? '#009BE4' : '#2563EB',
                       mb: 2,
                       transition: 'color 0.3s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '1.35rem',
+                      },
                     }}
                   >
                     {step.title}
@@ -142,6 +177,9 @@ const ScalableArchitectureSection: React.FC = () => {
                       color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
                       lineHeight: 1.7,
                       transition: 'color 0.3s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '0.95rem',
+                      },
                     }}
                   >
                     {step.description}

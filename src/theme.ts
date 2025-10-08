@@ -16,12 +16,12 @@ export const theme = createTheme({
       contrastText: '#FFFFFF',
     },
     background: {
-      default: '#F8FAFC', // Light gray background
+      default: '#FFFFFF', // Pure white background
       paper: '#FFFFFF',
     },
     text: {
-      primary: '#1E293B',
-      secondary: '#64748B',
+      primary: '#0F172A', // Darker text for better contrast
+      secondary: '#475569', // Better secondary text color
     },
     action: {
       hover: '#F1F5F9',
@@ -85,7 +85,7 @@ export const theme = createTheme({
     },
   },
   shape: {
-    borderRadius: 8,
+    borderRadius: 4,
   },
   components: {
     MuiButton: {
@@ -93,7 +93,7 @@ export const theme = createTheme({
         root: {
           textTransform: 'none',
           fontWeight: 600,
-          borderRadius: 8,
+          borderRadius: 4,
           padding: '12px 24px',
           boxShadow: 'none',
           '&:hover': {
@@ -120,7 +120,7 @@ export const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
+          borderRadius: 4,
           boxShadow: '0 4px 12px rgba(37, 99, 235, 0.1)',
           border: '1px solid rgba(37, 99, 235, 0.08)',
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -134,7 +134,7 @@ export const theme = createTheme({
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: 20,
+          borderRadius: 4,
           fontWeight: 500,
         },
       },
@@ -143,7 +143,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            borderRadius: 8,
+            borderRadius: 4,
             '&:hover .MuiOutlinedInput-notchedOutline': {
               borderColor: '#2563EB',
             },
@@ -158,7 +158,7 @@ export const theme = createTheme({
     MuiSelect: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          borderRadius: 4,
         },
       },
     },

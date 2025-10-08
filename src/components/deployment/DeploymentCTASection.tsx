@@ -19,9 +19,28 @@ const DeploymentCTASection: React.FC = () => {
           : 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(99, 102, 241, 0.04) 100%)',
         py: { xs: 8, md: 12 },
         transition: 'background 0.3s ease',
+        '@media (min-width: 960px) and (max-width: 1549px)': {
+          py: 10,
+        },
+        '@media (min-width: 1550px)': {
+          py: 12,
+        },
       }}
     >
-      <Container maxWidth="md" sx={{ textAlign: 'center' }}>
+      <Container 
+        maxWidth="md" 
+        sx={{ 
+          textAlign: 'center',
+          '@media (min-width: 960px) and (max-width: 1549px)': {
+            maxWidth: '850px',
+            px: 2.5,
+          },
+          '@media (min-width: 1550px)': {
+            maxWidth: '960px',
+            px: 3,
+          },
+        }}
+      >
         <Typography
           sx={{
             fontSize: { xs: '1.3rem', md: '1.6rem' },
@@ -30,6 +49,10 @@ const DeploymentCTASection: React.FC = () => {
             lineHeight: 1.7,
             mb: 5,
             transition: 'color 0.3s ease',
+            '@media (min-width: 960px) and (max-width: 1549px)': {
+              fontSize: '1.45rem',
+              mb: 4,
+            },
           }}
         >
           ChatAPC deployment is lightweight, secure, and adaptable — engineered to integrate seamlessly into your existing infrastructure while providing the advanced analytics capabilities your operations need to thrive in an increasingly competitive market.
@@ -45,12 +68,16 @@ const DeploymentCTASection: React.FC = () => {
             padding: '16px 48px',
             fontSize: '1.1rem',
             fontWeight: 600,
-            borderRadius: 3,
+            borderRadius: 4,
             textTransform: 'none',
             boxShadow: isDark 
               ? '0 8px 24px rgba(0, 155, 228, 0.3)'
               : '0 8px 24px rgba(37, 99, 235, 0.3)',
             transition: 'all 0.3s ease',
+            '@media (min-width: 960px) and (max-width: 1549px)': {
+              fontSize: '1.05rem',
+              padding: '14px 42px',
+            },
             '&:hover': {
               transform: 'translateY(-2px)',
               boxShadow: isDark 
