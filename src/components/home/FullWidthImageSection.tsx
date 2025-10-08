@@ -13,32 +13,20 @@ const FullWidthImageSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Image parallax effect
-      if (imageRef.current) {
-        gsap.to(imageRef.current, {
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.5,
-          },
-          y: -80,
-          ease: 'none',
-        });
-      }
-
-      // Overlay text animation
+      // Remove parallax for better scroll performance
+      
+      // Simplified overlay text animation
       if (overlayTextRef.current) {
         gsap.from(overlayTextRef.current, {
           scrollTrigger: {
             trigger: overlayTextRef.current,
-            start: 'top 80%',
+            start: 'top 75%',
             toggleActions: 'play none none none',
           },
-          y: 60,
+          y: 20,
           opacity: 0,
-          duration: 1.2,
-          ease: 'power3.out',
+          duration: 0.6,
+          ease: 'power2.out',
         });
       }
     }, sectionRef);

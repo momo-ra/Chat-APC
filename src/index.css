@@ -1,11 +1,24 @@
-/* ChatAPC Industrial Design System - MUI Global Styles */
+/* ChatAPC Industrial Design System - CLEAN VERSION */
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: auto !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  height: 100% !important;
 }
 
 body {
-  margin: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
   font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -13,7 +26,23 @@ body {
   color: #1E293B;
 }
 
-/* Custom utility classes for specific styling needs */
+#root {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow: visible !important;
+}
+
+/* Disable ALL scroll snap and containment */
+* {
+  scroll-snap-type: none !important;
+  scroll-snap-align: none !important;
+  scroll-snap-stop: normal !important;
+  contain: none !important;
+  content-visibility: visible !important;
+}
+
+/* Custom utility classes */
 .hero-gradient {
   background: linear-gradient(135deg, #2563EB 0%, #10B981 100%);
 }
@@ -81,4 +110,93 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* SplashScreen animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float-alt {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-20px) translateX(10px);
+  }
+}
+
+@keyframes ambient-glow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes dot-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.7s ease-in-out;
+}
+
+.animate-fade-out {
+  animation: fade-out 0.7s ease-in-out;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-alt {
+  animation: float-alt 6s ease-in-out infinite;
+}
+
+.animate-ambient-glow {
+  animation: ambient-glow 8s ease-in-out infinite;
+}
+
+.animate-dot-pulse {
+  animation: dot-pulse 1.4s ease-in-out infinite;
 }

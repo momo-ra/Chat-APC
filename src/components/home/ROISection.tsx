@@ -36,7 +36,7 @@ const ROISection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Animate header - rises from below
+      // Simplified animations for better performance
       if (headerRef.current) {
         gsap.from(headerRef.current, {
           scrollTrigger: {
@@ -44,14 +44,14 @@ const ROISection: React.FC = () => {
             start: 'top 85%',
             toggleActions: 'play none none none',
           },
-          y: 80,
+          y: 40,
           opacity: 0,
-          duration: 1,
-          ease: 'power3.out',
+          duration: 0.8,
+          ease: 'power2.out',
         });
       }
 
-      // Animate cards with rotation and scale
+      // Simplified card animations
       cardsRef.current.forEach((card, index) => {
         if (card) {
           gsap.from(card, {
@@ -61,29 +61,15 @@ const ROISection: React.FC = () => {
               toggleActions: 'play none none none',
             },
             opacity: 0,
-            scale: 0.9,
-            y: 60,
-            rotationX: -15,
-            duration: 0.9,
-            delay: index * 0.15,
-            ease: 'power3.out',
+            y: 30,
+            duration: 0.6,
+            delay: index * 0.1,
+            ease: 'power2.out',
           });
         }
       });
 
-      // Parallax for background
-      if (sectionRef.current) {
-        gsap.to(sectionRef.current, {
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.5,
-          },
-          y: -30,
-          ease: 'none',
-        });
-      }
+      // Remove heavy parallax for better scroll performance
     }, sectionRef);
 
     return () => ctx.revert();

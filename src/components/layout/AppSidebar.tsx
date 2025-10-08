@@ -20,10 +20,11 @@ import ChevronRight from '@mui/icons-material/ChevronRight';
 import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
+import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { SidebarItem } from '../../data/layout/sidebarData';
-import chatAPCLogo from '../../assets/chatAPC-logo-light-mode.png';
-import chatAPCLogoDark from '../../assets/chatAPC-logo.png';
+import chatAPCLogo from '../../assets/chatAPC-logo-light-mode.svg';
+import chatAPCLogoDark from '../../assets/chatAPC-logo.svg';
 
 interface AppSidebarProps {
   items: SidebarItem[];
@@ -40,6 +41,43 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isLightMode, setIsLightMode] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMediumScreen, setIsMediumScreen] = useState(false);
+  
+  // Detect if we're on medium screen
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const width = window.innerWidth;
+      setIsMediumScreen(width >= 960 && width <= 1366);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+  
+  // Auto-collapse for medium screens (1024-1280px)
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      // Auto-collapse for screens between 960px and 1366px (tablets and small laptops)
+      if (width >= 960 && width <= 1366) {
+        const newState = true;
+        setIsCollapsed(newState);
+        localStorage.setItem('sidebarCollapsed', String(newState));
+        window.dispatchEvent(new CustomEvent('sidebarToggle', { detail: { collapsed: newState } }));
+      } else if (width > 1366) {
+        const newState = false;
+        setIsCollapsed(newState);
+        localStorage.setItem('sidebarCollapsed', String(newState));
+        window.dispatchEvent(new CustomEvent('sidebarToggle', { detail: { collapsed: newState } }));
+      }
+    };
+    
+    handleResize(); // Initial check
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const [sectionColors, setSectionColors] = useState({
     primary: '#009BE4',
     text: 'rgba(255, 255, 255, 0.85)',
@@ -49,66 +87,115 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
   });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const { isDark: isSystemDark, toggleTheme } = useThemeMode();
+  const { isDark: isSystemDark, preference, setPreference } = useThemeMode();
   
   const collapsedWidth = 0;
   const expandedWidth = width;
 
-  // Detect section colors dynamically based on scroll position
+  // Detect scroll position for mobile header - Optimized
   useEffect(() => {
+    let ticking = false;
+    const handleHeaderScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 10);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    handleHeaderScroll(); // Initial check
+    window.addEventListener('scroll', handleHeaderScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleHeaderScroll);
+  }, []);
+
+  // Detect section colors dynamically based on scroll position - Optimized with throttling
+  useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      // Get all sections with data-section-theme attribute
-      const sections = document.querySelectorAll('[data-section-theme]');
-      const sidebarRect = { top: 0, bottom: window.innerHeight, height: window.innerHeight };
-      
-      let maxOverlap = 0;
-      let dominantSection: Element | null = null;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          // Get all sections with data-section-theme attribute
+          const sections = document.querySelectorAll('[data-section-theme]');
+          const sidebarRect = { top: 0, bottom: window.innerHeight, height: window.innerHeight };
+          
+          let maxOverlap = 0;
+          let dominantSection: Element | null = null;
 
-      sections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        
-        // Calculate overlap between sidebar area and section
-        const overlapTop = Math.max(sidebarRect.top, rect.top);
-        const overlapBottom = Math.min(sidebarRect.bottom, rect.bottom);
-        const overlapHeight = Math.max(0, overlapBottom - overlapTop);
-        
-        if (overlapHeight > maxOverlap) {
-          maxOverlap = overlapHeight;
-          dominantSection = section;
-        }
-      });
+          sections.forEach((section) => {
+            const rect = section.getBoundingClientRect();
+            
+            // Calculate overlap between sidebar area and section
+            const overlapTop = Math.max(sidebarRect.top, rect.top);
+            const overlapBottom = Math.min(sidebarRect.bottom, rect.bottom);
+            const overlapHeight = Math.max(0, overlapBottom - overlapTop);
+            
+            if (overlapHeight > maxOverlap) {
+              maxOverlap = overlapHeight;
+              dominantSection = section;
+            }
+          });
 
-      if (dominantSection) {
-        const theme = dominantSection.getAttribute('data-section-theme');
-        const primaryColor = dominantSection.getAttribute('data-section-primary') || '#009BE4';
-        const textColor = dominantSection.getAttribute('data-section-text');
-        
-        // Set light/dark mode
-        setIsLightMode(theme === 'light');
-        
-        // Set dynamic colors based on section
-        if (theme === 'light') {
-          setSectionColors({
-            primary: primaryColor,
-            text: textColor || 'rgba(0, 0, 0, 0.8)',
-            textSecondary: 'rgba(0, 0, 0, 0.6)',
-            border: 'rgba(0, 0, 0, 0.1)',
-            hover: 'rgba(0, 0, 0, 0.05)',
-          });
-        } else {
-          setSectionColors({
-            primary: primaryColor,
-            text: textColor || 'rgba(255, 255, 255, 0.85)',
-            textSecondary: 'rgba(255, 255, 255, 0.6)',
-            border: 'rgba(255, 255, 255, 0.1)',
-            hover: 'rgba(255, 255, 255, 0.05)',
-          });
-        }
+          if (dominantSection) {
+            const theme = dominantSection.getAttribute('data-section-theme');
+            const primaryColor = dominantSection.getAttribute('data-section-primary') || '#009BE4';
+            const textColor = dominantSection.getAttribute('data-section-text');
+            
+            // Set light/dark mode
+            setIsLightMode(theme === 'light');
+            
+            // Set dynamic colors based on section
+            if (theme === 'light') {
+              setSectionColors({
+                primary: primaryColor,
+                text: textColor || 'rgba(0, 0, 0, 0.8)',
+                textSecondary: 'rgba(0, 0, 0, 0.6)',
+                border: 'rgba(0, 0, 0, 0.1)',
+                hover: 'rgba(0, 0, 0, 0.05)',
+              });
+            } else {
+              setSectionColors({
+                primary: primaryColor,
+                text: textColor || 'rgba(255, 255, 255, 0.85)',
+                textSecondary: 'rgba(255, 255, 255, 0.6)',
+                border: 'rgba(255, 255, 255, 0.1)',
+                hover: 'rgba(255, 255, 255, 0.05)',
+              });
+            }
+          } else {
+            // No section detected - fallback to global theme preference
+            setIsLightMode(!isSystemDark);
+            
+            if (!isSystemDark) {
+              // Light mode
+              setSectionColors({
+                primary: '#2563EB',
+                text: 'rgba(0, 0, 0, 0.8)',
+                textSecondary: 'rgba(0, 0, 0, 0.6)',
+                border: 'rgba(0, 0, 0, 0.1)',
+                hover: 'rgba(0, 0, 0, 0.05)',
+              });
+            } else {
+              // Dark mode
+              setSectionColors({
+                primary: '#009BE4',
+                text: 'rgba(255, 255, 255, 0.85)',
+                textSecondary: 'rgba(255, 255, 255, 0.6)',
+                border: 'rgba(255, 255, 255, 0.1)',
+                hover: 'rgba(255, 255, 255, 0.05)',
+              });
+            }
+          }
+          
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
     handleScroll(); // Initial check
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isSystemDark]); // Re-run when theme changes
 
@@ -175,7 +262,12 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
   };
 
   const handleToggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    // Store in localStorage to sync with HomePage
+    localStorage.setItem('sidebarCollapsed', String(newState));
+    // Dispatch custom event to notify HomePage
+    window.dispatchEvent(new CustomEvent('sidebarToggle', { detail: { collapsed: newState } }));
   };
 
   const drawer = (
@@ -195,9 +287,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '12px 16px',
-              borderBottom: isSystemDark 
-                ? '1px solid rgba(255, 255, 255, 0.1)'
-                : '1px solid rgba(0, 0, 0, 0.1)',
+              borderBottom: 'none',
               backgroundColor: isSystemDark 
                 ? 'rgba(10, 14, 46, 0.98)'
                 : 'rgba(248, 250, 252, 0.98)',
@@ -232,9 +322,22 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
             {/* Right Side: Theme Toggle & Close Button */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {/* Theme Toggle Button */}
-              <Tooltip title={isSystemDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
+              <Tooltip title={
+                preference === 'light' ? 'Switch to Dark Mode' :
+                preference === 'dark' ? 'Switch to System' :
+                'Switch to Light Mode'
+              }>
                 <IconButton
-                  onClick={toggleTheme}
+                  onClick={() => {
+                    // Cycle: light → dark → system
+                    if (preference === 'light') {
+                      setPreference('dark');
+                    } else if (preference === 'dark') {
+                      setPreference('system');
+                    } else {
+                      setPreference('light');
+                    }
+                  }}
                   sx={{
                     color: isSystemDark 
                       ? 'rgba(255, 255, 255, 0.8)' 
@@ -251,7 +354,9 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                     },
                   }}
                 >
-                  {isSystemDark ? (
+                  {preference === 'system' ? (
+                    <SettingsBrightnessIcon sx={{ fontSize: 20, color: '#9333EA' }} />
+                  ) : isSystemDark ? (
                     <LightModeIcon sx={{ fontSize: 20, color: '#FDB813' }} />
                   ) : (
                     <DarkModeIcon sx={{ fontSize: 20, color: '#475569' }} />
@@ -345,7 +450,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                 mb: 3,
                 pb: 2,
                 borderBottom: isMobile 
-                  ? (isSystemDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)')
+                  ? 'none'
                   : (isLightMode 
                     ? '1px solid rgba(0, 0, 0, 0.1)' 
                     : '1px solid rgba(255, 255, 255, 0.1)'),
@@ -508,9 +613,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
             left: 0,
             right: 0,
             padding: 3,
-            borderTop: isSystemDark 
-              ? '1px solid rgba(255, 255, 255, 0.1)'
-              : '1px solid rgba(0, 0, 0, 0.1)',
+            borderTop: 'none',
             backgroundColor: isSystemDark 
               ? 'rgba(10, 14, 46, 0.98)'
               : 'rgba(248, 250, 252, 0.98)',
@@ -645,19 +748,27 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
             top: 0,
             left: 0,
             right: 0,
-            zIndex: 1300,
-            display: 'flex',
+            zIndex: 1350,
+            display: { xs: 'flex', md: 'none' },
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '12px 16px',
-            backgroundColor: isLightMode 
-              ? 'rgba(255, 255, 255, 0.95)' 
-              : 'rgba(10, 14, 46, 0.95)',
-            backdropFilter: 'blur(12px)',
-            borderBottom: isLightMode 
-              ? '1px solid rgba(0, 0, 0, 0.08)' 
-              : '1px solid rgba(255, 255, 255, 0.08)',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+            boxSizing: 'border-box',
+            maxWidth: '100vw',
+            backgroundColor: isScrolled
+              ? (isSystemDark
+                  ? 'rgba(10, 14, 46, 0.95)' 
+                  : 'rgba(255, 255, 255, 0.95)')
+              : (isSystemDark
+                  ? 'rgba(10, 14, 46, 0)'
+                  : 'rgba(255, 255, 255, 0)'),
+            backdropFilter: isScrolled ? 'blur(12px)' : 'none',
+            borderBottom: isScrolled
+              ? (isSystemDark
+                  ? '1px solid rgba(255, 255, 255, 0.08)' 
+                  : '1px solid rgba(0, 0, 0, 0.08)')
+              : 'none',
+            boxShadow: isScrolled ? '0 2px 8px rgba(0, 0, 0, 0.08)' : 'none',
             transition: 'all 0.3s ease',
           }}
         >
@@ -676,13 +787,13 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
           >
             <Box
               component="img"
-              src={isLightMode ? chatAPCLogoDark : chatAPCLogo}
+              src={isSystemDark ? chatAPCLogo : chatAPCLogoDark}
               alt="ChatAPC Logo"
               sx={{
                 height: '32px',
                 width: 'auto',
                 objectFit: 'contain',
-                filter: isLightMode ? 'none' : 'brightness(1.1)',
+                filter: isSystemDark ? 'brightness(1.1)' : 'none',
                 transition: 'all 0.3s ease',
               }}
             />
@@ -692,14 +803,14 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
           <IconButton
             onClick={handleDrawerToggle}
             sx={{
-              color: isLightMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.8)',
+              color: isSystemDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
               padding: '8px',
               transition: 'all 0.3s ease',
               '&:hover': {
-                backgroundColor: isLightMode 
-                  ? 'rgba(0, 0, 0, 0.05)' 
-                  : 'rgba(255, 255, 255, 0.1)',
-                color: isLightMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 1)',
+                backgroundColor: isSystemDark
+                  ? 'rgba(255, 255, 255, 0.1)'
+                  : 'rgba(0, 0, 0, 0.05)',
+                color: isSystemDark ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 0.9)',
               },
             }}
           >
@@ -719,6 +830,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
             '& .MuiDrawer-paper': {
               width: isCollapsed ? collapsedWidth : expandedWidth,
               boxSizing: 'border-box',
+              // Always transparent - let section background show through
               backgroundColor: 'transparent',
               borderRight: 'none',
               transition: 'width 0.3s ease',
@@ -738,8 +850,18 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
           onClose={handleDrawerToggle}
           ModalProps={{
             keepMounted: true, // Better mobile performance
+            BackdropProps: {
+              sx: {
+                backgroundColor: isSystemDark 
+                  ? 'rgba(0, 0, 0, 0.7)'
+                  : 'rgba(0, 0, 0, 0.5)',
+                backdropFilter: 'blur(8px)',
+              },
+            },
           }}
           sx={{
+            display: { xs: 'block', md: 'none' },
+            zIndex: 1400,
             '& .MuiDrawer-paper': {
               width: 260,
               boxSizing: 'border-box',
@@ -752,6 +874,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 200 }) => {
                 ? '-4px 0 24px rgba(0, 0, 0, 0.3)'
                 : '-4px 0 24px rgba(0, 0, 0, 0.12)',
               transition: 'all 0.3s ease',
+              zIndex: 1400,
             },
           }}
         >

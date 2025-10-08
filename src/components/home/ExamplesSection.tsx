@@ -7,28 +7,9 @@ import industrialAI from '../../assets/hero-industrial-ai.jpg';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const examples = [
-  {
-    question: '"Why isn\'t feed increasing?"',
-    answer: 'TI100 is maxed out at 285°C — it\'s your bottleneck right now. Last increased 40 minutes ago when pressure spiked.',
-  },
-  {
-    question: '"What happened last shift?"',
-    answer: 'Feed dropped at 02:15 when the controller went off due to a compressor vibration alarm. Operator switched to manual and ran 15% below target for 3 hours.',
-  },
-  {
-    question: '"Which limits are cutting profit?"',
-    answer: 'Column P is active 89% of the time, costing ~$4K/day. Cooler duty hits limits during hot afternoons — another $1.8K/day opportunity.',
-  },
-  {
-    question: '"What if I increase reflux by 5%?"',
-    answer: 'Product purity improves by 0.2%, but reboiler duty goes up 1.5% and column flooding risk increases to 12%. Net margin impact: +$340/day if you stay below 78% flooding.',
-  },
-];
 
 const ExamplesSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement[]>([]);
   const imageRef = useRef<HTMLDivElement>(null);
   const { isDark } = useThemeMode();
 
@@ -39,60 +20,26 @@ const ExamplesSection: React.FC = () => {
         gsap.from(imageRef.current, {
           scrollTrigger: {
             trigger: imageRef.current,
-            start: 'top 80%',
+            start: 'top 75%',
             toggleActions: 'play none none none',
           },
-          scale: 0.9,
+          scale: 0.95,
           opacity: 0,
-          duration: 1.2,
+          duration: 0.8,
           ease: 'power3.out',
         });
 
-        // Image parallax effect
-        gsap.to(imageRef.current, {
-          scrollTrigger: {
-            trigger: imageRef.current,
-            start: 'top 70%',
-            end: 'bottom top',
-            scrub: 1.5,
-          },
-          y: -40,
-          ease: 'none',
-        });
-      }
-
-      // Animate cards with alternating directions
-      cardsRef.current.forEach((card, index) => {
-        if (card) {
-          const isEven = index % 2 === 0;
-          gsap.from(card, {
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 80%',
-              toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            x: isEven ? -60 : 60,
-            y: 40,
-            duration: 0.8,
-            delay: index * 0.1,
-            ease: 'power3.out',
-          });
-        }
-      });
-
-      // Parallax effect for section
-      if (sectionRef.current) {
-        gsap.to(sectionRef.current, {
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1,
-          },
-          y: -50,
-          ease: 'none',
-        });
+        // Parallax effect disabled to prevent scroll lag
+        // gsap.to(imageRef.current, {
+        //   scrollTrigger: {
+        //     trigger: sectionRef.current,
+        //     start: 'top bottom',
+        //     end: 'bottom top',
+        //     scrub: 0.5,
+        //   },
+        //   y: -30,
+        //   ease: 'none',
+        // });
       }
     }, sectionRef);
 
@@ -137,7 +84,7 @@ const ExamplesSection: React.FC = () => {
               transition: 'color 0.3s ease',
             }}
           >
-            Instant answers to your everyday questions
+            This is ChatAPC in action.
           </Typography>
           <Typography
             sx={{
@@ -148,18 +95,18 @@ const ExamplesSection: React.FC = () => {
               transition: 'color 0.3s ease',
             }}
           >
-            No more hunting through trends, alarms, and reports. Just ask and get clear explanations — in seconds.
+            Real conversation. Real plant data. Here's how ChatAPC helps engineers understand what's happening — in plain language.
           </Typography>
         </Box>
 
-        {/* Image with overlay */}
+        {/* Video Demo Container */}
         <Box
           ref={imageRef}
           sx={{
             position: 'relative',
             width: '100%',
-            maxWidth: 900,
-            height: { xs: 200, md: 300 },
+            maxWidth: 1200,
+            height: { xs: 300, md: 500, lg: 600 },
             mx: 'auto',
             mb: 10,
             borderRadius: 4,
@@ -173,7 +120,7 @@ const ExamplesSection: React.FC = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'linear-gradient(135deg, rgba(0, 155, 228, 0.3) 0%, rgba(10, 14, 46, 0.6) 100%)',
+              background: 'linear-gradient(135deg, rgba(0, 155, 228, 0.1) 0%, rgba(10, 14, 46, 0.3) 100%)',
               pointerEvents: 'none',
             },
           }}
@@ -181,7 +128,7 @@ const ExamplesSection: React.FC = () => {
           <Box
             component="img"
             src={industrialAI}
-            alt="Industrial AI Control System"
+            alt="ChatAPC Demo Video"
             sx={{
               width: '100%',
               height: '100%',
@@ -190,105 +137,7 @@ const ExamplesSection: React.FC = () => {
           />
         </Box>
 
-        {/* Examples Grid */}
-        <Grid container spacing={4} sx={{ mb: 6 }}>
-          {examples.map((example, index) => (
-            <Grid
-              item
-              xs={12}
-              md={6}
-              key={index}
-              ref={(el) => {
-                if (el) cardsRef.current[index] = el as HTMLDivElement;
-              }}
-            >
-              <Box
-                sx={{
-                  padding: 4,
-                  borderRadius: 3,
-                  background: isDark 
-                    ? 'rgba(255, 255, 255, 0.02)' 
-                    : 'rgba(255, 255, 255, 0.7)',
-                  border: isDark 
-                    ? '1px solid rgba(255, 255, 255, 0.06)' 
-                    : '1px solid rgba(0, 0, 0, 0.08)',
-                  height: '100%',
-                  transition: 'all 0.3s ease',
-                  backdropFilter: 'blur(10px)',
-                  boxShadow: isDark 
-                    ? 'none' 
-                    : '0 4px 20px rgba(0, 0, 0, 0.06)',
-                  '&:hover': {
-                    background: isDark 
-                      ? 'rgba(255, 255, 255, 0.04)' 
-                      : 'rgba(255, 255, 255, 0.95)',
-                    border: isDark 
-                      ? '1px solid rgba(0, 155, 228, 0.15)' 
-                      : '1px solid rgba(37, 99, 235, 0.2)',
-                    transform: 'translateY(-4px)',
-                    boxShadow: isDark 
-                      ? 'none' 
-                      : '0 8px 32px rgba(37, 99, 235, 0.15)',
-                  },
-                }}
-              >
-                {/* Question */}
-                <Typography
-                  sx={{
-                    fontSize: { xs: '1.1rem', md: '1.25rem' },
-                    fontWeight: 600,
-                    color: isDark ? '#009BE4' : '#2563EB',
-                    mb: 2,
-                    lineHeight: 1.4,
-                    transition: 'color 0.3s ease',
-                  }}
-                >
-                  {example.question}
-                </Typography>
 
-                {/* Answer */}
-                <Typography
-                  sx={{
-                    fontSize: '1rem',
-                    color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)',
-                    lineHeight: 1.7,
-                    transition: 'color 0.3s ease',
-                  }}
-                >
-                  {example.answer}
-                </Typography>
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
-
-        {/* CTA Button */}
-        <Box sx={{ textAlign: 'center' }}>
-          <Button
-            variant="outlined"
-            sx={{
-              border: isDark 
-                ? '1px solid rgba(0, 155, 228, 0.3)' 
-                : '1px solid rgba(37, 99, 235, 0.3)',
-              color: isDark ? '#009BE4' : '#2563EB',
-              borderRadius: 3,
-              padding: '14px 36px',
-              fontSize: '1rem',
-              fontWeight: 500,
-              textTransform: 'none',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                borderColor: isDark ? '#009BE4' : '#2563EB',
-                background: isDark 
-                  ? 'rgba(0, 155, 228, 0.08)' 
-                  : 'rgba(37, 99, 235, 0.08)',
-                transform: 'translateY(-2px)',
-              },
-            }}
-          >
-            See more example questions →
-          </Button>
-        </Box>
       </Container>
     </Box>
   );

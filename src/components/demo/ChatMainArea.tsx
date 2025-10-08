@@ -142,9 +142,9 @@ const ChatMainArea: React.FC = () => {
     );
   }, [activeChat, searchQuery]);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive - Optimized
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' }); // Changed from 'smooth' for better performance
   };
 
   useEffect(() => {
@@ -426,7 +426,7 @@ const ChatMainArea: React.FC = () => {
                     flexShrink: 0
                   }}>
                     <img 
-                      src="/src/assets/chatAPC-logo.png" 
+                      src="/src/assets/chatAPC-logo.svg" 
                       alt="ChatAPC Logo" 
                       style={{ 
                         width: '20px', 
@@ -641,7 +641,7 @@ const ChatMainArea: React.FC = () => {
             overflow: 'hidden'
           }}>
             <img 
-              src="/src/assets/chatAPC-logo.png" 
+              src="/src/assets/chatAPC-logo.svg" 
               alt="ChatAPC Logo" 
               style={{ 
                 width: '100%', 
@@ -795,7 +795,7 @@ const InitialGreeting: React.FC<InitialGreetingProps> = ({ onSuggestionClick }) 
           flexShrink: 0
         }}>
           <img 
-            src="/src/assets/chatAPC-logo.png" 
+            src="/src/assets/chatAPC-logo.svg" 
             alt="ChatAPC Logo" 
             style={{ 
               width: '100%', 

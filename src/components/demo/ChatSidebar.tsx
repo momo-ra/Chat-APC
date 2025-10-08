@@ -363,7 +363,7 @@ const ChatSidebar: React.FC = () => {
             overflow: 'hidden'
           }}>
             <img 
-              src="/src/assets/chatAPC-logo.png" 
+              src="/src/assets/chatAPC-logo.svg" 
               alt="ChatAPC Logo" 
               style={{ 
                 width: '100%', 
@@ -558,7 +558,7 @@ const ChatSidebar: React.FC = () => {
             overflow: 'hidden'
           }}>
             <img 
-              src="/src/assets/chatAPC-logo.png" 
+              src="/src/assets/chatAPC-logo.svg" 
               alt="ChatAPC Logo" 
               style={{ 
                 width: '100%', 

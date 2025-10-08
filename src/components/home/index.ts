@@ -15,4 +15,7 @@ export { default as ContactSection } from './ContactSection';
 export { default as LightFeatureSection } from './LightFeatureSection';
 export { default as LightStatsSection } from './LightStatsSection';
 export { default as InteractiveFeaturesSection } from './InteractiveFeaturesSection';
+export { default as MetaballsBackground } from './MetaballsBackground';
+export { default as FloatingInput } from './FloatingInput';
+export { default as FAQSection } from './FAQSection';
 

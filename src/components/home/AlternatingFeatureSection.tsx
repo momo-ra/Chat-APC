@@ -34,7 +34,7 @@ const AlternatingFeatureSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Animate header image
+      // Simplified header image animation
       if (imageRef.current) {
         gsap.from(imageRef.current, {
           scrollTrigger: {
@@ -42,40 +42,26 @@ const AlternatingFeatureSection: React.FC = () => {
             start: 'top 80%',
             toggleActions: 'play none none none',
           },
-          scale: 1.1,
           opacity: 0,
-          duration: 1.3,
-          ease: 'power3.out',
-        });
-
-        // Image parallax
-        gsap.to(imageRef.current, {
-          scrollTrigger: {
-            trigger: imageRef.current,
-            start: 'top 65%',
-            end: 'bottom top',
-            scrub: 2,
-          },
-          y: -50,
-          scale: 1.05,
-          ease: 'none',
+          duration: 0.8,
+          ease: 'power2.out',
         });
       }
 
+      // Simplified item animations
       itemsRef.current.forEach((item, index) => {
         if (item) {
-          const direction = index % 2 === 0 ? -100 : 100;
           gsap.from(item, {
             scrollTrigger: {
               trigger: item,
               start: 'top 75%',
               toggleActions: 'play none none none',
             },
-            x: direction,
+            y: 30,
             opacity: 0,
-            duration: 1,
-            delay: index * 0.2,
-            ease: 'power3.out',
+            duration: 0.6,
+            delay: index * 0.1,
+            ease: 'power2.out',
           });
         }
       });

@@ -14,9 +14,15 @@ const AuthButtons: React.FC = () => {
         justifyContent: 'flex-end',
         alignItems: 'center',
         padding: '30px 48px',
-        position: 'relative',
+        position: 'absolute', // Changed from relative to absolute
+        top: 0,
+        right: 0,
         zIndex: 10,
         background: 'transparent',
+        pointerEvents: 'none', // Let scroll pass through
+        '& > *': {
+          pointerEvents: 'auto', // But keep buttons clickable
+        },
       }}
     >
       <Box sx={{ display: 'flex', gap: 2 }}>

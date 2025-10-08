@@ -15,44 +15,36 @@ interface Feature {
 const InteractiveFeaturesSection: React.FC = () => {
   const features: Feature[] = [
     {
-      id: 'realtime',
-      title: 'Real-Time Analysis',
-      subtitle: 'Lightning fast insights',
-      description: 'Monitor and analyze your process data in real-time with AI-powered insights. Get instant alerts and recommendations as conditions change.',
+      id: 'feed-question',
+      title: 'Why isn\'t feed increasing?',
+      subtitle: 'Real-time bottleneck analysis',
+      description: 'TI100 is maxed out at 285°C — it\'s your bottleneck right now. Last increased 40 minutes ago when pressure spiked.',
       image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=1000&fit=crop',
       color: '#009BE4',
     },
     {
-      id: 'optimization',
-      title: 'Process Optimization',
-      subtitle: 'Maximize efficiency',
-      description: 'Automatically identify optimization opportunities and implement advanced control strategies to improve yield and reduce waste.',
+      id: 'shift-question',
+      title: 'What happened last shift?',
+      subtitle: 'Historical process insights',
+      description: 'Feed dropped at 02:15 when the controller went off due to a compressor vibration alarm. Operator switched to manual and ran 15% below target for 3 hours.',
       image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=1000&fit=crop',
       color: '#2563EB',
     },
     {
-      id: 'predictive',
-      title: 'Predictive Maintenance',
-      subtitle: 'Stay ahead of issues',
-      description: 'Predict equipment failures before they happen using advanced machine learning models trained on your historical data.',
+      id: 'limits-question',
+      title: 'Which limits are cutting profit?',
+      subtitle: 'Profit optimization analysis',
+      description: 'Column P is active 89% of the time, costing ~$4K/day. Cooler duty hits limits during hot afternoons — another $1.8K/day opportunity.',
       image: 'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=800&h=1000&fit=crop',
       color: '#7C3AED',
     },
     {
-      id: 'dashboard',
-      title: 'Custom Dashboards',
-      subtitle: 'Your data, your way',
-      description: 'Create personalized dashboards with drag-and-drop widgets. Visualize KPIs, trends, and insights that matter most to you.',
+      id: 'reflux-question',
+      title: 'What if I increase reflux by 5%?',
+      subtitle: 'Predictive scenario analysis',
+      description: 'Product purity improves by 0.2%, but reboiler duty goes up 1.5% and column flooding risk increases to 12%. Net margin impact: +$340/day if you stay below 78% flooding.',
       image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=1000&fit=crop',
       color: '#059669',
-    },
-    {
-      id: 'ai-assistant',
-      title: 'AI Assistant',
-      subtitle: 'Smart recommendations',
-      description: 'Chat with your AI assistant to get instant answers, troubleshoot issues, and receive intelligent recommendations.',
-      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=1000&fit=crop',
-      color: '#DC2626',
     },
   ];
 
@@ -97,11 +89,11 @@ const InteractiveFeaturesSection: React.FC = () => {
       data-section-primary={activeFeature.color}
       sx={{
         width: '100%',
-        minHeight: '100vh',
+        minHeight: 'auto',
         background: 'transparent',
         display: 'flex',
         alignItems: 'center',
-        py: { xs: 8, md: 12 },
+        py: { xs: 5, sm: 6, md: 8, lg: 10 },
         position: 'relative',
         overflow: 'visible',
       }}
@@ -124,9 +116,9 @@ const InteractiveFeaturesSection: React.FC = () => {
       {/* Content Container with max-width */}
       <Box sx={{ 
         width: '100%', 
-        maxWidth: '1350px',
+        maxWidth: { xs: '100%', md: '1200px', lg: '1300px', xl: '1350px' },
         margin: '0 auto',
-        px: { xs: 3, md: 6, lg: 8 },
+        px: { xs: 2, sm: 3, md: 4, lg: 6, xl: 8 },
         position: 'relative',
         zIndex: 1,
       }}>
@@ -134,7 +126,7 @@ const InteractiveFeaturesSection: React.FC = () => {
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', lg: 'row' },
-            gap: { xs: 6, md: 8, lg: 10, xl: 12 },
+            gap: { xs: 4, sm: 5, md: 6, lg: 8, xl: 10 },
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
@@ -142,34 +134,34 @@ const InteractiveFeaturesSection: React.FC = () => {
           {/* Left Side - Feature Buttons */}
           <Box
             sx={{
-              flex: { xs: 1, lg: 0.65 },
+              flex: { xs: 1, lg: 0.6 },
               width: '100%',
-              maxWidth: { xs: '100%', lg: '420px', xl: '450px' },
+              maxWidth: { xs: '100%', md: '90%', lg: '380px', xl: '420px' },
             }}
           >
             <Typography
               variant="h2"
               sx={{
-                fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' },
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem', lg: '2.25rem' },
                 fontWeight: 700,
                 color: isDark ? '#FFFFFF' : '#0F172A',
-                mb: 1.5,
+                mb: { xs: 1, md: 1.5 },
                 lineHeight: 1.2,
                 transition: 'color 0.3s ease',
               }}
             >
-              Experience the Power
+              Ask the Right Questions
             </Typography>
             <Typography
               sx={{
-                fontSize: { xs: '0.9375rem', md: '1rem' },
+                fontSize: { xs: '0.875rem', sm: '0.9375rem', md: '1rem' },
                 color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
-                mb: { xs: 3, md: 4 },
+                mb: { xs: 2.5, md: 3 },
                 lineHeight: 1.6,
                 transition: 'color 0.3s ease',
               }}
             >
-              Discover how ChatAPC transforms industrial process control with cutting-edge AI technology
+              Get instant, intelligent answers to your process questions with AI-powered analysis
             </Typography>
 
             {/* Feature Buttons */}
@@ -177,7 +169,7 @@ const InteractiveFeaturesSection: React.FC = () => {
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 1.5,
+                gap: { xs: 1, md: 1.5 },
               }}
             >
               {features.map((feature) => (
@@ -188,8 +180,8 @@ const InteractiveFeaturesSection: React.FC = () => {
                     width: '100%',
                     textAlign: 'left',
                     justifyContent: 'flex-start',
-                    padding: '16px 20px',
-                    borderRadius: 3,
+                    padding: { xs: '12px 16px', md: '14px 18px', lg: '16px 20px' },
+                    borderRadius: { xs: 2, md: 3 },
                     textTransform: 'none',
                     transition: 'all 0.3s ease',
                     position: 'relative',
@@ -238,8 +230,9 @@ const InteractiveFeaturesSection: React.FC = () => {
                 >
                   <Box>
                     <Typography
+                      component="div"
                       sx={{
-                        fontSize: { xs: '1rem', md: '1.125rem' },
+                        fontSize: { xs: '0.9rem', sm: '0.95rem', md: '1rem', lg: '1.125rem' },
                         fontWeight: 600,
                         color: isDark ? '#FFFFFF' : '#0F172A',
                         mb: 0.5,
@@ -254,8 +247,8 @@ const InteractiveFeaturesSection: React.FC = () => {
                         <Box
                           component="span"
                           sx={{
-                            width: 7,
-                            height: 7,
+                            width: { xs: 6, md: 7 },
+                            height: { xs: 6, md: 7 },
                             borderRadius: '50%',
                             background: feature.color,
                             display: 'inline-block',
@@ -266,7 +259,7 @@ const InteractiveFeaturesSection: React.FC = () => {
                     {feature.subtitle && (
                       <Typography
                         sx={{
-                          fontSize: '0.8125rem',
+                          fontSize: { xs: '0.75rem', md: '0.8125rem' },
                           color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.5)',
                           fontWeight: 500,
                           transition: 'color 0.3s ease',
@@ -284,8 +277,9 @@ const InteractiveFeaturesSection: React.FC = () => {
           {/* Right Side - Feature Display */}
           <Box
             sx={{
-              flex: { xs: 1, lg: 1.5 },
+              flex: { xs: 1, lg: 1.4 },
               width: '100%',
+              maxWidth: { xs: '100%', md: '90%', lg: '100%' },
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -296,8 +290,8 @@ const InteractiveFeaturesSection: React.FC = () => {
             <Box
               sx={{
                 position: 'absolute',
-                width: { xs: '300px', md: '400px', lg: '500px' },
-                height: { xs: '300px', md: '400px', lg: '500px' },
+                width: { xs: '250px', sm: '300px', md: '350px', lg: '450px' },
+                height: { xs: '250px', sm: '300px', md: '350px', lg: '450px' },
                 borderRadius: '50%',
                 background: `radial-gradient(circle, ${activeFeature.color}12 0%, transparent 70%)`,
                 filter: 'blur(60px)',
@@ -313,9 +307,9 @@ const InteractiveFeaturesSection: React.FC = () => {
                 position: 'relative',
                 zIndex: 1,
                 width: '100%',
-                maxWidth: { xs: '420px', sm: '550px', md: '750px', lg: '850px', xl: '950px' },
+                maxWidth: { xs: '380px', sm: '500px', md: '100%', lg: '750px', xl: '850px' },
                 aspectRatio: '16/10',
-                borderRadius: 4,
+                borderRadius: { xs: 3, md: 4 },
                 overflow: 'hidden',
                 boxShadow: `
                   0 20px 60px -10px ${activeFeature.color}40,
@@ -348,27 +342,28 @@ const InteractiveFeaturesSection: React.FC = () => {
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  padding: { xs: 2.5, md: 3.5 },
+                  padding: { xs: 2, sm: 2.5, md: 3 },
                   background: `linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 50%, transparent 100%)`,
                   backdropFilter: 'blur(12px)',
                 }}
               >
                 <Typography
+                  component="div"
                   sx={{
-                    fontSize: { xs: '1.125rem', md: '1.375rem' },
+                    fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
                     fontWeight: 700,
                     color: '#FFF',
-                    mb: 1.5,
+                    mb: { xs: 1, md: 1.5 },
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 1.5,
+                    gap: { xs: 1, md: 1.5 },
                   }}
                 >
                   {activeFeature.title}
                   <Box
                     sx={{
-                      width: 6,
-                      height: 6,
+                      width: { xs: 5, md: 6 },
+                      height: { xs: 5, md: 6 },
                       borderRadius: '50%',
                       background: activeFeature.color,
                       boxShadow: `0 0 10px ${activeFeature.color}`,
@@ -377,7 +372,7 @@ const InteractiveFeaturesSection: React.FC = () => {
                 </Typography>
                 <Typography
                   sx={{
-                    fontSize: { xs: '0.875rem', md: '0.9375rem' },
+                    fontSize: { xs: '0.8125rem', sm: '0.875rem', md: '0.9375rem' },
                     color: 'rgba(255, 255, 255, 0.85)',
                     lineHeight: 1.6,
                   }}
@@ -392,9 +387,9 @@ const InteractiveFeaturesSection: React.FC = () => {
               sx={{
                 position: 'absolute',
                 top: '5%',
-                right: { xs: '-10%', md: '-15%' },
-                width: { xs: '120px', md: '150px', lg: '180px' },
-                height: { xs: '120px', md: '150px', lg: '180px' },
+                right: { xs: '-10%', md: '-12%', lg: '-15%' },
+                width: { xs: '100px', sm: '120px', md: '140px', lg: '180px' },
+                height: { xs: '100px', sm: '120px', md: '140px', lg: '180px' },
                 borderRadius: '50%',
                 background: `${activeFeature.color}08`,
                 filter: 'blur(40px)',
@@ -406,9 +401,9 @@ const InteractiveFeaturesSection: React.FC = () => {
               sx={{
                 position: 'absolute',
                 bottom: '10%',
-                left: { xs: '-10%', md: '-15%' },
-                width: { xs: '100px', md: '130px', lg: '160px' },
-                height: { xs: '100px', md: '130px', lg: '160px' },
+                left: { xs: '-10%', md: '-12%', lg: '-15%' },
+                width: { xs: '80px', sm: '100px', md: '120px', lg: '160px' },
+                height: { xs: '80px', sm: '100px', md: '120px', lg: '160px' },
                 borderRadius: '50%',
                 background: `${activeFeature.color}08`,
                 filter: 'blur(40px)',
@@ -418,8 +413,10 @@ const InteractiveFeaturesSection: React.FC = () => {
             />
           </Box>
         </Box>
-      </Box>
+      </Box>  
+      
     </Box>
+    
   );
 };
 

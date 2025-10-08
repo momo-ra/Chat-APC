@@ -23,19 +23,27 @@ const DeploymentPage: React.FC = () => {
   const { isDark } = useThemeMode();
 
   useEffect(() => {
-    // Refresh ScrollTrigger on mount to ensure all animations work
-    ScrollTrigger.refresh();
+    // Configure ScrollTrigger for better performance
+    ScrollTrigger.config({
+      limitCallbacks: true,
+      syncInterval: 150,
+    });
+    
+    return () => {
+      // Clean up on unmount
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
   }, []);
 
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        height: 'auto',
         background: isDark
           ? 'linear-gradient(to bottom, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
           : 'linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
         position: 'relative',
-        overflowX: 'hidden',
+        overflow: 'visible',
         transition: 'background 0.3s ease',
       }}
     >
@@ -46,11 +54,13 @@ const DeploymentPage: React.FC = () => {
       <Box
         sx={{
           width: '100%',
+          height: 'auto',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           position: 'relative',
           zIndex: 2,
+          overflow: 'visible',
         }}
       >
         <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>

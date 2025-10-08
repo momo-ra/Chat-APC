@@ -8,7 +8,6 @@ import {
 } from '@mui/icons-material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useThemeMode } from '../../contexts/ThemeContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -45,62 +44,50 @@ const DarkPillarSection: React.FC = () => {
   const pillarsRef = useRef<HTMLDivElement[]>([]);
   const headerRef = useRef<HTMLDivElement>(null);
   const visualRef = useRef<HTMLDivElement>(null);
-  const { isDark } = useThemeMode();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Header animation - fades and rises
-      if (headerRef.current) {
-        gsap.from(headerRef.current, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          y: 70,
-          opacity: 0,
-          duration: 1,
-          ease: 'power3.out',
-        });
-      }
-
-      // Visual element sinks down
-      if (visualRef.current) {
-        gsap.to(visualRef.current, {
-          scrollTrigger: {
-            trigger: visualRef.current,
-            start: 'top 70%',
-            end: 'bottom top',
-            scrub: 2,
-          },
-          y: 120,
-          scale: 0.85,
-          opacity: 0.4,
-          ease: 'none',
-        });
-      }
-
-      // Pillars with staggered entrance from different directions
-      pillarsRef.current.forEach((pillar, index) => {
-        if (pillar) {
-          const direction = index === 0 ? -80 : index === 2 ? 80 : 0;
-          gsap.from(pillar, {
-            scrollTrigger: {
-              trigger: pillar,
-              start: 'top 75%',
-              toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            x: direction,
-            y: 60,
-            scale: 0.92,
-            rotation: index === 1 ? 0 : (index === 0 ? -3 : 3),
-            duration: 1,
-            delay: index * 0.2,
-            ease: 'power3.out',
-          });
-        }
+      // Simplified animations for better performance
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 75%',
+          toggleActions: 'play none none none',
+        },
       });
+
+      // Animate header
+      if (headerRef.current) {
+        tl.from(headerRef.current, {
+          y: 30,
+          opacity: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+        }, 0);
+      }
+
+      // Remove heavy parallax animations
+      if (visualRef.current) {
+        tl.from(visualRef.current, {
+          opacity: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+        }, 0.2);
+      }
+
+      // Simplified pillar animations
+      if (pillarsRef.current.length > 0) {
+        pillarsRef.current.forEach((pillar, index) => {
+          if (pillar) {
+            tl.from(pillar, {
+              opacity: 0,
+              y: 20,
+              duration: 0.5,
+              ease: 'power2.out',
+            }, 0.3 + index * 0.1);
+          }
+        });
+      }
     }, sectionRef);
 
     return () => ctx.revert();
@@ -109,39 +96,36 @@ const DarkPillarSection: React.FC = () => {
   return (
     <Box
       ref={sectionRef}
-      data-section-theme={isDark ? 'dark' : 'light'}
-      data-section-primary={isDark ? '#009BE4' : '#2563EB'}
+      data-section-theme="light"
       sx={{
         width: '100%',
-        py: { xs: 10, md: 15 },
+        py: { xs: 12, md: 16 },
         position: 'relative',
-        zIndex: 2,
-        background: isDark 
-          ? 'linear-gradient(180deg, rgba(13, 24, 66, 0.4) 0%, rgba(106, 17, 203, 0.05) 30%, rgba(0, 155, 228, 0.04) 70%, rgba(10, 14, 46, 0.5) 100%)'
-          : 'transparent',
-        transition: 'background 0.3s ease',
+        background: 'linear-gradient(180deg, #E2E8F0 0%, #F1F5F9 50%, #E2E8F0 100%)',
+        overflow: 'hidden',
         '&::before': {
           content: '""',
           position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'radial-gradient(circle at 80% 30%, rgba(106, 17, 203, 0.08) 0%, transparent 50%), radial-gradient(circle at 20% 70%, rgba(0, 155, 228, 0.06) 0%, transparent 50%)',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '1000px',
+          height: '1000px',
+          background: 'radial-gradient(circle, rgba(0, 155, 228, 0.06) 0%, transparent 70%)',
           pointerEvents: 'none',
         },
       }}
     >
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
         {/* Section Header */}
-        <Box ref={headerRef} sx={{ textAlign: 'center', mb: 8 }}>
+        <Box ref={headerRef} sx={{ textAlign: 'center', mb: 10 }}>
           <Typography
             sx={{
               fontSize: { xs: '2.5rem', md: '3.5rem' },
-              fontWeight: 600,
-              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
-              mb: 2,
-              transition: 'color 0.3s ease',
+              fontWeight: 700,
+              color: '#1E293B',
+              mb: 3,
+              lineHeight: 1.2,
             }}
           >
             From question to answer — clear, fast, and explainable
@@ -149,10 +133,10 @@ const DarkPillarSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: { xs: '1.1rem', md: '1.25rem' },
-              color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+              color: '#475569',
               maxWidth: 700,
               mx: 'auto',
-              transition: 'color 0.3s ease',
+              lineHeight: 1.7,
             }}
           >
             No black boxes. Every answer shows its work.
@@ -171,12 +155,13 @@ const DarkPillarSection: React.FC = () => {
             mb: 8,
             borderRadius: 4,
             overflow: 'hidden',
-            background: 'linear-gradient(135deg, rgba(106, 17, 203, 0.08) 0%, rgba(0, 155, 228, 0.05) 100%)',
-            border: '1px solid rgba(106, 17, 203, 0.15)',
+            background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(16, 185, 129, 0.05) 100%)',
+            border: '2px solid #E2E8F0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: 4,
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.06)',
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -184,13 +169,13 @@ const DarkPillarSection: React.FC = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'radial-gradient(circle at center, rgba(106, 17, 203, 0.1) 0%, transparent 70%)',
+              background: 'radial-gradient(circle at center, rgba(37, 99, 235, 0.1) 0%, transparent 70%)',
             },
           }}
         >
-          <Typography sx={{ fontSize: { xs: '3rem', md: '4rem' }, opacity: 0.4, zIndex: 1 }}>🔍</Typography>
-          <Typography sx={{ fontSize: { xs: '3rem', md: '4rem' }, opacity: 0.4, zIndex: 1 }}>🌐</Typography>
-          <Typography sx={{ fontSize: { xs: '3rem', md: '4rem' }, opacity: 0.4, zIndex: 1 }}>🎯</Typography>
+          <Typography sx={{ fontSize: { xs: '3rem', md: '4rem' }, opacity: 0.6, zIndex: 1 }}>🔍</Typography>
+          <Typography sx={{ fontSize: { xs: '3rem', md: '4rem' }, opacity: 0.6, zIndex: 1 }}>🌐</Typography>
+          <Typography sx={{ fontSize: { xs: '3rem', md: '4rem' }, opacity: 0.6, zIndex: 1 }}>🎯</Typography>
         </Box>
 
         {/* Pillars Grid */}
@@ -211,19 +196,18 @@ const DarkPillarSection: React.FC = () => {
                   sx={{
                     padding: 4,
                     borderRadius: 4,
-                    background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.9)',
-                    border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.08)',
-                    backdropFilter: 'blur(10px)',
+                    background: '#FFFFFF',
+                    border: '2px solid #E2E8F0',
                     transition: 'all 0.3s ease',
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
-                    boxShadow: isDark ? 'none' : '0 4px 20px rgba(0, 0, 0, 0.06)',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.06)',
                     '&:hover': {
-                      background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.95)',
-                      border: isDark ? '1px solid rgba(0, 155, 228, 0.2)' : '1px solid rgba(37, 99, 235, 0.3)',
+                      background: '#FFFFFF',
+                      border: '2px solid rgba(0, 155, 228, 0.5)',
                       transform: 'translateY(-8px)',
-                      boxShadow: isDark ? 'none' : '0 12px 40px rgba(37, 99, 235, 0.15)',
+                      boxShadow: '0 12px 40px rgba(0, 155, 228, 0.2)',
                     },
                   }}
                 >
@@ -233,20 +217,18 @@ const DarkPillarSection: React.FC = () => {
                       width: 56,
                       height: 56,
                       borderRadius: 3,
-                      background: isDark ? 'rgba(0, 155, 228, 0.15)' : 'rgba(37, 99, 235, 0.12)',
+                      background: 'rgba(37, 99, 235, 0.12)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       mb: 3,
-                      transition: 'background 0.3s ease',
                     }}
                   >
                     <Typography
                       sx={{
                         fontSize: '2rem',
                         fontWeight: 700,
-                        color: isDark ? '#009BE4' : '#2563EB',
-                        transition: 'color 0.3s ease',
+                        color: '#2563EB',
                       }}
                     >
                       {pillar.emoji}
@@ -258,10 +240,9 @@ const DarkPillarSection: React.FC = () => {
                     sx={{
                       fontSize: { xs: '1.25rem', md: '1.4rem' },
                       fontWeight: 600,
-                      color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
+                      color: '#1E293B',
                       mb: 2,
                       lineHeight: 1.3,
-                      transition: 'color 0.3s ease',
                     }}
                   >
                     {pillar.title}
@@ -271,10 +252,9 @@ const DarkPillarSection: React.FC = () => {
                   <Typography
                     sx={{
                       fontSize: '1rem',
-                      color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
+                      color: '#475569',
                       lineHeight: 1.7,
                       mb: pillar.features ? 3 : 0,
-                      transition: 'color 0.3s ease',
                     }}
                   >
                     {pillar.description}
@@ -295,19 +275,17 @@ const DarkPillarSection: React.FC = () => {
                         <CheckCircle
                           sx={{
                             fontSize: 20,
-                            color: isDark ? '#009BE4' : '#2563EB',
+                            color: '#2563EB',
                             mr: 1,
                             mt: 0.25,
                             flexShrink: 0,
-                            transition: 'color 0.3s ease',
                           }}
                         />
                         <Typography
                           sx={{
                             fontSize: '0.875rem',
-                            color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.65)',
+                            color: '#475569',
                             lineHeight: 1.5,
-                            transition: 'color 0.3s ease',
                           }}
                         >
                           {feature}

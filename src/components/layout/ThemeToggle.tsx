@@ -2,10 +2,11 @@ import React from 'react';
 import { IconButton, Tooltip, Box, useMediaQuery, useTheme } from '@mui/material';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
+import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import { useThemeMode } from '../../contexts/ThemeContext';
 
 const ThemeToggle: React.FC = () => {
-  const { isDark, toggleTheme } = useThemeMode();
+  const { isDark, preference, setPreference } = useThemeMode();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -14,10 +15,38 @@ const ThemeToggle: React.FC = () => {
     return null;
   }
 
+  const handleToggle = () => {
+    // Cycle: light → dark → system
+    if (preference === 'light') {
+      setPreference('dark');
+    } else if (preference === 'dark') {
+      setPreference('system');
+    } else {
+      setPreference('light');
+    }
+  };
+
+  const getTooltipText = () => {
+    if (preference === 'light') return 'Switch to Dark Mode';
+    if (preference === 'dark') return 'Switch to System';
+    return 'Switch to Light Mode';
+  };
+
+  const getIcon = () => {
+    if (preference === 'system') {
+      return <SettingsBrightnessIcon sx={{ fontSize: 20, color: '#9333EA' }} />;
+    }
+    return isDark ? (
+      <LightModeIcon sx={{ fontSize: 20, color: '#FDB813' }} />
+    ) : (
+      <DarkModeIcon sx={{ fontSize: 20, color: '#475569' }} />
+    );
+  };
+
   return (
-    <Tooltip title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
+    <Tooltip title={getTooltipText()}>
       <IconButton
-        onClick={toggleTheme}
+        onClick={handleToggle}
         sx={{
           position: 'fixed',
           bottom: 32,
@@ -52,21 +81,7 @@ const ThemeToggle: React.FC = () => {
             transition: 'transform 0.3s ease',
           }}
         >
-          {isDark ? (
-            <LightModeIcon 
-              sx={{ 
-                fontSize: 20,
-                color: '#FDB813',
-              }} 
-            />
-          ) : (
-            <DarkModeIcon 
-              sx={{ 
-                fontSize: 20,
-                color: '#475569',
-              }} 
-            />
-          )}
+          {getIcon()}
         </Box>
       </IconButton>
     </Tooltip>

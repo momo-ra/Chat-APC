@@ -39,8 +39,8 @@ const Demo: React.FC = () => {
   };
 
   const handleLearnMore = () => {
-    // Scroll to top or show more info
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to top or show more info - removed smooth scroll for performance
+    window.scrollTo({ top: 0 });
     setShowWelcomePopup(false);
   };
 

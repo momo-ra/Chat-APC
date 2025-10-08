@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Container, Grid, Link, IconButton } from '@mui/material';
 import { 
   Twitter, 
@@ -6,13 +6,19 @@ import {
   GitHub, 
   YouTube 
 } from '@mui/icons-material';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
-import chatAPCLogo from '../../assets/chatAPC-logo-light-mode.png';
-import chatAPCLogoDark from '../../assets/ChatAPC-logo.png';
+import chatAPCLogo from '../../assets/chatAPC-logo-light-mode.svg';
+import chatAPCLogoDark from '../../assets/chatAPC-logo.svg';
 import alphaProcessLogo from '../../assets/AlphaProcess-logo.png';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Footer: React.FC = () => {
   const { isDark } = useThemeMode();
+  const footerRef = useRef<HTMLDivElement>(null);
+
   const footerLinks = {
     product: [
       { label: 'Features', href: '#' },
@@ -47,8 +53,28 @@ const Footer: React.FC = () => {
     { icon: YouTube, href: 'https://youtube.com', label: 'YouTube' },
   ];
 
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Simple single animation for the entire footer
+      gsap.from(footerRef.current, {
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: 'top 90%',
+          toggleActions: 'play none none none',
+        },
+        opacity: 0,
+        y: 30,
+        duration: 0.5,
+        ease: 'power2.out',
+      });
+    }, footerRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <Box
+      ref={footerRef}
       component="footer"
       sx={{
         width: '100%',
@@ -60,6 +86,8 @@ const Footer: React.FC = () => {
           : '1px solid rgba(0, 0, 0, 0.08)',
         position: 'relative',
         zIndex: 2,
+        m: 0,
+        p: 0,
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -135,7 +163,12 @@ const Footer: React.FC = () => {
             </Grid>
 
             {/* Links Sections */}
-            <Grid item xs={6} sm={6} md={2}>
+            <Grid 
+              item 
+              xs={6} 
+              sm={6} 
+              md={2}
+            >
               <Typography
                 sx={{
                   fontSize: '0.9rem',
@@ -170,7 +203,12 @@ const Footer: React.FC = () => {
               </Box>
             </Grid>
 
-            <Grid item xs={6} sm={6} md={2}>
+            <Grid 
+              item 
+              xs={6} 
+              sm={6} 
+              md={2}
+            >
               <Typography
                 sx={{
                   fontSize: '0.9rem',
@@ -205,7 +243,12 @@ const Footer: React.FC = () => {
               </Box>
             </Grid>
 
-            <Grid item xs={6} sm={6} md={2}>
+            <Grid 
+              item 
+              xs={6} 
+              sm={6} 
+              md={2}
+            >
               <Typography
                 sx={{
                   fontSize: '0.9rem',
@@ -240,7 +283,12 @@ const Footer: React.FC = () => {
               </Box>
             </Grid>
 
-            <Grid item xs={6} sm={6} md={2}>
+            <Grid 
+              item 
+              xs={6} 
+              sm={6} 
+              md={2}
+            >
               <Typography
                 sx={{
                   fontSize: '0.9rem',
@@ -370,20 +418,34 @@ const Footer: React.FC = () => {
             >
               Powered by
             </Typography>
-            <Box
-              component="img"
-              src={alphaProcessLogo}
-              alt="Alpha Process Logo"
+            <Link
+              href="https://www.alphaproc.com/"
+              target="_blank"
+              rel="noopener noreferrer"
               sx={{
-                height: '24px',
-                width: 'auto',
-                opacity: 0.7,
-                transition: 'opacity 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                transition: 'transform 0.3s ease',
                 '&:hover': {
-                  opacity: 1,
+                  transform: 'scale(1.05)',
                 },
               }}
-            />
+            >
+              <Box
+                component="img"
+                src={alphaProcessLogo}
+                alt="Alpha Process Control"
+                sx={{
+                  height: '24px',
+                  width: 'auto',
+                  opacity: 0.7,
+                  transition: 'opacity 0.3s ease',
+                  '&:hover': {
+                    opacity: 1,
+                  },
+                }}
+              />
+            </Link>
           </Box>
         </Box>
       </Container>

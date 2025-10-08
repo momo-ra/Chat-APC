@@ -29,19 +29,19 @@ const FullWidthCTASection: React.FC = () => {
         });
       }
 
-      // Parallax background
-      if (sectionRef.current) {
-        gsap.to(sectionRef.current, {
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 2,
-          },
-          backgroundPosition: '50% 100%',
-          ease: 'none',
-        });
-      }
+      // Parallax background disabled to prevent scroll lag
+      // if (sectionRef.current) {
+      //   gsap.to(sectionRef.current, {
+      //     scrollTrigger: {
+      //       trigger: sectionRef.current,
+      //       start: 'top bottom',
+      //       end: 'bottom top',
+      //       scrub: 2,
+      //     },
+      //     backgroundPosition: '50% 100%',
+      //     ease: 'none',
+      //   });
+      // }
     }, sectionRef);
 
     return () => ctx.revert();

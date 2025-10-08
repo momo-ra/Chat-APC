@@ -91,13 +91,13 @@ const ContactSection: React.FC = () => {
     {
       icon: Phone,
       title: 'Phone',
-      content: '+1 (555) 123-4567',
-      link: 'tel:+15551234567'
+      content: '+39 050 123 4567',
+      link: 'tel:+390501234567'
     },
     {
       icon: LocationOn,
       title: 'Office',
-      content: 'San Francisco, CA',
+      content: 'Via Impastato 1, 56122 Pisa, Italy',
       link: null
     }
   ];
@@ -219,6 +219,7 @@ const ContactSection: React.FC = () => {
                     fullWidth
                     name="name"
                     label="Your Name"
+                    placeholder="Enter your full name"
                     value={formData.name}
                     onChange={handleInputChange}
                     required
@@ -239,6 +240,7 @@ const ContactSection: React.FC = () => {
                     name="email"
                     type="email"
                     label="Email Address"
+                    placeholder="your.email@company.com"
                     value={formData.email}
                     onChange={handleInputChange}
                     required
@@ -258,6 +260,7 @@ const ContactSection: React.FC = () => {
                     fullWidth
                     name="company"
                     label="Company"
+                    placeholder="Your company name"
                     value={formData.company}
                     onChange={handleInputChange}
                     sx={textFieldSx}
@@ -277,6 +280,7 @@ const ContactSection: React.FC = () => {
                     name="phone"
                     type="tel"
                     label="Phone Number"
+                    placeholder="+39 050 123 4567"
                     value={formData.phone}
                     onChange={handleInputChange}
                     sx={textFieldSx}
@@ -295,6 +299,7 @@ const ContactSection: React.FC = () => {
                     fullWidth
                     name="message"
                     label="Message"
+                    placeholder="Tell us about your industrial process challenges and how we can help..."
                     value={formData.message}
                     onChange={handleInputChange}
                     multiline
@@ -463,7 +468,7 @@ const ContactSection: React.FC = () => {
                     transition: 'color 0.3s ease',
                   }}
                 >
-                  Monday - Friday: 9:00 AM - 6:00 PM PST<br />
+                  Monday - Friday: 9:00 AM - 6:00 PM CET<br />
                   Saturday - Sunday: Closed<br />
                   <Box component="span" sx={{ 
                     color: isDark ? '#009BE4' : '#2563EB', 

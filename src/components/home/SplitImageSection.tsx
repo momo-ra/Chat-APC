@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Typography, Grid } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { CheckCircle } from '@mui/icons-material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -23,46 +23,40 @@ const SplitImageSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Image animation
-      if (imageRef.current) {
-        gsap.from(imageRef.current, {
-          scrollTrigger: {
-            trigger: imageRef.current,
-            start: 'top 75%',
-            toggleActions: 'play none none none',
-          },
-          x: -100,
-          opacity: 0,
-          duration: 1.2,
-          ease: 'power3.out',
-        });
+      // Only animate on desktop (md breakpoint and above)
+      const isDesktop = window.matchMedia('(min-width: 960px)').matches;
+      
+      if (!isDesktop) return;
 
-        // Image parallax
-        gsap.to(imageRef.current, {
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 2,
-          },
-          y: -60,
-          ease: 'none',
-        });
+      // Use timeline for coordinated animations
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 75%',
+          toggleActions: 'play none none none',
+        },
+      });
+
+      // Image animation - Removed parallax scrub for better scroll performance
+      if (imageRef.current) {
+        tl.from(imageRef.current, {
+          x: -50,
+          opacity: 0,
+          duration: 0.7,
+          ease: 'power3.out',
+        }, 0);
+        
+        // Parallax removed - causes scroll jank
       }
 
       // Content animation
       if (contentRef.current) {
-        gsap.from(contentRef.current, {
-          scrollTrigger: {
-            trigger: contentRef.current,
-            start: 'top 75%',
-            toggleActions: 'play none none none',
-          },
-          x: 100,
+        tl.from(contentRef.current, {
+          x: 50,
           opacity: 0,
-          duration: 1.2,
+          duration: 0.7,
           ease: 'power3.out',
-        });
+        }, 0.1);
       }
     }, sectionRef);
 
@@ -76,116 +70,157 @@ const SplitImageSection: React.FC = () => {
       data-section-primary={isDark ? '#009BE4' : '#2563EB'}
       sx={{
         width: '100%',
-        py: { xs: 8, md: 12 },
+        py: { xs: 6, sm: 8, md: 12 },
         position: 'relative',
         overflow: 'hidden',
         background: isDark 
-          ? 'linear-gradient(135deg, rgba(10, 14, 46, 0.6) 0%, rgba(0, 155, 228, 0.04) 50%, rgba(10, 14, 46, 0.6) 100%)'
-          : 'linear-gradient(135deg, rgba(37, 99, 235, 0.03) 0%, rgba(255, 255, 255, 0.95) 30%, rgba(248, 250, 252, 0.9) 70%, rgba(241, 245, 249, 0.8) 100%)',
+          ? 'linear-gradient(to bottom, #0a0e2e 0%, #0d1842 100%)'
+          : 'linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%)',
         transition: 'background 0.3s ease',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: isDark 
-            ? 'radial-gradient(circle at 30% 50%, rgba(0, 155, 228, 0.08) 0%, transparent 50%)'
-            : 'radial-gradient(circle at 30% 50%, rgba(37, 99, 235, 0.06) 0%, transparent 60%), radial-gradient(circle at 70% 30%, rgba(124, 58, 237, 0.04) 0%, transparent 50%)',
-          pointerEvents: 'none',
-        },
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          top: '50%',
-          left: 0,
-          right: 0,
-          height: '1px',
-          background: isDark 
-            ? 'linear-gradient(90deg, transparent 0%, rgba(0, 155, 228, 0.3) 50%, transparent 100%)'
-            : 'linear-gradient(90deg, transparent 0%, rgba(37, 99, 235, 0.4) 50%, transparent 100%)',
-          pointerEvents: 'none',
-        },
       }}
     >
-      <Grid container sx={{ minHeight: { md: 500 } }}>
-        {/* Image Side */}
-        <Grid item xs={12} md={6}>
+      <Box
+        sx={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          px: { xs: 2, sm: 3, md: 4 },
+          position: 'relative',
+        }}
+      >
+        {/* Desktop Layout */}
+        <Box
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            position: 'relative',
+            minHeight: { md: '500px', lg: '550px' },
+          }}
+        >
+          {/* Image Container */}
           <Box
-            ref={imageRef}
             sx={{
-              position: 'relative',
-              height: { xs: 300, md: '100%' },
-              overflow: 'hidden',
+              width: '55%',
+              position: 'absolute',
+              left: 0,
+              top: '50%',
+              transform: 'translateY(-50%)',
             }}
           >
             <Box
-              component="img"
-              src={industrialAI}
-              alt="Industrial Operations"
+              ref={imageRef}
               sx={{
                 width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                filter: isDark ? 'brightness(0.8)' : 'brightness(0.7) contrast(1.1)',
-                transition: 'filter 0.3s ease',
+                height: 'auto',
+                borderRadius: 4,
+                overflow: 'hidden',
+                boxShadow: isDark 
+                  ? '0 20px 60px rgba(0, 0, 0, 0.6)'
+                  : '0 20px 60px rgba(0, 0, 0, 0.2)',
               }}
-            />
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: isDark 
-                  ? 'linear-gradient(90deg, transparent 0%, rgba(10, 14, 46, 0.8) 100%)'
-                  : 'linear-gradient(90deg, transparent 0%, rgba(37, 99, 235, 0.3) 100%)',
-                transition: 'background 0.3s ease',
-              }}
-            />
+            >
+              <Box
+                component="img"
+                src={industrialAI}
+                alt="Industrial Operations"
+                sx={{
+                  width: '100%',
+                  height: 'auto',
+                  display: 'block',
+                }}
+              />
+            </Box>
           </Box>
-        </Grid>
 
-        {/* Content Side */}
-        <Grid item xs={12} md={6}>
+          {/* Text Container */}
           <Box
-            ref={contentRef}
             sx={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              padding: { xs: 4, md: 8 },
+              width: '50%',
+              position: 'absolute',
+              right: 0,
+              top: '50%',
+              transform: 'translateY(-50%)',
             }}
           >
-            <Box>
+            <Box
+              ref={contentRef}
+              sx={{
+                width: '100%',
+                background: isDark
+                  ? 'rgba(45, 55, 72, 0.95)'
+                  : 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: 4,
+                padding: { md: 5, lg: 6 },
+                boxShadow: isDark 
+                  ? '0 20px 60px rgba(0, 0, 0, 0.5)'
+                  : '0 20px 60px rgba(0, 0, 0, 0.15)',
+                border: isDark 
+                  ? '1px solid rgba(255, 255, 255, 0.1)'
+                  : '1px solid rgba(0, 0, 0, 0.08)',
+              }}
+            >
+              {/* Quote Icon */}
+              <Box
+                sx={{
+                  fontSize: '4rem',
+                  lineHeight: 0.8,
+                  color: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
+                  mb: 2,
+                  fontFamily: 'Georgia, serif',
+                  fontWeight: 700,
+                }}
+              >
+                "
+              </Box>
+
+              {/* Quote Text */}
               <Typography
                 sx={{
-                  fontSize: { xs: '1.8rem', md: '2.8rem' },
-                  fontWeight: 600,
-                  color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
+                  fontSize: { md: '1.15rem', lg: '1.25rem' },
+                  fontWeight: 400,
+                  color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.87)',
                   mb: 3,
-                  lineHeight: 1.2,
-                  transition: 'color 0.3s ease',
-                }}
-              >
-                Your entire plant, one conversation away
-              </Typography>
-              
-              <Typography
-                sx={{
-                  fontSize: { xs: '1rem', md: '1.15rem' },
-                  color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.65)',
-                  mb: 4,
                   lineHeight: 1.7,
-                  transition: 'color 0.3s ease',
+                  letterSpacing: '0.01em',
                 }}
               >
-                Access decades of operational expertise combined with AI-powered insights through simple, natural conversations.
+                Your entire plant, one conversation away. Access decades of operational expertise combined with AI-powered insights through simple, natural conversations.
               </Typography>
 
-              {/* Features List */}
+              {/* Divider */}
+              <Box
+                sx={{
+                  width: '100%',
+                  height: '1px',
+                  background: isDark 
+                    ? 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%)'
+                    : 'linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.15) 50%, transparent 100%)',
+                  mb: 3,
+                }}
+              />
+
+              {/* Author Info */}
+              <Box mb={3}>
+                <Typography
+                  sx={{
+                    fontSize: { md: '1.1rem', lg: '1.2rem' },
+                    fontWeight: 600,
+                    color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.87)',
+                    mb: 0.5,
+                  }}
+                >
+                  Industrial AI Excellence
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: '0.95rem',
+                    color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                  }}
+                >
+                  Chief Technology Officer, Alpha Process Control
+                </Typography>
+              </Box>
+
+              {/* Features List - Subtle */}
               <Box>
                 {features.map((feature, index) => (
                   <Box
@@ -193,25 +228,24 @@ const SplitImageSection: React.FC = () => {
                     sx={{
                       display: 'flex',
                       alignItems: 'flex-start',
-                      mb: 2,
+                      mb: 1.5,
+                      opacity: 0.9,
                     }}
                   >
                     <CheckCircle
                       sx={{
-                        fontSize: 24,
+                        fontSize: 16,
                         color: isDark ? '#009BE4' : '#2563EB',
-                        mr: 2,
+                        mr: 1.5,
                         mt: 0.25,
                         flexShrink: 0,
-                        transition: 'color 0.3s ease',
                       }}
                     />
                     <Typography
                       sx={{
-                        fontSize: { xs: '0.95rem', md: '1.05rem' },
-                        color: isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.75)',
-                        lineHeight: 1.6,
-                        transition: 'color 0.3s ease',
+                        fontSize: '0.85rem',
+                        color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)',
+                        lineHeight: 1.5,
                       }}
                     >
                       {feature}
@@ -221,11 +255,155 @@ const SplitImageSection: React.FC = () => {
               </Box>
             </Box>
           </Box>
-        </Grid>
-      </Grid>
+        </Box>
+
+        {/* Mobile/Tablet Layout */}
+        <Box
+          sx={{
+            display: { xs: 'block', md: 'none' },
+          }}
+        >
+          {/* Image */}
+          <Box
+            sx={{
+              width: '100%',
+              borderRadius: 2,
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.4)',
+              mb: 3,
+            }}
+          >
+            <Box
+              component="img"
+              src={industrialAI}
+              alt="Industrial Operations"
+              sx={{
+                width: '100%',
+                height: { xs: '250px', sm: '350px' },
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
+          </Box>
+
+          {/* Content Card */}
+          <Box
+            sx={{
+              width: '100%',
+              background: isDark
+                ? 'rgba(45, 55, 72, 0.95)'
+                : 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: 3,
+              padding: { xs: 3, sm: 4 },
+              boxShadow: isDark 
+                ? '0 10px 30px rgba(0, 0, 0, 0.5)'
+                : '0 10px 30px rgba(0, 0, 0, 0.15)',
+              border: isDark 
+                ? '1px solid rgba(255, 255, 255, 0.1)'
+                : '1px solid rgba(0, 0, 0, 0.08)',
+            }}
+          >
+            {/* Quote Icon */}
+            <Box
+              sx={{
+                fontSize: { xs: '3rem', sm: '3.5rem' },
+                lineHeight: 0.8,
+                color: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
+                mb: 2,
+                fontFamily: 'Georgia, serif',
+                fontWeight: 700,
+              }}
+            >
+              "
+            </Box>
+
+            {/* Quote Text */}
+            <Typography
+              sx={{
+                fontSize: { xs: '1rem', sm: '1.1rem' },
+                fontWeight: 400,
+                color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.87)',
+                mb: 3,
+                lineHeight: 1.6,
+                letterSpacing: '0.01em',
+              }}
+            >
+              Your entire plant, one conversation away. Access decades of operational expertise combined with AI-powered insights through simple, natural conversations.
+            </Typography>
+
+            {/* Divider */}
+            <Box
+              sx={{
+                width: '100%',
+                height: '1px',
+                background: isDark 
+                  ? 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%)'
+                  : 'linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.15) 50%, transparent 100%)',
+                mb: 3,
+              }}
+            />
+
+            {/* Author Info */}
+            <Box mb={3}>
+              <Typography
+                sx={{
+                  fontSize: { xs: '1rem', sm: '1.1rem' },
+                  fontWeight: 600,
+                  color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.87)',
+                  mb: 0.5,
+                }}
+              >
+                Industrial AI Excellence
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: { xs: '0.85rem', sm: '0.95rem' },
+                  color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                }}
+              >
+                Chief Technology Officer, Alpha Process Control
+              </Typography>
+            </Box>
+
+            {/* Features List */}
+            <Box>
+              {features.map((feature, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    mb: 1.5,
+                    opacity: 0.9,
+                  }}
+                >
+                  <CheckCircle
+                    sx={{
+                      fontSize: { xs: 16, sm: 18 },
+                      color: isDark ? '#009BE4' : '#2563EB',
+                      mr: 1.5,
+                      mt: 0.25,
+                      flexShrink: 0,
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      fontSize: { xs: '0.8rem', sm: '0.85rem' },
+                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {feature}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
     </Box>
   );
 };
 
 export default SplitImageSection;
-

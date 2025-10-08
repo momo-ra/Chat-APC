@@ -1,35 +1,32 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Grid, Container } from '@mui/material';
-import { Speed, Security, TrendingUp, Settings } from '@mui/icons-material';
+import { AttachMoney, Schedule, School } from '@mui/icons-material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const features = [
+const roiItems = [
   {
-    icon: Speed,
-    title: 'Real-Time Performance',
-    description: 'Monitor and optimize your process in real-time with instant insights and automated recommendations.',
+    icon: AttachMoney,
+    amount: '$500K',
+    title: 'Constraint Identification',
+    description: 'Annual margin improvement, potentially up to $2M. One hidden bottleneck can pay for years of ChatAPC.',
     gradient: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
   },
   {
-    icon: Security,
-    title: 'Enterprise-Grade Security',
-    description: 'Your data stays secure with SOC 2 compliance, end-to-end encryption, and on-premise deployment options.',
+    icon: Schedule,
+    amount: '$200K',
+    title: 'Time Savings',
+    description: 'Annually, 3 engineers saving 10 hours/week translates to $200K - $400K in productivity gains.',
     gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
   },
   {
-    icon: TrendingUp,
-    title: 'Predictive Analytics',
-    description: 'Anticipate issues before they happen with AI-powered predictive models and proactive alerts.',
+    icon: School,
+    amount: '$150K',
+    title: 'Knowledge Retention',
+    description: 'Faster onboarding for new hires and consistent decision-making, valued at $150K - $300K annually.',
     gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-  },
-  {
-    icon: Settings,
-    title: 'Seamless Integration',
-    description: 'Connect with your existing DCS, SCADA, and historians without disrupting your current operations.',
-    gradient: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
   },
 ];
 
@@ -40,39 +37,36 @@ const LightFeatureSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // Use a single timeline for better performance
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none none',
+        },
+      });
+
       // Animate header
       if (headerRef.current) {
-        gsap.from(headerRef.current, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          y: 60,
+        tl.from(headerRef.current, {
+          y: 50,
           opacity: 0,
-          duration: 1,
+          duration: 0.6,
           ease: 'power3.out',
-        });
+        }, 0);
       }
 
       // Animate cards with stagger
-      cardsRef.current.forEach((card, index) => {
-        if (card) {
-          gsap.from(card, {
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            y: 50,
-            scale: 0.95,
-            duration: 0.8,
-            delay: index * 0.1,
-            ease: 'power3.out',
-          });
-        }
-      });
+      if (cardsRef.current.length > 0) {
+        tl.from(cardsRef.current, {
+          opacity: 0,
+          y: 40,
+          scale: 0.95,
+          duration: 0.6,
+          stagger: 0.08,
+          ease: 'power3.out',
+        }, 0.2);
+      }
     }, sectionRef);
 
     return () => ctx.revert();
@@ -114,31 +108,14 @@ const LightFeatureSection: React.FC = () => {
         <Box ref={headerRef} sx={{ textAlign: 'center', mb: 10 }}>
           <Typography
             sx={{
-              display: 'inline-block',
-              fontSize: '0.875rem',
-              fontWeight: 600,
-              color: '#2563EB',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              mb: 2,
-              px: 3,
-              py: 1,
-              borderRadius: 3,
-              background: 'rgba(37, 99, 235, 0.08)',
-            }}
-          >
-            Why ChatAPC
-          </Typography>
-          <Typography
-            sx={{
               fontSize: { xs: '2.5rem', md: '3.5rem' },
-              fontWeight: 700,
+              fontWeight: 600,
               color: '#1E293B',
-              mb: 3,
+              mb: 2,
               lineHeight: 1.2,
             }}
           >
-            Built for industrial excellence
+            Typical ROI in under 6 months
           </Typography>
           <Typography
             sx={{
@@ -146,22 +123,23 @@ const LightFeatureSection: React.FC = () => {
               color: '#475569',
               maxWidth: 800,
               mx: 'auto',
+              mb: 1,
               lineHeight: 1.7,
             }}
           >
-            Powerful features designed specifically for process engineers and plant operations teams
+            Here's what plants can achieve with ChatAPC:
           </Typography>
         </Box>
 
-        {/* Features Grid */}
+        {/* ROI Grid */}
         <Grid container spacing={4}>
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
+          {roiItems.map((item, index) => {
+            const Icon = item.icon;
             return (
               <Grid
                 item
                 xs={12}
-                md={6}
+                md={4}
                 key={index}
                 ref={(el) => {
                   if (el) cardsRef.current[index] = el as HTMLDivElement;
@@ -190,7 +168,7 @@ const LightFeatureSection: React.FC = () => {
                       width: 64,
                       height: 64,
                       borderRadius: 3,
-                      background: feature.gradient,
+                      background: item.gradient,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -201,34 +179,59 @@ const LightFeatureSection: React.FC = () => {
                     <Icon sx={{ fontSize: 32, color: '#FFFFFF' }} />
                   </Box>
 
+                  {/* Amount */}
+                  <Typography
+                    sx={{
+                      fontSize: '2.5rem',
+                      fontWeight: 700,
+                      color: '#2563EB',
+                      mb: 1,
+                    }}
+                  >
+                    {item.amount}
+                  </Typography>
+
                   {/* Title */}
                   <Typography
                     sx={{
-                      fontSize: '1.5rem',
+                      fontSize: '1.25rem',
                       fontWeight: 600,
                       color: '#1E293B',
                       mb: 2,
                       lineHeight: 1.3,
                     }}
                   >
-                    {feature.title}
+                    {item.title}
                   </Typography>
 
                   {/* Description */}
                   <Typography
                     sx={{
-                      fontSize: '1rem',
+                      fontSize: '0.95rem',
                       color: '#475569',
                       lineHeight: 1.7,
                     }}
                   >
-                    {feature.description}
+                    {item.description}
                   </Typography>
                 </Box>
               </Grid>
             );
           })}
         </Grid>
+
+        {/* Total Value */}
+        <Box sx={{ textAlign: 'center', mt: 8 }}>
+          <Typography
+            sx={{
+              fontSize: { xs: '1.25rem', md: '1.5rem' },
+              fontWeight: 600,
+              color: '#475569',
+            }}
+          >
+            Total potential value: <Box component="span" sx={{ color: '#2563EB' }}>$1M - $4M+ per year</Box>
+          </Typography>
+        </Box>
       </Container>
     </Box>
   );

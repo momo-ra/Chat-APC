@@ -45,7 +45,7 @@ const DarkFeatureSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Animate cards
+      // Simplified card animations
       cardsRef.current.forEach((card, index) => {
         if (card) {
           gsap.from(card, {
@@ -55,32 +55,17 @@ const DarkFeatureSection: React.FC = () => {
               toggleActions: 'play none none none',
             },
             opacity: 0,
-            y: 50,
-            scale: 0.95,
-            duration: 0.8,
+            y: 30,
+            duration: 0.6,
             delay: index * 0.1,
-            ease: 'power3.out',
+            ease: 'power2.out',
           });
         }
       });
 
-      // Image sinks down as you scroll (parallax)
-      if (imageRef.current) {
-        gsap.to(imageRef.current, {
-          scrollTrigger: {
-            trigger: imageRef.current,
-            start: 'top 60%',
-            end: 'bottom top',
-            scrub: 2,
-          },
-          y: 150,
-          scale: 0.9,
-          opacity: 0.3,
-          ease: 'none',
-        });
-      }
+      // Remove heavy parallax animations
 
-      // Text rises up as you scroll
+      // Simplified text animation
       if (textRef.current) {
         gsap.from(textRef.current, {
           scrollTrigger: {
@@ -88,10 +73,10 @@ const DarkFeatureSection: React.FC = () => {
             start: 'top 80%',
             toggleActions: 'play none none none',
           },
-          y: 60,
+          y: 30,
           opacity: 0,
-          duration: 1,
-          ease: 'power3.out',
+          duration: 0.8,
+          ease: 'power2.out',
         });
       }
     }, sectionRef);

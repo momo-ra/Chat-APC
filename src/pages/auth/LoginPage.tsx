@@ -21,9 +21,11 @@ import {
 import { gsap } from 'gsap';
 import { AppSidebar } from '../../components/layout';
 import { sidebarItems } from '../../data/layout/sidebarData';
+import { useThemeMode } from '../../contexts/ThemeContext';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const { isDark } = useThemeMode();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -81,13 +83,44 @@ const LoginPage: React.FC = () => {
     navigate('/');
   };
 
+  const getTextFieldStyles = () => ({
+    '& .MuiOutlinedInput-root': {
+      background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+      borderRadius: 3,
+      '& fieldset': {
+        border: isDark 
+          ? '1px solid rgba(255, 255, 255, 0.1)'
+          : '1px solid rgba(0, 0, 0, 0.15)',
+      },
+      '&:hover fieldset': {
+        border: isDark 
+          ? '1px solid rgba(0, 155, 228, 0.3)'
+          : '1px solid rgba(0, 155, 228, 0.4)',
+      },
+      '&.Mui-focused fieldset': {
+        border: isDark 
+          ? '1px solid rgba(0, 155, 228, 0.5)'
+          : '1px solid rgba(0, 155, 228, 0.6)',
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+    },
+    '& .MuiInputBase-input': {
+      color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.87)',
+    },
+  });
+
   return (
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)',
+        background: isDark 
+          ? 'linear-gradient(135deg, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
+          : 'linear-gradient(135deg, #ffffff 0%, #f1f5f9 50%, #e2e8f0 100%)',
         position: 'relative',
         overflow: 'hidden',
+        transition: 'background 0.3s ease',
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -95,7 +128,9 @@ const LoginPage: React.FC = () => {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'radial-gradient(circle at 20% 20%, rgba(0, 155, 228, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(106, 17, 203, 0.08) 0%, transparent 50%)',
+          background: isDark
+            ? 'radial-gradient(circle at 20% 20%, rgba(0, 155, 228, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(106, 17, 203, 0.08) 0%, transparent 50%)'
+            : 'radial-gradient(circle at 20% 20%, rgba(0, 155, 228, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.04) 0%, transparent 50%)',
           pointerEvents: 'none',
         },
       }}
@@ -122,10 +157,12 @@ const LoginPage: React.FC = () => {
             <IconButton
               onClick={() => navigate('/')}
               sx={{
-                color: 'rgba(255, 255, 255, 0.7)',
+                color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)',
                 '&:hover': {
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
+                  backgroundColor: isDark 
+                    ? 'rgba(255, 255, 255, 0.05)'
+                    : 'rgba(0, 0, 0, 0.05)',
                 },
               }}
             >
@@ -139,7 +176,6 @@ const LoginPage: React.FC = () => {
               sx={{
                 fontSize: { xs: '2.5rem', md: '3.5rem' },
                 fontWeight: 700,
-                color: 'rgba(255, 255, 255, 0.95)',
                 mb: 2,
                 background: 'linear-gradient(135deg, #009BE4 0%, #6A11CB 100%)',
                 backgroundClip: 'text',
@@ -152,7 +188,7 @@ const LoginPage: React.FC = () => {
             <Typography
               sx={{
                 fontSize: '1.1rem',
-                color: 'rgba(255, 255, 255, 0.6)',
+                color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                 maxWidth: 400,
                 mx: 'auto',
               }}
@@ -167,12 +203,18 @@ const LoginPage: React.FC = () => {
             component="form"
             onSubmit={handleSubmit}
             sx={{
-              background: 'rgba(255, 255, 255, 0.03)',
+              background: isDark 
+                ? 'rgba(255, 255, 255, 0.03)'
+                : 'rgba(255, 255, 255, 0.9)',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              border: isDark 
+                ? '1px solid rgba(255, 255, 255, 0.1)'
+                : '1px solid rgba(0, 0, 0, 0.08)',
               borderRadius: 4,
               padding: { xs: 3, md: 4 },
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+              boxShadow: isDark 
+                ? '0 20px 60px rgba(0, 0, 0, 0.3)'
+                : '0 20px 60px rgba(0, 0, 0, 0.1)',
             }}
           >
             {/* Email Field */}
@@ -186,30 +228,12 @@ const LoginPage: React.FC = () => {
               required
               sx={{
                 mb: 3,
-                '& .MuiOutlinedInput-root': {
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  borderRadius: 3,
-                  '& fieldset': {
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                  },
-                  '&:hover fieldset': {
-                    border: '1px solid rgba(0, 155, 228, 0.3)',
-                  },
-                  '&.Mui-focused fieldset': {
-                    border: '1px solid rgba(0, 155, 228, 0.5)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: 'rgba(255, 255, 255, 0.7)',
-                },
-                '& .MuiInputBase-input': {
-                  color: 'rgba(255, 255, 255, 0.9)',
-                },
+                ...getTextFieldStyles(),
               }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Email sx={{ color: 'rgba(0, 155, 228, 0.7)' }} />
+                    <Email sx={{ color: '#009BE4' }} />
                   </InputAdornment>
                 ),
               }}
@@ -226,30 +250,12 @@ const LoginPage: React.FC = () => {
               required
               sx={{
                 mb: 4,
-                '& .MuiOutlinedInput-root': {
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  borderRadius: 3,
-                  '& fieldset': {
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                  },
-                  '&:hover fieldset': {
-                    border: '1px solid rgba(0, 155, 228, 0.3)',
-                  },
-                  '&.Mui-focused fieldset': {
-                    border: '1px solid rgba(0, 155, 228, 0.5)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: 'rgba(255, 255, 255, 0.7)',
-                },
-                '& .MuiInputBase-input': {
-                  color: 'rgba(255, 255, 255, 0.9)',
-                },
+                ...getTextFieldStyles(),
               }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Lock sx={{ color: 'rgba(0, 155, 228, 0.7)' }} />
+                    <Lock sx={{ color: '#009BE4' }} />
                   </InputAdornment>
                 ),
                 endAdornment: (
@@ -257,7 +263,9 @@ const LoginPage: React.FC = () => {
                     <IconButton
                       onClick={() => setShowPassword(!showPassword)}
                       edge="end"
-                      sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
+                      sx={{ 
+                        color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                      }}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -315,24 +323,30 @@ const LoginPage: React.FC = () => {
 
             {/* Divider */}
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-              <Divider sx={{ flex: 1, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+              <Divider sx={{ 
+                flex: 1, 
+                borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.12)',
+              }} />
               <Typography
                 sx={{
-                  color: 'rgba(255, 255, 255, 0.5)',
+                  color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
                   px: 2,
                   fontSize: '0.9rem',
                 }}
               >
                 OR
               </Typography>
-              <Divider sx={{ flex: 1, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+              <Divider sx={{ 
+                flex: 1, 
+                borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.12)',
+              }} />
             </Box>
 
             {/* Sign Up Link */}
             <Box sx={{ textAlign: 'center' }}>
               <Typography
                 sx={{
-                  color: 'rgba(255, 255, 255, 0.6)',
+                  color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                   fontSize: '0.95rem',
                 }}
               >
