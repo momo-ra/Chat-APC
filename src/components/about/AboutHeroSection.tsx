@@ -3,6 +3,7 @@ import { Box, Typography, Container, Chip } from '@mui/material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,6 +15,7 @@ export const AboutHeroSection: React.FC = () => {
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
   const { isDark } = useThemeMode();
+  const { h1FontSize, bodyLargeFontSize, heroMaxWidth, containerMaxWidth } = useResponsiveLayout();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -109,12 +111,12 @@ export const AboutHeroSection: React.FC = () => {
       sx={{
         position: 'relative',
         overflow: 'hidden',
-        py: { xs: 10, md: 16, lg: 20 },
+        py: 'clamp(2.5rem, 12vh, 5rem)',
         background: isDark
           ? 'linear-gradient(135deg, rgba(30, 58, 138, 0.1) 0%, rgba(79, 70, 229, 0.08) 35%, rgba(124, 58, 237, 0.06) 100%)'
           : 'linear-gradient(135deg, rgba(239, 246, 255, 1) 0%, rgba(238, 242, 255, 1) 35%, rgba(250, 245, 255, 1) 100%)',
         transition: 'background 0.3s ease',
-        minHeight: { xs: '80vh', md: '90vh' },
+        minHeight: 'clamp(70vh, 85vh, 90vh)',
         display: 'flex',
         alignItems: 'center',
       }}
@@ -158,11 +160,19 @@ export const AboutHeroSection: React.FC = () => {
         }}
       />
 
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 10 }}>
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          position: 'relative', 
+          zIndex: 10,
+          maxWidth: containerMaxWidth,
+          px: 'clamp(0.5rem, 2vw, 0.75rem)',
+        }}
+      >
         <Box
           ref={heroContentRef}
           sx={{
-            maxWidth: 1000,
+            maxWidth: heroMaxWidth,
             mx: 'auto',
             textAlign: 'center',
           }}
@@ -212,12 +222,7 @@ export const AboutHeroSection: React.FC = () => {
             variant="h1"
             component="h1"
             sx={{
-              fontSize: {
-                xs: '2.5rem',
-                sm: '3rem',
-                md: '3.75rem',
-                lg: '4.5rem',
-              },
+              fontSize: h1FontSize,
               fontWeight: 700,
               color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
               mb: 3,
@@ -235,11 +240,7 @@ export const AboutHeroSection: React.FC = () => {
             variant="body1"
             component="p"
             sx={{
-              fontSize: {
-                xs: '1.125rem',
-                sm: '1.25rem',
-                md: '1.5rem',
-              },
+              fontSize: bodyLargeFontSize,
               color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(75, 85, 99, 1)',
               lineHeight: 1.6,
               maxWidth: 768,

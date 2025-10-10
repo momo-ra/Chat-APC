@@ -43,25 +43,17 @@ export const sidebarItems: SidebarItem[] = [
   { 
     label: 'Product',
     children: [
-      { label: 'Overview', path: '/product/overview' },
-      { label: 'Features', path: '/product/features' },
+      // { label: 'Overview', path: '/product/overview' },
+      // { label: 'Features', path: '/product/features' },
+      { label: 'How It Works', path: '/product/how-it-works' },
       { label: 'Architecture', path: '/product/architecture' },
+      { label: 'Agents', path: '/product/agents' },
       { label: 'Deployment', path: '/product/deployment' },
     ]
   },
   { 
     label: 'Roadmap', 
     path: '/roadmap',
-  },
-  { 
-    label: 'Solutions',
-    children: [
-      { label: 'APC Troubleshooting', path: '/solutions/apc-troubleshooting' },
-      { label: 'APC Gap Calculation', path: '/solutions/apc-gap-calculation' },
-      { label: 'Constraint Management', path: '/solutions/constraint-management' },
-      { label: 'Process Monitoring & Insights', path: '/solutions/process-monitoring' },
-      { label: 'Optimization Opportunities', path: '/solutions/optimization' },
-    ]
   },
   { 
     label: 'Demo', 
@@ -71,7 +63,7 @@ export const sidebarItems: SidebarItem[] = [
     label: 'Resources',
     children: [
       { label: 'FAQ', path: '/resources/faq' },
-      { label: 'Whitepapers', path: '/resources/whitepapers' },
+      // { label: 'Whitepapers', path: '/resources/whitepapers' },
       { label: 'Blog', path: '/resources/blog' },
     ]
   },

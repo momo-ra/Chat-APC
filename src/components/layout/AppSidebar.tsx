@@ -217,6 +217,13 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 185 }) => {
 
   const handleItemClick = (item: SidebarItem) => {
     if (item.children) {
+      // Navigate to first child's path if it exists
+      const firstChild = item.children.find(child => child.path);
+      if (firstChild && firstChild.path) {
+        navigate(firstChild.path);
+        if (isMobile) handleDrawerToggle();
+      }
+      
       // Replace view with children - slide left (forward)
       setSlideDirection('left');
       setIsAnimating(true);

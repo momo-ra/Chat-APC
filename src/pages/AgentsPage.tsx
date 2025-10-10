@@ -2,26 +2,23 @@ import React, { useEffect } from 'react';
 import { Box } from '@mui/material';
 import { AppSidebar, Footer, ThemeToggle } from '../components/layout';
 import {
-  AboutHeroSection,
-  AboutBeginningSection,
-  AboutGapSection,
-  AboutTurningPointSection,
-  AboutResultSection,
-  AboutBeliefSection,
-  AboutFinalSection,
-} from '../components/about';
+  AgentsHeroSection,
+  AgentsOverviewSection,
+  AgentsShowcaseSection,
+  BiggerVisionSection,
+} from '../components/agents';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 
-const AboutPage: React.FC = () => {
+const AgentsPage: React.FC = () => {
   const { isDark } = useThemeMode();
 
   useEffect(() => {
     // Set page metadata
-    document.title = 'Our Story - Alpha Process Control | ChatAPC';
+    document.title = 'AI Agents - Alpha Process Control | ChatAPC';
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Learn about Alpha Process Control\'s journey from traditional process control to AI-driven industrial operations with ChatAPC.');
+      metaDescription.setAttribute('content', 'Meet your ecosystem of digital colleagues. ChatAPC\'s specialized AI agents detect, explain, and advise on process operations with interactive, conversational intelligence.');
     }
 
     // Scroll to top on mount
@@ -56,8 +53,8 @@ const AboutPage: React.FC = () => {
         sx={{
           minHeight: '100vh',
           background: isDark
-            ? 'linear-gradient(to bottom, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
-            : 'linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
+            ? 'linear-gradient(to bottom, #0F1419 0%, #1A1F2E 25%, #2D1B69 75%, #1A1F2E 100%)'
+            : 'linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 25%, #EEF2FF 75%, #FFFFFF 100%)',
           position: 'relative',
           overflow: 'visible',
           transition: 'background 0.3s ease',
@@ -79,7 +76,7 @@ const AboutPage: React.FC = () => {
             background: 'transparent',
           }}
         >
-          {/* About Sections */}
+          {/* Agents Sections */}
           <Box
             sx={{
               width: '100%',
@@ -91,13 +88,10 @@ const AboutPage: React.FC = () => {
               overflow: 'hidden',
             }}
           >
-            <AboutHeroSection />
-            <AboutBeginningSection />
-            <AboutGapSection />
-            <AboutTurningPointSection />
-            <AboutResultSection />
-            <AboutBeliefSection />
-            <AboutFinalSection />
+            <AgentsHeroSection />
+            <AgentsOverviewSection />
+            <AgentsShowcaseSection />
+            <BiggerVisionSection />
           </Box>
 
           {/* Footer */}
@@ -119,4 +113,4 @@ const AboutPage: React.FC = () => {
   );
 };
 
-export default AboutPage;
+export default AgentsPage;

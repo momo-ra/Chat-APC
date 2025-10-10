@@ -1,12 +1,29 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Typography, Container, Grid, Paper } from '@mui/material';
+import { Box, Typography, Container, Grid } from '@mui/material';
 import { MessageSquare, Wrench, GraduationCap, Heart } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export const AboutBeliefSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const beliefBoxRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement[]>([]);
+  const footerRef = useRef<HTMLDivElement>(null);
   const { isDark } = useThemeMode();
+  const { 
+    sectionPadding, 
+    containerMaxWidth, 
+    containerPadding, 
+    h2FontSize, 
+    h4FontSize, 
+    bodyFontSize, 
+    bodyLargeFontSize 
+  } = useResponsiveLayout();
 
   const beliefs = [
     {
@@ -21,7 +38,7 @@ export const AboutBeliefSection: React.FC = () => {
       title: "Practical",
       description: "Every feature is built around real operational needs and workflows",
       bgColor: isDark ? 'rgba(168, 85, 247, 0.15)' : 'rgba(233, 213, 255, 1)',
-      iconColor: isDark ? '#A855F7' : '#7C3AED',
+      iconColor: isDark ? '#A855F7' : '#8B5CF6',
     },
     {
       icon: GraduationCap,
@@ -33,155 +50,277 @@ export const AboutBeliefSection: React.FC = () => {
   ];
 
   useEffect(() => {
-    // Animation disabled for better reliability - content is always visible
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none none',
+        },
+      });
+
+      if (headerRef.current) {
+        tl.from(headerRef.current, {
+          opacity: 0,
+          y: 50,
+          duration: 0.8,
+          ease: 'power3.out',
+        }, 0);
+      }
+
+      if (beliefBoxRef.current) {
+        tl.from(beliefBoxRef.current, {
+          opacity: 0,
+          y: 20,
+          duration: 0.6,
+          ease: 'power3.out',
+        }, 0.2);
+      }
+
+      if (cardsRef.current.length > 0) {
+        tl.from(cardsRef.current, {
+          opacity: 0,
+          y: 30,
+          duration: 0.6,
+          stagger: 0.15,
+          ease: 'power3.out',
+        }, 0.4);
+      }
+
+      if (footerRef.current) {
+        tl.from(footerRef.current, {
+          opacity: 0,
+          y: 20,
+          duration: 0.6,
+          ease: 'power3.out',
+        }, 0.8);
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
     <Box
       ref={sectionRef}
       component="section"
+      data-section-theme={isDark ? 'dark' : 'light'}
+      data-section-primary={isDark ? '#009BE4' : '#2563EB'}
       sx={{
-        py: { xs: 8, md: 12, lg: 16 },
+        width: '100%',
+        py: sectionPadding,
+        background: isDark
+          ? 'linear-gradient(180deg, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
+          : 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
         position: 'relative',
-        background: isDark 
-          ? 'rgba(10, 14, 46, 0.5)' 
-          : '#FFFFFF',
+        overflow: 'hidden',
         transition: 'background 0.3s ease',
       }}
     >
-      <Container maxWidth="lg">
-        <Box ref={contentRef}>
-          {/* Section header */}
-          <Box sx={{ mb: { xs: 6, md: 8 }, textAlign: 'center' }}>
-            <Typography
-              variant="overline"
-              sx={{
-                display: 'inline-block',
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                color: isDark ? '#009BE4' : '#2563EB',
-                letterSpacing: '0.1em',
-                mb: 2,
-                transition: 'color 0.3s ease',
-              }}
-            >
-              CHAPTER 05
-            </Typography>
-            <Typography
-              variant="h2"
-              sx={{
-                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
-                fontWeight: 700,
-                color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
-                mb: 3,
-                transition: 'color 0.3s ease',
-              }}
-            >
-              Our Belief
-            </Typography>
-          </Box>
+      <Container 
+        maxWidth="lg"
+        sx={{
+          position: 'relative',
+          zIndex: 10,
+          maxWidth: containerMaxWidth,
+          px: containerPadding,
+        }}
+      >
+        {/* Section Header */}
+        <Box 
+          ref={headerRef}
+          sx={{ 
+            textAlign: 'center',
+            mb: { xs: 6, md: 8 },
+            '@media (min-width: 960px) and (max-width: 1549px)': {
+              mb: 6,
+            },
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              color: isDark ? '#009BE4' : '#2563EB',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              mb: 2,
+              transition: 'color 0.3s ease',
+            }}
+          >
+            Chapter 05
+          </Typography>
+          <Typography
+            variant="h2"
+            sx={{
+              fontSize: h2FontSize,
+              fontWeight: 700,
+              color: isDark ? 'rgba(255, 255, 255, 0.95)' : '#1E293B',
+              mb: 3,
+              lineHeight: 1.2,
+              transition: 'color 0.3s ease',
+            }}
+          >
+            Our Belief
+          </Typography>
+        </Box>
 
-          {/* Main belief statement */}
-          <Box sx={{ mb: 6 }}>
-            <Paper
-              elevation={isDark ? 0 : 4}
+        {/* Main Belief Statement */}
+        <Box
+          ref={beliefBoxRef}
+          sx={{
+            mb: { xs: 6, md: 8 },
+            '@media (min-width: 960px) and (max-width: 1549px)': {
+              mb: 6,
+            },
+          }}
+        >
+          <Box
+            sx={{
+              position: 'relative',
+            }}
+          >
+            <Box
+              sx={{
+                position: 'absolute',
+                inset: 0,
+                background: isDark
+                  ? 'radial-gradient(circle, rgba(0, 155, 228, 0.1), rgba(168, 85, 247, 0.05), transparent)'
+                  : 'radial-gradient(circle, rgba(37, 99, 235, 0.08), rgba(139, 92, 246, 0.05), transparent)',
+                filter: 'blur(40px)',
+              }}
+            />
+            <Box
               sx={{
                 position: 'relative',
+                borderRadius: '24px',
                 p: { xs: 4, md: 6 },
-                borderRadius: 6,
-                bgcolor: isDark ? 'rgba(31, 41, 55, 0.5)' : '#FFFFFF',
-                border: isDark ? '1px solid rgba(55, 65, 81, 1)' : '1px solid rgba(229, 231, 235, 1)',
-                overflow: 'hidden',
+                '@media (min-width: 960px) and (max-width: 1549px)': {
+                  p: 5,
+                },
+                boxShadow: isDark
+                  ? '0 10px 40px rgba(0, 0, 0, 0.4)'
+                  : '0 10px 40px rgba(0, 0, 0, 0.08)',
+                background: isDark ? '#1e293b' : '#FFFFFF',
+                border: isDark ? '1px solid #334155' : '1px solid #E2E8F0',
                 transition: 'all 0.3s ease',
               }}
             >
-              {/* Background glow */}
               <Box
                 sx={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1), rgba(236, 72, 153, 0.1))',
-                  filter: 'blur(60px)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  mb: 3,
                 }}
-              />
-              
-              <Box sx={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
-                <Heart size={48} style={{ color: '#EF4444', marginBottom: 24 }} />
-                <Typography
-                  variant="h3"
-                  sx={{
-                    fontSize: { xs: '1.5rem', md: '2rem', lg: '2.5rem' },
-                    fontWeight: 700,
-                    color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
-                    mb: 2,
-                    lineHeight: 1.3,
-                    transition: 'color 0.3s ease',
-                  }}
-                >
-                  We believe technology only works if it feels like a colleague, not another system to manage.
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: { xs: '1.125rem', md: '1.25rem' },
-                    color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(107, 114, 128, 1)',
-                    lineHeight: 1.7,
-                    transition: 'color 0.3s ease',
-                  }}
-                >
-                  That's why ChatAPC is designed the way it is: conversational, practical, and grounded
-                  in real plant experience. We didn't want to create another complex software tool that
-                  operators would need extensive training to use.
-                </Typography>
+              >
+                <Heart 
+                  size={48} 
+                  style={{ 
+                    color: '#EF4444',
+                    fill: '#EF4444',
+                  }} 
+                />
               </Box>
-            </Paper>
+              <Typography
+                variant="h3"
+                sx={{
+                  fontSize: h4FontSize,
+                  fontWeight: 700,
+                  color: isDark ? 'rgba(255, 255, 255, 0.95)' : '#1E293B',
+                  textAlign: 'center',
+                  mb: 2,
+                  lineHeight: 1.3,
+                  transition: 'color 0.3s ease',
+                }}
+              >
+                We believe technology only works if it feels like a colleague, not another system to manage.
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: bodyLargeFontSize,
+                  color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
+                  textAlign: 'center',
+                  lineHeight: 1.7,
+                  transition: 'color 0.3s ease',
+                }}
+              >
+                That's why ChatAPC is designed the way it is: conversational, practical, and grounded
+                in real plant experience. We didn't want to create another complex software tool that
+                operators would need extensive training to use.
+              </Typography>
+            </Box>
           </Box>
+        </Box>
 
-          {/* Beliefs grid */}
-          <Grid container spacing={4} sx={{ mb: 6 }}>
-            {beliefs.map((belief, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <Paper
-                  elevation={isDark ? 0 : 2}
+        {/* Beliefs Grid */}
+        <Grid 
+          container 
+          spacing={{ xs: 4, md: 6 }}
+          sx={{
+            mb: { xs: 6, md: 8 },
+            '@media (min-width: 960px) and (max-width: 1549px)': {
+              mb: 6,
+            },
+          }}
+        >
+          {beliefs.map((belief, index) => {
+            const Icon = belief.icon;
+            return (
+              <Grid
+                item
+                xs={12}
+                md={4}
+                key={index}
+                ref={(el) => {
+                  if (el) cardsRef.current[index] = el as HTMLDivElement;
+                }}
+              >
+                <Box
                   sx={{
                     height: '100%',
-                    p: 4,
-                    borderRadius: 4,
-                    bgcolor: isDark ? 'rgba(31, 41, 55, 0.5)' : '#FFFFFF',
-                    border: isDark ? '1px solid rgba(55, 65, 81, 1)' : '1px solid rgba(229, 231, 235, 1)',
+                    p: { xs: 4, md: 5 },
+                    '@media (min-width: 960px) and (max-width: 1549px)': {
+                      p: 4,
+                    },
+                    borderRadius: '16px',
+                    background: isDark ? '#1e293b' : '#FFFFFF',
+                    border: isDark ? '1px solid #334155' : '1px solid #E2E8F0',
+                    boxShadow: isDark
+                      ? '0 4px 20px rgba(0, 0, 0, 0.3)'
+                      : '0 4px 20px rgba(0, 0, 0, 0.08)',
                     transition: 'all 0.3s ease',
                     '&:hover': {
-                      transform: 'translateY(-8px) scale(1.02)',
-                      boxShadow: isDark 
-                        ? '0 20px 40px rgba(0, 0, 0, 0.3)' 
-                        : '0 20px 40px rgba(0, 0, 0, 0.1)',
-                      '& .belief-icon': {
-                        transform: 'scale(1.1) rotate(3deg)',
-                      },
+                      transform: 'translateY(-8px)',
+                      boxShadow: isDark
+                        ? '0 20px 50px rgba(0, 155, 228, 0.2)'
+                        : '0 20px 50px rgba(37, 99, 235, 0.15)',
                     },
                   }}
                 >
                   <Box
-                    className="belief-icon"
                     sx={{
                       width: 56,
                       height: 56,
-                      borderRadius: 3,
-                      bgcolor: belief.bgColor,
+                      borderRadius: '12px',
+                      backgroundColor: belief.bgColor,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       mb: 3,
-                      transition: 'transform 0.3s ease',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'scale(1.1) rotate(3deg)',
+                      },
                     }}
                   >
-                    <belief.icon size={28} style={{ color: belief.iconColor }} />
+                    <Icon size={28} style={{ color: belief.iconColor }} />
                   </Box>
                   <Typography
                     variant="h5"
                     sx={{
-                      fontSize: '1.5rem',
+                      fontSize: h4FontSize,
                       fontWeight: 700,
-                      color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
+                      color: isDark ? 'rgba(255, 255, 255, 0.95)' : '#1E293B',
                       mb: 2,
                       transition: 'color 0.3s ease',
                     }}
@@ -190,35 +329,37 @@ export const AboutBeliefSection: React.FC = () => {
                   </Typography>
                   <Typography
                     sx={{
-                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(107, 114, 128, 1)',
+                      fontSize: bodyFontSize,
+                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
                       lineHeight: 1.7,
                       transition: 'color 0.3s ease',
                     }}
                   >
                     {belief.description}
                   </Typography>
-                </Paper>
+                </Box>
               </Grid>
-            ))}
-          </Grid>
+            );
+          })}
+        </Grid>
 
-          {/* Bottom statement */}
-          <Box sx={{ maxWidth: 896, mx: 'auto' }}>
-            <Typography
-              sx={{
-                fontSize: { xs: '1.125rem', md: '1.25rem' },
-                color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(55, 65, 81, 1)',
-                textAlign: 'center',
-                lineHeight: 1.7,
-                fontStyle: 'italic',
-                transition: 'color 0.3s ease',
-              }}
-            >
-              Technology should enhance human expertise, not replace it. ChatAPC amplifies the
-              knowledge and intuition that experienced operators already possess.
-            </Typography>
-          </Box>
-        </Box>
+        {/* Bottom Statement */}
+        <Typography
+          ref={footerRef}
+          sx={{
+            fontSize: bodyLargeFontSize,
+            color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
+            textAlign: 'center',
+            lineHeight: 1.7,
+            maxWidth: 900,
+            mx: 'auto',
+            fontStyle: 'italic',
+            transition: 'color 0.3s ease',
+          }}
+        >
+          Technology should enhance human expertise, not replace it. ChatAPC amplifies the
+          knowledge and intuition that experienced operators already possess.
+        </Typography>
       </Container>
     </Box>
   );

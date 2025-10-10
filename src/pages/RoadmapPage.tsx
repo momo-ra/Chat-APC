@@ -2,26 +2,22 @@ import React, { useEffect } from 'react';
 import { Box } from '@mui/material';
 import { AppSidebar, Footer, ThemeToggle } from '../components/layout';
 import {
-  AboutHeroSection,
-  AboutBeginningSection,
-  AboutGapSection,
-  AboutTurningPointSection,
-  AboutResultSection,
-  AboutBeliefSection,
-  AboutFinalSection,
-} from '../components/about';
+  RoadmapHeroSection,
+  RoadmapTimelineSection,
+  RoadmapEcosystemSection,
+} from '../components/roadmap';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 
-const AboutPage: React.FC = () => {
+const RoadmapPage: React.FC = () => {
   const { isDark } = useThemeMode();
 
   useEffect(() => {
     // Set page metadata
-    document.title = 'Our Story - Alpha Process Control | ChatAPC';
+    document.title = 'Product Roadmap - Alpha Process Control | ChatAPC';
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Learn about Alpha Process Control\'s journey from traditional process control to AI-driven industrial operations with ChatAPC.');
+      metaDescription.setAttribute('content', 'Discover the future of ChatAPC with our comprehensive product roadmap, featuring upcoming features, integrations, and innovations in industrial AI.');
     }
 
     // Scroll to top on mount
@@ -79,7 +75,7 @@ const AboutPage: React.FC = () => {
             background: 'transparent',
           }}
         >
-          {/* About Sections */}
+          {/* Roadmap Sections */}
           <Box
             sx={{
               width: '100%',
@@ -91,13 +87,9 @@ const AboutPage: React.FC = () => {
               overflow: 'hidden',
             }}
           >
-            <AboutHeroSection />
-            <AboutBeginningSection />
-            <AboutGapSection />
-            <AboutTurningPointSection />
-            <AboutResultSection />
-            <AboutBeliefSection />
-            <AboutFinalSection />
+            <RoadmapHeroSection />
+            <RoadmapTimelineSection />
+            <RoadmapEcosystemSection />
           </Box>
 
           {/* Footer */}
@@ -119,4 +111,5 @@ const AboutPage: React.FC = () => {
   );
 };
 
-export default AboutPage;
+export default RoadmapPage;
+

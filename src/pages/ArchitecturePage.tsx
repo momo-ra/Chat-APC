@@ -2,26 +2,25 @@ import React, { useEffect } from 'react';
 import { Box } from '@mui/material';
 import { AppSidebar, Footer, ThemeToggle } from '../components/layout';
 import {
-  AboutHeroSection,
-  AboutBeginningSection,
-  AboutGapSection,
-  AboutTurningPointSection,
-  AboutResultSection,
-  AboutBeliefSection,
-  AboutFinalSection,
-} from '../components/about';
+  ArchitectureHeroSection,
+  ConnectorsSection,
+  KnowledgeMapSection,
+  AIBrainSection,
+  WorkflowExampleSection,
+  FinalBenefitsSection,
+} from '../components/architecture';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 
-const AboutPage: React.FC = () => {
+const ArchitecturePage: React.FC = () => {
   const { isDark } = useThemeMode();
 
   useEffect(() => {
     // Set page metadata
-    document.title = 'Our Story - Alpha Process Control | ChatAPC';
+    document.title = 'Architecture - Alpha Process Control | ChatAPC';
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Learn about Alpha Process Control\'s journey from traditional process control to AI-driven industrial operations with ChatAPC.');
+      metaDescription.setAttribute('content', 'Discover how ChatAPC\'s powerful architecture connects to your plant systems, organizes knowledge, and delivers AI-driven insights through specialized agents.');
     }
 
     // Scroll to top on mount
@@ -56,7 +55,7 @@ const AboutPage: React.FC = () => {
         sx={{
           minHeight: '100vh',
           background: isDark
-            ? 'linear-gradient(to bottom, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
+            ? 'linear-gradient(to bottom, #0F1419 0%, #1A1F2E 50%, #0F1419 100%)'
             : 'linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
           position: 'relative',
           overflow: 'visible',
@@ -79,7 +78,7 @@ const AboutPage: React.FC = () => {
             background: 'transparent',
           }}
         >
-          {/* About Sections */}
+          {/* Architecture Sections */}
           <Box
             sx={{
               width: '100%',
@@ -91,13 +90,12 @@ const AboutPage: React.FC = () => {
               overflow: 'hidden',
             }}
           >
-            <AboutHeroSection />
-            <AboutBeginningSection />
-            <AboutGapSection />
-            <AboutTurningPointSection />
-            <AboutResultSection />
-            <AboutBeliefSection />
-            <AboutFinalSection />
+            <ArchitectureHeroSection />
+            <ConnectorsSection />
+            <KnowledgeMapSection />
+            <AIBrainSection />
+            <WorkflowExampleSection />
+            <FinalBenefitsSection />
           </Box>
 
           {/* Footer */}
@@ -119,4 +117,4 @@ const AboutPage: React.FC = () => {
   );
 };
 
-export default AboutPage;
+export default ArchitecturePage;

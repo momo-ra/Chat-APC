@@ -10,12 +10,15 @@ import { SplashScreen } from './components/shared';
 // Lazy load all pages for better performance
 const Index = lazy(() => import("./pages/Index"));
 const Demo = lazy(() => import("./pages/Demo"));
-const Test = lazy(() => import("./pages/Test"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const SignupPage = lazy(() => import("./pages/auth/SignupPage"));
 const DeploymentPage = lazy(() => import("./pages/DeploymentPage"));
 const FAQPage = lazy(() => import("./pages/resources/FAQPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
+const RoadmapPage = lazy(() => import("./pages/RoadmapPage"));
+const HowItWorksPage = lazy(() => import("./pages/HowItWorksPage"));
+const ArchitecturePage = lazy(() => import("./pages/ArchitecturePage"));
+const AgentsPage = lazy(() => import("./pages/AgentsPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -76,12 +79,15 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/demo" element={<Demo />} />
-                <Route path="/test" element={<Test />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/product/deployment" element={<DeploymentPage />} />
                 <Route path="/resources/faq" element={<FAQPage />} />
                 <Route path="/company/about" element={<AboutPage />} />
+                <Route path="/roadmap" element={<RoadmapPage />} />
+                <Route path="/product/how-it-works" element={<HowItWorksPage />} />
+                <Route path="/product/architecture" element={<ArchitecturePage />} />
+                <Route path="/product/agents" element={<AgentsPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

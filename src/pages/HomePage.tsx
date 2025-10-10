@@ -2,24 +2,24 @@ import React from 'react';
 import { Box } from '@mui/material';
 import { AppSidebar, Footer, ThemeToggle } from '../components/layout';
 import { 
-  CompanySlider, 
   HeroSearchSection, 
   AuthButtons,
   ExamplesSection,
   DarkFeatureSection,
-  ROISection,
   DarkPillarSection,
   FullWidthCTASection,
   AlternatingFeatureSection,
-  FullWidthImageSection,
-  SplitImageSection,
   ContactSection,
   LightFeatureSection,
-  LightStatsSection,
-  InteractiveFeaturesSection
 } from '../components/home';
+import {
+  CTASection,
+  BenefitsSection,
+  ArchitectureSection,
+  DemoVideoSection,
+  TeamSection,
+} from '../components/home22';
 import { sidebarItems } from '../data/layout/sidebarData';
-import { heroQuestions, partnerCompanies } from '../data/home/chatHeroData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -83,8 +83,8 @@ const HomePage: React.FC = () => {
       sx={{
         height: 'auto',
         background: isDark 
-          ? 'linear-gradient(to bottom, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
-          : 'linear-gradient(to bottom, #FFFFFF 0%, #FEFEFE 30%, #FCFCFC 70%, #FAFAFA 100%)',
+          ? '#111827'
+          : '#FFFFFF',
         position: 'relative',
         overflow: 'visible',
         transition: 'background 0.3s ease',
@@ -105,7 +105,9 @@ const HomePage: React.FC = () => {
           // No padding here - sections will handle their own margins
           transition: 'all 0.3s ease',
           position: 'relative',
-          background: 'transparent',
+          background: isDark 
+            ? '#111827'
+            : '#FFFFFF',
         }}
       >
         {/* Hero Section - Simplified for better scroll performance */}
@@ -120,13 +122,14 @@ const HomePage: React.FC = () => {
             padding: 0,
             overflow: 'hidden',
             height: 'auto',
+            background: 'transparent',
           }}
         >
         {/* Auth Buttons */}
-        <AuthButtons />
+        {/* <AuthButtons /> */}
 
         {/* Hero Chat Section */}
-        <HeroSearchSection questions={heroQuestions} />
+        <HeroSearchSection />
       
         {/* Companies Slider - Fixed at Bottom */}
         {/* <CompanySlider companies={partnerCompanies} /> */}
@@ -148,16 +151,34 @@ const HomePage: React.FC = () => {
         }}
       >
         {/* Examples Section */}
-        <ExamplesSection />
+        {/* <ExamplesSection /> */}
+
+        {/* DemoVideoSection */}
+        <DemoVideoSection />
+
+
+        {/* BenefitsSection */}
+        <BenefitsSection />
+
+        {/* ArchitectureSection */}
+        <ArchitectureSection />
+
+
+        {/* TeamSection */}
+        <TeamSection />
+
+        {/* CTASection */}
+        <CTASection />
+
 
         {/* Interactive Features Section - NEW */}
         {/* <InteractiveFeaturesSection /> */}
 
         {/* Light Feature Section - WHITE BACKGROUND */}
-        <LightFeatureSection />
+        {/* <LightFeatureSection /> */}
 
         {/* Dark Feature Section */}
-        <DarkFeatureSection />
+        {/* <DarkFeatureSection /> */}
 
         {/* Light Stats Section - WHITE BACKGROUND */}
         {/* <LightStatsSection /> */}
@@ -168,17 +189,17 @@ const HomePage: React.FC = () => {
         {/* ROI Section */}
         {/* <ROISection /> */}
 
-        {/* Split Image Section */}
+        {/* Split Image Section */} 
         {/* <SplitImageSection /> */}
 
         {/* Dark Pillar Section */}
-        <DarkPillarSection />
+        {/* <DarkPillarSection /> */}
 
         {/* Full Width CTA Section */}
-        <FullWidthCTASection />
+        {/* <FullWidthCTASection /> */}
 
         {/* Alternating Feature Section - "Not just another AI tool" */}
-        <AlternatingFeatureSection />
+        {/* <AlternatingFeatureSection /> */}
 
         {/* FAQ Section - Moved to /resources/faq */}
         {/* <FAQSection /> */}

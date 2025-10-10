@@ -79,27 +79,13 @@ const Footer: React.FC = () => {
       sx={{
         width: '100%',
         background: isDark 
-          ? 'linear-gradient(180deg, rgba(10, 14, 46, 0.8) 0%, #0a0e2e 100%)'
-          : 'linear-gradient(180deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.98) 100%)',
-        borderTop: isDark 
-          ? '1px solid rgba(255, 255, 255, 0.08)'
-          : '1px solid rgba(0, 0, 0, 0.08)',
+          ? 'radial-gradient(ellipse 120% 80% at 50% 0%, rgba(139, 92, 246, 0.025) 0%, #111827 35%, #111827 100%)'
+          : 'radial-gradient(ellipse 120% 80% at 50% 0%, rgba(139, 92, 246, 0.012) 0%, #FFFFFF 35%, #FFFFFF 100%)',
+        borderTop: 'none',
         position: 'relative',
         zIndex: 2,
         m: 0,
         p: 0,
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: isDark
-            ? 'radial-gradient(circle at 50% 0%, rgba(0, 155, 228, 0.05) 0%, transparent 50%)'
-            : 'radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.03) 0%, transparent 50%)',
-          pointerEvents: 'none',
-        },
       }}
     >
       <Container 

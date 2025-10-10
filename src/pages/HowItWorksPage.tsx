@@ -2,26 +2,22 @@ import React, { useEffect } from 'react';
 import { Box } from '@mui/material';
 import { AppSidebar, Footer, ThemeToggle } from '../components/layout';
 import {
-  AboutHeroSection,
-  AboutBeginningSection,
-  AboutGapSection,
-  AboutTurningPointSection,
-  AboutResultSection,
-  AboutBeliefSection,
-  AboutFinalSection,
-} from '../components/about';
+  HowItWorksHeroSection,
+  HowItWorksProcessSection,
+  HowItWorksFeaturesSection,
+} from '../components/how-it-works';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 
-const AboutPage: React.FC = () => {
+const HowItWorksPage: React.FC = () => {
   const { isDark } = useThemeMode();
 
   useEffect(() => {
     // Set page metadata
-    document.title = 'Our Story - Alpha Process Control | ChatAPC';
+    document.title = 'How ChatAPC Works - AI Process Control Assistant | Alpha Process Control';
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Learn about Alpha Process Control\'s journey from traditional process control to AI-driven industrial operations with ChatAPC.');
+      metaDescription.setAttribute('content', 'Discover how ChatAPC transforms natural language questions into actionable industrial insights through AI-powered agents, process knowledge mapping, and intelligent analysis.');
     }
 
     // Scroll to top on mount
@@ -79,7 +75,7 @@ const AboutPage: React.FC = () => {
             background: 'transparent',
           }}
         >
-          {/* About Sections */}
+          {/* How It Works Sections */}
           <Box
             sx={{
               width: '100%',
@@ -91,13 +87,9 @@ const AboutPage: React.FC = () => {
               overflow: 'hidden',
             }}
           >
-            <AboutHeroSection />
-            <AboutBeginningSection />
-            <AboutGapSection />
-            <AboutTurningPointSection />
-            <AboutResultSection />
-            <AboutBeliefSection />
-            <AboutFinalSection />
+            <HowItWorksHeroSection />
+            <HowItWorksProcessSection />
+            <HowItWorksFeaturesSection />
           </Box>
 
           {/* Footer */}
@@ -119,4 +111,4 @@ const AboutPage: React.FC = () => {
   );
 };
 
-export default AboutPage;
+export default HowItWorksPage;
