@@ -62,9 +62,9 @@ export const sidebarItems: SidebarItem[] = [
   { 
     label: 'Resources',
     children: [
+      { label: 'Blog', path: '/resources/blog' },
       { label: 'FAQ', path: '/resources/faq' },
       // { label: 'Whitepapers', path: '/resources/whitepapers' },
-      { label: 'Blog', path: '/resources/blog' },
     ]
   },
   { 

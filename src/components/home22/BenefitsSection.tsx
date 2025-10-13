@@ -17,8 +17,6 @@ const benefits = [
     color: '#10B981',
     gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
     bgGradient: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%)',
-    stat: '$1M-$4M',
-    statLabel: 'Annual Value',
   },
   {
     icon: AccessTime,
@@ -28,8 +26,6 @@ const benefits = [
     color: '#3B82F6',
     gradient: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
     bgGradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.05) 100%)',
-    stat: 'Up to 70%',
-    statLabel: 'Time Reduction',
   },
   {
     icon: School,
@@ -39,14 +35,12 @@ const benefits = [
     color: '#8B5CF6',
     gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
     bgGradient: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%)',
-    stat: '24/7',
-    statLabel: 'Expert Access',
   },
 ];
 
 export const BenefitsSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement[]>([]);
+  const cardsRef = useRef<Array<HTMLDivElement | null>>([]);
   const headerRef = useRef<HTMLDivElement>(null);
   const roiRef = useRef<HTMLDivElement>(null);
   const { isDark } = useThemeMode();
@@ -57,66 +51,64 @@ export const BenefitsSection: React.FC = () => {
     containerPadding 
   } = useResponsiveLayout();
 
+  // --- Simpler & more attractive animation ---
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Header animation
+      // Animate header in (fade + up)
       if (headerRef.current) {
-        gsap.from(headerRef.current, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          opacity: 0,
-          y: 50,
-          duration: 1,
-          ease: 'power3.out',
-        });
+        gsap.fromTo(
+          headerRef.current,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1, y: 0, 
+            duration: 0.7, 
+            ease: 'power2.out', 
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: 'top 90%',
+              toggleActions: 'play none none none',
+            }
+          }
+        );
       }
 
-      // Cards animation with stagger
-      cardsRef.current.forEach((card, index) => {
-        if (card) {
-          gsap.from(card, {
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 80%',
-              toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            y: 60,
-            scale: 0.9,
-            duration: 1.2,
-            delay: index * 0.2,
-            ease: 'back.out(1.7)',
-          });
-
-          // Continuous floating animation
-          gsap.to(card, {
-            y: -8,
-            duration: 3 + index * 0.5,
-            repeat: -1,
-            yoyo: true,
-            ease: 'power2.inOut',
-            delay: index * 0.3,
-          });
-        }
-      });
-
-      // ROI statement animation
-      if (roiRef.current) {
-        gsap.from(roiRef.current, {
+      // Animate cards: each fades & rises staggered (no layered float)
+      gsap.fromTo(
+        cardsRef.current.filter(Boolean),
+        { opacity: 0, y: 40, scale: 0.96 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          stagger: 0.18,
+          ease: 'power2.out',
           scrollTrigger: {
-            trigger: roiRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          opacity: 0,
-          scale: 0.9,
-          duration: 1,
-          ease: 'back.out(1.7)',
-          delay: 0.8,
-        });
+            trigger: sectionRef.current,
+            start: 'top 82%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+
+      // Animate ROI statement in (fade + slight scale from 0.94)
+      if (roiRef.current) {
+        gsap.fromTo(
+          roiRef.current,
+          { opacity: 0, scale: 0.94 },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.7,
+            delay: 0.25,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: roiRef.current,
+              start: 'top 90%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
       }
     }, sectionRef);
 
@@ -201,7 +193,7 @@ export const BenefitsSection: React.FC = () => {
               <Grid item xs={12} md={4} key={index}>
                 <Card
                   ref={(el) => {
-                    if (el) cardsRef.current[index] = el as HTMLDivElement;
+                    cardsRef.current[index] = el;
                   }}
                   elevation={0}
                   sx={{
@@ -216,36 +208,20 @@ export const BenefitsSection: React.FC = () => {
                       : '1px solid rgba(0, 0, 0, 0.05)',
                     borderRadius: '32px',
                     overflow: 'visible',
-                    transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: 'box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                     cursor: 'pointer',
                     '&:hover': {
-                      transform: 'translateY(-12px) scale(1.02)',
-                      border: isDark
-                        ? `1px solid ${benefit.color}40`
-                        : `1px solid ${benefit.color}30`,
                       boxShadow: isDark
-                        ? `0 40px 80px -12px ${benefit.color}20, 0 0 0 1px ${benefit.color}10`
-                        : `0 40px 80px -12px ${benefit.color}20, 0 0 0 1px ${benefit.color}15`,
+                        ? `0 8px 32px -8px ${benefit.color}22, 0 1.5px 14px 2px ${benefit.color}09`
+                        : `0 16px 32px -8px ${benefit.color}1C, 0 1.5px 14px 2px ${benefit.color}12`,
+                      transform: 'translateY(-8px) scale(1.025)',
+                      border: isDark
+                        ? `1px solid ${benefit.color}33`
+                        : `1px solid ${benefit.color}22`,
                       '& .benefit-icon': {
-                        transform: 'scale(1.1) rotate(5deg)',
+                        transform: 'scale(1.07) rotate(3deg)',
                         background: benefit.gradient,
-                      },
-                      '& .benefit-stat': {
-                        transform: 'scale(1.05)',
-                      },
-                      '&::before': {
-                        opacity: 1,
-                      },
-                    },
-                    '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      inset: 0,
-                      background: benefit.bgGradient,
-                      borderRadius: '32px',
-                      opacity: 0,
-                      transition: 'opacity 0.6s ease',
-                      zIndex: -1,
+                      }
                     },
                   }}
                 >
@@ -258,63 +234,31 @@ export const BenefitsSection: React.FC = () => {
                         height: 80,
                         borderRadius: '24px',
                         background: isDark
-                          ? `${benefit.color}20`
-                          : `${benefit.color}15`,
+                          ? `${benefit.color}19`
+                          : `${benefit.color}13`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         mb: 4,
-                        transition: 'all 0.4s ease',
+                        transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1), background 0.35s cubic-bezier(0.4,0,0.2,1)',
                         position: 'relative',
+                        boxShadow: isDark
+                          ? `0 2px 16px 0 ${benefit.color}20`
+                          : `0 2px 16px 0 ${benefit.color}1A`,
                         '&::after': {
                           content: '""',
                           position: 'absolute',
                           inset: 0,
                           borderRadius: '24px',
                           background: benefit.gradient,
-                          opacity: 0.1,
-                          transition: 'opacity 0.4s ease',
+                          opacity: 0.13,
+                          transition: 'opacity 0.3s ease',
                         },
                       }}
                     >
                       <IconComponent sx={{ fontSize: 40, color: benefit.color, zIndex: 1 }} />
                     </Box>
 
-                    {/* Stat */}
-                    <Box
-                      className="benefit-stat"
-                      sx={{
-                        mb: 3,
-                        transition: 'transform 0.4s ease',
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontSize: '2.5rem',
-                          fontWeight: 800,
-                          background: benefit.gradient,
-                          backgroundClip: 'text',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          lineHeight: 1,
-                          mb: 1,
-                        }}
-                      >
-                        {benefit.stat}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontSize: '0.875rem',
-                          color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(71, 85, 105, 0.8)',
-                          fontWeight: 600,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.05em',
-                        }}
-                      >
-                        {benefit.statLabel}
-                      </Typography>
-                    </Box>
-                    
                     {/* Content */}
                     <Box sx={{ flex: 1 }}>
                       <Typography
@@ -328,7 +272,7 @@ export const BenefitsSection: React.FC = () => {
                       >
                         {benefit.title}
                       </Typography>
-                      
+
                       <Typography
                         variant="body1"
                         sx={{
@@ -340,7 +284,7 @@ export const BenefitsSection: React.FC = () => {
                       >
                         {benefit.description}
                       </Typography>
-                      
+
                       <Typography
                         variant="body2"
                         sx={{
@@ -377,20 +321,20 @@ export const BenefitsSection: React.FC = () => {
               py: 4,
               borderRadius: '50px',
               background: isDark
-                ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)'
-                : 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)',
+                ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.09) 0%, rgba(139, 92, 246, 0.10) 100%)'
+                : 'linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.10) 100%)',
               backdropFilter: 'blur(20px)',
               border: isDark
-                ? '2px solid rgba(255, 255, 255, 0.1)'
-                : '2px solid rgba(0, 0, 0, 0.05)',
+                ? '2px solid rgba(255, 255, 255, 0.08)'
+                : '2px solid rgba(0, 0, 0, 0.045)',
               boxShadow: isDark
-                ? '0 20px 40px rgba(0, 0, 0, 0.3)'
-                : '0 20px 40px rgba(0, 0, 0, 0.1)',
+                ? '0 12px 32px rgba(0, 0, 0, 0.25)'
+                : '0 12px 32px rgba(0, 0, 0, 0.09)',
             }}
           >
             <Typography
               sx={{
-                fontSize: 'clamp(1.25rem, 2.5vw, 1.75rem)',
+                fontSize: 'clamp(1.20rem, 2.5vw, 1.65rem)',
                 fontWeight: 700,
                 background: isDark
                   ? 'linear-gradient(135deg, #009BE4 0%, #8B5CF6 100%)'

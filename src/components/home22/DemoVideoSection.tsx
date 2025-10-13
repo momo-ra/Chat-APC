@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { Box, Typography, Container, IconButton } from '@mui/material';
-import { PlayArrow, Visibility } from '@mui/icons-material';
+import React, { useEffect, useRef, useState } from 'react';
+import { Box, Typography, Container, IconButton, Fab } from '@mui/material';
+import { PlayArrow, Pause, Visibility, Fullscreen, VolumeUp, VolumeOff } from '@mui/icons-material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
@@ -11,18 +11,31 @@ gsap.registerPlugin(ScrollTrigger);
 export const DemoVideoSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const playerContainerRef = useRef<HTMLDivElement>(null);
   const { isDark } = useThemeMode();
+  
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasStartedPlaying, setHasStartedPlaying] = useState(false);
+  const [showControls, setShowControls] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  
   const { 
     h2FontSize, 
     bodyLargeFontSize, 
     containerMaxWidth,
-    containerPadding 
+    containerPadding,
+    isMobile 
   } = useResponsiveLayout();
+
+  // YouTube video ID
+  const YOUTUBE_VIDEO_ID = 'OnVBarmGnek';
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Floating animation for the video container
-      if (videoRef.current) {
+      if (videoRef.current && !isPlaying) {
         gsap.to(videoRef.current, {
           y: -10,
           duration: 3,
@@ -58,7 +71,64 @@ export const DemoVideoSection: React.FC = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isPlaying]);
+
+  // Handle play/pause
+  const handlePlayPause = () => {
+    if (iframeRef.current) {
+      const iframe = iframeRef.current;
+      if (isPlaying) {
+        // Send pause command to YouTube iframe
+        iframe.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      } else {
+        // Send play command to YouTube iframe
+        iframe.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        if (!hasStartedPlaying) {
+          setHasStartedPlaying(true);
+        }
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  // Handle mute/unmute
+  const handleMuteToggle = () => {
+    if (iframeRef.current) {
+      const iframe = iframeRef.current;
+      if (isMuted) {
+        iframe.contentWindow?.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+      } else {
+        iframe.contentWindow?.postMessage('{"event":"command","func":"mute","args":""}', '*');
+      }
+      setIsMuted(!isMuted);
+    }
+  };
+
+  // Handle fullscreen
+  const handleFullscreen = () => {
+    if (playerContainerRef.current) {
+      if (!isFullscreen) {
+        if (playerContainerRef.current.requestFullscreen) {
+          playerContainerRef.current.requestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+      setIsFullscreen(!isFullscreen);
+    }
+  };
+
+  // Handle mouse movement to show/hide controls
+  const handleMouseMove = () => {
+    setShowControls(true);
+    setTimeout(() => {
+      if (isPlaying) {
+        setShowControls(false);
+      }
+    }, 3000);
+  };
 
   return (
     <Box
@@ -152,7 +222,7 @@ export const DemoVideoSection: React.FC = () => {
             </Typography>
           </Box>
 
-          {/* Video Container */}
+          {/* Custom Video Player */}
           <Box
             ref={videoRef}
             className="video-container"
@@ -164,103 +234,227 @@ export const DemoVideoSection: React.FC = () => {
             }}
           >
             <Box
+              ref={playerContainerRef}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={() => setShowControls(isPlaying ? false : true)}
               sx={{
                 position: 'relative',
                 width: '100%',
                 aspectRatio: '16/9',
                 borderRadius: '24px',
-                background: isDark
-                  ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%)'
-                  : 'linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(241, 245, 249, 0.95) 100%)',
-                backdropFilter: 'blur(20px)',
-                border: isDark
-                  ? '1px solid rgba(255, 255, 255, 0.1)'
-                  : '1px solid rgba(0, 0, 0, 0.05)',
+                overflow: 'hidden',
+                background: '#000',
                 boxShadow: isDark
                   ? '0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05)'
                   : '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.8)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden',
-                cursor: 'pointer',
                 transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                cursor: isPlaying ? (showControls ? 'default' : 'none') : 'pointer',
                 '&:hover': {
-                  transform: 'translateY(-8px) rotateX(2deg)',
+                  transform: isPlaying ? 'none' : 'translateY(-8px)',
                   boxShadow: isDark
-                    ? '0 35px 70px -12px rgba(0, 155, 228, 0.3), 0 0 0 1px rgba(0, 155, 228, 0.2)'
-                    : '0 35px 70px -12px rgba(59, 130, 246, 0.3), 0 0 0 1px rgba(59, 130, 246, 0.2)',
-                  '& .play-button': {
-                    transform: 'scale(1.1)',
-                    background: isDark
-                      ? 'linear-gradient(135deg, #009BE4 0%, #00D4AA 100%)'
-                      : 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
-                    boxShadow: isDark
-                      ? '0 20px 40px rgba(0, 155, 228, 0.4)'
-                      : '0 20px 40px rgba(59, 130, 246, 0.4)',
-                  }
-                },
-                '&::before': {
-                  content: '""',
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.03) 50%, transparent 70%)',
-                  borderRadius: '24px',
-                  pointerEvents: 'none',
+                    ? '0 35px 70px -12px rgba(0, 155, 228, 0.3)'
+                    : '0 35px 70px -12px rgba(59, 130, 246, 0.3)',
                 },
               }}
             >
-              {/* Play Button */}
-              <IconButton
-                className="play-button"
-                sx={{
-                  width: 80,
-                  height: 80,
-                  background: isDark
-                    ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%)'
-                    : 'linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%)',
-                  backdropFilter: 'blur(10px)',
-                  border: '2px solid rgba(255, 255, 255, 0.2)',
-                  transition: 'all 0.3s ease',
-                  boxShadow: isDark
-                    ? '0 10px 30px rgba(0, 155, 228, 0.3)'
-                    : '0 10px 30px rgba(59, 130, 246, 0.3)',
-                  '&:hover': {
-                    transform: 'scale(1.05)',
-                  },
+              {/* YouTube Embed */}
+              <iframe
+                ref={iframeRef}
+                width="100%"
+                height="100%"
+                src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?enablejsapi=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1`}
+                title="ChatAPC Demo"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  pointerEvents: isPlaying ? 'auto' : 'none',
                 }}
-              >
-                <PlayArrow sx={{ fontSize: 32, color: 'white', ml: 0.5 }} />
-              </IconButton>
+              />
 
-              {/* Demo Label */}
+              {/* Initial Overlay - only shows before first play */}
+              {!hasStartedPlaying && (
+                <Box
+                  onClick={handlePlayPause}
+                  sx={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), url(https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/maxresdefault.jpg)`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    cursor: 'pointer',
+                    zIndex: 10,
+                  }}
+                >
+                  {/* Play Button */}
+                  <IconButton
+                    sx={{
+                      width: { xs: 80, md: 100 },
+                      height: { xs: 80, md: 100 },
+                      background: isDark
+                        ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.95) 0%, rgba(139, 92, 246, 0.95) 100%)'
+                        : 'linear-gradient(135deg, rgba(59, 130, 246, 0.95) 0%, rgba(139, 92, 246, 0.95) 100%)',
+                      backdropFilter: 'blur(20px)',
+                      border: '3px solid rgba(255, 255, 255, 0.3)',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                      '&:hover': {
+                        transform: 'scale(1.1)',
+                        background: isDark
+                          ? 'linear-gradient(135deg, #009BE4 0%, #8B5CF6 100%)'
+                          : 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
+                        boxShadow: '0 25px 50px rgba(0, 0, 0, 0.4)',
+                      },
+                    }}
+                  >
+                    <PlayArrow sx={{ 
+                      fontSize: { xs: 32, md: 40 }, 
+                      color: 'white', 
+                      ml: 1,
+                      filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
+                    }} />
+                  </IconButton>
+                </Box>
+              )}
+
+              {/* Custom Controls */}
               <Box
                 sx={{
                   position: 'absolute',
-                  bottom: 20,
-                  right: 20,
-                  px: 3,
-                  py: 1,
-                  borderRadius: '50px',
-                  background: isDark
-                    ? 'rgba(0, 0, 0, 0.6)'
-                    : 'rgba(255, 255, 255, 0.9)',
-                  backdropFilter: 'blur(10px)',
-                  border: isDark
-                    ? '1px solid rgba(255, 255, 255, 0.1)'
-                    : '1px solid rgba(0, 0, 0, 0.1)',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  background: 'linear-gradient(transparent, rgba(0, 0, 0, 0.8))',
+                  p: 2,
+                  transform: showControls ? 'translateY(0)' : 'translateY(100%)',
+                  transition: 'transform 0.3s ease',
+                  zIndex: 20,
                 }}
               >
-                <Typography
-                  sx={{
-                    fontSize: '0.875rem',
-                    fontWeight: 600,
-                    color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(17, 24, 39, 1)',
-                  }}
-                >
-                  Interactive Demo
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  {/* Play/Pause Button */}
+                  <IconButton
+                    onClick={handlePlayPause}
+                    sx={{
+                      color: 'white',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      '&:hover': {
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        transform: 'scale(1.05)',
+                      },
+                    }}
+                  >
+                    {isPlaying ? <Pause /> : <PlayArrow />}
+                  </IconButton>
+
+                  {/* Volume Button */}
+                  <IconButton
+                    onClick={handleMuteToggle}
+                    sx={{
+                      color: 'white',
+                      '&:hover': {
+                        color: isDark ? '#009BE4' : '#3B82F6',
+                      },
+                    }}
+                  >
+                    {isMuted ? <VolumeOff /> : <VolumeUp />}
+                  </IconButton>
+
+                  {/* Spacer */}
+                  <Box sx={{ flex: 1 }} />
+
+                  {/* Video Title */}
+                  <Typography
+                    sx={{
+                      color: 'white',
+                      fontSize: '0.875rem',
+                      fontWeight: 500,
+                      display: { xs: 'none', sm: 'block' },
+                    }}
+                  >
+                    ChatAPC Interactive Demo
+                  </Typography>
+
+                  {/* Fullscreen Button */}
+                  <IconButton
+                    onClick={handleFullscreen}
+                    sx={{
+                      color: 'white',
+                      '&:hover': {
+                        color: isDark ? '#009BE4' : '#3B82F6',
+                      },
+                    }}
+                  >
+                    <Fullscreen />
+                  </IconButton>
+                </Box>
               </Box>
+
+              {/* Custom Labels - only show before first play */}
+              {!hasStartedPlaying && (
+                <>
+                  {/* Demo Label */}
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      bottom: 20,
+                      right: 20,
+                      px: 3,
+                      py: 1,
+                      borderRadius: '50px',
+                      background: 'rgba(0, 0, 0, 0.8)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      zIndex: 15,
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        color: 'white',
+                      }}
+                    >
+                      Interactive Demo
+                    </Typography>
+                  </Box>
+
+                  {/* Duration */}
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: 20,
+                      left: 20,
+                      px: 2,
+                      py: 0.5,
+                      borderRadius: '8px',
+                      background: 'rgba(0, 0, 0, 0.8)',
+                      backdropFilter: 'blur(5px)',
+                      zIndex: 15,
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        color: 'white',
+                      }}
+                    >
+                      5:42
+                    </Typography>
+                  </Box>
+                </>
+              )}
             </Box>
 
             {/* Floating Elements */}

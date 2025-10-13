@@ -45,9 +45,6 @@ const HomePage: React.FC = () => {
       // Detect if we're on medium screen (960-1549px)
       const isMedium = width >= 960 && width <= 1549;
       setIsMediumScreen(isMedium);
-      
-      // Sidebar no longer auto-collapses - user controls it manually
-      // Keep sidebar state from localStorage or user interaction
     };
     
     const handleSidebarToggle = (event: CustomEvent) => {
@@ -66,11 +63,21 @@ const HomePage: React.FC = () => {
 
   // Configure ScrollTrigger for better performance
   React.useEffect(() => {
+    // Set page metadata
+    document.title = 'ChatAPC - AI Assistant for Process Control | Alpha Process Control';
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'ChatAPC: AI-powered assistant for industrial process control. Analyze constraints, optimize operations, and improve plant efficiency with conversational intelligence.');
+    }
+
     // Configure ScrollTrigger but don't kill animations
     ScrollTrigger.config({
       limitCallbacks: true,
       syncInterval: 150,
     });
+    
+    // Scroll to top on mount
+    window.scrollTo(0, 0);
     
     return () => {
       // Clean up on unmount
@@ -79,151 +86,123 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <Box
-      sx={{
-        height: 'auto',
-        background: isDark 
-          ? '#111827'
-          : '#FFFFFF',
-        position: 'relative',
-        overflow: 'visible',
-        transition: 'background 0.3s ease',
-      }}
-    >
-      <AppSidebar items={sidebarItems} />
-      <ThemeToggle />
-  
-      {/* Main Content Wrapper - Responsive to avoid sidebar overlap */}
+    <>
+      {/* Skip Navigation for Accessibility */}
       <Box
+        component="a"
+        href="#main-content"
         sx={{
-          width: '100%',
-          height: 'auto',
-          maxWidth: '100vw',
-          overflow: 'hidden',
-          // Adjust margin for sidebar when expanded on larger screens
-          marginLeft: sidebarCollapsed ? 0 : (isMediumScreen ? 0 : 0),
-          // No padding here - sections will handle their own margins
-          transition: 'all 0.3s ease',
-          position: 'relative',
-          background: isDark 
-            ? '#111827'
-            : '#FFFFFF',
+          position: 'absolute',
+          left: '-9999px',
+          zIndex: 9999,
+          padding: '8px 16px',
+          backgroundColor: 'primary.main',
+          color: 'primary.contrastText',
+          textDecoration: 'none',
+          borderRadius: 1,
+          '&:focus': {
+            left: '16px',
+            top: '16px',
+          },
         }}
       >
-        {/* Hero Section - Simplified for better scroll performance */}
+        Skip to main content
+      </Box>
+
+      <Box
+        sx={{
+          minHeight: '100vh',
+          background: isDark 
+            ? 'linear-gradient(to bottom, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
+            : 'linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
+          position: 'relative',
+          overflow: 'visible',
+          transition: 'background 0.3s ease',
+        }}
+      >
+        <AppSidebar items={sidebarItems} />
+        <ThemeToggle />
+  
+        {/* Main Content */}
         <Box
-          data-section-theme={isDark ? 'dark' : 'light'}
-          data-section-primary={isDark ? '#009BE4' : '#2563EB'}
+          id="main-content"
+          component="main"
           sx={{
-            position: 'relative',
             width: '100%',
-            maxWidth: '100vw',
-            margin: 0,
-            padding: 0,
-            overflow: 'hidden',
             height: 'auto',
+            maxWidth: '100vw',
+            overflow: 'hidden',
+            position: 'relative',
             background: 'transparent',
           }}
         >
-        {/* Auth Buttons */}
-        {/* <AuthButtons /> */}
+          {/* Hero Section */}
+          <Box
+            data-section-theme={isDark ? 'dark' : 'light'}
+            data-section-primary={isDark ? '#009BE4' : '#2563EB'}
+            sx={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: '100vw',
+              margin: 0,
+              padding: 0,
+              overflow: 'hidden',
+              height: 'auto',
+              background: 'transparent',
+            }}
+          >
+            {/* Hero Chat Section */}
+            <HeroSearchSection />
+          </Box>
 
-        {/* Hero Chat Section */}
-        <HeroSearchSection />
-      
-        {/* Companies Slider - Fixed at Bottom */}
-        {/* <CompanySlider companies={partnerCompanies} /> */}
-      </Box>
+          {/* Content Sections */}
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: '100vw',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              zIndex: 2,
+              overflow: 'hidden',
+            }}
+          >
+            {/* DemoVideoSection */}
+            <DemoVideoSection />
 
-      {/* Content Sections - Below Hero */}
-      <Box
-        sx={{
-          width: '100%',
-          maxWidth: '100vw',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          position: 'relative',
-          zIndex: 2,
-          marginLeft: 0,
-          paddingLeft: 0,
-          overflow: 'hidden', // Prevent horizontal overflow
-        }}
-      >
-        {/* Examples Section */}
-        {/* <ExamplesSection /> */}
+            {/* BenefitsSection */}
+            <BenefitsSection />
 
-        {/* DemoVideoSection */}
-        <DemoVideoSection />
+            {/* ArchitectureSection */}
+            <ArchitectureSection />
 
+            {/* TeamSection */}
+            <TeamSection />
 
-        {/* BenefitsSection */}
-        <BenefitsSection />
+            {/* CTASection */}
+            <CTASection />
 
-        {/* ArchitectureSection */}
-        <ArchitectureSection />
+            {/* Contact Section */}
+            <ContactSection />
+          </Box>
 
-
-        {/* TeamSection */}
-        <TeamSection />
-
-        {/* CTASection */}
-        <CTASection />
-
-
-        {/* Interactive Features Section - NEW */}
-        {/* <InteractiveFeaturesSection /> */}
-
-        {/* Light Feature Section - WHITE BACKGROUND */}
-        {/* <LightFeatureSection /> */}
-
-        {/* Dark Feature Section */}
-        {/* <DarkFeatureSection /> */}
-
-        {/* Light Stats Section - WHITE BACKGROUND */}
-        {/* <LightStatsSection /> */}
-
-        {/* Full Width Image Section */}
-        {/* <FullWidthImageSection /> */}
-
-        {/* ROI Section */}
-        {/* <ROISection /> */}
-
-        {/* Split Image Section */} 
-        {/* <SplitImageSection /> */}
-
-        {/* Dark Pillar Section */}
-        {/* <DarkPillarSection /> */}
-
-        {/* Full Width CTA Section */}
-        {/* <FullWidthCTASection /> */}
-
-        {/* Alternating Feature Section - "Not just another AI tool" */}
-        {/* <AlternatingFeatureSection /> */}
-
-        {/* FAQ Section - Moved to /resources/faq */}
-        {/* <FAQSection /> */}
-
-        {/* Contact Section */}
-        <ContactSection />
-      </Box>
-
-        {/* Footer */}
-        <Box 
-          sx={{ 
-            mt: 0, 
-            mb: 0,
-            width: '100%',
-            marginLeft: 0,
-            paddingLeft: 0,
-          }}
-        >
-          <Footer />
+          {/* Footer */}
+          <Box 
+            component="footer"
+            sx={{ 
+              mt: 0, 
+              mb: 0,
+              width: '100%',
+              marginLeft: 0,
+              paddingLeft: 0,
+            }}
+          >
+            <Footer />
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 
 export default HomePage;
-
