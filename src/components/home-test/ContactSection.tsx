@@ -167,9 +167,7 @@ const StylishContactSection: React.FC = () => {
         py: { xs: 12, md: 18 },
         position: 'relative',
         overflow: 'hidden',
-        background: isDark 
-          ? 'radial-gradient(ellipse 120% 100% at 50% 0%, rgba(0, 155, 228, 0.03) 0%, #111827 40%, #111827 100%)'
-          : 'radial-gradient(ellipse 120% 100% at 50% 0%, rgba(59, 130, 246, 0.015) 0%, #FFFFFF 40%, #FFFFFF 100%)',
+        background: 'transparent',
         transition: 'background 0.3s ease',
         '@media (min-width: 960px) and (max-width: 1549px)': {
           py: 15,

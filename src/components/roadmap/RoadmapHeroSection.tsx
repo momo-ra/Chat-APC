@@ -26,59 +26,58 @@ export const RoadmapHeroSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Hero content animation
+      const tl = gsap.timeline();
+
+      // Hero content entrance
       if (heroContentRef.current) {
-        gsap.from(heroContentRef.current, {
+        tl.from(heroContentRef.current, {
           opacity: 0,
-          y: 50,
-          duration: 1,
-          ease: 'power2.out',
-        });
-      }
-
-      // Title animation with split text effect
-      if (titleRef.current) {
-        gsap.from(titleRef.current, {
-          opacity: 0,
-          y: 30,
+          y: 40,
           duration: 0.8,
-          delay: 0.3,
           ease: 'power2.out',
         });
       }
 
-      // Subtitle animation
-      if (subtitleRef.current) {
-        gsap.from(subtitleRef.current, {
-          opacity: 0,
-          scale: 0.9,
-          duration: 0.6,
-          delay: 0.5,
-          ease: 'back.out(1.7)',
-        });
-      }
-
-      // Description animation
-      if (descriptionRef.current) {
-        gsap.from(descriptionRef.current, {
+      // Title animation
+      if (titleRef.current) {
+        tl.from(titleRef.current, {
           opacity: 0,
           y: 20,
           duration: 0.6,
-          delay: 0.7,
           ease: 'power2.out',
-        });
+        }, 0.2);
       }
 
-      // Floating animations for background elements
-      const circles = sectionRef.current?.querySelectorAll('.floating-element');
-      circles?.forEach((circle, index) => {
-        gsap.to(circle, {
-          y: -20,
-          duration: 3 + index,
+      // Subtitle badge animation
+      if (subtitleRef.current) {
+        tl.from(subtitleRef.current, {
+          opacity: 0,
+          scale: 0.9,
+          duration: 0.5,
+          ease: 'back.out(1.7)',
+        }, 0.4);
+      }
+
+      // Description fade in
+      if (descriptionRef.current) {
+        tl.from(descriptionRef.current, {
+          opacity: 0,
+          y: 15,
+          duration: 0.5,
+          ease: 'power2.out',
+        }, 0.6);
+      }
+
+      // Continuous floating animations
+      const floatingElements = sectionRef.current?.querySelectorAll('.floating-element');
+      floatingElements?.forEach((element, index) => {
+        gsap.to(element, {
+          y: -15,
+          duration: 3 + index * 0.5,
           repeat: -1,
           yoyo: true,
           ease: 'power2.inOut',
-          delay: index * 0.5,
+          delay: index * 0.3,
         });
       });
     }, sectionRef);
@@ -90,40 +89,35 @@ export const RoadmapHeroSection: React.FC = () => {
     <Box
       ref={sectionRef}
       component="section"
-      data-section-theme={isDark ? 'dark' : 'light'}
       sx={{
         position: 'relative',
         overflow: 'hidden',
-        py: 'clamp(3rem, 10vh, 5rem)',
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(17, 24, 39, 1) 0%, rgba(30, 58, 138, 0.3) 50%, rgba(17, 24, 39, 1) 100%)'
-          : 'linear-gradient(135deg, rgba(239, 246, 255, 1) 0%, rgba(238, 242, 255, 1) 50%, rgba(250, 245, 255, 1) 100%)',
-        transition: 'background 0.3s ease',
+        py: 'clamp(3rem, 8vw, 5rem)',
+        // TRANSPARENT - let page background show through
+        background: 'transparent',
         minHeight: 'clamp(70vh, 90vh, 95vh)',
         display: 'flex',
         alignItems: 'center',
+        // No margins or borders
+        margin: 0,
+        border: 'none',
       }}
     >
-      {/* Animated Background Elements */}
+      {/* Subtle Floating Background Elements */}
       <Box
         className="floating-element"
         sx={{
           position: 'absolute',
-          top: '10%',
+          top: '15%',
           left: '10%',
-          width: { xs: 150, md: 250 },
-          height: { xs: 150, md: 250 },
+          width: { xs: 120, md: 200 },
+          height: { xs: 120, md: 200 },
           borderRadius: '50%',
           background: isDark
-            ? 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%)',
-          filter: 'blur(30px)',
+            ? 'radial-gradient(circle, rgba(100, 116, 139, 0.08) 0%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(148, 163, 184, 0.12) 0%, transparent 70%)',
+          filter: 'blur(40px)',
           pointerEvents: 'none',
-          animation: 'pulse 4s ease-in-out infinite',
-          '@keyframes pulse': {
-            '0%, 100%': { opacity: 0.3 },
-            '50%': { opacity: 0.6 },
-          },
         }}
       />
 
@@ -133,33 +127,14 @@ export const RoadmapHeroSection: React.FC = () => {
           position: 'absolute',
           top: '60%',
           right: '15%',
-          width: { xs: 120, md: 200 },
-          height: { xs: 120, md: 200 },
+          width: { xs: 100, md: 160 },
+          height: { xs: 100, md: 160 },
           borderRadius: '50%',
           background: isDark
-            ? 'radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(147, 51, 234, 0.2) 0%, transparent 70%)',
-          filter: 'blur(30px)',
+            ? 'radial-gradient(circle, rgba(71, 85, 105, 0.06) 0%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(100, 116, 139, 0.08) 0%, transparent 70%)',
+          filter: 'blur(35px)',
           pointerEvents: 'none',
-          animation: 'pulse 5s ease-in-out infinite',
-        }}
-      />
-
-      <Box
-        className="floating-element"
-        sx={{
-          position: 'absolute',
-          bottom: '20%',
-          left: '5%',
-          width: { xs: 100, md: 180 },
-          height: { xs: 100, md: 180 },
-          borderRadius: '50%',
-          background: isDark
-            ? 'radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, transparent 70%)',
-          filter: 'blur(25px)',
-          pointerEvents: 'none',
-          animation: 'pulse 6s ease-in-out infinite',
         }}
       />
 
@@ -180,30 +155,33 @@ export const RoadmapHeroSection: React.FC = () => {
             mx: 'auto',
           }}
         >
-          {/* Icon Badge */}
+          {/* Timeline Badge */}
           <Box
             sx={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 2,
+              gap: 1.5,
               px: 3,
               py: 1.5,
               borderRadius: '50px',
               background: isDark
-                ? 'rgba(0, 155, 228, 0.1)'
-                : 'rgba(59, 130, 246, 0.1)',
+                ? 'rgba(51, 65, 85, 0.4)'
+                : 'rgba(241, 245, 249, 0.8)',
               border: isDark
-                ? '1px solid rgba(0, 155, 228, 0.2)'
-                : '1px solid rgba(59, 130, 246, 0.2)',
+                ? '1px solid rgba(71, 85, 105, 0.3)'
+                : '1px solid rgba(203, 213, 225, 0.4)',
               mb: 4,
-              backdropFilter: 'blur(10px)',
+              backdropFilter: 'blur(20px)',
             }}
           >
-            <Timeline sx={{ color: isDark ? '#009BE4' : '#2563EB', fontSize: 20 }} />
+            <Timeline sx={{ 
+              color: isDark ? '#94a3b8' : '#475569', 
+              fontSize: 18 
+            }} />
             <Typography
               variant="body2"
               sx={{
-                color: isDark ? '#009BE4' : '#2563EB',
+                color: isDark ? '#94a3b8' : '#475569',
                 fontWeight: 600,
                 fontSize: '0.875rem',
                 textTransform: 'uppercase',
@@ -222,20 +200,17 @@ export const RoadmapHeroSection: React.FC = () => {
             sx={{
               fontSize: h1FontSize,
               fontWeight: 800,
-              color: isDark ? '#FFFFFF' : '#1E293B',
-              mb: 2,
+              color: isDark ? '#f1f5f9' : '#1e293b',
+              mb: 3,
               lineHeight: 1.1,
               letterSpacing: '-0.02em',
-              textShadow: isDark 
-                ? '0 2px 20px rgba(0, 155, 228, 0.3)'
-                : '0 2px 20px rgba(37, 99, 235, 0.2)',
-              transition: 'all 0.3s ease',
+              transition: 'color 0.3s ease',
             }}
           >
             Where ChatAPC is Going
           </Typography>
 
-          {/* Subtitle */}
+          {/* Interactive Subtitle Badge */}
           <Box ref={subtitleRef} sx={{ mb: 4 }}>
             <Box
               sx={{
@@ -246,27 +221,41 @@ export const RoadmapHeroSection: React.FC = () => {
                 py: 2,
                 borderRadius: '50px',
                 background: isDark
-                  ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%)'
-                  : 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%)',
+                  ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.6) 0%, rgba(30, 41, 59, 0.4) 100%)'
+                  : 'linear-gradient(135deg, rgba(241, 245, 249, 0.8) 0%, rgba(248, 250, 252, 0.6) 100%)',
                 border: isDark
-                  ? '1px solid rgba(255, 255, 255, 0.1)'
-                  : '1px solid rgba(0, 0, 0, 0.1)',
+                  ? '1px solid rgba(71, 85, 105, 0.4)'
+                  : '1px solid rgba(203, 213, 225, 0.3)',
                 backdropFilter: 'blur(20px)',
+                transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                cursor: 'pointer',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: isDark
+                    ? '0 8px 30px rgba(0, 0, 0, 0.4)'
+                    : '0 8px 30px rgba(148, 163, 184, 0.15)',
+                },
               }}
             >
-              <Rocket sx={{ color: isDark ? '#009BE4' : '#2563EB', fontSize: 24 }} />
+              <Rocket sx={{ 
+                color: isDark ? '#64748b' : '#64748b', 
+                fontSize: 22 
+              }} />
               <Typography
                 variant="h4"
                 sx={{
                   fontSize: h4FontSize,
                   fontWeight: 700,
-                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(17, 24, 39, 1)',
+                  color: isDark ? '#e2e8f0' : '#334155',
                   transition: 'color 0.3s ease',
                 }}
               >
                 Building the Future, Step by Step
               </Typography>
-              <AutoAwesome sx={{ color: isDark ? '#A855F7' : '#8B5CF6', fontSize: 24 }} />
+              <AutoAwesome sx={{ 
+                color: isDark ? '#64748b' : '#64748b', 
+                fontSize: 22 
+              }} />
             </Box>
           </Box>
 
@@ -276,9 +265,9 @@ export const RoadmapHeroSection: React.FC = () => {
             variant="body1"
             sx={{
               fontSize: bodyLargeFontSize,
-              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(75, 85, 99, 1)',
+              color: isDark ? '#94a3b8' : '#64748b',
               lineHeight: 1.7,
-              maxWidth: 700,
+              maxWidth: 650,
               mx: 'auto',
               transition: 'color 0.3s ease',
             }}

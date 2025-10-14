@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, Button, Typography, TextField, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Button, Typography, TextField, useTheme, useMediaQuery, Chip } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import { AutoAwesome, Psychology } from '@mui/icons-material';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import FloatingInput from './FloatingInput';
 
@@ -49,10 +50,10 @@ const TypingText: React.FC<{ text: string; speed?: number; isDark: boolean; onCo
   return (
     <Box
       sx={{
-        maxWidth: '85%',
+        maxWidth: { xs: '95%', sm: '90%', md: '85%' },
         color: isDark ? 'rgba(255, 255, 255, 0.92)' : 'rgba(15, 23, 42, 0.92)',
-        fontSize: { xs: '0.95rem', sm: '1rem', md: '1.05rem' },
-        lineHeight: 1.6,
+        fontSize: { xs: '0.875rem', sm: '0.95rem', md: '1rem' },
+        lineHeight: { xs: 1.5, sm: 1.55, md: 1.6 },
         textAlign: 'left',
         whiteSpace: 'pre-line',
         fontWeight: 400,
@@ -94,8 +95,8 @@ const SuggestionQuestions: React.FC<{
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        gap: 2,
-        mb: 3,
+        gap: { xs: 1.25, sm: 1.75, md: 2 },
+        mb: { xs: 2, sm: 2.5, md: 3 },
         animation: 'fadeInUp 0.8s ease-out',
         '@keyframes fadeInUp': {
           from: { opacity: 0, transform: 'translateY(20px)' },
@@ -105,12 +106,12 @@ const SuggestionQuestions: React.FC<{
     >
       <Typography
         sx={{
-          fontSize: '0.9rem',
+          fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
           color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(15, 23, 42, 0.7)',
           textAlign: 'center',
           fontWeight: 600,
           fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-          mb: 1,
+          mb: { xs: 0.75, sm: 1 },
         }}
       >
         {title}
@@ -120,7 +121,7 @@ const SuggestionQuestions: React.FC<{
         sx={{
           display: 'flex',
           flexDirection: { xs: 'column', sm: 'row' },
-          gap: 1.5,
+          gap: { xs: 1, sm: 1.5 },
           width: '100%',
         }}
       >
@@ -141,9 +142,9 @@ const SuggestionQuestions: React.FC<{
               border: isDark 
                 ? '1px solid rgba(0, 155, 228, 0.3)' 
                 : '1px solid rgba(59, 130, 246, 0.3)',
-              borderRadius: '12px',
-              padding: '6px 8px',
-              fontSize: '0.8rem',
+              borderRadius: { xs: '10px', sm: '12px' },
+              padding: { xs: '5px 6px', sm: '6px 8px' },
+              fontSize: { xs: '0.75rem', sm: '0.8rem' },
               fontWeight: 500,
               textTransform: 'none',
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -152,7 +153,7 @@ const SuggestionQuestions: React.FC<{
               background: isDark 
                 ? 'rgba(0, 155, 228, 0.05)' 
                 : 'rgba(59, 130, 246, 0.05)',
-              minHeight: '42px',
+              minHeight: { xs: '36px', sm: '40px', md: '42px' },
               '&:hover:not(:disabled)': {
                 borderColor: isDark ? '#009BE4' : '#3B82F6',
                 background: isDark 
@@ -494,6 +495,11 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
             0%, 80%, 100% { transform: scale(0); }
             40% { transform: scale(1); }
           }
+
+          @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
         `}
       </style>
 
@@ -509,50 +515,15 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
           alignItems: 'center',
           justifyContent: 'center',
           textAlign: 'center',
+          background: 'transparent',
           transition: 'background 0.3s ease',
-          background: isDark 
-            ? 'radial-gradient(ellipse 80% 50% at 20% -20%, rgba(0, 155, 228, 0.15) 0%, transparent 60%), radial-gradient(ellipse 80% 50% at 80% 120%, rgba(139, 92, 246, 0.12) 0%, transparent 60%), linear-gradient(135deg, #0F1419 0%, #1A202C 50%, #0F1419 100%)'
-            : 'radial-gradient(ellipse 80% 50% at 20% -20%, rgba(37, 99, 235, 0.08) 0%, transparent 60%), radial-gradient(ellipse 80% 50% at 80% 120%, rgba(16, 185, 129, 0.06) 0%, transparent 60%), linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundImage: "url('https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=1920&q=60')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'scroll',
-            opacity: isDark ? 0.08 : 0.04,
-            filter: isDark 
-              ? 'brightness(0.6) contrast(1.3) saturate(1.4)'
-              : 'brightness(1.4) contrast(1.1) saturate(1.1)',
-            zIndex: 0,
-            transition: 'opacity 0.3s ease',
-            transform: 'translateZ(0)',
-            pointerEvents: 'none',
-          },
-          '&::after': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: isDark 
-              ? 'linear-gradient(135deg, rgba(15, 20, 25, 0.92) 0%, rgba(26, 32, 44, 0.88) 50%, rgba(15, 20, 25, 0.92) 100%)'
-              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.97) 0%, rgba(248, 250, 252, 0.95) 50%, rgba(255, 255, 255, 0.97) 100%)',
-            zIndex: 1,
-            pointerEvents: 'none',
-          },
         }}
       >
         <Box
           sx={{
             position: 'relative',
             zIndex: 5,
-            padding: { xs: '24px 20px', sm: '40px 32px', md: '60px 80px' },
+            padding: { xs: '20px 18px', sm: '30px 24px', md: '40px 80px' },
             maxWidth: { xs: '100%', sm: '100%', md: 1000 },
             margin: '0 auto',
             width: '100%',
@@ -560,7 +531,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            maxHeight: '90vh',
+            maxHeight: '95vh',
             overflowY: 'auto',
             overflowX: 'hidden',
             '&::-webkit-scrollbar': {
@@ -575,106 +546,119 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
             },
           }}
         >
-          {/* Main Title */}
-          <Typography
-            sx={{
-              fontSize: { xs: '1.9rem', sm: '2.4rem', md: '2.8rem' },
-              fontWeight: 700,
-              background: isDark 
-                ? 'linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 50%, #E2E8F0 100%)'
-                : 'linear-gradient(135deg, #0F172A 0%, #334155 50%, #475569 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              letterSpacing: '-0.02em',
-              lineHeight: 1.15,
-              mb: 2,
-              textAlign: 'center',
-              position: 'relative',
-              fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                bottom: '-12px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '60px',
-                height: '3px',
-                background: isDark
-                  ? 'linear-gradient(90deg, #009BE4 0%, #34D399 100%)'
-                  : 'linear-gradient(90deg, #3B82F6 0%, #10B981 100%)',
-                borderRadius: '4px',
-                opacity: 0.8,
-              },
-            }}
-          >
-            Chat with your plant. Get straight answers.
-          </Typography>
-          
-          <Typography
-            sx={{
-              fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.25rem' },
-              fontWeight: 500,
-              color: isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(15, 23, 42, 0.85)',
-              lineHeight: 1.6,
-              textAlign: 'center',
-              maxWidth: '700px',
-              margin: '0 auto 1rem auto',
-              position: 'relative',
-              fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: '-24px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '40px',
-                height: '1px',
-                background: isDark 
-                  ? 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)'
-                  : 'linear-gradient(90deg, transparent 0%, rgba(15,23,42,0.4) 50%, transparent 100%)',
-              },
-            }}
-          >
-            <Box component="span" sx={{
-              background: isDark 
-                ? 'linear-gradient(135deg, #009BE4 0%, #34D399 100%)'
-                : 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              fontWeight: 600,
-            }}>
-              ChatAPC
-            </Box>{' '}
-            analyzes your process data, identifies constraints, and recommends optimizations in real-time.
-          </Typography>
+          {/* Enhanced Header Section */}
+          <Box sx={{ textAlign: 'center', mb: 2, position: 'relative' }}>
 
-          {/* Chat Area */}
+            {/* Main Title */}
+            <Typography
+              sx={{
+                fontSize: { xs: '2.1rem', sm: '2.75rem', md: '3.5rem' },
+                fontWeight: 800,
+                lineHeight: 1.2,
+                mb: 2,
+                my: { xs: 0, sm: 1, md: 2 },
+                letterSpacing: '-0.02em',
+                textAlign: 'center',
+                position: 'relative',
+                fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+              }}
+            >
+              <Box
+                component="span"
+                sx={{
+                  background: isDark 
+                    ? 'linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 100%)'
+                    : 'linear-gradient(135deg, #0F172A 0%, #334155 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  display: 'block',
+                  mb: 0.5,
+                  my: { xs: 0, sm: 1, md: 2 },
+                }}
+              >
+                Chat with your plant.
+              </Box>
+              <Box
+                component="span"
+                sx={{
+                  background: isDark 
+                    ? 'linear-gradient(135deg, #009BE4 0%, #34D399 100%)'
+                    : 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  position: 'relative',
+                }}
+              >
+                Turn data into decisions.
+              </Box>
+            </Typography>
+            
+            {/* Enhanced Subtitle */}
+            <Typography
+              sx={{
+                fontSize: { xs: '1rem', sm: '1.15rem', md: '1.175rem' },
+                fontWeight: 400,
+                color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
+                lineHeight: 1.4,
+                textAlign: 'center',
+                maxWidth: '700px',
+                margin: '0 auto',
+                fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+              }}
+            >
+              <Box
+                component="span"
+                sx={{
+                  background: isDark 
+                    ? 'linear-gradient(135deg, #009BE4 0%, #34D399 100%)'
+                    : 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  fontWeight: 600,
+                }}
+              >
+                ChatAPC
+              </Box>{' '}
+              blends engineering expertise with AI to deliver clear, reliable insights detecting issues early and revealing profit opportunities.
+            </Typography>
+          </Box>
+
+          {/* Enhanced Chat Area */}
           <Box
             ref={messagesContainerRef}
             data-messages-container="true"
             sx={{
               width: '100%',
-              maxWidth: 750,
+              maxWidth: 850,
               background: isDark 
-                ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.9) 100%)'
-                : 'linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%)'
+                : 'linear-gradient(145deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.9) 100%)',
               backdropFilter: 'blur(20px)',
               border: isDark 
-                ? '1px solid rgba(71, 85, 105, 0.4)' 
-                : '1px solid rgba(226, 232, 240, 0.6)',
-              borderRadius: '20px',
+                ? '1px solid rgba(255, 255, 255, 0.08)' 
+                : '1px solid rgba(0, 0, 0, 0.05)',
+              borderRadius: '32px',
               boxShadow: isDark 
-                ? '0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)'
-                : '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.8)',
+                ? '0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.05)'
+                : '0 25px 50px -12px rgba(0, 0, 0, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.8)',
               padding: 0,
-              marginBottom: 3,
+              marginBottom: 1,
               display: 'flex',
               flexDirection: 'column',
-              height: { xs: '420px', sm: '560px', md: '650px' },
+              height: { xs: '380px', sm: '650px', md: '850px' },
               position: 'relative',
               overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%)',
+                borderRadius: '32px',
+                pointerEvents: 'none',
+              },
             }}
           >
             {/* Scrollable Messages Area */}
@@ -686,11 +670,11 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
                 overflowY: 'auto',
                 overflowX: 'hidden',
                 scrollBehavior: 'smooth',
-                padding: { xs: 2, sm: 2.5, md: 3 },
+                padding: { xs: 2, sm: 3, md: 4 },
                 paddingBottom: 0,
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 3,
+                gap: 2,
                 '&::-webkit-scrollbar': {
                   width: '6px',
                 },
@@ -699,7 +683,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
                 },
                 '&::-webkit-scrollbar-thumb': {
                   background: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
-                  borderRadius: 4,
+                  borderRadius: 6,
                   '&:hover': {
                     background: isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.25)',
                   },
@@ -713,47 +697,47 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
                     <Box sx={{
                       display: 'flex',
                       justifyContent: 'flex-end',
-                      mb: 2
+                      mb: { xs: 1.5, sm: 2 }
                     }}>
                       <Box sx={{
-                        maxWidth: '90%',
-                        padding: '8px 10px',
-                        borderRadius: '16px',
+                        maxWidth: { xs: '92%', sm: '90%' },
+                        padding: { xs: '10px 12px', sm: '12px 16px' },
+                        borderRadius: { xs: '16px', sm: '20px' },
                         background: isDark 
-                          ? 'linear-gradient(135deg, rgba(71, 85, 105, 0.8) 0%, rgba(55, 65, 81, 0.9) 100%)'
-                          : 'linear-gradient(135deg, rgba(226, 232, 240, 0.9) 0%, rgba(203, 213, 225, 0.95) 100%)',
+                          ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%)'
+                          : 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)',
                         backdropFilter: 'blur(10px)',
-                        border: isDark ? '1px solid rgba(71, 85, 105, 0.5)' : '1px solid rgba(203, 213, 225, 0.8)',
+                        border: isDark ? '1px solid rgba(0, 155, 228, 0.2)' : '1px solid rgba(59, 130, 246, 0.2)',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 2,
+                        gap: { xs: 1.5, sm: 2.5, md: 3 },
                         boxShadow: isDark 
-                          ? '0 4px 20px rgba(0, 0, 0, 0.3)'
-                          : '0 4px 20px rgba(0, 0, 0, 0.08)',
+                          ? '0 8px 32px rgba(0, 155, 228, 0.15)'
+                          : '0 8px 32px rgba(59, 130, 246, 0.15)',
                       }}>
                         <Box sx={{
-                          fontSize: { xs: '0.95rem', sm: '1rem', md: '1.05rem' },
-                          lineHeight: 1.6,
+                          fontSize: { xs: '0.875rem', sm: '0.95rem', md: '1rem' },
+                          lineHeight: { xs: 1.5, sm: 1.6 },
                           color: isDark ? 'rgba(255, 255, 255, 0.92)' : 'rgba(15, 23, 42, 0.92)',
                           flex: 1,
-                          fontWeight: 400,
+                          fontWeight: 500,
                           fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                         }}>
                           {message.content}
                         </Box>
                         <Box sx={{
-                          width: 35,
-                          height: 35,
+                          width: { xs: 32, sm: 36, md: 40 },
+                          height: { xs: 32, sm: 36, md: 40 },
                           borderRadius: '50%',
                           background: 'linear-gradient(135deg, #64748B 0%, #475569 100%)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           color: '#FFFFFF',
-                          fontSize: '0.85rem',
-                          fontWeight: 600,
+                          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+                          fontWeight: 700,
                           flexShrink: 0,
-                          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.2)',
                           fontFamily: '"Inter", sans-serif',
                         }}>
                           MG
@@ -765,10 +749,11 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
                       <Box sx={{ 
                         display: 'flex', 
                         alignItems: 'flex-start', 
-                        gap: 2, 
+                        gap: 3, 
                         maxWidth: '95%',
                         mb: 3
                       }}>
+
                         <TypingText 
                           text={message.content} 
                           speed={25} 
@@ -805,22 +790,35 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
                 />
               )}
               
-              {/* Loading State */}
+              {/* Enhanced Loading State */}
               {isLoading && (
-                <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2, width: '100%', mb: 4 }}>
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'flex-start', 
+                  alignItems: 'flex-start', 
+                  gap: { xs: 1.5, sm: 2.5, md: 3 }, 
+                  width: '100%', 
+                  mb: { xs: 2, sm: 3, md: 4 } 
+                }}>
                   <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 2,
-                    padding: '12px 16px',
-                    borderRadius: '12px',
+                    gap: { xs: 1.5, sm: 2 },
+                    padding: { xs: '10px 14px', sm: '14px 18px', md: '16px 20px' },
+                    borderRadius: { xs: '12px', sm: '14px', md: '16px' },
+                    background: isDark 
+                      ? 'rgba(0, 155, 228, 0.08)'
+                      : 'rgba(59, 130, 246, 0.08)',
+                    border: isDark 
+                      ? '1px solid rgba(0, 155, 228, 0.2)'
+                      : '1px solid rgba(59, 130, 246, 0.2)',
                   }}>
                     {[0, 0.2, 0.4].map((delay, i) => (
                       <Box
                         key={i}
                         sx={{
-                          width: 6,
-                          height: 6,
+                          width: { xs: 6, sm: 7, md: 8 },
+                          height: { xs: 6, sm: 7, md: 8 },
                           borderRadius: '50%',
                           background: isDark ? '#009BE4' : '#3B82F6',
                           animation: 'bounce 1.4s infinite ease-in-out',
@@ -829,10 +827,12 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
                       />
                     ))}
                     <Typography sx={{ 
-                      fontSize: '0.9rem',
-                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(15, 23, 42, 0.7)',
+                      fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
+                      color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(15, 23, 42, 0.8)',
                       fontWeight: 500,
                       fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                      ml: { xs: 0.5, sm: 0.75, md: 1 },
+                      display: { xs: 'none', sm: 'block' },
                     }}>
                       {processingStages[currentStage]}
                     </Typography>
@@ -841,32 +841,36 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
               )}
             </Box>
 
-            {/* Fixed Input at Bottom */}
+            {/* Enhanced Input at Bottom */}
             <Box sx={{
-              padding: { xs: 2, sm: 1.5, md: 2 },
-              paddingTop: 2,
-              borderRadius: '0 0 20px 20px',
+              padding: { xs: 2, sm: 3, md: 4 },
+              paddingTop: { xs: 2, sm: 2.5, md: 3 },
+              borderRadius: '0 0 32px 32px',
             }}>
               <Box sx={{
                 position: 'relative',
                 width: '100%',
-                border: isDark ? '1px solid rgba(71, 85, 105, 0.3)' : '1px solid rgba(226, 232, 240, 0.8)',
-                borderRadius: '16px',
+                border: isDark 
+                  ? { xs: '1.5px solid rgba(255, 255, 255, 0.08)', sm: '2px solid rgba(255, 255, 255, 0.08)' }
+                  : { xs: '1.5px solid rgba(0, 0, 0, 0.05)', sm: '2px solid rgba(0, 0, 0, 0.05)' },
+                borderRadius: { xs: '16px', sm: '18px', md: '20px' },
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: 'none',
+                background: isDark 
+                  ? 'rgba(255, 255, 255, 0.02)'
+                  : 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(10px)',
                 '&:hover': {
                   borderColor: isDark 
-                    ? 'rgba(0, 155, 228, 0.4)' 
-                    : 'rgba(59, 130, 246, 0.4)',
-                  boxShadow: 'none',
+                    ? 'rgba(0, 155, 228, 0.3)' 
+                    : 'rgba(59, 130, 246, 0.3)',
                 },
                 '&:focus-within': {
                   borderColor: isDark 
-                    ? 'rgba(0, 155, 228, 0.6)' 
-                    : 'rgba(59, 130, 246, 0.6)',
+                    ? 'rgba(0, 155, 228, 0.5)' 
+                    : 'rgba(59, 130, 246, 0.5)',
                   boxShadow: isDark 
-                    ? '0 0 0 2px rgba(0, 155, 228, 0.1)' 
-                    : '0 0 0 2px rgba(59, 130, 246, 0.1)',
+                    ? { xs: '0 0 0 3px rgba(0, 155, 228, 0.1)', sm: '0 0 0 4px rgba(0, 155, 228, 0.1)' }
+                    : { xs: '0 0 0 3px rgba(59, 130, 246, 0.1)', sm: '0 0 0 4px rgba(59, 130, 246, 0.1)' },
                 },
               }}>
                 <TextField
@@ -883,11 +887,11 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
                   sx={{
                     '& .MuiInputBase-root': {
                       color: isDark ? 'rgba(255, 255, 255, 0.92)' : 'rgba(15, 23, 42, 0.92)',
-                      fontSize: { xs: '1rem', sm: '1.05rem' },
+                      fontSize: { xs: '0.9rem', sm: '0.95rem', md: '1rem' },
                       fontWeight: 400,
                       fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                      lineHeight: 1.6,
-                      padding: '18px 64px 18px 20px',
+                      lineHeight: { xs: 1.5, sm: 1.55, md: 1.6 },
+                      padding: { xs: '14px 56px 14px 16px', sm: '16px 62px 16px 20px', md: '20px 70px 20px 24px' },
                       '&.Mui-disabled': {
                         color: isDark ? 'rgba(255, 255, 255, 0.75) !important' : 'rgba(15, 23, 42, 0.6)',
                         WebkitTextFillColor: isDark ? 'rgba(255, 255, 255, 0.75) !important' : 'rgba(15, 23, 42, 0.6)',
@@ -909,11 +913,11 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
                       resize: 'none',
                       scrollbarWidth: 'thin',
                       '&::-webkit-scrollbar': {
-                        width: '3px',
+                        width: '4px',
                       },
                       '&::-webkit-scrollbar-thumb': {
                         background: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
-                        borderRadius: '2px',
+                        borderRadius: '4px',
                       },
                       '&:disabled': {
                         color: isDark ? 'rgba(255, 255, 255, 0.75) !important' : 'rgba(15, 23, 42, 0.6)',
@@ -926,34 +930,34 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
                   onClick={() => handleSendMessage()}
                   sx={{
                     position: 'absolute',
-                    right: 16,
+                    right: { xs: 10, sm: 12, md: 16 },
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    width: 40,
-                    height: 40,
-                    borderRadius: '10px',
+                    width: { xs: 40, sm: 44, md: 48 },
+                    height: { xs: 40, sm: 44, md: 48 },
+                    borderRadius: { xs: '12px', sm: '14px', md: '16px' },
                     background: inputValue.trim() && !isLoading && !isTyping
-                      ? (isDark ? 'linear-gradient(135deg, #009BE4 0%, #3B82F6 100%)' : 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)')
-                      : (isDark ? 'rgba(71, 85, 105, 0.3)' : 'rgba(203, 213, 225, 0.5)'),
+                      ? (isDark ? 'linear-gradient(135deg, #009BE4 0%, #34D399 100%)' : 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)')
+                      : (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'),
                     cursor: inputValue.trim() && !isLoading && !isTyping ? 'pointer' : 'not-allowed',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    transition: 'all 0.2s ease',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     '&:hover': inputValue.trim() && !isLoading && !isTyping ? {
                       background: isDark 
-                        ? 'linear-gradient(135deg, #93C5FD 0%, #009BE4 100%)'
-                        : 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)',
-                      transform: 'translateY(-50%) translateY(-2px)',
+                        ? 'linear-gradient(135deg, #0284C7 0%, #10B981 100%)'
+                        : 'linear-gradient(135deg, #1D4ED8 0%, #059669 100%)',
+                      transform: 'translateY(-50%) translateY(-2px) scale(1.05)',
                       boxShadow: isDark
-                        ? '0 4px 12px rgba(0, 155, 228, 0.4)'
-                        : '0 4px 12px rgba(59, 130, 246, 0.3)',
+                        ? '0 8px 25px rgba(0, 155, 228, 0.4)'
+                        : '0 8px 25px rgba(59, 130, 246, 0.4)',
                     } : {},
                   }}
                 >
                   <ArrowUpwardIcon 
                     sx={{ 
-                      fontSize: '1.2rem',
+                      fontSize: { xs: '1.1rem', sm: '1.175rem', md: '1.25rem' },
                       color: inputValue.trim() && !isLoading && !isTyping ? '#FFFFFF' : (isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(15, 23, 42, 0.3)'),
                     }} 
                   />

@@ -26,11 +26,7 @@ const roadmapData = [
   {
     period: "0-6 months ahead",
     title: "Near Term: Expanding Core Capabilities",
-    color: {
-      light: '#3B82F6',
-      dark: '#009BE4',
-    },
-    gradient: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+    accentColor: { light: '#3b82f6', dark: '#60a5fa' },
     items: [
       {
         icon: Assessment,
@@ -67,11 +63,7 @@ const roadmapData = [
   {
     period: "6-12 months ahead",
     title: "Mid Term: Deeper Plant Intelligence",
-    color: {
-      light: '#8B5CF6',
-      dark: '#A855F7',
-    },
-    gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+    accentColor: { light: '#8b5cf6', dark: '#a78bfa' },
     items: [
       {
         icon: TrendingUp,
@@ -88,7 +80,7 @@ const roadmapData = [
       {
         icon: CloudSync,
         title: "Enhanced Connectivity",
-        description: "Real-time enterprise databases, Cloud storage (Azure, AWS, GCP), DCS display integration",
+        description: "Real-time enterprise databases, Cloud storage, DCS integration",
         features: [],
       },
       {
@@ -108,11 +100,7 @@ const roadmapData = [
   {
     period: "12+ months vision",
     title: "Long Term: Connected Ecosystem",
-    color: {
-      light: '#EC4899',
-      dark: '#F472B6',
-    },
-    gradient: 'linear-gradient(135deg, #EC4899 0%, #DB2777 100%)',
+    accentColor: { light: '#ef4444', dark: '#f87171' },
     items: [
       {
         icon: RecordVoiceOver,
@@ -148,33 +136,30 @@ export const RoadmapTimelineSection: React.FC = () => {
   const cardsRef = useRef<HTMLDivElement[]>([]);
   const { isDark } = useThemeMode();
   const { 
-    h4FontSize, 
-    isMobile,
+    h4FontSize,
     containerMaxWidth,
     containerPadding 
   } = useResponsiveLayout();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Timeline line animation
-      if (timelineRef.current) {
-        const timelineLine = timelineRef.current.querySelector('.timeline-line');
-        if (timelineLine) {
-          gsap.from(timelineLine, {
-            scrollTrigger: {
-              trigger: timelineLine,
-              start: 'top 80%',
-              end: 'bottom 20%',
-              scrub: 1,
-            },
-            scaleY: 0,
-            transformOrigin: 'top',
-            ease: 'none',
-          });
-        }
+      // Timeline line progressive reveal
+      const timelineLine = timelineRef.current?.querySelector('.timeline-line');
+      if (timelineLine) {
+        gsap.from(timelineLine, {
+          scrollTrigger: {
+            trigger: timelineLine,
+            start: 'top 85%',
+            end: 'bottom 15%',
+            scrub: 1,
+          },
+          scaleY: 0,
+          transformOrigin: 'top',
+          ease: 'none',
+        });
       }
 
-      // Cards animation
+      // Cards stagger animation
       cardsRef.current.forEach((card, index) => {
         if (card) {
           gsap.from(card, {
@@ -184,14 +169,14 @@ export const RoadmapTimelineSection: React.FC = () => {
               toggleActions: 'play none none none',
             },
             opacity: 0,
-            x: index % 2 === 0 ? -50 : 50,
+            x: index % 2 === 0 ? -40 : 40,
             duration: 0.8,
-            delay: index * 0.2,
+            delay: index * 0.15,
             ease: 'power2.out',
           });
 
-          // Individual items within cards
-          const items = card.querySelectorAll('.roadmap-item');
+          // Individual items animation
+          const items = card.querySelectorAll('.timeline-item');
           items.forEach((item, itemIndex) => {
             gsap.from(item, {
               scrollTrigger: {
@@ -201,8 +186,8 @@ export const RoadmapTimelineSection: React.FC = () => {
               },
               opacity: 0,
               y: 20,
-              duration: 0.6,
-              delay: index * 0.2 + itemIndex * 0.1 + 0.3,
+              duration: 0.5,
+              delay: index * 0.15 + itemIndex * 0.08 + 0.3,
               ease: 'power2.out',
             });
           });
@@ -220,10 +205,11 @@ export const RoadmapTimelineSection: React.FC = () => {
       sx={{
         py: 'clamp(2rem, 8vw, 4rem)',
         position: 'relative',
-        background: isDark
-          ? 'linear-gradient(180deg, rgba(17, 24, 39, 1) 0%, rgba(31, 41, 55, 1) 50%, rgba(17, 24, 39, 1) 100%)'
-          : 'linear-gradient(180deg, rgba(249, 250, 251, 1) 0%, rgba(255, 255, 255, 1) 50%, rgba(249, 250, 251, 1) 100%)',
-        transition: 'background 0.3s ease',
+        // TRANSPARENT - let page background show through
+        background: 'transparent',
+        // No margins or borders
+        margin: 0,
+        border: 'none',
       }}
     >
       <Container 
@@ -231,6 +217,8 @@ export const RoadmapTimelineSection: React.FC = () => {
         sx={{
           maxWidth: containerMaxWidth,
           px: containerPadding,
+          position: 'relative',
+          zIndex: 10,
         }}
       >
         <Box ref={timelineRef} sx={{ position: 'relative' }}>
@@ -242,13 +230,14 @@ export const RoadmapTimelineSection: React.FC = () => {
               left: '50%',
               top: 0,
               bottom: 0,
-              width: 4,
+              width: 3,
               background: isDark
-                ? 'linear-gradient(180deg, #009BE4 0%, #A855F7 50%, #F472B6 100%)'
-                : 'linear-gradient(180deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%)',
+                ? 'linear-gradient(180deg, #60a5fa 0%, #a78bfa 50%, #f87171 100%)'
+                : 'linear-gradient(180deg, #3b82f6 0%, #8b5cf6 50%, #ef4444 100%)',
               transform: 'translateX(-50%)',
-              borderRadius: 2,
+              borderRadius: 1.5,
               display: { xs: 'none', md: 'block' },
+              opacity: 0.6,
             }}
           />
 
@@ -274,12 +263,14 @@ export const RoadmapTimelineSection: React.FC = () => {
                   position: { xs: 'relative', md: 'absolute' },
                   left: { md: '50%' },
                   transform: { md: 'translateX(-50%)' },
-                  width: 24,
-                  height: 24,
+                  width: 20,
+                  height: 20,
                   borderRadius: '50%',
-                  background: phase.gradient,
-                  border: `4px solid ${isDark ? 'rgba(17, 24, 39, 1)' : 'rgba(255, 255, 255, 1)'}`,
-                  boxShadow: `0 0 20px ${phase.color[isDark ? 'dark' : 'light']}40`,
+                  background: phase.accentColor[isDark ? 'dark' : 'light'],
+                  border: `3px solid ${isDark ? 'rgba(15, 23, 42, 0.8)' : 'rgba(255, 255, 255, 0.8)'}`,
+                  boxShadow: isDark
+                    ? `0 0 15px ${phase.accentColor.dark}40`
+                    : `0 0 15px ${phase.accentColor.light}30`,
                   zIndex: 10,
                   display: { xs: 'none', md: 'block' },
                 }}
@@ -287,12 +278,16 @@ export const RoadmapTimelineSection: React.FC = () => {
 
               {/* Content Card */}
               <Card
-                elevation={isDark ? 0 : 8}
+                elevation={isDark ? 0 : 4}
                 sx={{
-                  width: { xs: '100%', md: isMobile ? '100%' : 'calc(50% - 40px)' },
-                  backgroundColor: isDark ? 'rgba(31, 41, 55, 0.8)' : 'rgba(255, 255, 255, 0.95)',
-                  border: isDark ? '1px solid rgba(55, 65, 81, 1)' : 'none',
-                  borderRadius: 4,
+                  width: { xs: '100%', md: 'calc(50% - 40px)' },
+                  backgroundColor: isDark 
+                    ? 'rgba(30, 41, 59, 0.6)' 
+                    : 'rgba(255, 255, 255, 0.8)',
+                  border: isDark 
+                    ? '1px solid rgba(51, 65, 85, 0.5)' 
+                    : '1px solid rgba(226, 232, 240, 0.8)',
+                  borderRadius: 3,
                   backdropFilter: 'blur(20px)',
                   position: 'relative',
                   overflow: 'visible',
@@ -300,24 +295,13 @@ export const RoadmapTimelineSection: React.FC = () => {
                   '&:hover': {
                     transform: 'translateY(-8px)',
                     boxShadow: isDark
-                      ? `0 20px 60px ${phase.color.dark}20`
-                      : `0 20px 60px ${phase.color.light}20`,
-                  },
-                  '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: -2,
-                    left: -2,
-                    right: -2,
-                    bottom: -2,
-                    background: phase.gradient,
-                    borderRadius: 4,
-                    opacity: 0.1,
-                    zIndex: -1,
+                      ? `0 20px 40px rgba(0, 0, 0, 0.4)`
+                      : `0 20px 40px rgba(148, 163, 184, 0.2)`,
+                    borderColor: phase.accentColor[isDark ? 'dark' : 'light'],
                   },
                 }}
               >
-                <CardContent sx={{ p: 'clamp(0.75rem, 2vw, 1rem)' }}>
+                <CardContent sx={{ p: 'clamp(1rem, 2vw, 1.5rem)' }}>
                   {/* Phase Header */}
                   <Box sx={{ mb: 3 }}>
                     <Chip
@@ -326,8 +310,10 @@ export const RoadmapTimelineSection: React.FC = () => {
                         mb: 2,
                         fontSize: '0.75rem',
                         fontWeight: 600,
-                        background: phase.gradient,
+                        background: phase.accentColor[isDark ? 'dark' : 'light'],
                         color: 'white',
+                        border: 'none',
+                        opacity: 0.9,
                       }}
                     />
                     <Typography
@@ -335,7 +321,7 @@ export const RoadmapTimelineSection: React.FC = () => {
                       sx={{
                         fontSize: h4FontSize,
                         fontWeight: 700,
-                        color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
+                        color: isDark ? '#f1f5f9' : '#1e293b',
                         mb: 1,
                         transition: 'color 0.3s ease',
                       }}
@@ -345,13 +331,13 @@ export const RoadmapTimelineSection: React.FC = () => {
                   </Box>
 
                   {/* Items Grid */}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     {phase.items.map((item, itemIndex) => {
                       const IconComponent = item.icon;
                       return (
                         <Box
                           key={itemIndex}
-                          className="roadmap-item"
+                          className="timeline-item"
                           sx={{
                             display: 'flex',
                             alignItems: 'flex-start',
@@ -359,27 +345,29 @@ export const RoadmapTimelineSection: React.FC = () => {
                             p: 2,
                             borderRadius: 2,
                             background: isDark
-                              ? 'rgba(55, 65, 81, 0.3)'
-                              : 'rgba(249, 250, 251, 0.8)',
+                              ? 'rgba(51, 65, 85, 0.3)'
+                              : 'rgba(248, 250, 252, 0.8)',
                             border: isDark
-                              ? '1px solid rgba(75, 85, 99, 0.3)'
-                              : '1px solid rgba(229, 231, 235, 0.8)',
+                              ? '1px solid rgba(71, 85, 105, 0.4)'
+                              : '1px solid rgba(226, 232, 240, 0.6)',
                             transition: 'all 0.3s ease',
                             '&:hover': {
                               background: isDark
-                                ? 'rgba(55, 65, 81, 0.5)'
-                                : 'rgba(249, 250, 251, 1)',
-                              borderColor: phase.color[isDark ? 'dark' : 'light'],
+                                ? 'rgba(51, 65, 85, 0.5)'
+                                : 'rgba(248, 250, 252, 1)',
+                              borderColor: phase.accentColor[isDark ? 'dark' : 'light'],
                               transform: 'translateX(4px)',
                             },
                           }}
                         >
                           <Box
                             sx={{
-                              width: 40,
-                              height: 40,
+                              width: 36,
+                              height: 36,
                               borderRadius: 2,
-                              background: `${phase.color[isDark ? 'dark' : 'light']}20`,
+                              background: isDark
+                                ? `${phase.accentColor.dark}20`
+                                : `${phase.accentColor.light}15`,
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
@@ -388,8 +376,9 @@ export const RoadmapTimelineSection: React.FC = () => {
                           >
                             <IconComponent
                               sx={{
-                                fontSize: 20,
-                                color: phase.color[isDark ? 'dark' : 'light'],
+                                fontSize: 18,
+                                color: phase.accentColor[isDark ? 'dark' : 'light'],
+                                opacity: 0.8,
                               }}
                             />
                           </Box>
@@ -397,9 +386,9 @@ export const RoadmapTimelineSection: React.FC = () => {
                             <Typography
                               variant="h6"
                               sx={{
-                                fontSize: '1.1rem',
+                                fontSize: '1rem',
                                 fontWeight: 600,
-                                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(17, 24, 39, 1)',
+                                color: isDark ? '#e2e8f0' : '#334155',
                                 mb: 0.5,
                                 transition: 'color 0.3s ease',
                               }}
@@ -409,31 +398,33 @@ export const RoadmapTimelineSection: React.FC = () => {
                             <Typography
                               variant="body2"
                               sx={{
-                                color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(75, 85, 99, 1)',
+                                color: isDark ? '#94a3b8' : '#64748b',
                                 lineHeight: 1.5,
+                                fontSize: '0.875rem',
                                 transition: 'color 0.3s ease',
                               }}
                             >
                               {item.description}
                             </Typography>
                             {item.features.length > 0 && (
-                              <Box sx={{ mt: 2 }}>
+                              <Box sx={{ mt: 1.5 }}>
                                 {item.features.map((feature, featureIndex) => (
                                   <Typography
                                     key={featureIndex}
                                     variant="body2"
                                     sx={{
-                                      fontSize: '0.875rem',
-                                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(107, 114, 128, 1)',
-                                      mb: 0.5,
-                                      pl: 2,
+                                      fontSize: '0.8rem',
+                                      color: isDark ? '#64748b' : '#64748b',
+                                      mb: 0.3,
+                                      pl: 1.5,
                                       position: 'relative',
                                       transition: 'color 0.3s ease',
                                       '&::before': {
                                         content: '"•"',
                                         position: 'absolute',
                                         left: 0,
-                                        color: phase.color[isDark ? 'dark' : 'light'],
+                                        color: phase.accentColor[isDark ? 'dark' : 'light'],
+                                        opacity: 0.7,
                                       },
                                     }}
                                   >

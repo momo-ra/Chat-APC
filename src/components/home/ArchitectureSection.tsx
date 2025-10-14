@@ -116,21 +116,7 @@ export const ArchitectureSection: React.FC = () => {
         py: 'clamp(3rem, 8vw, 5rem)',
         position: 'relative',
         overflow: 'hidden',
-        background: isDark
-          ? 'radial-gradient(ellipse 120% 80% at 50% 0%, rgba(16, 185, 129, 0.04) 0%, #111827 50%, #111827 100%)'
-          : 'radial-gradient(ellipse 120% 80% at 50% 0%, rgba(16, 185, 129, 0.02) 0%, #FFFFFF 50%, #FFFFFF 100%)',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: isDark 
-            ? 'radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.02) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.02) 0%, transparent 50%)'
-            : 'radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.01) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.01) 0%, transparent 50%)',
-          pointerEvents: 'none',
-        },
+        background: 'transparent',
       }}
     >
       <Container 

@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { theme } from './theme';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { SplashScreen } from './components/shared';
+import ContactPage from './pages/ContactPage';
 
 // Lazy load all pages for better performance
 const Index = lazy(() => import("./pages/Index"));
@@ -92,6 +93,7 @@ const App = () => {
                 <Route path="/product/agents" element={<AgentsPage />} />
                 <Route path="/resources/blog" element={<BlogPage />} />
                 <Route path="/resources/blog/:id" element={<BlogDetailPage />} />
+                <Route path="/company/contact" element={<ContactPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

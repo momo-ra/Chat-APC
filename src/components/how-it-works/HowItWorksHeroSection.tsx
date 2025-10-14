@@ -97,9 +97,7 @@ export const HowItWorksHeroSection: React.FC = () => {
         position: 'relative',
         overflow: 'hidden',
         py: sectionPadding,
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(17, 24, 39, 1) 0%, rgba(30, 58, 138, 0.2) 50%, rgba(17, 24, 39, 1) 100%)'
-          : 'linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(239, 246, 255, 0.8) 50%, rgba(255, 255, 255, 1) 100%)',
+        background: 'transparent',
         transition: 'background 0.3s ease',
         minHeight: '90vh',
         display: 'flex',

@@ -9,6 +9,7 @@ import {
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { getFooterBackground } from '../shared/pageBackgrounds';
 import chatAPCLogo from '../../assets/chatAPC-logo-light-mode.svg';
 import chatAPCLogoDark from '../../assets/chatAPC-logo.svg';
 import alphaProcessLogo from '../../assets/AlphaProcess-logo.png';
@@ -78,9 +79,7 @@ const Footer: React.FC = () => {
       component="footer"
       sx={{
         width: '100%',
-        background: isDark 
-          ? 'radial-gradient(ellipse 120% 80% at 50% 0%, rgba(139, 92, 246, 0.025) 0%, #111827 35%, #111827 100%)'
-          : 'radial-gradient(ellipse 120% 80% at 50% 0%, rgba(139, 92, 246, 0.012) 0%, #FFFFFF 35%, #FFFFFF 100%)',
+        background: getFooterBackground(isDark),
         borderTop: 'none',
         position: 'relative',
         zIndex: 2,

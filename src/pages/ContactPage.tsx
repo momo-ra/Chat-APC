@@ -2,23 +2,25 @@ import React, { useEffect } from 'react';
 import { Box } from '@mui/material';
 import { AppSidebar, Footer, ThemeToggle } from '../components/layout';
 import {
-  RoadmapHeroSection,
-  RoadmapTimelineSection,
-  RoadmapEcosystemSection,
-} from '../components/roadmap';
+  ContactHeroSection,
+  ContactFormSection,
+  ContactInfoSection,
+  ContactMapSection,
+  ContactSupportSection,
+} from '../components/contact';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
-import { getRoadmapBackground } from '../components/shared/pageBackgrounds';
+import { getContactBackground } from '../components/shared/pageBackgrounds';
 
-const RoadmapPage: React.FC = () => {
+const ContactPage: React.FC = () => {
   const { isDark } = useThemeMode();
 
   useEffect(() => {
     // Set page metadata
-    document.title = 'Product Roadmap - Alpha Process Control | ChatAPC';
+    document.title = 'Contact Us - Alpha Process Control | Get in Touch';
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Discover the future of ChatAPC with our comprehensive product roadmap, featuring upcoming features, integrations, and innovations in industrial AI.');
+      metaDescription.setAttribute('content', 'Contact Alpha Process Control for expert consultation on industrial AI solutions, ChatAPC implementation, and process optimization services.');
     }
 
     // Scroll to top on mount
@@ -52,8 +54,7 @@ const RoadmapPage: React.FC = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          // UNIFIED SEAMLESS BACKGROUND for entire page
-          background: getRoadmapBackground(isDark),
+          background: getContactBackground(isDark),
           position: 'relative',
           overflow: 'visible',
           transition: 'background 0.3s ease',
@@ -72,10 +73,10 @@ const RoadmapPage: React.FC = () => {
             maxWidth: '100vw',
             overflow: 'hidden',
             position: 'relative',
-            background: 'transparent', // Let page background show through
+            background: 'transparent',
           }}
         >
-          {/* Roadmap Sections - all have transparent backgrounds now */}
+          {/* Contact Sections */}
           <Box
             sx={{
               width: '100%',
@@ -87,9 +88,11 @@ const RoadmapPage: React.FC = () => {
               overflow: 'hidden',
             }}
           >
-            <RoadmapHeroSection />
-            <RoadmapTimelineSection />
-            <RoadmapEcosystemSection />
+            <ContactHeroSection />
+            <ContactFormSection />
+            <ContactInfoSection />
+            <ContactMapSection />
+            <ContactSupportSection />
           </Box>
 
           {/* Footer */}
@@ -111,4 +114,4 @@ const RoadmapPage: React.FC = () => {
   );
 };
 
-export default RoadmapPage;
+export default ContactPage;

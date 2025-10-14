@@ -141,9 +141,7 @@ export const DemoVideoSection: React.FC = () => {
         py: 'clamp(2.5rem, 8vw, 4rem)',
         position: 'relative',
         overflow: 'hidden',
-        background: isDark
-          ? 'radial-gradient(ellipse 120% 100% at 50% 0%, rgba(0, 155, 228, 0.035) 0%, #111827 40%, #111827 100%)'
-          : 'radial-gradient(ellipse 120% 100% at 50% 0%, rgba(59, 130, 246, 0.02) 0%, #FFFFFF 40%, #FFFFFF 100%)',
+        background: 'transparent',
       }}
     >
       <Container 

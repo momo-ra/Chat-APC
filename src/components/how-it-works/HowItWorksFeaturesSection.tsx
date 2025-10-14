@@ -170,9 +170,7 @@ export const HowItWorksFeaturesSection: React.FC = () => {
       component="section"
       sx={{
         py: sectionPadding,
-        background: isDark
-          ? 'linear-gradient(180deg, rgba(17, 24, 39, 1) 0%, rgba(30, 58, 138, 0.1) 50%, rgba(17, 24, 39, 1) 100%)'
-          : 'linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(239, 246, 255, 0.5) 50%, rgba(255, 255, 255, 1) 100%)',
+        background: 'transparent',
         transition: 'background 0.3s ease',
         position: 'relative',
       }}

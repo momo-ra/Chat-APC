@@ -8,6 +8,7 @@ import {
 } from '../components/how-it-works';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
+import { getHowItWorksBackground } from '../components/shared/pageBackgrounds';
 
 const HowItWorksPage: React.FC = () => {
   const { isDark } = useThemeMode();
@@ -51,9 +52,7 @@ const HowItWorksPage: React.FC = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          background: isDark
-            ? 'linear-gradient(to bottom, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
-            : 'linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
+          background: getHowItWorksBackground(isDark),
           position: 'relative',
           overflow: 'visible',
           transition: 'background 0.3s ease',

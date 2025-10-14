@@ -133,23 +133,9 @@ export const HowItWorksProcessSection: React.FC = () => {
       component="section"
       sx={{
         py: sectionPadding,
-        background: isDark
-          ? 'linear-gradient(180deg, #0F1419 0%, #1A1F2E 50%, #0F1419 100%)'
-          : 'linear-gradient(180deg, #FAFBFC 0%, #FFFFFF 50%, #F8FAFC 100%)',
+        background: 'transparent',
         position: 'relative',
         overflow: 'hidden',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: '20%',
-          right: '-10%',
-          width: '40%',
-          height: '60%',
-          background: isDark
-            ? 'radial-gradient(ellipse, rgba(59, 130, 246, 0.08) 0%, transparent 70%)'
-            : 'radial-gradient(ellipse, rgba(59, 130, 246, 0.06) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        },
       }}
     >
       <Container 

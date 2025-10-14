@@ -126,9 +126,7 @@ export const BenefitsSection: React.FC = () => {
         py: 'clamp(3rem, 10vw, 5rem)',
         position: 'relative',
         overflow: 'hidden',
-        background: isDark
-          ? 'radial-gradient(ellipse 120% 100% at 50% 0%, rgba(59, 130, 246, 0.04) 0%, #111827 40%, #111827 100%)'
-          : 'radial-gradient(ellipse 120% 100% at 50% 0%, rgba(59, 130, 246, 0.02) 0%, #FFFFFF 40%, #FFFFFF 100%)',
+        background: 'transparent',
       }}
     >
       <Container 
