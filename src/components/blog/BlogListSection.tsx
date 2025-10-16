@@ -18,13 +18,11 @@ import {
 } from '@mui/material';
 import { AccessTime, Person, TrendingUp, FilterList } from '@mui/icons-material';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { blogService } from '../../services/blogService';
 import type { BlogArticle } from '../../types/blog';
-
-gsap.registerPlugin(ScrollTrigger);
+import { applySlideUp, applyCardGridAnimation } from '../shared/animationHelpers';
 
 const BlogListSection: React.FC = () => {
   const navigate = useNavigate();
@@ -71,35 +69,11 @@ const BlogListSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Header animation
-      if (headerRef.current) {
-        gsap.from(headerRef.current, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          y: 50,
-          opacity: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-        });
-      }
+      // Animate header
+      applySlideUp(headerRef.current);
 
-      // Tabs animation
-      if (tabsRef.current) {
-        gsap.from(tabsRef.current, {
-          scrollTrigger: {
-            trigger: tabsRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          y: 30,
-          opacity: 0,
-          duration: 0.6,
-          ease: 'power2.out',
-        });
-      }
+      // Animate tabs
+      applySlideUp(tabsRef.current, { delay: 0.2 });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -107,25 +81,11 @@ const BlogListSection: React.FC = () => {
 
   // Animate articles when they change
   useEffect(() => {
-    articlesRef.current.forEach((article, index) => {
-      if (article) {
-        gsap.fromTo(article, 
-          {
-            opacity: 0,
-            y: 40,
-            scale: 0.95,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.6,
-            delay: index * 0.1,
-            ease: 'power2.out',
-          }
-        );
-      }
-    });
+    if (articlesRef.current.length > 0) {
+      applyCardGridAnimation(articlesRef.current, sectionRef.current, {
+        staggerDelay: 0.1,
+      });
+    }
   }, [activeCategory, currentPage]);
 
   // Filter articles based on active category
@@ -160,11 +120,8 @@ const BlogListSection: React.FC = () => {
         component="section"
         sx={{
           py: 'clamp(3rem, 8vw, 6rem)',
-          background: isDark
-            ? 'linear-gradient(180deg, rgba(17, 24, 39, 1) 0%, rgba(31, 41, 55, 1) 50%, rgba(17, 24, 39, 1) 100%)'
-            : 'linear-gradient(180deg, rgba(248, 250, 252, 1) 0%, rgba(255, 255, 255, 1) 50%, rgba(248, 250, 252, 1) 100%)',
+          background: 'transparent',
           position: 'relative',
-          transition: 'background 0.3s ease',
         }}
       >
         <Container maxWidth="lg">
@@ -191,11 +148,8 @@ const BlogListSection: React.FC = () => {
         component="section"
         sx={{
           py: 'clamp(3rem, 8vw, 6rem)',
-          background: isDark
-            ? 'linear-gradient(180deg, rgba(17, 24, 39, 1) 0%, rgba(31, 41, 55, 1) 50%, rgba(17, 24, 39, 1) 100%)'
-            : 'linear-gradient(180deg, rgba(248, 250, 252, 1) 0%, rgba(255, 255, 255, 1) 50%, rgba(248, 250, 252, 1) 100%)',
+          background: 'transparent',
           position: 'relative',
-          transition: 'background 0.3s ease',
         }}
       >
         <Container maxWidth="lg">

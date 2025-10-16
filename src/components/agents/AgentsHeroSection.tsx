@@ -72,13 +72,12 @@ export const AgentsHeroSection: React.FC = () => {
     <Box
       ref={heroRef}
       component="section"
+      data-section-theme={isDark ? 'dark' : 'light'}
       sx={{
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        background: isDark
-          ? 'linear-gradient(135deg, #0F1419 0%, #1A1F2E 40%, #2D1B69 100%)'
-          : 'linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 40%, #EEF2FF 100%)',
+        background: 'transparent',
         position: 'relative',
         overflow: 'hidden',
         '&::before': {

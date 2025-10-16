@@ -2,11 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Container, Card, CardContent, CardMedia, Chip, Avatar } from '@mui/material';
 import { AccessTime, ArrowForward, Person } from '@mui/icons-material';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
-
-gsap.registerPlugin(ScrollTrigger);
+import { applySlideUp, applyScaleUp, applyStaggerAnimation } from '../shared/animationHelpers';
 
 const featuredArticles = [
   {
@@ -68,53 +66,16 @@ const BlogFeaturedSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Header animation
-      if (headerRef.current) {
-        gsap.from(headerRef.current, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          y: 50,
-          opacity: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-        });
-      }
+      // Animate header
+      applySlideUp(headerRef.current);
 
-      // Featured article animation
-      if (featuredRef.current) {
-        gsap.from(featuredRef.current, {
-          scrollTrigger: {
-            trigger: featuredRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none',
-          },
-          y: 60,
-          opacity: 0,
-          scale: 0.95,
-          duration: 0.8,
-          ease: 'power3.out',
-        });
-      }
+      // Animate featured article
+      applyScaleUp(featuredRef.current, { startTrigger: 'top 80%' });
 
-      // Other articles animation
-      articlesRef.current.forEach((article, index) => {
-        if (article) {
-          gsap.from(article, {
-            scrollTrigger: {
-              trigger: article,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-            y: 40,
-            opacity: 0,
-            duration: 0.6,
-            delay: index * 0.15,
-            ease: 'power2.out',
-          });
-        }
+      // Animate other articles
+      applyStaggerAnimation(articlesRef.current, 'slideUp', {
+        staggerDelay: 0.15,
+        triggerElement: sectionRef.current,
       });
     }, sectionRef);
 
@@ -129,11 +90,8 @@ const BlogFeaturedSection: React.FC = () => {
       component="section"
       sx={{
         py: 'clamp(3rem, 8vw, 6rem)',
-        background: isDark
-          ? 'linear-gradient(180deg, rgba(31, 41, 55, 1) 0%, rgba(17, 24, 39, 1) 100%)'
-          : 'linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(248, 250, 252, 1) 100%)',
+        background: 'transparent',
         position: 'relative',
-        transition: 'background 0.3s ease',
       }}
     >
       <Container 

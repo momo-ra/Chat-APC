@@ -52,7 +52,7 @@ const SecuritySection: React.FC = () => {
     {
       icon: <ShieldIcon sx={{ fontSize: 40 }} />,
       title: 'Industrial Cybersecurity Standards',
-      description: 'Built to meet IEC 62443, NIST, and other industrial cybersecurity frameworks. Regular security audits and updates maintain compliance with evolving standards.',
+      description: 'Built to meet cybersecurity frameworks. Regular security audits and updates maintain compliance with evolving standards.',
     },
   ];
 

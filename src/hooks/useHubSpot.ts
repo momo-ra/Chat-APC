@@ -11,6 +11,7 @@ interface HubSpotFormData {
   plant_size: string;
   primary_challenge: string;
   current_systems: string;
+  message: string;
   website?: string;
   lead_status: string;
   lead_source: string;
@@ -65,6 +66,7 @@ export const useHubSpot = (): UseHubSpotReturn => {
           { name: 'company', value: formData.company },
           { name: 'jobtitle', value: formData.jobtitle },
           { name: 'industry', value: formData.industry },
+          { name: 'message', value: formData.message },
           { name: 'plant_size', value: formData.plant_size },
           { name: 'primary_challenge', value: formData.primary_challenge },
           { name: 'current_systems', value: formData.current_systems },

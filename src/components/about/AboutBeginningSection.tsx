@@ -99,9 +99,7 @@ export const AboutBeginningSection: React.FC = () => {
       sx={{
         width: '100%',
         py: sectionPadding,
-        background: isDark
-          ? 'linear-gradient(180deg, #0a0e2e 0%, #0d1842 100%)'
-          : 'linear-gradient(180deg, #FFFFFF 0%, #FEFEFE 100%)',
+        background: 'transparent',
         transition: 'background 0.3s ease',
       }}
     >

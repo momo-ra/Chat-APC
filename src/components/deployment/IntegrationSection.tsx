@@ -32,7 +32,6 @@ const IntegrationSection: React.FC = () => {
   const dataSources = [
     'OPC-UA: Standard industrial protocol connectivity',
     'SQL Databases: Direct integration with existing databases',
-    'Historians: OSIsoft PI, Wonderware, and other major platforms',
     'Excel/CSV: Import spreadsheets and flat files',
     'Custom Connectors: Tailored solutions for proprietary systems',
   ];

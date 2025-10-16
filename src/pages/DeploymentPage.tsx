@@ -14,6 +14,7 @@ import {
 } from '../components/deployment';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
+import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -23,14 +24,21 @@ const DeploymentPage: React.FC = () => {
   const { isDark } = useThemeMode();
 
   useEffect(() => {
-    // CRITICAL FIX: Kill all ScrollTrigger instances to prevent scroll lag
-    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    
-    // Disable ScrollTrigger globally
+    // Set page metadata
+    document.title = 'Deployment Options - ChatAPC | Alpha Process Control';
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Flexible deployment options for ChatAPC. Choose cloud, on-premise, or hybrid solutions with enterprise-grade security and scalability.');
+    }
+
+    // Configure ScrollTrigger for better performance
     ScrollTrigger.config({
-      autoRefreshEvents: 'none',
       limitCallbacks: true,
+      syncInterval: 150,
     });
+    
+    // Scroll to top on mount
+    window.scrollTo(0, 0);
     
     return () => {
       // Clean up on unmount
@@ -39,71 +47,111 @@ const DeploymentPage: React.FC = () => {
   }, []);
 
   return (
-    <Box
-      sx={{
-        height: 'auto',
-        background: isDark
-          ? 'linear-gradient(to bottom, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
-          : 'linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
-        position: 'relative',
-        overflow: 'visible',
-        transition: 'background 0.3s ease',
-        // CRITICAL FIX: Force all content to be visible immediately
-        '& *': {
-          opacity: '1 !important',
-          transform: 'none !important',
-          visibility: 'visible !important',
-        },
-      }}
-    >
-      <AppSidebar items={sidebarItems} />
-      <ThemeToggle />
-
-      {/* Content Sections */}
+    <>
+      {/* Skip Navigation for Accessibility */}
       <Box
+        component="a"
+        href="#main-content"
         sx={{
-          width: '100%',
-          height: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          position: 'relative',
-          zIndex: 2,
-          overflow: 'visible',
+          position: 'absolute',
+          left: '-9999px',
+          zIndex: 9999,
+          padding: '8px 16px',
+          backgroundColor: 'primary.main',
+          color: 'primary.contrastText',
+          textDecoration: 'none',
+          borderRadius: 1,
+          '&:focus': {
+            left: '16px',
+            top: '16px',
+          },
         }}
       >
-        <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-          <DeploymentHeroSection />
-        </Box>
-        <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-          <HostingOptionsSection />
-        </Box>
-        <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-          <IntegrationArchitectureSection />
-        </Box>
-        <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-          <SecuritySection />
-        </Box>
-        <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-          <DeploymentShowcaseSection />
-        </Box>
-        <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-          <IntegrationSection />
-        </Box>
-        <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-          <ScalableArchitectureSection />
-        </Box>
-        <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-          <ReadyToDeploySection />
-        </Box>
-        <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-          <DeploymentCTASection />
-        </Box>
+        Skip to main content
       </Box>
 
-      {/* Footer */}
-      <Footer />
-    </Box>
+      <Box
+        sx={{
+          minHeight: '100vh',
+          background: getHomeBackground(isDark),
+          position: 'relative',
+          overflow: 'visible',
+          transition: 'background 0.3s ease',
+        }}
+      >
+        <AppSidebar items={sidebarItems} />
+        <ThemeToggle />
+
+        {/* Main Content */}
+        <Box
+          id="main-content"
+          component="main"
+          sx={{
+            width: '100%',
+            height: 'auto',
+            maxWidth: '100vw',
+            overflow: 'hidden',
+            position: 'relative',
+            background: 'transparent',
+          }}
+        >
+          {/* Content Sections */}
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: '100vw',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              zIndex: 2,
+              overflow: 'hidden',
+            }}
+          >
+            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
+              <DeploymentHeroSection />
+            </Box>
+            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
+              <HostingOptionsSection />
+            </Box>
+            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
+              <IntegrationArchitectureSection />
+            </Box>
+            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
+              <SecuritySection />
+            </Box>
+            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
+              <DeploymentShowcaseSection />
+            </Box>
+            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
+              <IntegrationSection />
+            </Box>
+            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
+              <ScalableArchitectureSection />
+            </Box>
+            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
+              <ReadyToDeploySection />
+            </Box>
+            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
+              <DeploymentCTASection />
+            </Box>
+          </Box>
+
+          {/* Footer */}
+          <Box 
+            component="footer"
+            sx={{ 
+              mt: 0, 
+              mb: 0,
+              width: '100%',
+              marginLeft: 0,
+              paddingLeft: 0,
+            }}
+          >
+            <Footer />
+          </Box>
+        </Box>
+      </Box>
+    </>
   );
 };
 

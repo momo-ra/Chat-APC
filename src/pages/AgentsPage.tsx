@@ -9,6 +9,7 @@ import {
 } from '../components/agents';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
+import { getHomeBackground } from '../components/shared/pageBackgrounds';
 
 const AgentsPage: React.FC = () => {
   const { isDark } = useThemeMode();
@@ -52,9 +53,7 @@ const AgentsPage: React.FC = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          background: isDark
-            ? 'linear-gradient(to bottom, #0F1419 0%, #1A1F2E 25%, #2D1B69 75%, #1A1F2E 100%)'
-            : 'linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 25%, #EEF2FF 75%, #FFFFFF 100%)',
+          background: getHomeBackground(isDark),
           position: 'relative',
           overflow: 'visible',
           transition: 'background 0.3s ease',

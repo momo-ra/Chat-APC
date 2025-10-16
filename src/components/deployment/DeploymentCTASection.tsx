@@ -1,10 +1,11 @@
 import React from 'react';
 import { Box, Container, Typography, Button } from '@mui/material';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 
 const DeploymentCTASection: React.FC = () => {
   const { isDark } = useThemeMode();
-  
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -60,6 +61,7 @@ const DeploymentCTASection: React.FC = () => {
         <Button
           variant="contained"
           size="large"
+          onClick={() => navigate('/company/contact')}  
           sx={{
             background: isDark 
               ? 'linear-gradient(135deg, #009BE4 0%, #0077B6 100%)'

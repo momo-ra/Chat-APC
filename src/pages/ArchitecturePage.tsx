@@ -11,6 +11,7 @@ import {
 } from '../components/architecture';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
+import { getHomeBackground } from '../components/shared/pageBackgrounds';
 
 const ArchitecturePage: React.FC = () => {
   const { isDark } = useThemeMode();
@@ -54,9 +55,7 @@ const ArchitecturePage: React.FC = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          background: isDark
-            ? 'linear-gradient(to bottom, #0F1419 0%, #1A1F2E 50%, #0F1419 100%)'
-            : 'linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
+          background: getHomeBackground(isDark),
           position: 'relative',
           overflow: 'visible',
           transition: 'background 0.3s ease',

@@ -106,7 +106,7 @@ export const AboutResultSection: React.FC = () => {
       sx={{
         width: '100%',
         py: sectionPadding,
-        background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 50%, #1E293B 100%)',
+        background: 'transparent',
         position: 'relative',
         overflow: 'hidden',
         '&::before': {

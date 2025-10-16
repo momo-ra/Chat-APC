@@ -4,3 +4,6 @@ export { default as BenefitsSection } from './BenefitsSection';
 export { default as ArchitectureSection } from './ArchitectureSection';
 export { default as DemoVideoSection } from './DemoVideoSection';
 export { default as TeamSection } from './TeamSection';
+export { default as HorizontalScrollSlider } from './HorizontalScrollSlider';
+export { default as ExpandingBackgroundSlider } from './ExpandingBackgroundSlider';
+export { default as ContactSection } from './ContactSection';

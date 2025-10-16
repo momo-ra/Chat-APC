@@ -2,12 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Container, Button, Card, CardContent } from '@mui/material';
 import { ArrowForward, PlayArrow, ChatBubbleOutline } from '@mui/icons-material';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useNavigate } from 'react-router-dom';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
-
-gsap.registerPlugin(ScrollTrigger);
+import { applyScaleUp, applyStaggerAnimation, applyFloatingAnimation } from '../shared/animationHelpers';
 
 export const CTASection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -24,51 +22,27 @@ export const CTASection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Main CTA animation
-      if (ctaRef.current) {
-        gsap.from(ctaRef.current, {
-          scrollTrigger: {
-            trigger: ctaRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none',
-          },
-          opacity: 0,
-          scale: 0.9,
-          y: 60,
-          duration: 1.2,
-          ease: 'back.out(1.7)',
-        });
+      // Main CTA animation with scale
+      applyScaleUp(ctaRef.current, { startTrigger: 'top 80%' });
 
-        // CTA content stagger animation
-        const ctaContent = ctaRef.current.querySelector('.cta-content');
-        if (ctaContent) {
-          gsap.from(ctaContent.children, {
-            scrollTrigger: {
-              trigger: ctaRef.current,
-              start: 'top 80%',
-              toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            y: 30,
-            duration: 0.8,
-            stagger: 0.15,
-            delay: 0.4,
-            ease: 'power3.out',
-          });
-        }
+      // CTA content stagger animation
+      const ctaContent = ctaRef.current?.querySelector('.cta-content');
+      if (ctaContent) {
+        const children = Array.from(ctaContent.children) as HTMLElement[];
+        applyStaggerAnimation(children, 'slideUp', {
+          staggerDelay: 0.15,
+          startTrigger: 'top 80%',
+          triggerElement: ctaRef.current,
+          customProps: { delay: 0.4 },
+        });
       }
 
       // Floating elements continuous animation
       floatingElementsRef.current.forEach((element, index) => {
         if (element) {
-          gsap.to(element, {
-            y: -15,
-            x: index % 2 === 0 ? 10 : -10,
-            rotation: index % 2 === 0 ? 5 : -5,
+          applyFloatingAnimation(element, {
+            distance: 15,
             duration: 4 + index,
-            repeat: -1,
-            yoyo: true,
-            ease: 'power2.inOut',
             delay: index * 0.5,
           });
         }
@@ -301,7 +275,7 @@ export const CTASection: React.FC = () => {
                 <Button
                   variant="outlined"
                   size="large"
-                  onClick={() => navigate('/contact')}
+                  onClick={() => navigate('/company/contact')}
                   startIcon={<ChatBubbleOutline />}
                   sx={{
                     px: 'clamp(1.5rem, 4vw, 2rem)',

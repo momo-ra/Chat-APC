@@ -2,11 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Container, Grid, Card, CardContent } from '@mui/material';
 import { TrendingUp, AccessTime, School } from '@mui/icons-material';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
-
-gsap.registerPlugin(ScrollTrigger);
+import { applySlideUp, applyCardGridAnimation, applyScaleUp } from '../shared/animationHelpers';
 
 const benefits = [
   {
@@ -51,65 +49,20 @@ export const BenefitsSection: React.FC = () => {
     containerPadding 
   } = useResponsiveLayout();
 
-  // --- Simpler & more attractive animation ---
+  // Unified animation system
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Animate header in (fade + up)
-      if (headerRef.current) {
-        gsap.fromTo(
-          headerRef.current,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1, y: 0, 
-            duration: 0.7, 
-            ease: 'power2.out', 
-            scrollTrigger: {
-              trigger: headerRef.current,
-              start: 'top 90%',
-              toggleActions: 'play none none none',
-            }
-          }
-        );
-      }
+      // Animate header
+      applySlideUp(headerRef.current, { startTrigger: 'top 90%' });
 
-      // Animate cards: each fades & rises staggered (no layered float)
-      gsap.fromTo(
-        cardsRef.current.filter(Boolean),
-        { opacity: 0, y: 40, scale: 0.96 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          stagger: 0.18,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 82%',
-            toggleActions: 'play none none none'
-          }
-        }
-      );
+      // Animate cards with stagger
+      applyCardGridAnimation(cardsRef.current, sectionRef.current);
 
-      // Animate ROI statement in (fade + slight scale from 0.94)
-      if (roiRef.current) {
-        gsap.fromTo(
-          roiRef.current,
-          { opacity: 0, scale: 0.94 },
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.7,
-            delay: 0.25,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: roiRef.current,
-              start: 'top 90%',
-              toggleActions: 'play none none none'
-            }
-          }
-        );
-      }
+      // Animate ROI statement
+      applyScaleUp(roiRef.current, { 
+        delay: 0.25,
+        startTrigger: 'top 90%' 
+      });
     }, sectionRef);
 
     return () => ctx.revert();

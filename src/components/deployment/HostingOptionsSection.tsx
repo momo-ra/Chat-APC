@@ -49,7 +49,7 @@ const HostingOptionsSection: React.FC = () => {
     {
       icon: <CloudIcon sx={{ fontSize: 48 }} />,
       title: 'Private Cloud',
-      description: 'Run securely in Azure, AWS, or Google Cloud Platform with enterprise-grade security. Benefit from cloud scalability while maintaining dedicated, isolated environments for your industrial data.',
+      description: 'Run securely in Cloud Platforms with enterprise-grade security. Benefit from cloud scalability while maintaining dedicated, isolated environments for your industrial data.',
       benefits: [
         'Elastic scalability',
         'Managed infrastructure',
@@ -182,46 +182,6 @@ const HostingOptionsSection: React.FC = () => {
                     },
                   }}
                 >
-                  {/* Image Placeholder */}
-                  <Box
-                    sx={{
-                      width: '100%',
-                      height: 180,
-                      borderRadius: 4,
-                      mb: 3,
-                      background: isDark 
-                        ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.1) 0%, rgba(0, 155, 228, 0.05) 100%)'
-                        : 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(37, 99, 235, 0.03) 100%)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      position: 'relative',
-                      overflow: 'hidden',
-                      border: isDark 
-                        ? '1px solid rgba(0, 155, 228, 0.15)' 
-                        : '1px solid rgba(37, 99, 235, 0.12)',
-                      transition: 'all 0.3s ease',
-                      '&::after': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        background: isDark 
-                          ? 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M30 0L30 60M0 30L60 30\' stroke=\'rgba(0,155,228,0.1)\' stroke-width=\'1\'/%3E%3C/svg%3E")'
-                          : 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M30 0L30 60M0 30L60 30\' stroke=\'rgba(37,99,235,0.08)\' stroke-width=\'1\'/%3E%3C/svg%3E")',
-                      },
-                    }}
-                  >
-                    <Box sx={{ 
-                      color: isDark ? 'rgba(0, 155, 228, 0.3)' : 'rgba(37, 99, 235, 0.25)',
-                      zIndex: 1,
-                      transition: 'color 0.3s ease',
-                    }}>
-                      {option.icon}
-                    </Box>
-                  </Box>
 
                   {/* Content Area */}
                   <Box
@@ -240,17 +200,10 @@ const HostingOptionsSection: React.FC = () => {
                       sx={{
                         width: 64,
                         height: 64,
-                        borderRadius: 4,
-                        background: isDark 
-                          ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.15) 0%, rgba(0, 155, 228, 0.05) 100%)'
-                          : 'linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(37, 99, 235, 0.04) 100%)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         mb: 3,
-                        border: isDark 
-                          ? '1px solid rgba(0, 155, 228, 0.2)' 
-                          : '1px solid rgba(37, 99, 235, 0.15)',
                         transition: 'all 0.3s ease',
                         '@media (min-width: 960px) and (max-width: 1549px)': {
                           width: 56,

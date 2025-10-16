@@ -10,6 +10,7 @@ import {
 } from '../components/blog';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
+import { getHomeBackground } from '../components/shared/pageBackgrounds';
 
 const BlogPage: React.FC = () => {
   const { isDark } = useThemeMode();
@@ -53,9 +54,7 @@ const BlogPage: React.FC = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          background: isDark
-            ? 'linear-gradient(to bottom, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
-            : 'linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
+          background: getHomeBackground(isDark),
           position: 'relative',
           overflow: 'visible',
           transition: 'background 0.3s ease',

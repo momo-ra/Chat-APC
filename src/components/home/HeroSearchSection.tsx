@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, Button, Typography, TextField, useTheme, useMediaQuery } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import PersonIcon from '@mui/icons-material/Person';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import FloatingInput from './FloatingInput';
+import gsap from 'gsap';
 
 interface Message {
   id: string;
@@ -89,6 +91,9 @@ const SuggestionQuestions: React.FC<{
   title?: string;
   disabled?: boolean;
 }> = ({ suggestions, onSuggestionClick, isDark, title = "What would you like to explore?", disabled = false }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  
   return (
     <Box
       sx={{
@@ -119,7 +124,7 @@ const SuggestionQuestions: React.FC<{
       <Box
         sx={{
           display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' },
+          flexDirection: isMobile ? 'column' : 'column', // Always vertical for both mobile and desktop
           gap: 1.5,
           width: '100%',
         }}
@@ -136,14 +141,14 @@ const SuggestionQuestions: React.FC<{
             disabled={disabled}
             size="medium"
             sx={{
-              flex: 1,
+              width: '100%', // Full width for vertical layout
               textAlign: 'center',
               border: isDark 
                 ? '1px solid rgba(0, 155, 228, 0.3)' 
                 : '1px solid rgba(59, 130, 246, 0.3)',
               borderRadius: '12px',
-              padding: '6px 8px',
-              fontSize: '0.8rem',
+              padding: '8px 12px', // Slightly more padding for vertical layout
+              fontSize: '0.85rem',
               fontWeight: 500,
               textTransform: 'none',
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -152,7 +157,7 @@ const SuggestionQuestions: React.FC<{
               background: isDark 
                 ? 'rgba(0, 155, 228, 0.05)' 
                 : 'rgba(59, 130, 246, 0.05)',
-              minHeight: '42px',
+              minHeight: '45px', // Slightly taller for better vertical appearance
               '&:hover:not(:disabled)': {
                 borderColor: isDark ? '#009BE4' : '#3B82F6',
                 background: isDark 
@@ -195,6 +200,14 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { isDark } = useThemeMode();
   
+  // Refs for GSAP animations
+  const firstTitleRef = useRef<HTMLDivElement>(null);
+  const secondTitleRef = useRef<HTMLDivElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
+  const chatAreaRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [animationComplete, setAnimationComplete] = useState(false);
+  
   // Processing stages
   const processingStages = [
     'Analyzing real-time process data...',
@@ -205,43 +218,43 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
   ];
   const [currentStage, setCurrentStage] = useState(0);
   
-  // New flow state
+  // Updated flow state - removed hasAutoSentOnce to allow multiple auto-sends
   const [showInitialMessage, setShowInitialMessage] = useState(true);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [waitingForUserInput, setWaitingForUserInput] = useState(false);
   const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [hasUserSentMessage, setHasUserSentMessage] = useState(false);
+  const [lastAutoSendTime, setLastAutoSendTime] = useState<number>(0);
+  
+  // Timer for auto-sending question
+  const autoSendTimerRef = useRef<NodeJS.Timeout | null>(null);
   
   // Initial welcome message
-  const initialWelcomeMessage = "Welcome to ChatAPC! I'm your AI assistant for process control and optimization. I can help you analyze constraints, identify opportunities, and optimize your plant operations in real-time.\n\nLet's get started with some common questions you might have:";
+  const initialWelcomeMessage = "ChatAPC blends deep engineering expertise with advanced AI to deliver clear, data-driven insights. It identifies issues early, explains process behavior intuitively, and reveals untapped opportunities for improved performance and profit — all in plain language.";
 
-  // Suggestion questions that appear after responses
-  const suggestionQuestions = [
-    'Analyze my current process constraints',
-    'Show me optimization opportunities', 
-    'Explain recent process changes',
-  ];
+  // Suggestion questions that appear after responses (memoized to prevent recreating on every render)
+  const suggestionQuestions = React.useMemo(() => [
+    'When did TI100 start violating the high limit?',
+    'How can we increase the margin of the CDU?', 
+    'What is TI100?',
+  ], []);
 
   // Expanded suggestion questions pool
   const allSuggestionQuestions = [
-    'Analyze my current process constraints',
-    'Show me optimization opportunities', 
-    'Explain recent process changes',
-    'Review equipment performance trends',
-    'Identify energy efficiency improvements',
-    'Check control loop stability',
-    'Analyze production bottlenecks',
-    'Review safety system status',
-    'Examine quality control metrics',
-    'Assess maintenance requirements',
-    'Monitor environmental compliance',
-    'Evaluate cost reduction opportunities',
-    'Check alarm system performance',
-    'Review operator performance data',
-    'Analyze raw material efficiency'
+    'When did TI100 start violating the high limit?',
+    'How can we increase the margin of the CDU?', 
+    'What is TI100?',
+    'What is kerosene flash point influenced by?',
+    'What is the feed of C101', 
+    'Check if the APC limits on the Debutanizer are correct',
+    'How can I increase the kerosene flash point from 42 edgC to 43 degC',
+    'Why is the draw temperature above its limit?',
+    'Can I increase the feed from 1000 t/h to 1100 t/h?',
+    'What is E201',
   ];
 
-  // Enhanced AI responses with more variety and no repeated questions
+  // Enhanced AI responses with specific Q&A pairs
   const getAIResponse = (userMessage: string, lastQuestion: string): { response: string; suggestions: string[] } => {
     const lowerMessage = userMessage.toLowerCase();
     
@@ -250,35 +263,70 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
       q.toLowerCase() !== lastQuestion.toLowerCase()
     );
     
-    if (lowerMessage.includes('constraint') || lowerMessage.includes('analyze') && lowerMessage.includes('constraint')) {
+    // Get random suggestions
+    const getRandomSuggestions = (count: number = 3) => {
+      return availableSuggestions
+        .sort(() => Math.random() - 0.5)
+        .slice(0, count);
+    };
+    
+    // Check for specific questions
+    if (lowerMessage.includes('ti100') && lowerMessage.includes('violating')) {
       return {
-        response: "I've analyzed your current process constraints and identified several key areas:\n\n• **Active Constraints**: 3 control loops currently at their limits\n• **Bottleneck Analysis**: Unit 200 reactor temperature is the primary constraint\n• **Impact Assessment**: Current constraints are reducing throughput by ~12%\n• **Economic Impact**: Estimated $45K/day in lost revenue potential\n\nThe main constraint appears to be the reactor temperature limit (TI-200), which is preventing higher feed rates and limiting overall production capacity.",
-        suggestions: availableSuggestions.filter(q => 
-          q.includes('optimization') || q.includes('equipment') || q.includes('bottleneck')
-        ).slice(0, 3)
+        response: "TI100 exceeded its high limit at **14:32 on October 10**, remaining above the limit for **45 minutes**.\n\nThis extended violation indicates a sustained process disturbance that should be investigated to prevent recurrence.",
+        suggestions: getRandomSuggestions()
       };
-    } else if (lowerMessage.includes('optimization') || lowerMessage.includes('opportunities')) {
+    } else if (lowerMessage.includes('increase') && lowerMessage.includes('margin') && lowerMessage.includes('cdu')) {
       return {
-        response: "I've identified several optimization opportunities in your current process:\n\n• **Control Loop Tuning**: 4 loops showing suboptimal response times\n• **Setpoint Optimization**: Temperature and pressure targets could be adjusted\n• **Advanced Control**: Potential for implementing multivariable control strategies\n• **Economic Potential**: Estimated $200K+ annual savings opportunity\n\nThe highest-impact opportunity involves optimizing your reactor temperature control strategy, which could improve throughput by 6-8%.",
-        suggestions: availableSuggestions.filter(q => 
-          q.includes('energy') || q.includes('control') || q.includes('cost')
-        ).slice(0, 3)
+        response: "The margin of the CDU can be increased from **3.5 EUR/ton** to **3.8 EUR/ton** by performing the following action:\n\n• **Increase the Top pumparound flow APC high limit** from 600 ton/hr to 650 ton/hr\n  - This is safely below the equipment maximum of 700 ton/hr\n  - Expected margin improvement: **+0.3 EUR/ton**\n\nThis optimization opportunity could deliver significant annual savings while maintaining safe operating conditions.",
+        suggestions: getRandomSuggestions()
       };
-    } else if (lowerMessage.includes('changes') || lowerMessage.includes('explain') && lowerMessage.includes('changes')) {
+    } else if (lowerMessage.includes('what is ti100')) {
       return {
-        response: "Recent process changes detected in your system:\n\n• **Last 4 hours**: Feed composition shifted by 3.2% (higher C3 content)\n• **Control Adjustments**: 2 setpoints modified by operations team\n• **Equipment Performance**: Compressor C-101 efficiency decreased to 92%\n• **Overall Impact**: Unit efficiency down 1.8% from normal operation\n\nThe most significant change was the feed composition shift, which has affected downstream separation efficiency and increased reboiler duty.",
-        suggestions: availableSuggestions.filter(q => 
-          q.includes('equipment') || q.includes('quality') || q.includes('performance')
-        ).slice(0, 3)
+        response: "**TI100** is the temperature indicator on the kerosene stripper overhead line, measuring vapor temperature.\n\n• **Current value**: 212.2°C\n• **8-hour average**: 210.8°C\n• **Location**: Overhead vapor line of kerosene stripper\n\nThis measurement is critical for monitoring stripper performance and product quality control.",
+        suggestions: getRandomSuggestions()
+      };
+    } else if (lowerMessage.includes('kerosene flash point') && lowerMessage.includes('influenced')) {
+      return {
+        response: "Kerosene flash point **AI100** is influenced by two primary factors:\n\n1. **Top temperature TC101** - Higher temperatures increase flash point\n2. **Stripping steam FC200** - Increased steam flow raises flash point by removing light ends\n\nThese variables can be adjusted to optimize the flash point specification while maintaining product quality.",
+        suggestions: getRandomSuggestions()
+      };
+    } else if (lowerMessage.includes('feed of c101') || (lowerMessage.includes('what is') && lowerMessage.includes('feed') && lowerMessage.includes('c101'))) {
+      return {
+        response: "The feed of stabilizer column **C101** is:\n\n• **Stream**: S01\n• **Source**: Heat exchanger E101 outlet\n• **Description**: Pre-heated hydrocarbon feed entering the stabilizer for light-ends removal\n\nThis feed stream's temperature and composition significantly affect the stabilizer's separation efficiency.",
+        suggestions: getRandomSuggestions()
+      };
+    } else if (lowerMessage.includes('apc limits') && lowerMessage.includes('debutanizer')) {
+      return {
+        response: "Analysis of the Debutanizer APC limits reveals an optimization opportunity:\n\n**Recommendation**: Reduce the APC low limit on the reboiler flow from **65 ton/hr to 60 ton/hr** (equipment low limit)\n\n**Economic Impact**:\n• Margin increase: 3.4 EUR/ton → **3.6 EUR/ton** (+0.2 EUR/ton)\n• Annual benefit: **156k EUR/year**\n\nThe current limit is unnecessarily conservative and constraining profitability. The equipment can safely operate at 60 ton/hr.",
+        suggestions: getRandomSuggestions()
+      };
+    } else if (lowerMessage.includes('increase') && lowerMessage.includes('kerosene flash point') && (lowerMessage.includes('42') || lowerMessage.includes('43'))) {
+      return {
+        response: "Kerosene Flash point **AI100** can be increased from 42°C to 43°C by performing the following actions:\n\n1. **Increase top temperature** from 110.8°C to **112.3°C** (+1.5°C)\n2. **Increase stripping steam** to the process high limit of **600 kg/hr**\n\nThese adjustments will remove lighter components more effectively, raising the flash point to meet your target specification while maintaining column stability.",
+        suggestions: getRandomSuggestions()
+      };
+    } else if (lowerMessage.includes('draw temperature') && lowerMessage.includes('above') && lowerMessage.includes('limit')) {
+      return {
+        response: "The draw temperature is high because the **kerosene draw flow is constrained at its APC low limit**.\n\nWhen the draw flow hits its lower constraint, it cannot be reduced further to control the temperature, causing the temperature to rise above its limit.\n\n**Solution**: Either increase the draw flow limit or adjust upstream conditions to reduce the temperature driving force.",
+        suggestions: getRandomSuggestions()
+      };
+    } else if (lowerMessage.includes('increase') && lowerMessage.includes('feed') && (lowerMessage.includes('1000') || lowerMessage.includes('1100'))) {
+      return {
+        response: "**No**, the feed cannot be increased from 1000 t/h to 1100 t/h.\n\n**Constraint**: Column differential pressure (ΔP)\n• Current ΔP: 0.3 bar\n• Projected ΔP at 1100 t/h: **0.6 bar**\n• Column limit: **0.55 bar**\n\nIncreasing the feed to 1100 t/h would exceed the column's pressure limit by 0.05 bar, risking flooding and potential equipment damage. The maximum safe feed rate is lower than 1100 t/h.",
+        suggestions: getRandomSuggestions()
+      };
+    } else if (lowerMessage.includes('what is e201')) {
+      return {
+        response: "**E201** is a shell-and-tube heat exchanger with the following configuration:\n\n• **Type**: Shell-and-tube heat exchanger\n• **Hot side (shell)**: Kerosene flow from Main Fractionator C101\n• **Cold side (tubes)**: Cooling water\n• **Function**: Cools kerosene product to storage temperature\n\nThis exchanger is critical for product cooling and heat recovery in the fractionation section.",
+        suggestions: getRandomSuggestions()
       };
     } else {
       // Default response with random suggestions
-      const randomSuggestions = availableSuggestions
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3);
+      const randomSuggestions = getRandomSuggestions();
       
       return {
-        response: "I can help you with various aspects of process control and optimization:\n\n• **Real-time Analysis**: Monitor constraints and performance indicators\n• **Optimization**: Identify improvement opportunities and cost savings\n• **Troubleshooting**: Diagnose issues and recommend solutions\n• **Reporting**: Generate insights and performance summaries\n\nI have access to your current process data and can provide specific insights tailored to your plant operations.",
+        response: "I can help you with various aspects of process control and optimization:\n\n• **Equipment Information**: Details on instruments, vessels, and heat exchangers\n• **Process Analysis**: Temperature trends, pressure limits, and flow constraints\n• **Optimization Opportunities**: Margin improvements and limit adjustments\n• **Troubleshooting**: Root cause analysis and corrective actions\n\nI have access to your current process data and can provide specific insights tailored to your plant operations. Try asking about specific tags, equipment, or optimization opportunities!",
         suggestions: randomSuggestions
       };
     }
@@ -287,6 +335,106 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
   // Initialize with welcome message and first suggestions
   useEffect(() => {
     setCurrentSuggestions(suggestionQuestions);
+  }, []);
+
+  // GSAP Intro Animation - "The GSAP Field" style (Responsive)
+  useEffect(() => {
+    const tl = gsap.timeline({
+      onComplete: () => setAnimationComplete(true)
+    });
+
+    // Get word elements for animation
+    const words = firstTitleRef.current?.querySelectorAll('[class^="word-"]');
+
+    // Responsive values based on screen size
+    const isMobileView = window.innerWidth < 768;
+    const isTabletView = window.innerWidth >= 768 && window.innerWidth < 1024;
+    
+    // Calculate responsive starting position and scale
+    const startY = isMobileView 
+      ? window.innerHeight * 0.25  // 25% for mobile
+      : isTabletView 
+      ? window.innerHeight * 0.3   // 30% for tablet
+      : window.innerHeight * 0.35; // 35% for desktop
+    
+    const startScale = isMobileView 
+      ? 1.5   // Smaller scale for mobile
+      : isTabletView 
+      ? 1.8   // Medium scale for tablet
+      : 2.2;  // Full scale for desktop
+
+    const animationDuration = isMobileView ? 1.6 : 1.8; // Faster on mobile
+
+    // Set initial states - hide everything
+    gsap.set([secondTitleRef.current, subtitleRef.current, chatAreaRef.current], {
+      opacity: 0,
+      y: isMobileView ? 40 : 60
+    });
+
+    // Set first title container - start from bottom with larger scale
+    gsap.set(firstTitleRef.current, {
+      y: startY,
+      scale: startScale,
+      opacity: 1,
+      transformOrigin: 'center center'
+    });
+
+    // Set individual words - start with dim/gray color
+    gsap.set(words, {
+      opacity: 0.3,
+      filter: 'grayscale(100%) brightness(0.5)',
+      y: 0
+    });
+
+    // Animation sequence - "The GSAP Field" style
+    tl
+      // First, bring the title up from bottom with color fade in
+      .to(firstTitleRef.current, {
+        y: 0,
+        duration: animationDuration,
+        ease: 'power2.out'
+      })
+      // Simultaneously fade in the words and reveal colors
+      .to(words, {
+        opacity: 1,
+        filter: 'grayscale(0%) brightness(1)',
+        duration: animationDuration * 0.9,
+        stagger: isMobileView ? 0.08 : 0.1,
+        ease: 'power2.inOut'
+      }, `-=${animationDuration * 0.9}`)
+      // Hold for a moment to let user see the full title
+      .to({}, { duration: isMobileView ? 0.3 : 0.5 })
+      // Scale down to final size
+      .to(firstTitleRef.current, {
+        scale: 1,
+        duration: isMobileView ? 1 : 1.2,
+        ease: 'power3.inOut'
+      })
+      // Bring in second title
+      .to(secondTitleRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.9,
+        ease: 'power2.out'
+      }, '-=0.5')
+      // Bring in subtitle
+      .to(subtitleRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: 'power2.out'
+      }, '-=0.4')
+      // Finally reveal the chat area
+      .to(chatAreaRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: 'power2.out'
+      }, '-=0.3');
+
+    return () => {
+      tl.kill();
+    };
   }, []);
 
   // Initial welcome flow
@@ -306,6 +454,50 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
     }
   }, [showInitialMessage, messages.length]);
   
+  // Updated auto-send logic - allows multiple auto-sends with time intervals
+  useEffect(() => {
+    if (showSuggestions && !hasUserSentMessage && currentSuggestions.length > 0) {
+      // Clear any existing timer
+      if (autoSendTimerRef.current) {
+        clearTimeout(autoSendTimerRef.current);
+      }
+      
+      // Set a new timer for auto-sending (15 seconds for first, 30 seconds for subsequent)
+      const delay = messages.length === 1 ? 15000 : 30000; // 15s for first message, 30s for subsequent
+      
+      autoSendTimerRef.current = setTimeout(() => {
+        const currentTime = Date.now();
+        const timeSinceLastAutoSend = currentTime - lastAutoSendTime;
+        
+        // Only auto-send if enough time has passed and user hasn't sent a message
+        if (!hasUserSentMessage && (lastAutoSendTime === 0 || timeSinceLastAutoSend > 25000)) {
+          // Pick a random suggestion to make it more varied
+          const randomIndex = Math.floor(Math.random() * currentSuggestions.length);
+          const suggestionToSend = currentSuggestions[randomIndex];
+          
+          if (suggestionToSend) {
+            setLastAutoSendTime(currentTime);
+            handleSuggestionClick(suggestionToSend, true); // true flag indicates auto-sent
+          }
+        }
+      }, delay);
+    }
+    
+    return () => {
+      if (autoSendTimerRef.current) {
+        clearTimeout(autoSendTimerRef.current);
+      }
+    };
+  }, [showSuggestions, hasUserSentMessage, currentSuggestions, messages.length, lastAutoSendTime]);
+  
+  // Reset hasUserSentMessage when suggestions change (to allow auto-send for new suggestions)
+  useEffect(() => {
+    if (showSuggestions && messages.length > 1) {
+      // Reset user interaction flag after showing suggestions for a new AI response
+      setHasUserSentMessage(false);
+    }
+  }, [currentSuggestions, showSuggestions]);
+  
   // Callback for when welcome message typing completes
   const handleWelcomeTypingComplete = () => {
     setIsTyping(false);
@@ -319,6 +511,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
     setIsTyping(false);
     setShowSuggestions(true);
     setWaitingForUserInput(true);
+    setHasUserSentMessage(false); // Reset to allow auto-send for new suggestions
   };
 
   // Enhanced scroll to bottom effect
@@ -408,19 +601,26 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile]);
 
-  // Fixed suggestion click handler
-  const handleSuggestionClick = (suggestion: string) => {
+  // Updated suggestion click handler
+  const handleSuggestionClick = (suggestion: string, isAutoSent: boolean = false) => {
     if (isLoading || isTyping) {
       return;
+    }
+    
+    // Clear auto-send timer if user clicks manually
+    if (!isAutoSent && autoSendTimerRef.current) {
+      clearTimeout(autoSendTimerRef.current);
+      autoSendTimerRef.current = null;
     }
     
     setInputValue(suggestion);
     setShowSuggestions(false);
     setWaitingForUserInput(false);
-    handleSendMessage(suggestion);
+    setHasUserSentMessage(true);
+    handleSendMessage(suggestion, isAutoSent);
   };
 
-  const handleSendMessage = async (messageToSend?: string) => {
+  const handleSendMessage = async (messageToSend?: string, isAutoSent: boolean = false) => {
     const messageContent = messageToSend || inputValue.trim();
     
     if (!messageContent || isLoading || isTyping) {
@@ -430,6 +630,18 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
     setLastAskedQuestion(messageContent);
     setShowSuggestions(false);
     setWaitingForUserInput(false);
+    setHasUserSentMessage(true);
+    
+    // Update last auto-send time if this was auto-sent
+    if (isAutoSent) {
+      setLastAutoSendTime(Date.now());
+    }
+
+    // Clear auto-send timer
+    if (autoSendTimerRef.current) {
+      clearTimeout(autoSendTimerRef.current);
+      autoSendTimerRef.current = null;
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -438,7 +650,11 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    // Remove welcome message when first user message is sent
+    setMessages((prev) => {
+      const filteredMessages = prev.filter(msg => msg.id !== 'welcome-message');
+      return [...filteredMessages, userMessage];
+    });
     setInputValue('');
     
     setTimeout(() => {
@@ -500,7 +716,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
       <Box
         sx={{
           position: 'relative',
-          overflow: 'hidden',
+          overflow: 'hidden', // Prevent content from going outside viewport
           margin: 0,
           width: '100%',
           minHeight: '100vh',
@@ -510,50 +726,16 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
           justifyContent: 'center',
           textAlign: 'center',
           transition: 'background 0.3s ease',
-          background: isDark 
-            ? 'radial-gradient(ellipse 80% 50% at 20% -20%, rgba(0, 155, 228, 0.15) 0%, transparent 60%), radial-gradient(ellipse 80% 50% at 80% 120%, rgba(139, 92, 246, 0.12) 0%, transparent 60%), linear-gradient(135deg, #0F1419 0%, #1A202C 50%, #0F1419 100%)'
-            : 'radial-gradient(ellipse 80% 50% at 20% -20%, rgba(37, 99, 235, 0.08) 0%, transparent 60%), radial-gradient(ellipse 80% 50% at 80% 120%, rgba(16, 185, 129, 0.06) 0%, transparent 60%), linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundImage: "url('https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=1920&q=60')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'scroll',
-            opacity: isDark ? 0.08 : 0.04,
-            filter: isDark 
-              ? 'brightness(0.6) contrast(1.3) saturate(1.4)'
-              : 'brightness(1.4) contrast(1.1) saturate(1.1)',
-            zIndex: 0,
-            transition: 'opacity 0.3s ease',
-            transform: 'translateZ(0)',
-            pointerEvents: 'none',
-          },
-          '&::after': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: isDark 
-              ? 'linear-gradient(135deg, rgba(15, 20, 25, 0.92) 0%, rgba(26, 32, 44, 0.88) 50%, rgba(15, 20, 25, 0.92) 100%)'
-              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.97) 0%, rgba(248, 250, 252, 0.95) 50%, rgba(255, 255, 255, 0.97) 100%)',
-            zIndex: 1,
-            pointerEvents: 'none',
-          },
+          background: 'transparent', // Use unified background from parent
         }}
       >
         <Box
+          ref={containerRef}
           sx={{
             position: 'relative',
             zIndex: 5,
-            padding: { xs: '24px 20px', sm: '40px 32px', md: '60px 80px' },
-            maxWidth: { xs: '100%', sm: '100%', md: 1000 },
+            padding: { xs: '24px 20px', sm: '40px 32px', md: '52px 40px' },
+            maxWidth: { xs: '100%', sm: '100%', md: 1100 },
             margin: '0 auto',
             width: '100%',
             boxSizing: 'border-box',
@@ -563,6 +745,8 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
             maxHeight: '90vh',
             overflowY: 'auto',
             overflowX: 'hidden',
+            perspective: '1000px',
+            transformStyle: 'preserve-3d',
             '&::-webkit-scrollbar': {
               width: '6px',
             },
@@ -575,11 +759,49 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
             },
           }}
         >
-          {/* Main Title */}
-          <Typography
+          {/* Main Title with word-by-word animation */}
+          <Box
+            ref={firstTitleRef}
             sx={{
-              fontSize: { xs: '1.9rem', sm: '2.4rem', md: '2.8rem' },
-              fontWeight: 700,
+              fontSize: { xs: '1.6rem', sm: '2.4rem', md: '3.2rem' },
+              fontWeight: 900,
+              letterSpacing: '-0.02em',
+              textAlign: 'center',
+              position: 'relative',
+              fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+              display: 'flex',
+              gap: { xs: '0.25rem', sm: '0.4rem', md: '0.5rem' },
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+              transformStyle: 'preserve-3d',
+              px: { xs: 1, sm: 2, md: 0 }, // Add padding on mobile to prevent overflow
+            }}
+          >
+            {['Chat', 'with', 'your', 'plant.'].map((word, index) => (
+              <Box
+                key={index}
+                component="span"
+                className={`word-${index}`}
+                sx={{
+                  background: isDark ? 
+                    'linear-gradient(135deg, #009BE4 0%, #34D399 100%)' :
+                    'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  display: 'inline-block',
+                }}
+              >
+                {word}
+              </Box>
+            ))}
+          </Box>
+          
+          <Typography
+            ref={secondTitleRef}
+            sx={{
+              fontSize: { xs: '1.6rem', sm: '2.4rem', md: '3.2rem' },
+              fontWeight: 900,
               background: isDark 
                 ? 'linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 50%, #E2E8F0 100%)'
                 : 'linear-gradient(135deg, #0F172A 0%, #334155 50%, #475569 100%)',
@@ -592,28 +814,16 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
               textAlign: 'center',
               position: 'relative',
               fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                bottom: '-12px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '60px',
-                height: '3px',
-                background: isDark
-                  ? 'linear-gradient(90deg, #009BE4 0%, #34D399 100%)'
-                  : 'linear-gradient(90deg, #3B82F6 0%, #10B981 100%)',
-                borderRadius: '4px',
-                opacity: 0.8,
-              },
+              px: { xs: 1, sm: 2, md: 0 },
             }}
           >
-            Chat with your plant. Get straight answers.
+          Turn data into decisions.
           </Typography>
           
           <Typography
+            ref={subtitleRef}
             sx={{
-              fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.25rem' },
+              fontSize: { xs: '0.95rem', sm: '1.15rem', md: '1.25rem' },
               fontWeight: 500,
               color: isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(15, 23, 42, 0.85)',
               lineHeight: 1.6,
@@ -622,6 +832,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
               margin: '0 auto 1rem auto',
               position: 'relative',
               fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+              px: { xs: 2, sm: 3, md: 0 },
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -647,32 +858,37 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
             }}>
               ChatAPC
             </Box>{' '}
-            analyzes your process data, identifies constraints, and recommends optimizations in real-time.
+            blends engineering expertise with AI to deliver clear, reliable insights — detecting issues early and revealing profit opportunities.
           </Typography>
 
           {/* Chat Area */}
           <Box
-            ref={messagesContainerRef}
+            ref={(el: HTMLDivElement | null) => {
+              if (el) {
+                messagesContainerRef.current = el;
+                chatAreaRef.current = el;
+              }
+            }}
             data-messages-container="true"
             sx={{
               width: '100%',
-              maxWidth: 750,
+              maxWidth: 850,
               background: isDark 
-                ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.9) 100%)'
-                : 'linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.95) 100%)',
-              backdropFilter: 'blur(20px)',
+                ? 'linear-gradient(145deg, rgba(10, 14, 46, 0.75) 0%, rgba(17, 24, 39, 0.85) 50%, rgba(13, 20, 51, 0.8) 100%)'
+                : 'linear-gradient(145deg, rgba(255, 255, 255, 0.85) 0%, rgba(250, 251, 254, 0.9) 50%, rgba(248, 250, 252, 0.88) 100%)',
+              backdropFilter: 'blur(24px) saturate(180%)',
               border: isDark 
-                ? '1px solid rgba(71, 85, 105, 0.4)' 
-                : '1px solid rgba(226, 232, 240, 0.6)',
-              borderRadius: '20px',
+                ? '1px solid rgba(0, 155, 228, 0.15)' 
+                : '1px solid rgba(59, 130, 246, 0.2)',
+              borderRadius: '24px',
               boxShadow: isDark 
-                ? '0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)'
-                : '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.8)',
+                ? '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 155, 228, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)'
+                : '0 25px 50px -12px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(59, 130, 246, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.9)',
               padding: 0,
-              marginBottom: 3,
+              marginBottom: 1,
               display: 'flex',
               flexDirection: 'column',
-              height: { xs: '420px', sm: '560px', md: '650px' },
+              height: { xs: '420px', sm: '600px', md: '750px' },
               position: 'relative',
               overflow: 'hidden',
             }}
@@ -750,13 +966,10 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
                           alignItems: 'center',
                           justifyContent: 'center',
                           color: '#FFFFFF',
-                          fontSize: '0.85rem',
-                          fontWeight: 600,
                           flexShrink: 0,
                           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                          fontFamily: '"Inter", sans-serif',
                         }}>
-                          MG
+                          <PersonIcon sx={{ fontSize: '1.3rem' }} />
                         </Box>
                       </Box>
                     </Box>
@@ -781,7 +994,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
                       {message.id === 'welcome-message' && showSuggestions && (
                         <SuggestionQuestions
                           suggestions={currentSuggestions}
-                          onSuggestionClick={handleSuggestionClick}
+                          onSuggestionClick={(suggestion) => handleSuggestionClick(suggestion, false)}
                           isDark={isDark}
                           title="What would you like to explore?"
                           disabled={isLoading || isTyping}
@@ -798,7 +1011,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = () => {
                messages[messages.length - 1]?.id !== 'welcome-message' && !isTyping && (
                 <SuggestionQuestions
                   suggestions={currentSuggestions}
-                  onSuggestionClick={handleSuggestionClick}
+                  onSuggestionClick={(suggestion) => handleSuggestionClick(suggestion, false)}
                   isDark={isDark}
                   title="What else can I help you with?"
                   disabled={isLoading || isTyping}

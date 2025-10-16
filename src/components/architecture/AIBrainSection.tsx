@@ -155,11 +155,10 @@ export const AIBrainSection: React.FC = () => {
     <Box
       ref={sectionRef}
       component="section"
+      data-section-theme={isDark ? 'dark' : 'light'}
       sx={{
         py: sectionPadding,
-        background: isDark
-          ? 'linear-gradient(180deg, #1A1F2E 0%, #0F1419 50%, #1A1F2E 100%)'
-          : 'linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 50%, #F8FAFC 100%)',
+        background: 'transparent',
         position: 'relative',
       }}
     >

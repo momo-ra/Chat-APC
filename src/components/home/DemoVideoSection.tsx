@@ -2,11 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Box, Typography, Container, IconButton, Fab } from '@mui/material';
 import { PlayArrow, Pause, Visibility, Fullscreen, VolumeUp, VolumeOff } from '@mui/icons-material';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
-
-gsap.registerPlugin(ScrollTrigger);
+import { applySlideUp, applyScaleUp, applyFloatingAnimation, createAnimationTimeline } from '../shared/animationHelpers';
 
 export const DemoVideoSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -36,37 +34,27 @@ export const DemoVideoSection: React.FC = () => {
     const ctx = gsap.context(() => {
       // Floating animation for the video container
       if (videoRef.current && !isPlaying) {
-        gsap.to(videoRef.current, {
-          y: -10,
+        applyFloatingAnimation(videoRef.current, {
+          distance: 10,
           duration: 3,
-          repeat: -1,
-          yoyo: true,
-          ease: 'power2.inOut',
         });
       }
 
       // Section entrance animation
-      if (sectionRef.current) {
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none',
-          }
+      const tl = createAnimationTimeline(sectionRef.current);
+      
+      const headerElement = sectionRef.current?.querySelector('.section-header') as HTMLElement;
+      const videoElement = sectionRef.current?.querySelector('.video-container') as HTMLElement;
+      
+      if (headerElement) {
+        applySlideUp(headerElement, { startTrigger: 'top 80%' });
+      }
+      
+      if (videoElement) {
+        applyScaleUp(videoElement, { 
+          delay: 0.3,
+          startTrigger: 'top 80%' 
         });
-
-        tl.from(sectionRef.current.querySelector('.section-header'), {
-          opacity: 0,
-          y: 40,
-          duration: 0.8,
-          ease: 'power3.out',
-        })
-        .from(sectionRef.current.querySelector('.video-container'), {
-          opacity: 0,
-          scale: 0.9,
-          duration: 1,
-          ease: 'back.out(1.7)',
-        }, 0.3);
       }
     }, sectionRef);
 
@@ -226,7 +214,7 @@ export const DemoVideoSection: React.FC = () => {
             className="video-container"
             sx={{
               position: 'relative',
-              maxWidth: 800,
+              maxWidth: 1000,
               mx: 'auto',
               perspective: '1000px',
             }}

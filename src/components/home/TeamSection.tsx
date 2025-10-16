@@ -1,11 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Container, Grid } from '@mui/material';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
-
-gsap.registerPlugin(ScrollTrigger);
+import { applySlideUp, applyStaggerAnimation } from '../shared/animationHelpers';
 
 const stats = [
   { 
@@ -43,52 +41,16 @@ export const TeamSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Header animation - simplified
-      if (headerRef.current) {
-        gsap.from(headerRef.current, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          opacity: 0,
-          y: 30,
-          duration: 0.8,
-          ease: 'power2.out',
-        });
-      }
+      // Animate header
+      applySlideUp(headerRef.current);
 
-      // Company info animation - simplified
-      if (companyRef.current) {
-        gsap.from(companyRef.current, {
-          scrollTrigger: {
-            trigger: companyRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          opacity: 0,
-          y: 20,
-          duration: 0.8,
-          ease: 'power2.out',
-        });
-      }
+      // Animate company info
+      applySlideUp(companyRef.current);
 
-      // Stats animation - much simpler, no rotation
-      statsRef.current.forEach((stat, index) => {
-        if (stat) {
-          gsap.from(stat, {
-            scrollTrigger: {
-              trigger: stat,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            y: 20,
-            duration: 0.6,
-            delay: index * 0.1,
-            ease: 'power2.out',
-          });
-        }
+      // Animate stats with stagger
+      applyStaggerAnimation(statsRef.current, 'slideUp', {
+        staggerDelay: 0.1,
+        triggerElement: sectionRef.current,
       });
     }, sectionRef);
 

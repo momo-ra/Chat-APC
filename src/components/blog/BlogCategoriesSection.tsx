@@ -11,11 +11,9 @@ import {
   CloudSync 
 } from '@mui/icons-material';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
-
-gsap.registerPlugin(ScrollTrigger);
+import { applySlideUp, applyCardGridAnimation } from '../shared/animationHelpers';
 
 const categories = [
   {
@@ -89,38 +87,12 @@ const BlogCategoriesSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Header animation
-      if (headerRef.current) {
-        gsap.from(headerRef.current, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          y: 50,
-          opacity: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-        });
-      }
+      // Animate header
+      applySlideUp(headerRef.current);
 
-      // Categories animation with stagger
-      categoriesRef.current.forEach((category, index) => {
-        if (category) {
-          gsap.from(category, {
-            scrollTrigger: {
-              trigger: category,
-              start: 'top 90%',
-              toggleActions: 'play none none none',
-            },
-            y: 40,
-            opacity: 0,
-            scale: 0.9,
-            duration: 0.6,
-            delay: index * 0.1,
-            ease: 'power2.out',
-          });
-        }
+      // Animate categories with unified card grid animation
+      applyCardGridAnimation(categoriesRef.current, sectionRef.current, {
+        staggerDelay: 0.1,
       });
     }, sectionRef);
 
@@ -133,11 +105,8 @@ const BlogCategoriesSection: React.FC = () => {
       component="section"
       sx={{
         py: 'clamp(3rem, 8vw, 6rem)',
-        background: isDark
-          ? 'linear-gradient(180deg, rgba(17, 24, 39, 1) 0%, rgba(31, 41, 55, 1) 50%, rgba(17, 24, 39, 1) 100%)'
-          : 'linear-gradient(180deg, rgba(248, 250, 252, 1) 0%, rgba(255, 255, 255, 1) 50%, rgba(248, 250, 252, 1) 100%)',
+        background: 'transparent',
         position: 'relative',
-        transition: 'background 0.3s ease',
       }}
     >
       <Container 

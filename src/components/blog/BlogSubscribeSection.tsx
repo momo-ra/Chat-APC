@@ -18,11 +18,9 @@ import {
   CheckCircle
 } from '@mui/icons-material';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
-
-gsap.registerPlugin(ScrollTrigger);
+import { applyStaggerAnimation, applyScaleUp } from '../shared/animationHelpers';
 
 const subscriptionBenefits = [
   {
@@ -56,47 +54,28 @@ const BlogSubscribeSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none',
-        },
+      // Animate content
+      if (contentRef.current) {
+        const children = Array.from(contentRef.current.children) as HTMLElement[];
+        applyStaggerAnimation(children, 'slideUp', {
+          staggerDelay: 0.2,
+          startTrigger: 'top 80%',
+          triggerElement: sectionRef.current,
+        });
+      }
+
+      // Animate form
+      applyScaleUp(formRef.current, {
+        delay: 0.4,
+        startTrigger: 'top 80%',
       });
 
-      // Main content animation
-      if (contentRef.current) {
-        tl.from(contentRef.current.children, {
-          y: 60,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: 'power3.out',
-        }, 0);
-      }
-
-      // Form animation
-      if (formRef.current) {
-        tl.from(formRef.current, {
-          y: 40,
-          opacity: 0,
-          scale: 0.95,
-          duration: 0.6,
-          ease: 'power2.out',
-        }, 0.4);
-      }
-
-      // Benefits animation
-      benefitsRef.current.forEach((benefit, index) => {
-        if (benefit) {
-          tl.from(benefit, {
-            y: 40,
-            opacity: 0,
-            duration: 0.6,
-            delay: index * 0.15,
-            ease: 'power2.out',
-          }, 0.6);
-        }
+      // Animate benefits
+      applyStaggerAnimation(benefitsRef.current, 'slideUp', {
+        staggerDelay: 0.15,
+        startTrigger: 'top 80%',
+        triggerElement: sectionRef.current,
+        customProps: { delay: 0.6 },
       });
     }, sectionRef);
 
@@ -110,35 +89,8 @@ const BlogSubscribeSection: React.FC = () => {
       sx={{
         py: 'clamp(4rem, 10vw, 8rem)',
         position: 'relative',
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(31, 41, 55, 1) 0%, rgba(17, 24, 39, 1) 50%, rgba(10, 14, 46, 1) 100%)'
-          : 'linear-gradient(135deg, rgba(248, 250, 252, 1) 0%, rgba(255, 255, 255, 1) 50%, rgba(240, 245, 251, 1) 100%)',
+        background: 'transparent',
         overflow: 'hidden',
-        transition: 'background 0.3s ease',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: '20%',
-          left: '10%',
-          width: '600px',
-          height: '600px',
-          background: isDark
-            ? 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        },
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          bottom: '10%',
-          right: '5%',
-          width: '500px',
-          height: '500px',
-          background: isDark
-            ? 'radial-gradient(circle, rgba(0, 155, 228, 0.12) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(0, 155, 228, 0.06) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        },
       }}
     >
       <Container 

@@ -1,35 +1,25 @@
 import React, { useEffect } from 'react';
 import { Box } from '@mui/material';
 import { AppSidebar, Footer, ThemeToggle } from '../components/layout';
-import {
-  ContactHeroSection,
-  ContactFormSection,
-  ContactInfoSection,
-  ContactMapSection,
-  ContactSupportSection,
-} from '../components/contact';
+import { ContactFormSection, ContactMapSection, ContactInfoSection } from '../components/contact';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
-import { getContactBackground } from '../components/shared/pageBackgrounds';
 
 const ContactPage: React.FC = () => {
   const { isDark } = useThemeMode();
 
   useEffect(() => {
-    // Set page metadata
-    document.title = 'Contact Us - Alpha Process Control | Get in Touch';
+    document.title = 'Contact Us - Alpha Process Control | Industrial AI Solutions';
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Contact Alpha Process Control for expert consultation on industrial AI solutions, ChatAPC implementation, and process optimization services.');
+      metaDescription.setAttribute('content', 'Contact Alpha Process Control for expert consultation on industrial AI solutions, ChatAPC implementation, and process optimization services. Located in Houston, Texas.');
     }
-
-    // Scroll to top on mount
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <>
-      {/* Skip Navigation for Accessibility */}
+      {/* Accessibility Skip Link */}
       <Box
         component="a"
         href="#main-content"
@@ -54,10 +44,11 @@ const ContactPage: React.FC = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          background: getContactBackground(isDark),
+          background: isDark
+            ? 'linear-gradient(135deg, #0F1419 0%, #1A202C 50%, #0F1419 100%)'
+            : 'linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
           position: 'relative',
           overflow: 'visible',
-          transition: 'background 0.3s ease',
         }}
       >
         <AppSidebar items={sidebarItems} />
@@ -69,45 +60,21 @@ const ContactPage: React.FC = () => {
           component="main"
           sx={{
             width: '100%',
-            height: 'auto',
-            maxWidth: '100vw',
-            overflow: 'hidden',
             position: 'relative',
-            background: 'transparent',
+            overflow: 'hidden',
           }}
         >
-          {/* Contact Sections */}
-          <Box
-            sx={{
-              width: '100%',
-              maxWidth: '100vw',
-              display: 'flex',
-              flexDirection: 'column',
-              position: 'relative',
-              zIndex: 2,
-              overflow: 'hidden',
-            }}
-          >
-            <ContactHeroSection />
-            <ContactFormSection />
-            <ContactInfoSection />
-            <ContactMapSection />
-            <ContactSupportSection />
-          </Box>
-
+          {/* Contact Form - First as requested */}
+          <ContactFormSection />
+          
+          {/* Impressive Map Section */}
+          <ContactMapSection />
+          
+          {/* Contact Info */}
+          <ContactInfoSection />
+          
           {/* Footer */}
-          <Box 
-            component="footer"
-            sx={{ 
-              mt: 0, 
-              mb: 0,
-              width: '100%',
-              marginLeft: 0,
-              paddingLeft: 0,
-            }}
-          >
-            <Footer />
-          </Box>
+          <Footer />
         </Box>
       </Box>
     </>

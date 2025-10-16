@@ -2,11 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Container, InputBase, IconButton } from '@mui/material';
 import { Search, TrendingUp, Psychology, Settings } from '@mui/icons-material';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
-
-gsap.registerPlugin(ScrollTrigger);
+import { applySlideUp, applyScaleUp, applyStaggerAnimation } from '../shared/animationHelpers';
 
 const BlogHeroSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -23,45 +21,31 @@ const BlogHeroSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none',
-        },
-      });
-
-      // Animate content elements
+      // Animate content elements with unified system
       if (contentRef.current) {
-        tl.from(contentRef.current.children, {
-          y: 60,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: 'power3.out',
-        }, 0);
+        const children = Array.from(contentRef.current.children) as HTMLElement[];
+        applyStaggerAnimation(children, 'slideUp', {
+          staggerDelay: 0.2,
+          startTrigger: 'top 80%',
+          triggerElement: sectionRef.current,
+        });
       }
 
       // Animate search box
-      if (searchRef.current) {
-        tl.from(searchRef.current, {
-          y: 40,
-          opacity: 0,
-          scale: 0.95,
-          duration: 0.6,
-          ease: 'power2.out',
-        }, 0.4);
-      }
+      applyScaleUp(searchRef.current, {
+        delay: 0.4,
+        startTrigger: 'top 80%',
+      });
 
       // Animate stats
       if (statsRef.current) {
-        tl.from(statsRef.current.children, {
-          y: 30,
-          opacity: 0,
-          duration: 0.6,
-          stagger: 0.15,
-          ease: 'power2.out',
-        }, 0.6);
+        const statsChildren = Array.from(statsRef.current.children) as HTMLElement[];
+        applyStaggerAnimation(statsChildren, 'slideUp', {
+          staggerDelay: 0.15,
+          startTrigger: 'top 80%',
+          triggerElement: sectionRef.current,
+          customProps: { delay: 0.6 },
+        });
       }
     }, sectionRef);
 
@@ -81,35 +65,8 @@ const BlogHeroSection: React.FC = () => {
       sx={{
         py: 'clamp(4rem, 10vw, 8rem)',
         position: 'relative',
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(10, 14, 46, 1) 0%, rgba(17, 24, 39, 1) 100%)'
-          : 'linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(248, 250, 252, 1) 100%)',
+        background: 'transparent',
         overflow: 'hidden',
-        transition: 'background 0.3s ease',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: '10%',
-          right: '10%',
-          width: '500px',
-          height: '500px',
-          background: isDark
-            ? 'radial-gradient(circle, rgba(0, 155, 228, 0.15) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        },
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          bottom: '20%',
-          left: '5%',
-          width: '400px',
-          height: '400px',
-          background: isDark
-            ? 'radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(139, 92, 246, 0.06) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        },
       }}
     >
       <Container 

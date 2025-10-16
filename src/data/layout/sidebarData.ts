@@ -71,9 +71,6 @@ export const sidebarItems: SidebarItem[] = [
     label: 'Company',
     children: [
       { label: 'About Us', path: '/company/about' },
-      { label: 'Mission', path: '/company/mission' },
-      { label: 'Team', path: '/company/team' },
-      { label: 'Careers', path: '/company/careers' },
       { label: 'Contact', path: '/company/contact' },
     ]
   },

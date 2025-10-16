@@ -52,7 +52,7 @@ const IntegrationArchitectureSection: React.FC = () => {
   const features = [
     'Seamless DCS/SCADA integration',
     'Real-time data synchronization',
-    'Historian connectivity (PI, Wonderware)',
+    'Historian connectivity',
     'Secure API endpoints',
     'Custom connector framework',
   ];

@@ -13,7 +13,8 @@ import {
   RecordVoiceOver,
   PhoneIphone,
   AutoAwesome,
-  Group
+  Group,
+  Hub
 } from '@mui/icons-material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -43,7 +44,7 @@ const roadmapData = [
       {
         icon: Storage,
         title: "New Connectors",
-        description: "PI, Canary, Honeywell PHD historian support",
+        description: "PI, Honeywell PHD historian support",
         features: [],
       },
       {
@@ -58,6 +59,12 @@ const roadmapData = [
           "Delivered when you log in, or scheduled for your shift start"
         ],
       },
+      {
+        icon: Hub,
+        title: "Multi-Unit Optimization",
+        description: "Connect multiple units and blending facilities",
+        features: [],
+      }
     ],
   },
   {

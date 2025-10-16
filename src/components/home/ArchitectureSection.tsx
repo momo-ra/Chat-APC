@@ -1,11 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Container, Card, CardContent, Chip } from '@mui/material';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
-
-gsap.registerPlugin(ScrollTrigger);
+import { applySlideUp, applyStaggerAnimation } from '../shared/animationHelpers';
 
 const layers = [
   {
@@ -53,53 +51,16 @@ export const ArchitectureSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Simple header animation
-      if (headerRef.current) {
-        gsap.from(headerRef.current, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          opacity: 0,
-          y: 30,
-          duration: 0.8,
-          ease: 'power2.out',
-        });
-      }
+      // Animate header
+      applySlideUp(headerRef.current);
 
-      // Simple layers animation - no complex rotations or movements
-      layersRef.current.forEach((layer, index) => {
-        if (layer) {
-          gsap.from(layer, {
-            scrollTrigger: {
-              trigger: layer,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            y: 40,
-            duration: 0.8,
-            delay: index * 0.15,
-            ease: 'power2.out',
-          });
-        }
+      // Animate layers with stagger
+      applyStaggerAnimation(layersRef.current, 'slideUp', {
+        triggerElement: sectionRef.current,
       });
 
-      // Simple bottom statement animation
-      if (bottomStatementRef.current) {
-        gsap.from(bottomStatementRef.current, {
-          scrollTrigger: {
-            trigger: bottomStatementRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          opacity: 0,
-          y: 30,
-          duration: 0.8,
-          ease: 'power2.out',
-        });
-      }
+      // Animate bottom statement
+      applySlideUp(bottomStatementRef.current);
     }, sectionRef);
 
     return () => ctx.revert();

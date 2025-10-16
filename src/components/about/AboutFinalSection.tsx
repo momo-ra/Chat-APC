@@ -114,9 +114,7 @@ export const AboutFinalSection: React.FC = () => {
       sx={{
         width: '100%',
         py: sectionPadding,
-        background: isDark
-          ? 'linear-gradient(180deg, #0d1842 0%, #0a0e2e 100%)'
-          : 'linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%)',
+        background: 'transparent',
         position: 'relative',
         overflow: 'hidden',
         transition: 'background 0.3s ease',
@@ -380,7 +378,7 @@ export const AboutFinalSection: React.FC = () => {
               </Button>
               <Button
                 variant="outlined"
-                onClick={() => navigate("/#contact")}
+                onClick={() => navigate("/company/contact")}
                 sx={{
                   px: 4,
                   py: 2,

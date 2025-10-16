@@ -8,7 +8,7 @@ import {
 } from '../components/roadmap';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
-import { getRoadmapBackground } from '../components/shared/pageBackgrounds';
+import { getHomeBackground } from '../components/shared/pageBackgrounds';
 
 const RoadmapPage: React.FC = () => {
   const { isDark } = useThemeMode();
@@ -52,8 +52,8 @@ const RoadmapPage: React.FC = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          // UNIFIED SEAMLESS BACKGROUND for entire page
-          background: getRoadmapBackground(isDark),
+          // UNIFIED SEAMLESS BACKGROUND for entire page (same as home)
+          background: getHomeBackground(isDark),
           position: 'relative',
           overflow: 'visible',
           transition: 'background 0.3s ease',

@@ -101,9 +101,7 @@ export const AboutGapSection: React.FC = () => {
       sx={{
         width: '100%',
         py: sectionPadding,
-        background: isDark
-          ? 'linear-gradient(180deg, #0d1842 0%, #0a0e2e 100%)'
-          : 'linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%)',
+        background: 'transparent',
         position: 'relative',
         overflow: 'hidden',
         transition: 'background 0.3s ease',

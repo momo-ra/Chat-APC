@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Typography, Container, Card, CardContent, Button } from '@mui/material';
+import { Box, Typography, Container, Button, Stack } from '@mui/material';
 import { 
   BarChart, 
   Event, 
@@ -7,7 +7,9 @@ import {
   Science, 
   TrendingUp,
   ArrowForward,
-  Visibility
+  Visibility,
+  PlayArrow,
+  Settings
 } from '@mui/icons-material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -17,46 +19,32 @@ import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Reorganized to 4 features for better grid balance
 const directAccessFeatures = [
   {
     icon: BarChart,
-    title: "Custom Graphs",
-    description: "Build custom graphs and add variables for detailed analysis",
-    gradient: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+    title: "Custom Analytics",
+    description: "Build custom graphs, dashboards, and reports with your plant data. Add variables, set time ranges, and create the exact analysis you need.",
+    color: '#3B82F6',
   },
   {
     icon: Event,
-    title: "Event Definition",
-    description: "Define new events and adjust thresholds for better monitoring",
-    gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-  },
-  {
-    icon: Explore,
-    title: "Knowledge Browsing",
-    description: "Browse the knowledge map for equipment, tags, and documents",
-    gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+    title: "Smart Monitoring",
+    description: "Define intelligent events, set dynamic thresholds, and get alerts that matter. Monitor what's critical to your operations.",
+    color: '#10B981',
   },
   {
     icon: Science,
     title: "Scenario Testing",
-    description: "Run \"what if\" scenarios with the Process Advisor",
-    gradient: 'linear-gradient(135deg, #EC4899 0%, #DB2777 100%)',
+    description: "Run comprehensive \"what if\" scenarios with the Process Advisor. Test changes before implementation.",
+    color: '#EC4899',
   },
   {
     icon: TrendingUp,
-    title: "Economic Analysis",
-    description: "Adjust economics in the Profit Advisor for optimization",
-    gradient: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+    title: "Economic Optimization",
+    description: "Analyze economics in real-time with the Profit Advisor. Optimize for maximum efficiency and profitability.",
+    color: '#F59E0B',
   },
-];
-
-const whyItMattersSteps = [
-  { number: "1", title: "Ask", description: "Natural language question" },
-  { number: "2", title: "AI Understands", description: "Language processing" },
-  { number: "3", title: "Agent Works", description: "Specialized analysis" },
-  { number: "4", title: "Knowledge Map", description: "Context integration" },
-  { number: "5", title: "Artifact", description: "Concrete output" },
-  { number: "6", title: "Explanation", description: "Clear insights" },
 ];
 
 export const HowItWorksFeaturesSection: React.FC = () => {
@@ -66,96 +54,80 @@ export const HowItWorksFeaturesSection: React.FC = () => {
     containerMaxWidth, 
     containerPadding, 
     h2FontSize,
-    bodyFontSize,
     sectionPadding 
   } = useResponsiveLayout();
 
   const sectionRef = useRef<HTMLDivElement>(null);
-  const directAccessRef = useRef<HTMLDivElement>(null);
-  const whyItMattersRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const featuresRef = useRef<HTMLDivElement>(null);
+  const processRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
-  const featuresRef = useRef<HTMLDivElement[]>([]);
-  const stepsRef = useRef<HTMLDivElement[]>([]);
+  const featureItemsRef = useRef<HTMLDivElement[]>([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Direct access section animation
-      if (directAccessRef.current) {
-        gsap.from(directAccessRef.current, {
+      // Header animation
+      if (headerRef.current) {
+        gsap.from(headerRef.current.children, {
           scrollTrigger: {
-            trigger: directAccessRef.current,
+            trigger: headerRef.current,
             start: 'top 85%',
             toggleActions: 'play none none none',
           },
           opacity: 0,
           y: 30,
           duration: 0.8,
-          ease: 'power2.out',
+          stagger: 0.2,
+          ease: 'power3.out',
         });
       }
 
       // Features animation
-      featuresRef.current.forEach((feature, index) => {
-        if (feature) {
-          gsap.from(feature, {
+      featureItemsRef.current.forEach((item, index) => {
+        if (item) {
+          gsap.from(item, {
             scrollTrigger: {
-              trigger: feature,
-              start: 'top 85%',
+              trigger: featuresRef.current,
+              start: 'top 80%',
               toggleActions: 'play none none none',
             },
             opacity: 0,
-            y: 30,
-            duration: 0.6,
-            delay: index * 0.1,
+            y: 40,
+            duration: 0.7,
+            delay: index * 0.15,
             ease: 'power2.out',
           });
         }
       });
 
-      // Why it matters section
-      if (whyItMattersRef.current) {
-        gsap.from(whyItMattersRef.current, {
+      // Process section animation
+      if (processRef.current) {
+        gsap.from(processRef.current.children, {
           scrollTrigger: {
-            trigger: whyItMattersRef.current,
+            trigger: processRef.current,
             start: 'top 85%',
             toggleActions: 'play none none none',
           },
           opacity: 0,
-          y: 40,
+          y: 30,
           duration: 0.8,
-          ease: 'power2.out',
+          stagger: 0.1,
+          ease: 'power3.out',
         });
       }
 
-      // Steps animation with connecting lines
-      stepsRef.current.forEach((step, index) => {
-        if (step) {
-          gsap.from(step, {
-            scrollTrigger: {
-              trigger: whyItMattersRef.current,
-              start: 'top 80%',
-              toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            scale: 0.8,
-            duration: 0.6,
-            delay: index * 0.15,
-            ease: 'back.out(1.7)',
-          });
-        }
-      });
-
       // CTA animation
       if (ctaRef.current) {
-        gsap.from(ctaRef.current, {
+        gsap.from(ctaRef.current.children, {
           scrollTrigger: {
             trigger: ctaRef.current,
             start: 'top 85%',
             toggleActions: 'play none none none',
           },
           opacity: 0,
-          y: 30,
-          duration: 0.8,
+          y: 20,
+          duration: 0.6,
+          stagger: 0.1,
           ease: 'power2.out',
         });
       }
@@ -168,10 +140,10 @@ export const HowItWorksFeaturesSection: React.FC = () => {
     <Box
       ref={sectionRef}
       component="section"
+      data-section-theme={isDark ? 'dark' : 'light'}
       sx={{
         py: sectionPadding,
         background: 'transparent',
-        transition: 'background 0.3s ease',
         position: 'relative',
       }}
     >
@@ -182,342 +154,338 @@ export const HowItWorksFeaturesSection: React.FC = () => {
           px: containerPadding,
         }}
       >
-        {/* Direct Agent Access Section */}
-        <Box ref={directAccessRef} sx={{ mb: { xs: 8, md: 12 } }}>
+        {/* Main Header */}
+        <Box 
+          ref={headerRef} 
+          sx={{ 
+            textAlign: 'center', 
+            mb: { xs: 8, md: 12 },
+          }}
+        >
           <Typography
             variant="h2"
             sx={{
               fontSize: h2FontSize,
               fontWeight: 700,
               color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
-              mb: 2,
-              textAlign: 'center',
+              mb: 3,
+              lineHeight: 1.2,
             }}
           >
-            Direct Agent Access
+            Advanced Agent Access
           </Typography>
+          
           <Typography
             variant="body1"
             sx={{
-              fontSize: { xs: '1rem', md: '1.125rem' },
+              fontSize: { xs: '1.125rem', md: '1.375rem' },
               color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(75, 85, 99, 1)',
-              textAlign: 'center',
-              maxWidth: 600,
+              lineHeight: 1.6,
+              maxWidth: 700,
               mx: 'auto',
-              mb: 6,
             }}
           >
-            Power users can open agents directly for advanced functionality and deeper analysis.
+            Skip the chat and go straight to specialized AI agents designed for process engineers
           </Typography>
+        </Box>
 
+        {/* Features Section - Now with 4 items for better balance */}
+        <Box ref={featuresRef} sx={{ mb: { xs: 12, md: 16 } }}>
           <Box
             sx={{
               display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' },
-              gap: 3,
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+              gap: { xs: 4, md: 6 },
+              maxWidth: 1000,
+              mx: 'auto',
             }}
           >
             {directAccessFeatures.map((feature, index) => {
               const IconComponent = feature.icon;
               return (
-                <Card
+                <Box
                   key={index}
                   ref={(el) => {
-                    if (el) featuresRef.current[index] = el as HTMLDivElement;
+                    if (el) featureItemsRef.current[index] = el as HTMLDivElement;
                   }}
-                  elevation={isDark ? 0 : 6}
                   sx={{
-                    backgroundColor: isDark ? 'rgba(31, 41, 55, 0.6)' : 'rgba(255, 255, 255, 0.9)',
-                    border: isDark ? '1px solid rgba(55, 65, 81, 0.8)' : 'none',
-                    borderRadius: 3,
                     position: 'relative',
-                    overflow: 'hidden',
+                    p: { xs: 4, md: 5 },
+                    background: isDark 
+                      ? 'linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(55, 65, 81, 0.6) 100%)'
+                      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(249, 250, 251, 0.8) 100%)',
                     backdropFilter: 'blur(20px)',
-                    transition: 'all 0.3s ease',
+                    borderRadius: 3,
+                    border: isDark 
+                      ? '1px solid rgba(55, 65, 81, 0.6)' 
+                      : '1px solid rgba(226, 232, 240, 0.8)',
+                    transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                     cursor: 'pointer',
+                    overflow: 'hidden',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: 4,
+                      background: `linear-gradient(90deg, ${feature.color} 0%, ${feature.color}aa 100%)`,
+                      transform: 'scaleX(0)',
+                      transformOrigin: 'left',
+                      transition: 'transform 0.4s ease',
+                    },
                     '&:hover': {
                       transform: 'translateY(-8px)',
+                      background: isDark 
+                        ? 'linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(55, 65, 81, 0.8) 100%)'
+                        : 'linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(249, 250, 251, 0.95) 100%)',
+                      boxShadow: `0 20px 60px -8px ${feature.color}40`,
+                      border: `1px solid ${feature.color}50`,
+                      '&::before': {
+                        transform: 'scaleX(1)',
+                      },
+                      '& .feature-icon': {
+                        background: feature.color,
+                        transform: 'scale(1.05)',
+                      }
                     },
                   }}
                 >
-                  <CardContent sx={{ p: 4, textAlign: 'center', position: 'relative' }}>
-                    <Box
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: 2,
-                        background: feature.gradient,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mx: 'auto',
-                        mb: 2,
-                      }}
-                    >
-                      <IconComponent sx={{ fontSize: 28, color: 'white' }} />
-                    </Box>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontSize: '1.125rem',
-                        fontWeight: 600,
-                        color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(17, 24, 39, 1)',
-                        mb: 1,
-                      }}
-                    >
-                      {feature.title}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(75, 85, 99, 1)',
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      {feature.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
+                  {/* Icon */}
+                  <Box
+                    className="feature-icon"
+                    sx={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 2,
+                      background: `${feature.color}20`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      mb: 3,
+                      transition: 'all 0.4s ease',
+                    }}
+                  >
+                    <IconComponent 
+                      sx={{ 
+                        fontSize: 28, 
+                        color: feature.color,
+                        transition: 'color 0.3s ease',
+                      }} 
+                    />
+                  </Box>
+
+                  {/* Content */}
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontSize: '1.5rem',
+                      fontWeight: 700,
+                      color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
+                      mb: 2,
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {feature.title}
+                  </Typography>
+                  
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(75, 85, 99, 1)',
+                      lineHeight: 1.6,
+                      fontSize: '1rem',
+                    }}
+                  >
+                    {feature.description}
+                  </Typography>
+                </Box>
               );
             })}
           </Box>
         </Box>
 
-        {/* Why It Matters Section */}
-        <Box ref={whyItMattersRef} sx={{ mb: { xs: 8, md: 12 } }}>
-          <Card
-            elevation={isDark ? 0 : 8}
-            sx={{
-              backgroundColor: isDark ? 'rgba(31, 41, 55, 0.6)' : 'rgba(255, 255, 255, 0.9)',
-              border: isDark ? '1px solid rgba(55, 65, 81, 0.8)' : 'none',
-              borderRadius: 4,
-              backdropFilter: 'blur(20px)',
-              overflow: 'visible',
-              position: 'relative',
-            }}
-          >
-            <CardContent sx={{ p: { xs: 4, md: 6 }, position: 'relative' }}>
-              <Typography
-                variant="h2"
-                sx={{
-                  fontSize: h2FontSize,
-                  fontWeight: 700,
-                  color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
-                  mb: 4,
-                  textAlign: 'center',
-                }}
-              >
-                Why It Matters
-              </Typography>
+        {/* Simple Process Explanation */}
+        <Box ref={processRef} sx={{ mb: { xs: 12, md: 16 } }}>
+          <Box sx={{ textAlign: 'center', maxWidth: 800, mx: 'auto' }}>
+            <Typography
+              variant="h3"
+              sx={{
+                fontSize: { xs: '2rem', md: '2.5rem' },
+                fontWeight: 700,
+                color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
+                mb: 4,
+              }}
+            >
+              How It Works
+            </Typography>
 
-              {/* Process Flow - Modern Vertical Timeline */}
-              <Box
-                sx={{
-                  position: 'relative',
-                  maxWidth: 600,
-                  mx: 'auto',
-                  mb: 6,
-                }}
-              >
-                {/* Central Connecting Line */}
+            <Stack 
+              direction={{ xs: 'column', md: 'row' }} 
+              spacing={4} 
+              sx={{ 
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                mb: 6 
+              }}
+            >
+              <Box sx={{ textAlign: 'center', flex: 1 }}>
                 <Box
                   sx={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: 60,
-                    bottom: 60,
-                    width: 3,
+                    width: 64,
+                    height: 64,
+                    borderRadius: '50%',
                     background: isDark
-                      ? 'linear-gradient(180deg, #009BE4 0%, #A855F7 50%, #EC4899 100%)'
-                      : 'linear-gradient(180deg, #2563EB 0%, #8B5CF6 50%, #EC4899 100%)',
-                    transform: 'translateX(-50%)',
-                    borderRadius: '2px',
-                    '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      inset: -2,
-                      background: 'inherit',
-                      filter: 'blur(4px)',
-                      opacity: 0.4,
-                      borderRadius: '4px',
-                    }
+                      ? 'linear-gradient(135deg, #009BE4 0%, #2563EB 100%)'
+                      : 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mx: 'auto',
+                    mb: 2,
+                    color: 'white',
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
                   }}
-                />
-
-                {whyItMattersSteps.map((step, index) => (
-                  <Box
-                    key={index}
-                    ref={(el) => {
-                      if (el) stepsRef.current[index] = el as HTMLDivElement;
-                    }}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      mb: 6,
-                      position: 'relative',
-                      '&:last-child': { mb: 0 },
-                      // Alternate left and right positioning
-                      flexDirection: index % 2 === 0 ? 'row' : 'row-reverse',
-                    }}
-                  >
-                    {/* Step Content Card */}
-                    <Box
-                      sx={{
-                        flex: 1,
-                        maxWidth: 240,
-                        background: isDark
-                          ? 'linear-gradient(135deg, rgba(31, 41, 55, 0.9) 0%, rgba(55, 65, 81, 0.7) 100%)'
-                          : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.9) 100%)',
-                        backdropFilter: 'blur(20px)',
-                        borderRadius: 4,
-                        p: 3,
-                        border: isDark ? '1px solid rgba(75, 85, 99, 0.3)' : '1px solid rgba(229, 231, 235, 0.5)',
-                        boxShadow: isDark 
-                          ? '0 10px 40px rgba(0, 0, 0, 0.3)' 
-                          : '0 10px 40px rgba(0, 0, 0, 0.1)',
-                        transition: 'all 0.3s ease',
-                        position: 'relative',
-                        '&:hover': {
-                          transform: 'translateY(-4px)',
-                          boxShadow: isDark 
-                            ? '0 20px 60px rgba(0, 155, 228, 0.2)' 
-                            : '0 20px 60px rgba(37, 99, 235, 0.15)',
-                        },
-                        // Connector line to center
-                        '&::before': {
-                          content: '""',
-                          position: 'absolute',
-                          top: '50%',
-                          [index % 2 === 0 ? 'right' : 'left']: -20,
-                          width: 40,
-                          height: 2,
-                          background: isDark
-                            ? 'linear-gradient(90deg, transparent 0%, #009BE4 50%, transparent 100%)'
-                            : 'linear-gradient(90deg, transparent 0%, #2563EB 50%, transparent 100%)',
-                          transform: 'translateY(-50%)',
-                        }
-                      }}
-                    >
-                      <Typography
-                        variant="h5"
-                        sx={{
-                          fontSize: '1.25rem',
-                          fontWeight: 700,
-                          color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
-                          mb: 1,
-                          textAlign: index % 2 === 0 ? 'left' : 'right',
-                        }}
-                      >
-                        {step.title}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(75, 85, 99, 1)',
-                          fontSize: '0.9rem',
-                          lineHeight: 1.4,
-                          textAlign: index % 2 === 0 ? 'left' : 'right',
-                        }}
-                      >
-                        {step.description}
-                      </Typography>
-                    </Box>
-
-                    {/* Central Number Circle */}
-                    <Box
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: '50%',
-                        background: isDark
-                          ? 'linear-gradient(135deg, #009BE4 0%, #A855F7 100%)'
-                          : 'linear-gradient(135deg, #2563EB 0%, #8B5CF6 100%)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontWeight: 800,
-                        fontSize: '1.5rem',
-                        position: 'relative',
-                        zIndex: 2,
-                        mx: 2,
-                        boxShadow: isDark
-                          ? '0 8px 32px rgba(0, 155, 228, 0.4)'
-                          : '0 8px 32px rgba(37, 99, 235, 0.4)',
-                        border: `4px solid ${isDark ? 'rgba(17, 24, 39, 1)' : 'rgba(255, 255, 255, 1)'}`,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'scale(1.1)',
-                          boxShadow: isDark
-                            ? '0 12px 48px rgba(0, 155, 228, 0.6)'
-                            : '0 12px 48px rgba(37, 99, 235, 0.6)',
-                        }
-                      }}
-                    >
-                      {step.number}
-                    </Box>
-
-                    {/* Spacer for opposite side */}
-                    <Box sx={{ flex: 1, maxWidth: 240 }} />
-                  </Box>
-                ))}
+                >
+                  1
+                </Box>
+                <Typography variant="h6" sx={{ mb: 1, fontWeight: 600, color: isDark ? 'white' : 'black' }}>
+                  Ask or Access
+                </Typography>
+                <Typography variant="body2" sx={{ color: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(75,85,99,1)' }}>
+                  Chat naturally or open agents directly
+                </Typography>
               </Box>
 
-              <Typography
-                variant="body1"
-                sx={{
-                  fontSize: { xs: '1rem', md: '1.125rem' },
-                  color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(75, 85, 99, 1)',
-                  textAlign: 'center',
-                  lineHeight: 1.7,
-                  mb: 2,
-                }}
-              >
-                ChatAPC isn't a black box. You see how answers are created, interact with artifacts, and dive deeper whenever needed.
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  fontSize: { xs: '1rem', md: '1.125rem' },
-                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(17, 24, 39, 1)',
-                  textAlign: 'center',
-                  fontWeight: 600,
-                }}
-              >
-                Transparent, actionable, and built for industrial operations teams.
-              </Typography>
-            </CardContent>
-          </Card>
+              <ArrowForward sx={{ 
+                fontSize: 32, 
+                color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(156,163,175,1)',
+                display: { xs: 'none', md: 'block' },
+                transform: { xs: 'rotate(90deg)', md: 'none' }
+              }} />
+
+              <Box sx={{ textAlign: 'center', flex: 1 }}>
+                <Box
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: '50%',
+                    background: isDark
+                      ? 'linear-gradient(135deg, #A855F7 0%, #8B5CF6 100%)'
+                      : 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mx: 'auto',
+                    mb: 2,
+                    color: 'white',
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  2
+                </Box>
+                <Typography variant="h6" sx={{ mb: 1, fontWeight: 600, color: isDark ? 'white' : 'black' }}>
+                  AI Processes
+                </Typography>
+                <Typography variant="body2" sx={{ color: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(75,85,99,1)' }}>
+                  Specialized agents analyze your data
+                </Typography>
+              </Box>
+
+              <ArrowForward sx={{ 
+                fontSize: 32, 
+                color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(156,163,175,1)',
+                display: { xs: 'none', md: 'block' },
+                transform: { xs: 'rotate(90deg)', md: 'none' }
+              }} />
+
+              <Box sx={{ textAlign: 'center', flex: 1 }}>
+                <Box
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: '50%',
+                    background: isDark
+                      ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                      : 'linear-gradient(135deg, #10B981 0%, #047857 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mx: 'auto',
+                    mb: 2,
+                    color: 'white',
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  3
+                </Box>
+                <Typography variant="h6" sx={{ mb: 1, fontWeight: 600, color: isDark ? 'white' : 'black' }}>
+                  Get Results
+                </Typography>
+                <Typography variant="body2" sx={{ color: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(75,85,99,1)' }}>
+                  Actionable insights and recommendations
+                </Typography>
+              </Box>
+            </Stack>
+
+            <Typography
+              variant="body1"
+              sx={{
+                fontSize: '1.25rem',
+                color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(75, 85, 99, 1)',
+                lineHeight: 1.6,
+                fontStyle: 'italic',
+              }}
+            >
+              "No black boxes. Every insight is transparent, explainable, and actionable."
+            </Typography>
+          </Box>
         </Box>
 
-        {/* CTA Section */}
+        {/* Simple CTA */}
         <Box ref={ctaRef} sx={{ textAlign: 'center' }}>
-          <Box
+          <Typography
+            variant="h4"
             sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' },
-              gap: 2,
-              justifyContent: 'center',
-              alignItems: 'center',
+              fontSize: { xs: '1.75rem', md: '2.25rem' },
+              fontWeight: 700,
+              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
+              mb: 4,
             }}
+          >
+            Ready to Get Started?
+          </Typography>
+
+          <Stack 
+            direction={{ xs: 'column', sm: 'row' }} 
+            spacing={3} 
+            sx={{ justifyContent: 'center', alignItems: 'center' }}
           >
             <Button
               variant="contained"
               size="large"
-              startIcon={<ArrowForward />}
+              startIcon={<PlayArrow />}
               onClick={() => navigate('/demo')}
               sx={{
-                px: 5,
-                py: 2,
+                px: 6,
+                py: 2.5,
                 fontSize: '1.125rem',
                 fontWeight: 600,
                 background: isDark
-                  ? 'linear-gradient(135deg, #009BE4 0%, #A855F7 100%)'
-                  : 'linear-gradient(135deg, #2563EB 0%, #8B5CF6 100%)',
-                borderRadius: 3,
+                  ? 'linear-gradient(135deg, #009BE4 0%, #2563EB 100%)'
+                  : 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+                borderRadius: 2,
+                minWidth: 180,
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 8px 25px rgba(37, 99, 235, 0.4)',
+                },
               }}
             >
-              Get Started
+              Try Demo
             </Button>
             
             <Button
@@ -526,18 +494,24 @@ export const HowItWorksFeaturesSection: React.FC = () => {
               startIcon={<Visibility />}
               onClick={() => navigate('/about')}
               sx={{
-                px: 5,
-                py: 2,
+                px: 6,
+                py: 2.5,
                 fontSize: '1.125rem',
                 fontWeight: 600,
-                borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(59, 130, 246, 0.5)',
-                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(59, 130, 246, 1)',
-                borderRadius: 3,
+                borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(75, 85, 99, 0.4)',
+                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(75, 85, 99, 1)',
+                borderRadius: 2,
+                minWidth: 180,
+                '&:hover': {
+                  borderColor: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(75, 85, 99, 0.6)',
+                  background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(75, 85, 99, 0.05)',
+                  transform: 'translateY(-2px)',
+                },
               }}
             >
               Learn More
             </Button>
-          </Box>
+          </Stack>
         </Box>
       </Container>
     </Box>

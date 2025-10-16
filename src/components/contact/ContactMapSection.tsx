@@ -1,182 +1,88 @@
-import React, { useEffect, useRef } from 'react';
-import { Box, Typography, Container, Card, CardContent, Grid, Chip } from '@mui/material';
-import { 
-  LocationOn, 
-  Directions, 
-  LocalParking,
-  AccessTime,
-  Business,
+import React, { useState } from 'react';
+import { Box, Typography, Container, Card, CardContent, Grid, Chip, IconButton } from '@mui/material';
+import {
+  LocationOn,
+  Directions,
   Flight,
   Train,
-  DirectionsCar
+  DirectionsCar,
+  AccessTime,
+  LocalParking,
+  Business,
 } from '@mui/icons-material';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
-import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
-
-gsap.registerPlugin(ScrollTrigger);
-
-const locationFeatures = [
-  {
-    icon: LocalParking,
-    title: 'Free Parking',
-    description: 'Ample visitor parking available on-site',
-  },
-  {
-    icon: AccessTime,
-    title: 'Easy Access',
-    description: '24/7 secure building access for scheduled meetings',
-  },
-  {
-    icon: Business,
-    title: 'Conference Facilities',
-    description: 'State-of-the-art meeting rooms and demo labs',
-  },
-];
+import worldMapSvg from './world.svg';
 
 const transportationOptions = [
   {
     icon: Flight,
-    title: 'George Bush Intercontinental Airport (IAH)',
-    distance: '15 minutes',
-    description: 'Major international airport with direct flights worldwide',
-  },
-  {
-    icon: DirectionsCar,
-    title: 'Interstate Access',
-    distance: '2 minutes',
-    description: 'Direct access to I-45 and Beltway 8 for easy navigation',
+    title: 'Airport',
+    distance: '5 km',
+    description: 'Pisa International Airport (PSA)',
+    color: { light: '#EA580C', dark: '#FB923C' },
   },
   {
     icon: Train,
-    title: 'Metro Rail',
-    distance: '5 minutes walk',
-    description: 'Green Line connection to downtown Houston',
+    title: 'Train Station',
+    distance: '3 km',
+    description: 'Pisa Centrale Railway Station',
+    color: { light: '#2563EB', dark: '#3B82F6' },
+  },
+  {
+    icon: DirectionsCar,
+    title: 'Highway',
+    distance: '1 km',
+    description: 'A12 Autostrada Access',
+    color: { light: '#059669', dark: '#10B981' },
   },
 ];
 
+const facilities = [
+  { icon: LocalParking, title: 'Free Parking', color: '#10B981' },
+  { icon: AccessTime, title: '24/7 Access', color: '#3B82F6' },
+  { icon: Business, title: 'Conference Rooms', color: '#8B5CF6' },
+];
+
 const ContactMapSection: React.FC = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<HTMLDivElement>(null);
-  const infoRef = useRef<HTMLDivElement>(null);
-  const featuresRef = useRef<HTMLDivElement[]>([]);
-  const transportRef = useRef<HTMLDivElement[]>([]);
+  const [activeTransport, setActiveTransport] = useState<number | null>(null);
+  const [showEmbeddedMap, setShowEmbeddedMap] = useState(false);
   const { isDark } = useThemeMode();
-  const { 
-    h2FontSize,
-    containerMaxWidth,
-    containerPadding 
-  } = useResponsiveLayout();
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Map animation
-      if (mapRef.current) {
-        gsap.from(mapRef.current, {
-          scrollTrigger: {
-            trigger: mapRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none',
-          },
-          scale: 0.9,
-          opacity: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-        });
-      }
+  const handleLocationClick = () => setShowEmbeddedMap((prev) => !prev);
 
-      // Info animation
-      if (infoRef.current) {
-        gsap.from(infoRef.current, {
-          scrollTrigger: {
-            trigger: infoRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none',
-          },
-          x: 50,
-          opacity: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-        });
-      }
-
-      // Features animation
-      featuresRef.current.forEach((feature, index) => {
-        if (feature) {
-          gsap.from(feature, {
-            scrollTrigger: {
-              trigger: feature,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-            y: 30,
-            opacity: 0,
-            duration: 0.6,
-            delay: index * 0.1,
-            ease: 'power2.out',
-          });
-        }
-      });
-
-      // Transportation animation
-      transportRef.current.forEach((transport, index) => {
-        if (transport) {
-          gsap.from(transport, {
-            scrollTrigger: {
-              trigger: transport,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-            y: 30,
-            opacity: 0,
-            duration: 0.6,
-            delay: index * 0.15,
-            ease: 'power2.out',
-          });
-        }
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  const openGoogleMaps = () => {
+    window.open('https://maps.app.goo.gl/eTLTDLj53ANp1Az8A', '_blank');
+  };
 
   return (
     <Box
-      ref={sectionRef}
       component="section"
       sx={{
-        py: 'clamp(3rem, 8vw, 6rem)',
-        background: isDark
-          ? 'linear-gradient(180deg, rgba(17, 24, 39, 1) 0%, rgba(31, 41, 55, 1) 100%)'
-          : 'linear-gradient(180deg, rgba(248, 250, 252, 1) 0%, rgba(255, 255, 255, 1) 100%)',
+        py: { xs: 8, md: 12 },
         position: 'relative',
-        transition: 'background 0.3s ease',
+        background: isDark
+          ? 'radial-gradient(ellipse 80% 50% at 30% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 70%), radial-gradient(ellipse 70% 40% at 70% 80%, rgba(59, 130, 246, 0.12) 0%, transparent 70%), linear-gradient(135deg, #0F1419 0%, #1A202C 50%, #0F1419 100%)'
+          : 'radial-gradient(ellipse 80% 50% at 30% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 70%), radial-gradient(ellipse 70% 40% at 70% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 70%), linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
+        overflow: 'hidden',
       }}
     >
-      <Container 
-        maxWidth="lg"
-        sx={{
-          maxWidth: containerMaxWidth,
-          px: containerPadding,
-        }}
-      >
+      <Container maxWidth="lg" sx={{ px: { xs: 3, md: 4 }, position: 'relative', zIndex: 2 }}>
         {/* Section Header */}
-        <Box
-          sx={{
-            textAlign: 'center',
-            mb: { xs: 6, md: 8 },
-          }}
-        >
+        <Box sx={{ textAlign: 'center', mb: 8 }}>
           <Typography
             variant="h2"
             sx={{
-              fontSize: h2FontSize,
-              fontWeight: 700,
-              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
+              fontSize: { xs: '2.2rem', md: '2.8rem' },
+              fontWeight: 800,
+              background: isDark
+                ? 'linear-gradient(135deg, #FFFFFF 0%, #3B82F6 50%, #10B981 100%)'
+                : 'linear-gradient(135deg, #1E293B 0%, #2563EB 50%, #059669 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
               mb: 3,
-              lineHeight: 1.2,
-              transition: 'color 0.3s ease',
+              lineHeight: 1.1,
+              fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             }}
           >
             Visit Our Headquarters
@@ -184,24 +90,238 @@ const ContactMapSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: { xs: '1.1rem', md: '1.25rem' },
-              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
+              color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
               maxWidth: '600px',
               mx: 'auto',
               lineHeight: 1.6,
-              transition: 'color 0.3s ease',
+              mb: 2,
             }}
           >
-            Located in the heart of Houston's industrial corridor, easily accessible from anywhere in the greater Houston area
+            Located in the beautiful city of Pisa, Italy
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: '1rem',
+              color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(100, 116, 139, 1)',
+              fontStyle: 'italic',
+            }}
+          >
+            Click on our location to explore more
           </Typography>
         </Box>
 
-        {/* Map and Address Section */}
-        <Grid container spacing={{ xs: 4, md: 6 }} sx={{ mb: { xs: 6, md: 8 } }}>
-          {/* Interactive Map */}
-          <Grid item xs={12} md={8}>
+        {/* Map/Card Section */}
+        <Box sx={{ mb: 6 }}>
+          <Card
+            elevation={0}
+            sx={{
+              borderRadius: '24px',
+              overflow: 'hidden',
+              background: isDark
+                ? 'rgba(31, 41, 55, 0.9)'
+                : 'rgba(255, 255, 255, 0.95)',
+              border: isDark
+                ? '1px solid rgba(75, 85, 99, 0.3)'
+                : '1px solid rgba(226, 232, 240, 0.5)',
+              backdropFilter: 'blur(20px)',
+              height: '500px',
+              position: 'relative',
+              boxShadow: isDark
+                ? '0 25px 80px rgba(0, 0, 0, 0.3)'
+                : '0 25px 80px rgba(0, 0, 0, 0.08)',
+            }}
+          >
+            <Box
+              sx={{
+                width: '100%',
+                height: '100%',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: isDark
+                  ? 'linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.95) 100%)'
+                  : 'linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(255, 255, 255, 0.95) 100%)',
+              }}
+            >
+              <Box
+                sx={{
+                  width: '90%',
+                  height: '80%',
+                  position: 'relative',
+                  cursor: 'pointer',
+                }}
+              >
+                <Box
+                  component="img"
+                  src={worldMapSvg}
+                  alt="World Map"
+                  sx={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    filter: isDark
+                      ? 'brightness(0.8) contrast(1.2)'
+                      : 'brightness(1.1) contrast(0.9)',
+                  }}
+                />
+
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: '32%',
+                    left: '52%',
+                    transform: 'translate(-50%, -50%)',
+                    cursor: 'pointer',
+                    zIndex: 10,
+                  }}
+                  onClick={handleLocationClick}
+                >
+                  {/* Pulsing circle animation */}
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      border: `2px solid ${isDark ? '#3B82F6' : '#2563EB'}`,
+                      animation: 'pulse 2s infinite',
+                      '@keyframes pulse': {
+                        '0%': { transform: 'translate(-50%, -50%) scale(1)', opacity: 0.8 },
+                        '50%': { transform: 'translate(-50%, -50%) scale(1.5)', opacity: 0.3 },
+                        '100%': { transform: 'translate(-50%, -50%) scale(1)', opacity: 0.8 },
+                      },
+                    }}
+                  />
+                  {/* Main location pin */}
+                  <Box
+                    sx={{
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '50%',
+                      background: isDark
+                        ? 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)'
+                        : 'linear-gradient(135deg, #2563EB 0%, #8B5CF6 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: isDark
+                        ? '0 4px 12px rgba(59, 130, 246, 0.4)'
+                        : '0 4px 12px rgba(37, 99, 235, 0.3)',
+                      transition: 'transform 0.3s ease',
+                      '&:hover': { transform: 'scale(1.2)' },
+                    }}
+                  >
+                    <LocationOn sx={{ fontSize: 10, color: '#FFFFFF' }} />
+                  </Box>
+                </Box>
+
+                {/* Location Label */}
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: '25%',
+                    left: '52%',
+                    transform: 'translateX(-50%)',
+                    cursor: 'pointer',
+                    zIndex: 11,
+                  }}
+                  onClick={handleLocationClick}
+                >
+                  <Box
+                    sx={{
+                      px: 2,
+                      py: 1,
+                      borderRadius: '8px',
+                      background: isDark
+                        ? 'rgba(31, 41, 55, 0.95)'
+                        : 'rgba(255, 255, 255, 0.95)',
+                      backdropFilter: 'blur(10px)',
+                      border: isDark
+                        ? '1px solid rgba(75, 85, 99, 0.5)'
+                        : '1px solid rgba(226, 232, 240, 0.8)',
+                      boxShadow: isDark
+                        ? '0 4px 12px rgba(0, 0, 0, 0.3)'
+                        : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 1)',
+                        fontFamily: '"Inter", sans-serif',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      Pisa, Italy
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+              {/* Floating particles (visual detail) */}
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '20%',
+                  left: '48%',
+                  width: '4px',
+                  height: '4px',
+                  borderRadius: '50%',
+                  background: isDark ? '#3B82F6' : '#2563EB',
+                  animation: 'float1 4s ease-in-out infinite',
+                  '@keyframes float1': {
+                    '0%, 100%': { transform: 'translate(0, 0)' },
+                    '50%': { transform: 'translate(10px, -5px)' },
+                  },
+                }}
+              />
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '35%',
+                  left: '46%',
+                  width: '3px',
+                  height: '3px',
+                  borderRadius: '50%',
+                  background: isDark ? '#10B981' : '#059669',
+                  animation: 'float2 3s ease-in-out infinite',
+                  '@keyframes float2': {
+                    '0%, 100%': { transform: 'translate(0, 0)' },
+                    '50%': { transform: 'translate(-8px, 8px)' },
+                  },
+                }}
+              />
+              <Typography
+                sx={{
+                  position: 'absolute',
+                  bottom: 20,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  fontSize: '0.9rem',
+                  color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(100, 116, 139, 1)',
+                  fontWeight: 500,
+                  animation: 'pulse 2s infinite',
+                  '@keyframes pulse': {
+                    '0%, 100%': { opacity: 0.6 },
+                    '50%': { opacity: 1 },
+                  },
+                }}
+              >
+                Click on our location to see detailed map
+              </Typography>
+            </Box>
+          </Card>
+        </Box>
+
+        {/* Embedded Google Map */}
+        {showEmbeddedMap && (
+          <Box sx={{ mb: 6 }}>
             <Card
-              ref={mapRef}
-              elevation={isDark ? 0 : 16}
+              elevation={0}
               sx={{
                 borderRadius: '20px',
                 overflow: 'hidden',
@@ -210,374 +330,343 @@ const ContactMapSection: React.FC = () => {
                   : 'rgba(255, 255, 255, 0.95)',
                 border: isDark
                   ? '1px solid rgba(75, 85, 99, 0.3)'
-                  : 'none',
+                  : '1px solid rgba(226, 232, 240, 0.5)',
                 backdropFilter: 'blur(20px)',
-                height: { xs: '300px', md: '400px' },
-                position: 'relative',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: isDark
-                    ? '0 25px 80px rgba(0, 155, 228, 0.25)'
-                    : '0 25px 80px rgba(37, 99, 235, 0.2)',
-                },
+                boxShadow: isDark
+                  ? '0 25px 80px rgba(0, 0, 0, 0.3)'
+                  : '0 25px 80px rgba(0, 0, 0, 0.08)',
               }}
             >
-              {/* Placeholder for interactive map */}
-              <Box
-                sx={{
-                  width: '100%',
-                  height: '100%',
-                  background: isDark
-                    ? 'linear-gradient(135deg, rgba(17, 24, 39, 1) 0%, rgba(31, 41, 55, 1) 100%)'
-                    : 'linear-gradient(135deg, rgba(243, 244, 246, 1) 0%, rgba(249, 250, 251, 1) 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  position: 'relative',
-                  '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: '20%',
-                    left: '30%',
-                    width: '40%',
-                    height: '60%',
-                    background: isDark
-                      ? 'radial-gradient(circle, rgba(0, 155, 228, 0.3) 0%, transparent 70%)'
-                      : 'radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%)',
-                    borderRadius: '50%',
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    textAlign: 'center',
-                    zIndex: 10,
-                  }}
-                >
-                  <LocationOn
-                    sx={{
-                      fontSize: 48,
-                      color: isDark ? '#009BE4' : '#2563EB',
-                      mb: 2,
-                    }}
-                  />
-                  <Typography
-                    sx={{
-                      fontSize: '1.1rem',
-                      fontWeight: 600,
-                      color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 1)',
-                      mb: 1,
-                    }}
-                  >
-                    Alpha Process Control
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: '0.9rem',
-                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
-                      mb: 3,
-                    }}
-                  >
-                    Houston, TX 77032
-                  </Typography>
-                  <Chip
-                    icon={<Directions />}
-                    label="Get Directions"
-                    clickable
-                    sx={{
-                      background: isDark
-                        ? 'linear-gradient(135deg, #009BE4 0%, #0EA5E9 100%)'
-                        : 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
-                      color: 'white',
-                      fontWeight: 600,
-                      '&:hover': {
-                        transform: 'scale(1.05)',
-                      },
-                    }}
-                  />
-                </Box>
-              </Box>
-            </Card>
-          </Grid>
-
-          {/* Address and Details */}
-          <Grid item xs={12} md={4}>
-            <Card
-              ref={infoRef}
-              elevation={isDark ? 0 : 8}
-              sx={{
-                height: '100%',
-                borderRadius: '16px',
-                background: isDark
-                  ? 'rgba(31, 41, 55, 0.8)'
-                  : 'rgba(255, 255, 255, 0.95)',
-                border: isDark
-                  ? '1px solid rgba(75, 85, 99, 0.3)'
-                  : 'none',
-                backdropFilter: 'blur(20px)',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <CardContent
-                sx={{
-                  p: { xs: 3, md: 4 },
-                  flex: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  '@media (min-width: 960px) and (max-width: 1549px)': {
-                    p: 3,
-                  },
-                }}
-              >
+              <Box sx={{ p: 3 }}>
                 <Box
                   sx={{
                     display: 'flex',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
-                    gap: 2,
                     mb: 3,
                   }}
                 >
-                  <LocationOn
-                    sx={{
-                      fontSize: 28,
-                      color: isDark ? '#009BE4' : '#2563EB',
-                    }}
-                  />
                   <Typography
                     sx={{
-                      fontSize: '1.2rem',
-                      fontWeight: 600,
+                      fontSize: '1.3rem',
+                      fontWeight: 700,
                       color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
+                      fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                     }}
                   >
-                    Our Location
+                    Alpha Process Control Location
                   </Typography>
+                  <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Chip
+                      icon={<Directions />}
+                      label="Open in Google Maps"
+                      clickable
+                      onClick={openGoogleMaps}
+                      sx={{
+                        background: isDark
+                          ? 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)'
+                          : 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+                        color: 'white',
+                        fontWeight: 600,
+                        '&:hover': {
+                          transform: 'scale(1.05)',
+                        },
+                      }}
+                    />
+                    <IconButton
+                      onClick={() => setShowEmbeddedMap(false)}
+                      sx={{
+                        background: isDark ? 'rgba(75, 85, 99, 0.3)' : 'rgba(226, 232, 240, 0.5)',
+                        '&:hover': {
+                          background: isDark ? 'rgba(75, 85, 99, 0.5)' : 'rgba(226, 232, 240, 0.8)',
+                        },
+                      }}
+                    >
+                      <Box sx={{ fontSize: 18 }}>×</Box>
+                    </IconButton>
+                  </Box>
                 </Box>
-
-                <Typography
-                  sx={{
-                    fontSize: '1rem',
-                    color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
-                    lineHeight: 1.8,
-                    mb: 3,
-                  }}
-                >
-                  <strong>Alpha Process Control</strong><br />
-                  1500 Industrial Blvd, Suite 200<br />
-                  Houston, TX 77032<br />
-                  United States
-                </Typography>
-
                 <Box
                   sx={{
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    height: '450px',
+                    position: 'relative',
+                  }}
+                >
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2883.482240659333!2d10.375793676412835!3d43.72130794802288!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12d591892f500b9b%3A0x145344e5a7bb4f43!2sALPHA%20Process%20Control!5e0!3m2!1sen!2sit!4v1760456793258!5m2!1sen!2sit"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Alpha Process Control Google Map"
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    mt: 3,
                     p: 3,
                     borderRadius: '12px',
-                    background: isDark
-                      ? 'rgba(17, 24, 39, 0.6)'
-                      : 'rgba(248, 250, 252, 0.8)',
-                    border: isDark
-                      ? '1px solid rgba(75, 85, 99, 0.3)'
-                      : '1px solid rgba(226, 232, 240, 0.5)',
-                    mb: 3,
+                    background: isDark ? 'rgba(17, 24, 39, 0.6)' : 'rgba(248, 250, 252, 0.8)',
+                    border: isDark ? '1px solid rgba(75, 85, 99, 0.3)' : '1px solid rgba(226, 232, 240, 0.5)',
                   }}
                 >
                   <Typography
                     sx={{
-                      fontSize: '0.9rem',
+                      fontSize: '1rem',
                       fontWeight: 600,
                       color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 1)',
                       mb: 1,
                     }}
                   >
-                    Visitor Information
+                    📍 Address
                   </Typography>
                   <Typography
                     sx={{
-                      fontSize: '0.8rem',
-                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
-                      lineHeight: 1.5,
+                      fontSize: '0.95rem',
+                      color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
+                      lineHeight: 1.6,
                     }}
                   >
-                    Please check in at the main reception desk. Valid ID required for building access. 
-                    Visitor badges will be provided for security purposes.
+                    Via Giuseppe Impastato, 1<br />
+                    56122 Pisa, PI, Italy
                   </Typography>
                 </Box>
-
-                <Box sx={{ mt: 'auto' }}>
-                  <Typography
-                    sx={{
-                      fontSize: '0.85rem',
-                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(100, 116, 139, 1)',
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    GPS Coordinates:<br />
-                    29.7604° N, 95.3698° W
-                  </Typography>
-                </Box>
-              </CardContent>
+              </Box>
             </Card>
-          </Grid>
-        </Grid>
+          </Box>
+        )}
 
-        {/* Location Features */}
-        <Box sx={{ mb: { xs: 6, md: 8 } }}>
-          <Typography
-            sx={{
-              fontSize: { xs: '1.3rem', md: '1.5rem' },
-              fontWeight: 700,
-              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
-              mb: 4,
-              textAlign: 'center',
-            }}
-          >
-            Facility Features
-          </Typography>
-
-          <Grid container spacing={{ xs: 3, md: 4 }}>
-            {locationFeatures.map((feature, index) => {
-              const IconComponent = feature.icon;
-              return (
-                <Grid
-                  item
-                  xs={12}
-                  md={4}
-                  key={index}
-                  ref={(el) => {
-                    if (el) featuresRef.current[index] = el as HTMLDivElement;
-                  }}
-                >
+        {/* Facility and Contact Info */}
+        <Grid container spacing={4} sx={{ mb: 6 }}>
+          <Grid item xs={12} lg={4}>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {/* Facilities */}
+              <Card
+                elevation={0}
+                sx={{
+                  borderRadius: '16px',
+                  background: isDark
+                    ? 'rgba(31, 41, 55, 0.9)'
+                    : 'rgba(255, 255, 255, 0.95)',
+                  border: isDark
+                    ? '1px solid rgba(75, 85, 99, 0.3)'
+                    : '1px solid rgba(226, 232, 240, 0.5)',
+                  backdropFilter: 'blur(20px)',
+                  flex: 1,
+                }}
+              >
+                <CardContent sx={{ p: 3 }}>
+                  <Typography
+                    sx={{
+                      fontSize: '1.2rem',
+                      fontWeight: 700,
+                      color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
+                      mb: 3,
+                    }}
+                  >
+                    Facilities
+                  </Typography>
+                  {facilities.map((facility, index) => {
+                    const IconComponent = facility.icon;
+                    return (
+                      <Box
+                        key={index}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 2,
+                          mb: 2,
+                          p: 2,
+                          borderRadius: '8px',
+                          background: isDark ? 'rgba(17, 24, 39, 0.5)' : 'rgba(248, 250, 252, 0.8)',
+                          transition: 'all 0.3s ease',
+                          cursor: 'pointer',
+                          '&:hover': {
+                            background: `${facility.color}15`,
+                            transform: 'translateX(4px)',
+                          },
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: '8px',
+                            background: `${facility.color}15`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <IconComponent sx={{ fontSize: 18, color: facility.color }} />
+                        </Box>
+                        <Typography
+                          sx={{
+                            fontSize: '0.9rem',
+                            fontWeight: 600,
+                            color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
+                          }}
+                        >
+                          {facility.title}
+                        </Typography>
+                      </Box>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+              {/* Contact Info */}
+              <Card
+                elevation={0}
+                sx={{
+                  borderRadius: '16px',
+                  background: isDark
+                    ? 'rgba(31, 41, 55, 0.9)'
+                    : 'rgba(255, 255, 255, 0.95)',
+                  border: isDark
+                    ? '1px solid rgba(75, 85, 99, 0.3)'
+                    : '1px solid rgba(226, 232, 240, 0.5)',
+                  backdropFilter: 'blur(20px)',
+                }}
+              >
+                <CardContent sx={{ p: 3 }}>
+                  <Typography
+                    sx={{
+                      fontSize: '1.2rem',
+                      fontWeight: 700,
+                      color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
+                      mb: 3,
+                    }}
+                  >
+                    Contact Info
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: '0.9rem',
+                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
+                      lineHeight: 1.6,
+                      mb: 2,
+                    }}
+                  >
+                    📞 +1 (555) 123-4567<br />
+                    ✉️ hello@alphapc.com<br />
+                    🕒 Mon-Fri 9AM-6PM EST
+                  </Typography>
                   <Box
                     sx={{
-                      textAlign: 'center',
-                      p: { xs: 3, md: 4 },
-                      borderRadius: '12px',
-                      background: isDark
-                        ? 'rgba(31, 41, 55, 0.6)'
-                        : 'rgba(255, 255, 255, 0.7)',
-                      border: isDark
-                        ? '1px solid rgba(75, 85, 99, 0.3)'
-                        : '1px solid rgba(226, 232, 240, 0.5)',
-                      backdropFilter: 'blur(20px)',
-                      transition: 'all 0.3s ease',
-                      height: '100%',
-                      '&:hover': {
-                        transform: 'translateY(-4px)',
-                        background: isDark
-                          ? 'rgba(31, 41, 55, 0.8)'
-                          : 'rgba(255, 255, 255, 0.9)',
-                      },
+                      p: 2,
+                      borderRadius: '8px',
+                      background: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(5, 150, 105, 0.1)',
+                      border: isDark ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(5, 150, 105, 0.2)',
+                      mt: 2,
                     }}
                   >
-                    <IconComponent
-                      sx={{
-                        fontSize: 40,
-                        color: isDark ? '#009BE4' : '#2563EB',
-                        mb: 2,
-                      }}
-                    />
                     <Typography
                       sx={{
-                        fontSize: '1.1rem',
+                        fontSize: '0.85rem',
                         fontWeight: 600,
-                        color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
-                        mb: 1,
+                        color: isDark ? '#10B981' : '#059669',
                       }}
                     >
-                      {feature.title}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: '0.9rem',
-                        color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      {feature.description}
+                      💡 Pro Tip: Valid ID required for building access
                     </Typography>
                   </Box>
-                </Grid>
-              );
-            })}
+                </CardContent>
+              </Card>
+            </Box>
           </Grid>
-        </Box>
+        </Grid>
 
         {/* Transportation Options */}
         <Box>
           <Typography
             sx={{
-              fontSize: { xs: '1.3rem', md: '1.5rem' },
+              fontSize: '1.5rem',
               fontWeight: 700,
               color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
               mb: 4,
               textAlign: 'center',
             }}
           >
-            Getting Here
+            Easy to Reach
           </Typography>
-
-          <Grid container spacing={{ xs: 3, md: 4 }}>
+          <Grid container spacing={3}>
             {transportationOptions.map((option, index) => {
               const IconComponent = option.icon;
+              const isActive = activeTransport === index;
               return (
-                <Grid
-                  item
-                  xs={12}
-                  md={4}
-                  key={index}
-                  ref={(el) => {
-                    if (el) transportRef.current[index] = el as HTMLDivElement;
-                  }}
-                >
+                <Grid item xs={12} md={4} key={index}>
                   <Card
-                    elevation={isDark ? 0 : 4}
+                    elevation={0}
+                    onMouseEnter={() => setActiveTransport(index)}
+                    onMouseLeave={() => setActiveTransport(null)}
                     sx={{
-                      height: '100%',
-                      borderRadius: '12px',
-                      background: isDark
-                        ? 'rgba(31, 41, 55, 0.8)'
-                        : 'rgba(255, 255, 255, 0.95)',
-                      border: isDark
-                        ? '1px solid rgba(75, 85, 99, 0.3)'
-                        : 'none',
+                      borderRadius: '16px',
+                      background: isActive
+                        ? (isDark
+                          ? `linear-gradient(135deg, ${option.color.dark}20 0%, ${option.color.dark}10 100%)`
+                          : `linear-gradient(135deg, ${option.color.light}10 0%, ${option.color.light}05 100%)`)
+                        : (isDark
+                          ? 'rgba(31, 41, 55, 0.8)'
+                          : 'rgba(255, 255, 255, 0.9)'),
+                      border: isActive
+                        ? `2px solid ${option.color[isDark ? 'dark' : 'light']}`
+                        : (isDark ? '1px solid rgba(75, 85, 99, 0.3)' : '1px solid rgba(226, 232, 240, 0.5)'),
                       backdropFilter: 'blur(20px)',
-                      transition: 'all 0.3s ease',
+                      cursor: 'pointer',
+                      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
-                        transform: 'translateY(-6px)',
+                        transform: 'translateY(-8px) scale(1.02)',
                         boxShadow: isDark
-                          ? '0 15px 40px rgba(0, 155, 228, 0.2)'
-                          : '0 15px 40px rgba(37, 99, 235, 0.15)',
+                          ? `0 20px 60px ${option.color.dark}25`
+                          : `0 20px 60px ${option.color.light}15`,
                       },
                     }}
                   >
-                    <CardContent
-                      sx={{
-                        p: { xs: 3, md: 4 },
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        textAlign: 'center',
-                        '@media (min-width: 960px) and (max-width: 1549px)': {
-                          p: 3,
-                        },
-                      }}
-                    >
-                      <IconComponent
+                    <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                      <Box
                         sx={{
-                          fontSize: 36,
-                          color: isDark ? '#009BE4' : '#2563EB',
-                          mb: 2,
+                          width: 60,
+                          height: 60,
+                          borderRadius: '16px',
+                          background: isActive
+                            ? `linear-gradient(135deg, ${option.color[isDark ? 'dark' : 'light']} 0%, ${option.color[isDark ? 'dark' : 'light']}CC 100%)`
+                            : `${option.color[isDark ? 'dark' : 'light']}15`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
                           mx: 'auto',
+                          mb: 2,
+                          transition: 'all 0.3s ease',
+                        }}
+                      >
+                        <IconComponent
+                          sx={{
+                            fontSize: 28,
+                            color: isActive ? '#FFFFFF' : option.color[isDark ? 'dark' : 'light'],
+                          }}
+                        />
+                      </Box>
+
+                      <Chip
+                        label={option.distance}
+                        size="small"
+                        sx={{
+                          mb: 2,
+                          background: `${option.color[isDark ? 'dark' : 'light']}15`,
+                          color: option.color[isDark ? 'dark' : 'light'],
+                          fontWeight: 700,
+                          border: `1px solid ${option.color[isDark ? 'dark' : 'light']}30`,
                         }}
                       />
-                      
+
                       <Typography
                         sx={{
                           fontSize: '1.1rem',
-                          fontWeight: 600,
+                          fontWeight: 700,
                           color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
                           mb: 1,
                         }}
@@ -585,23 +674,11 @@ const ContactMapSection: React.FC = () => {
                         {option.title}
                       </Typography>
 
-                      <Chip
-                        label={option.distance}
-                        size="small"
-                        sx={{
-                          mb: 2,
-                          background: isDark ? 'rgba(0, 155, 228, 0.2)' : 'rgba(37, 99, 235, 0.1)',
-                          color: isDark ? '#009BE4' : '#2563EB',
-                          fontWeight: 600,
-                        }}
-                      />
-
                       <Typography
                         sx={{
                           fontSize: '0.9rem',
                           color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
-                          lineHeight: 1.5,
-                          flex: 1,
+                          lineHeight: 1.4,
                         }}
                       >
                         {option.description}

@@ -104,9 +104,7 @@ export const AboutTurningPointSection: React.FC = () => {
       sx={{
         width: '100%',
         py: sectionPadding,
-        background: isDark
-          ? 'linear-gradient(180deg, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
-          : 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
+        background: 'transparent',
         position: 'relative',
         overflow: 'hidden',
         transition: 'background 0.3s ease',

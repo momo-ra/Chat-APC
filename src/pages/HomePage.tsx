@@ -1,23 +1,16 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import { AppSidebar, Footer, ThemeToggle } from '../components/layout';
-import { 
-  HeroSearchSection, 
-  AuthButtons,
-  ExamplesSection,
-  DarkFeatureSection,
-  DarkPillarSection,
-  FullWidthCTASection,
-  AlternatingFeatureSection,
-  ContactSection,
-  LightFeatureSection,
-} from '../components/home-test';
 import {
+  HeroSearchSection,
   CTASection,
   BenefitsSection,
   ArchitectureSection,
   DemoVideoSection,
   TeamSection,
+  ContactSection,
+  HorizontalScrollSlider,
+  ExpandingBackgroundSlider,
 } from '../components/home';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
@@ -168,6 +161,12 @@ const HomePage: React.FC = () => {
           >
             {/* DemoVideoSection */}
             <DemoVideoSection />
+            
+            {/* ExpandingBackgroundSlider */}
+            {/* <ExpandingBackgroundSlider /> */}
+            
+            {/* HorizontalScrollSlider */}
+            {/* <HorizontalScrollSlider /> */}
 
             {/* BenefitsSection */}
             <BenefitsSection />

@@ -1,5 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Container } from '@mui/material';
+import LinkIcon from '@mui/icons-material/Link';
+import MapIcon from '@mui/icons-material/Map';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
@@ -21,36 +25,63 @@ export const ArchitectureHeroSection: React.FC = () => {
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const flowRef = useRef<HTMLDivElement>(null);
 
+  // Define the data for the process flow.  Each entry contains
+  // a label, a color that adapts to the current theme and the
+  // corresponding icon component.  Placing this definition here
+  // ensures that the values are recalculated when `isDark` changes
+  // without re-rendering the entire component.  Using descriptive
+  // names helps keep the JSX below concise and easier to read.
+  const steps = [
+    { label: 'Connect', color: isDark ? '#60A5FA' : '#3B82F6', Icon: LinkIcon },
+    { label: 'Map',     color: isDark ? '#34D399' : '#10B981', Icon: MapIcon },
+    { label: 'Ask',     color: isDark ? '#FBBF24' : '#F59E0B', Icon: QuestionAnswerIcon },
+    { label: 'Answer',  color: isDark ? '#F472B6' : '#EC4899', Icon: CheckCircleIcon },
+  ];
+
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // Build a simple yet attractive animation timeline for the hero
+      // section.  We adjust the durations and add a subtle scale
+      // bounce effect to make the elements feel alive without being
+      // distracting.  Using negative offsets makes animations overlap
+      // slightly, producing a smooth cascade.
       const tl = gsap.timeline();
 
       if (titleRef.current) {
         tl.from(titleRef.current, {
-          y: 60,
+          y: 50,
           opacity: 0,
-          duration: 0.8,
+          duration: 0.6,
           ease: 'power3.out',
         });
       }
 
       if (subtitleRef.current) {
-        tl.from(subtitleRef.current, {
-          y: 40,
-          opacity: 0,
-          duration: 0.6,
-          ease: 'power2.out',
-        }, 0.3);
+        tl.from(
+          subtitleRef.current,
+          {
+            y: 40,
+            opacity: 0,
+            duration: 0.5,
+            ease: 'power2.out',
+          },
+          '-=0.3'
+        );
       }
 
       if (flowRef.current) {
-        tl.from(flowRef.current.children, {
-          y: 30,
-          opacity: 0,
-          duration: 0.5,
-          stagger: 0.1,
-          ease: 'power2.out',
-        }, 0.6);
+        tl.from(
+          flowRef.current.children,
+          {
+            y: 30,
+            scale: 0.9,
+            opacity: 0,
+            duration: 0.6,
+            stagger: 0.15,
+            ease: 'back.out(1.4)',
+          },
+          '-=0.2'
+        );
       }
     }, heroRef);
 
@@ -61,13 +92,12 @@ export const ArchitectureHeroSection: React.FC = () => {
     <Box
       ref={heroRef}
       component="section"
+      data-section-theme={isDark ? 'dark' : 'light'}
       sx={{
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        background: isDark
-          ? 'linear-gradient(135deg, #0F1419 0%, #1A1F2E 50%, #0F1419 100%)'
-          : 'linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
+        background: 'transparent',
         position: 'relative',
         overflow: 'hidden',
         '&::before': {
@@ -153,19 +183,14 @@ export const ArchitectureHeroSection: React.FC = () => {
             flexDirection: { xs: 'column', md: 'row' },
             alignItems: 'center',
             justifyContent: 'center',
-            gap: { xs: 3, md: 2 },
+            gap: { xs: 4, md: 3 },
             mt: 6,
             flexWrap: 'wrap',
             maxWidth: '900px',
             mx: 'auto',
           }}
         >
-          {[
-            { label: 'Connect', color: isDark ? '#60A5FA' : '#3B82F6' },
-            { label: 'Map', color: isDark ? '#34D399' : '#10B981' },
-            { label: 'Ask', color: isDark ? '#FBBF24' : '#F59E0B' },
-            { label: 'Answer', color: isDark ? '#F472B6' : '#EC4899' },
-          ].map((step, index) => (
+          {steps.map((step, index) => (
             <React.Fragment key={step.label}>
               <Box
                 sx={{
@@ -175,34 +200,48 @@ export const ArchitectureHeroSection: React.FC = () => {
                   gap: 2,
                 }}
               >
+                {/* Circle with icon and step number */}
                 <Box
                   sx={{
-                    width: { xs: 80, md: 100 },
-                    height: { xs: 80, md: 100 },
-                    borderRadius: '50%',
-                    background: `linear-gradient(135deg, ${step.color}20 0%, ${step.color}40 100%)`,
+                    position: 'relative',
+                    width: { xs: 80, md: 90 },
+                    height: { xs: 80, md: 90 },
+                    borderRadius: '20%',
+                    background: `linear-gradient(135deg, ${step.color}1A 0%, ${step.color}33 100%)`,
                     border: `2px solid ${step.color}`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    position: 'relative',
                     transition: 'all 0.3s ease',
                     '&:hover': {
-                      transform: 'scale(1.05)',
-                      boxShadow: `0 8px 32px ${step.color}40`,
+                      transform: 'translateY(-4px) scale(1.05)',
+                      boxShadow: `0 12px 24px ${step.color}40`,
                     },
                   }}
                 >
+                  {/* Icon */}
+                  <step.Icon
+                    sx={{
+                      fontSize: { xs: '2rem', md: '2.25rem' },
+                      color: step.color,
+                    }}
+                  />
+                  {/* Step number in the corner */}
                   <Typography
                     sx={{
-                      fontSize: { xs: '1.1rem', md: '1.25rem' },
+                      position: 'absolute',
+                      top: 4,
+                      right: 6,
+                      fontSize: { xs: '0.75rem', md: '0.875rem' },
                       fontWeight: 700,
                       color: step.color,
+                      opacity: 0.8,
                     }}
                   >
                     {index + 1}
                   </Typography>
                 </Box>
+                {/* Label */}
                 <Typography
                   sx={{
                     fontSize: { xs: '1rem', md: '1.125rem' },
@@ -214,17 +253,14 @@ export const ArchitectureHeroSection: React.FC = () => {
                 </Typography>
               </Box>
 
-              {index < 3 && (
+              {/* Connecting line for desktop */}
+              {index < steps.length - 1 && (
                 <Box
                   sx={{
                     display: { xs: 'none', md: 'block' },
-                    width: 40,
+                    width: 50,
                     height: 2,
-                    background: `linear-gradient(90deg, ${step.color} 0%, ${[
-                      isDark ? '#34D399' : '#10B981',
-                      isDark ? '#FBBF24' : '#F59E0B', 
-                      isDark ? '#F472B6' : '#EC4899'
-                    ][index]} 100%)`,
+                    background: `linear-gradient(90deg, ${step.color} 0%, ${steps[index + 1].color} 100%)`,
                     borderRadius: 1,
                   }}
                 />

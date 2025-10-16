@@ -8,6 +8,8 @@ import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { AppSidebar, Footer, ThemeToggle } from '../../components/layout';
 import { sidebarItems } from '../../data/layout/sidebarData';
+import { getHomeBackground } from '../../components/shared/pageBackgrounds';
+import { applySlideUp, applyCardGridAnimation, applyScaleUp } from '../../components/shared/animationHelpers';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -118,62 +120,16 @@ const FAQPage: React.FC = () => {
     }
 
     const ctx = gsap.context(() => {
-      // Header animation
-      if (headerRef.current) {
-        gsap.from(headerRef.current, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none',
-            once: true,
-          },
-          y: 50,
-          opacity: 0,
-          duration: 1.2,
-          ease: 'power4.out',
-          clearProps: 'all',
-        });
-      }
+      // Animate header with unified system
+      applySlideUp(headerRef.current, { startTrigger: 'top 80%' });
 
-      // FAQ cards animation - Batch them for better performance
-      if (faqRefs.current.length > 0) {
-        faqRefs.current.forEach((faq, index) => {
-          if (faq) {
-            gsap.from(faq, {
-              scrollTrigger: {
-                trigger: faq,
-                start: 'top 90%',
-                toggleActions: 'play none none none',
-                once: true,
-              },
-              y: 40,
-              opacity: 0,
-              duration: 0.9,
-              delay: Math.min(index * 0.08, 0.4),
-              ease: 'power3.out',
-              clearProps: 'all',
-            });
-          }
-        });
-      }
+      // Animate FAQ cards with unified system
+      applyCardGridAnimation(faqRefs.current, sectionRef.current, {
+        staggerDelay: 0.08,
+      });
 
-      // CTA animation
-      if (ctaRef.current) {
-        gsap.from(ctaRef.current, {
-          scrollTrigger: {
-            trigger: ctaRef.current,
-            start: 'top 90%',
-            toggleActions: 'play none none none',
-            once: true,
-          },
-          y: 50,
-          opacity: 0,
-          scale: 0.96,
-          duration: 1.1,
-          ease: 'power4.out',
-          clearProps: 'all',
-        });
-      }
+      // Animate CTA with unified system
+      applyScaleUp(ctaRef.current, { startTrigger: 'top 90%' });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -258,23 +214,9 @@ const FAQPage: React.FC = () => {
           width: '100%',
           maxWidth: '100vw',
           overflow: 'hidden',
-          background: isDark
-            ? 'radial-gradient(ellipse 120% 80% at 50% 0%, rgba(59, 130, 246, 0.04) 0%, #111827 40%, #111827 100%)'
-            : 'radial-gradient(ellipse 120% 80% at 50% 0%, rgba(59, 130, 246, 0.02) 0%, #FFFFFF 40%, #FFFFFF 100%)',
+          background: getHomeBackground(isDark),
           transition: 'background 0.3s ease',
           position: 'relative',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundImage: isDark
-              ? 'radial-gradient(circle at 25% 25%, rgba(139, 92, 246, 0.02) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.02) 0%, transparent 50%)'
-              : 'radial-gradient(circle at 25% 25%, rgba(139, 92, 246, 0.01) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.01) 0%, transparent 50%)',
-            pointerEvents: 'none',
-          },
         }}
       >
         <AppSidebar items={sidebarItems} />

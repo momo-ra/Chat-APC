@@ -9,7 +9,6 @@ import {
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
-import { getFooterBackground } from '../shared/pageBackgrounds';
 import chatAPCLogo from '../../assets/chatAPC-logo-light-mode.svg';
 import chatAPCLogoDark from '../../assets/chatAPC-logo.svg';
 import alphaProcessLogo from '../../assets/AlphaProcess-logo.png';
@@ -79,12 +78,15 @@ const Footer: React.FC = () => {
       component="footer"
       sx={{
         width: '100%',
-        background: getFooterBackground(isDark),
-        borderTop: 'none',
+        background: 'transparent',
+        borderTop: isDark 
+          ? '1px solid rgba(255, 255, 255, 0.06)'
+          : '1px solid rgba(0, 0, 0, 0.06)',
         position: 'relative',
         zIndex: 2,
         m: 0,
         p: 0,
+        mt: 8,
       }}
     >
       <Container 

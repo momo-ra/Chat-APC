@@ -7,7 +7,8 @@ import {
   CloudUpload,
   Timeline,
   Speed,
-  Sync
+  Sync,
+  CheckCircle,
 } from '@mui/icons-material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -107,53 +108,80 @@ export const ConnectorsSection: React.FC = () => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Header animation
-      if (headerRef.current) {
-        gsap.from(headerRef.current.children, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
+      if (headerRef.current && headerRef.current.children.length > 0) {
+        gsap.fromTo(
+          headerRef.current.children,
+          {
+            y: 60,
+            scale: 0.95,
+            opacity: 0,
           },
-          y: 50,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: 'power3.out',
-        });
+          {
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none none',
+            },
+            y: 0,
+            scale: 1,
+            opacity: 1,
+            duration: 0.7,
+            stagger: 0.2,
+            ease: 'back.out(1.4)',
+          }
+        );
       }
 
       // Cards animation
       cardsRef.current.forEach((card, index) => {
         if (card) {
-          gsap.from(card, {
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 90%',
-              toggleActions: 'play none none none',
+          gsap.fromTo(
+            card,
+            {
+              y: 80,
+              scale: 0.95,
+              opacity: 0,
             },
-            y: 60,
-            opacity: 0,
-            duration: 0.8,
-            delay: index * 0.15,
-            ease: 'power2.out',
-          });
+            {
+              scrollTrigger: {
+                trigger: card,
+                start: 'top 90%',
+                toggleActions: 'play none none none',
+              },
+              y: 0,
+              scale: 1,
+              opacity: 1,
+              duration: 0.7,
+              delay: index * 0.12,
+              ease: 'back.out(1.4)',
+            }
+          );
         }
       });
 
       // Benefits animation
-      if (benefitsRef.current) {
-        gsap.from(benefitsRef.current.children, {
-          scrollTrigger: {
-            trigger: benefitsRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
+      if (benefitsRef.current && benefitsRef.current.children.length > 0) {
+        gsap.fromTo(
+          benefitsRef.current.children,
+          {
+            y: 50,
+            scale: 0.9,
+            opacity: 0,
           },
-          y: 40,
-          opacity: 0,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'power2.out',
-        });
+          {
+            scrollTrigger: {
+              trigger: benefitsRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none none',
+            },
+            y: 0,
+            scale: 1,
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.12,
+            ease: 'back.out(1.4)',
+          }
+        );
       }
     }, sectionRef);
 
@@ -164,11 +192,10 @@ export const ConnectorsSection: React.FC = () => {
     <Box
       ref={sectionRef}
       component="section"
+      data-section-theme={isDark ? 'dark' : 'light'}
       sx={{
         py: sectionPadding,
-        background: isDark
-          ? 'linear-gradient(180deg, #1A1F2E 0%, #0F1419 50%, #1A1F2E 100%)'
-          : 'linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 50%, #F8FAFC 100%)',
+        background: 'transparent',
         position: 'relative',
       }}
     >
@@ -240,19 +267,19 @@ export const ConnectorsSection: React.FC = () => {
                 sx={{
                   background: isDark
                     ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.6) 100%)'
-                    : 'rgba(255, 255, 255, 0.9)',
-                  backdropFilter: 'blur(20px)',
-                  border: isDark 
+                    : 'rgba(255, 255, 255, 0.94)',
+                  backdropFilter: 'blur(24px)',
+                  border: isDark
                     ? `1px solid rgba(71, 85, 105, 0.3)`
                     : `1px solid rgba(226, 232, 240, 0.8)`,
-                  borderRadius: 4,
+                  borderRadius: 3,
                   height: '100%',
-                  transition: 'all 0.3s ease',
+                  transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
                   '&:hover': {
-                    transform: 'translateY(-8px)',
+                    transform: 'translateY(-10px) scale(1.02)',
                     boxShadow: isDark
-                      ? `0 20px 60px ${connector.color.dark}20`
-                      : `0 20px 60px ${connector.color.light}15`,
+                      ? `0 30px 60px ${connector.color.dark}25`
+                      : `0 30px 60px ${connector.color.light}20`,
                     borderColor: connector.color[isDark ? 'dark' : 'light'],
                   },
                 }}
@@ -261,10 +288,10 @@ export const ConnectorsSection: React.FC = () => {
                   {/* Icon */}
                   <Box
                     sx={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: 3,
-                      background: `${connector.color[isDark ? 'dark' : 'light']}20`,
+                      width: 72,
+                      height: 72,
+                      borderRadius: 2,
+                      background: `${connector.color[isDark ? 'dark' : 'light']}1A`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -273,7 +300,7 @@ export const ConnectorsSection: React.FC = () => {
                   >
                     <IconComponent
                       sx={{
-                        fontSize: 32,
+                        fontSize: 36,
                         color: connector.color[isDark ? 'dark' : 'light'],
                       }}
                     />
@@ -317,29 +344,32 @@ export const ConnectorsSection: React.FC = () => {
                   </Typography>
 
                   {/* Features List */}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
                     {connector.features.map((feature, featureIndex) => (
                       <Box
                         key={featureIndex}
                         sx={{
                           display: 'flex',
-                          alignItems: 'center',
-                          gap: 2,
+                          alignItems: 'flex-start',
+                          gap: 1.5,
                         }}
                       >
-                        <Box
+                        {/* Use a check icon for each feature instead of a simple dot.  This adds
+                            clarity and modernity to the list while tying the icon color to the
+                            connector’s accent color. */}
+                        <CheckCircle
                           sx={{
-                            width: 6,
-                            height: 6,
-                            borderRadius: '50%',
-                            backgroundColor: connector.color[isDark ? 'dark' : 'light'],
+                            fontSize: 16,
+                            mt: '2px',
+                            color: connector.color[isDark ? 'dark' : 'light'],
                             flexShrink: 0,
                           }}
                         />
                         <Typography
                           sx={{
-                            fontSize: '0.875rem',
-                            color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
+                            fontSize: '0.9rem',
+                            color: isDark ? 'rgba(255, 255, 255, 0.75)' : '#475569',
+                            lineHeight: 1.5,
                           }}
                         >
                           {feature}
@@ -372,22 +402,26 @@ export const ConnectorsSection: React.FC = () => {
                   textAlign: 'center',
                   p: 3,
                   background: isDark
-                    ? 'rgba(30, 41, 59, 0.3)'
-                    : 'rgba(248, 250, 252, 0.8)',
+                    ? 'rgba(30, 41, 59, 0.4)'
+                    : 'rgba(248, 250, 252, 0.9)',
                   borderRadius: 3,
-                  border: isDark 
-                    ? '1px solid rgba(71, 85, 105, 0.2)'
+                  border: isDark
+                    ? '1px solid rgba(71, 85, 105, 0.25)'
                     : '1px solid rgba(226, 232, 240, 0.6)',
-                  transition: 'all 0.3s ease',
+                  backdropFilter: 'blur(16px)',
+                  transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
                   '&:hover': {
-                    transform: 'translateY(-4px)',
+                    transform: 'translateY(-6px) scale(1.02)',
+                    boxShadow: isDark
+                      ? '0 20px 40px rgba(0, 0, 0, 0.3)'
+                      : '0 20px 40px rgba(0, 0, 0, 0.1)',
                   },
                 }}
               >
                 <Box
                   sx={{
-                    width: 48,
-                    height: 48,
+                    width: 56,
+                    height: 56,
                     borderRadius: '50%',
                     background: isDark
                       ? 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)'
@@ -399,12 +433,12 @@ export const ConnectorsSection: React.FC = () => {
                     mb: 2,
                   }}
                 >
-                  <IconComponent sx={{ fontSize: 24, color: 'white' }} />
+                  <IconComponent sx={{ fontSize: 28, color: 'white' }} />
                 </Box>
                 <Typography
                   variant="h6"
                   sx={{
-                    fontSize: '1.125rem',
+                    fontSize: '1.2rem',
                     fontWeight: 600,
                     color: isDark ? '#FFFFFF' : '#0F172A',
                     mb: 1,
@@ -414,8 +448,8 @@ export const ConnectorsSection: React.FC = () => {
                 </Typography>
                 <Typography
                   sx={{
-                    fontSize: '0.875rem',
-                    color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
+                    fontSize: '0.95rem',
+                    color: isDark ? 'rgba(255, 255, 255, 0.75)' : '#475569',
                     lineHeight: 1.5,
                   }}
                 >

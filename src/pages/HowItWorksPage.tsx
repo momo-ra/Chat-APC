@@ -8,7 +8,7 @@ import {
 } from '../components/how-it-works';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
-import { getHowItWorksBackground } from '../components/shared/pageBackgrounds';
+import { getHomeBackground } from '../components/shared/pageBackgrounds';
 
 const HowItWorksPage: React.FC = () => {
   const { isDark } = useThemeMode();
@@ -52,7 +52,7 @@ const HowItWorksPage: React.FC = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          background: getHowItWorksBackground(isDark),
+          background: getHomeBackground(isDark),
           position: 'relative',
           overflow: 'visible',
           transition: 'background 0.3s ease',

@@ -170,11 +170,10 @@ export const WorkflowExampleSection: React.FC = () => {
     <Box
       ref={sectionRef}
       component="section"
+      data-section-theme={isDark ? 'dark' : 'light'}
       sx={{
         py: sectionPadding,
-        background: isDark
-          ? 'linear-gradient(180deg, #0F1419 0%, #1A1F2E 50%, #0F1419 100%)'
-          : 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
+        background: 'transparent',
         position: 'relative',
       }}
     >

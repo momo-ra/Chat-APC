@@ -11,6 +11,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { useNavigate } from 'react-router-dom';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -40,8 +41,9 @@ const visionItems = [
 
 export const BiggerVisionSection: React.FC = () => {
   const { isDark } = useThemeMode();
+  const navigate = useNavigate();
   const { 
-    containerMaxWidth, 
+    containerMaxWidth,  
     containerPadding,
     h2FontSize,
     bodyFontSize,
@@ -114,11 +116,10 @@ export const BiggerVisionSection: React.FC = () => {
     <Box
       ref={sectionRef}
       component="section"
+      data-section-theme={isDark ? 'dark' : 'light'}
       sx={{
         py: sectionPadding,
-        background: isDark
-          ? 'linear-gradient(180deg, #1A1F2E 0%, #0F1419 50%, #2D1B69 100%)'
-          : 'linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 50%, #EEF2FF 100%)',
+        background: 'transparent',
         position: 'relative',
         overflow: 'hidden',
         '&::before': {
@@ -381,6 +382,7 @@ export const BiggerVisionSection: React.FC = () => {
               variant="contained"
               size="large"
               startIcon={<PlayArrow />}
+              onClick={() => navigate('/demo')}
               sx={{
                 background: isDark
                   ? 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)'
@@ -409,6 +411,7 @@ export const BiggerVisionSection: React.FC = () => {
               variant="outlined"
               size="large"
               startIcon={<CalendarToday />}
+              onClick={() => navigate('/company/contact')}
               sx={{
                 borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(71, 85, 105, 0.3)',
                 color: isDark ? 'rgba(255, 255, 255, 0.9)' : '#475569',

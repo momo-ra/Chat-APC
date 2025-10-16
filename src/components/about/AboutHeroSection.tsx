@@ -112,9 +112,7 @@ export const AboutHeroSection: React.FC = () => {
         position: 'relative',
         overflow: 'hidden',
         py: 'clamp(2.5rem, 12vh, 5rem)',
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(30, 58, 138, 0.1) 0%, rgba(79, 70, 229, 0.08) 35%, rgba(124, 58, 237, 0.06) 100%)'
-          : 'linear-gradient(135deg, rgba(239, 246, 255, 1) 0%, rgba(238, 242, 255, 1) 35%, rgba(250, 245, 255, 1) 100%)',
+        background: 'transparent',
         transition: 'background 0.3s ease',
         minHeight: 'clamp(70vh, 85vh, 90vh)',
         display: 'flex',

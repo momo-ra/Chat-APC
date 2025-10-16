@@ -1,245 +1,87 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Box, Typography, Container, Grid, Card, CardContent } from '@mui/material';
-import { 
-  LocationOn, 
-  Phone, 
-  Email, 
-  Schedule,
-  Business,
-  Support,
-  Groups,
-  Engineering
-} from '@mui/icons-material';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Phone, Email, LocationOn, AccessTime } from '@mui/icons-material';
 import { useThemeMode } from '../../contexts/ThemeContext';
-import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const contactInfo = [
   {
-    icon: LocationOn,
-    title: 'Headquarters',
-    details: [
-      'Alpha Process Control',
-      '1500 Industrial Blvd, Suite 200',
-      'Houston, TX 77032',
-      'United States',
-    ],
-    color: { light: '#2563EB', dark: '#009BE4' },
-  },
-  {
     icon: Phone,
-    title: 'Phone & Fax',
-    details: [
-      'Main: +1 (555) 123-4567',
-      'Sales: +1 (555) 123-4568',
-      'Support: +1 (555) 123-4569',
-      'Fax: +1 (555) 123-4570',
-    ],
+    title: 'Call Us',
+    details: ['+1 (555) 123-4567'],
+    subtext: 'Mon-Fri 9AM-6PM EST',
     color: { light: '#059669', dark: '#10B981' },
   },
   {
     icon: Email,
-    title: 'Email Contacts',
-    details: [
-      'General: hello@alphapc.com',
-      'Sales: sales@alphapc.com',
-      'Support: support@alphapc.com',
-      'Careers: careers@alphapc.com',
-    ],
-    color: { light: '#DC2626', dark: '#EF4444' },
+    title: 'Email Us',
+    details: ['hello@alphapc.com'],
+    subtext: '24-hour response guarantee',
+    color: { light: '#2563EB', dark: '#3B82F6' },
   },
   {
-    icon: Schedule,
-    title: 'Business Hours',
-    details: [
-      'Monday - Friday: 8:00 AM - 6:00 PM',
-      'Saturday: 9:00 AM - 2:00 PM',
-      'Sunday: Closed',
-      'Emergency Support: 24/7',
-    ],
-    color: { light: '#7C3AED', dark: '#8B5CF6' },
-  },
-];
-
-const departments = [
-  {
-    icon: Business,
-    title: 'Sales & Business Development',
-    description: 'Enterprise solutions, pricing, and partnership inquiries',
-    contact: 'sales@alphapc.com',
-    phone: '+1 (555) 123-4568',
-    color: { light: '#2563EB', dark: '#009BE4' },
-  },
-  {
-    icon: Support,
-    title: 'Technical Support',
-    description: '24/7 technical assistance and troubleshooting',
-    contact: 'support@alphapc.com',
-    phone: '+1 (555) 123-4569',
-    color: { light: '#059669', dark: '#10B981' },
-  },
-  {
-    icon: Engineering,
-    title: 'Professional Services',
-    description: 'Implementation, consulting, and custom development',
-    contact: 'services@alphapc.com',
-    phone: '+1 (555) 123-4571',
-    color: { light: '#EA580C', dark: '#FB923C' },
-  },
-  {
-    icon: Groups,
-    title: 'Training & Education',
-    description: 'Workshops, certification programs, and learning resources',
-    contact: 'training@alphapc.com',
-    phone: '+1 (555) 123-4572',
+    icon: LocationOn,
+    title: 'Visit Us',
+    details: ['1500 Industrial Blvd, Suite 200', 'Houston, TX 77032'],
+    subtext: 'Valid ID required for access',
     color: { light: '#7C3AED', dark: '#8B5CF6' },
   },
 ];
 
 const ContactInfoSection: React.FC = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const infoCardsRef = useRef<HTMLDivElement[]>([]);
-  const deptCardsRef = useRef<HTMLDivElement[]>([]);
   const { isDark } = useThemeMode();
-  const { 
-    h2FontSize,
-    containerMaxWidth,
-    containerPadding 
-  } = useResponsiveLayout();
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Header animation
-      if (headerRef.current) {
-        gsap.from(headerRef.current, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          y: 50,
-          opacity: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-        });
-      }
-
-      // Info cards animation
-      infoCardsRef.current.forEach((card, index) => {
-        if (card) {
-          gsap.from(card, {
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-            y: 40,
-            opacity: 0,
-            duration: 0.6,
-            delay: index * 0.1,
-            ease: 'power2.out',
-          });
-        }
-      });
-
-      // Department cards animation
-      deptCardsRef.current.forEach((card, index) => {
-        if (card) {
-          gsap.from(card, {
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-            y: 40,
-            opacity: 0,
-            duration: 0.6,
-            delay: index * 0.15,
-            ease: 'power2.out',
-          });
-        }
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
 
   return (
     <Box
-      ref={sectionRef}
       component="section"
       sx={{
-        py: 'clamp(3rem, 8vw, 6rem)',
+        py: { xs: 8, md: 10 },
         background: isDark
-          ? 'linear-gradient(180deg, rgba(31, 41, 55, 1) 0%, rgba(17, 24, 39, 1) 100%)'
-          : 'linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(248, 250, 252, 1) 100%)',
+          ? 'linear-gradient(135deg, #1A202C 0%, #0F1419 100%)'
+          : 'linear-gradient(135deg, #F8FAFC 0%, #FFFFFF 100%)',
         position: 'relative',
-        transition: 'background 0.3s ease',
       }}
     >
-      <Container 
-        maxWidth="lg"
-        sx={{
-          maxWidth: containerMaxWidth,
-          px: containerPadding,
-        }}
-      >
+      <Container maxWidth="lg" sx={{ px: { xs: 3, md: 4 } }}>
         {/* Section Header */}
-        <Box
-          ref={headerRef}
-          sx={{
-            textAlign: 'center',
-            mb: { xs: 6, md: 8 },
-          }}
-        >
+        <Box sx={{ textAlign: 'center', mb: 8 }}>
           <Typography
             variant="h2"
             sx={{
-              fontSize: h2FontSize,
-              fontWeight: 700,
-              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
+              fontSize: { xs: '2rem', md: '2.4rem' },
+              fontWeight: 800,
+              background: isDark
+                ? 'linear-gradient(135deg, #FFFFFF 0%, #3B82F6 100%)'
+                : 'linear-gradient(135deg, #1E293B 0%, #2563EB 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
               mb: 3,
-              lineHeight: 1.2,
-              transition: 'color 0.3s ease',
+              fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             }}
           >
             Get In Touch
           </Typography>
           <Typography
             sx={{
-              fontSize: { xs: '1.1rem', md: '1.25rem' },
-              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
-              maxWidth: '600px',
+              fontSize: { xs: '1rem', md: '1.15rem' },
+              color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
+              maxWidth: '500px',
               mx: 'auto',
               lineHeight: 1.6,
-              transition: 'color 0.3s ease',
             }}
           >
-            Multiple ways to reach our team of industrial automation experts
+            Multiple ways to connect with our expert team
           </Typography>
         </Box>
 
-        {/* Contact Information Cards */}
-        <Grid container spacing={{ xs: 3, md: 4 }} sx={{ mb: { xs: 6, md: 8 } }}>
+        {/* Contact Cards */}
+        <Grid container spacing={4} sx={{ mb: 8 }}>
           {contactInfo.map((info, index) => {
             const IconComponent = info.icon;
             return (
-              <Grid
-                item
-                xs={12}
-                md={6}
-                lg={3}
-                key={index}
-                ref={(el) => {
-                  if (el) infoCardsRef.current[index] = el as HTMLDivElement;
-                }}
-              >
+              <Grid item xs={12} md={4} key={index}>
                 <Card
-                  elevation={isDark ? 0 : 8}
+                  elevation={0}
                   sx={{
                     height: '100%',
                     borderRadius: '16px',
@@ -248,52 +90,44 @@ const ContactInfoSection: React.FC = () => {
                       : 'rgba(255, 255, 255, 0.95)',
                     border: isDark
                       ? '1px solid rgba(75, 85, 99, 0.3)'
-                      : 'none',
+                      : '1px solid rgba(226, 232, 240, 0.5)',
                     backdropFilter: 'blur(20px)',
-                    transition: 'all 0.3s ease',
-                    position: 'relative',
-                    overflow: 'hidden',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    cursor: 'pointer',
                     '&:hover': {
-                      transform: 'translateY(-8px)',
+                      transform: 'translateY(-8px) scale(1.02)',
                       borderColor: info.color[isDark ? 'dark' : 'light'],
                       boxShadow: isDark
-                        ? `0 20px 60px ${info.color.dark}30`
-                        : `0 20px 60px ${info.color.light}20`,
-                      '&::before': {
-                        opacity: 1,
+                        ? `0 20px 60px ${info.color.dark}20`
+                        : `0 20px 60px ${info.color.light}15`,
+                      '& .icon-container': {
+                        background: `linear-gradient(135deg, ${info.color[isDark ? 'dark' : 'light']} 0%, ${info.color[isDark ? 'dark' : 'light']}CC 100%)`,
+                        transform: 'scale(1.05)',
                       },
-                    },
-                    '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: '4px',
-                      background: `linear-gradient(90deg, ${info.color[isDark ? 'dark' : 'light']} 0%, transparent 100%)`,
-                      opacity: 0,
-                      transition: 'opacity 0.3s ease',
+                      '& .icon': {
+                        color: '#FFFFFF',
+                      },
                     },
                   }}
                 >
                   <CardContent
                     sx={{
-                      p: { xs: 3, md: 4 },
+                      p: 4,
+                      textAlign: 'center',
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
-                      '@media (min-width: 960px) and (max-width: 1549px)': {
-                        p: 3,
-                      },
+                      alignItems: 'center',
                     }}
                   >
                     {/* Icon */}
                     <Box
+                      className="icon-container"
                       sx={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: '12px',
-                        background: `${info.color[isDark ? 'dark' : 'light']}20`,
+                        width: 70,
+                        height: 70,
+                        borderRadius: '16px',
+                        background: `${info.color[isDark ? 'dark' : 'light']}15`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -302,9 +136,11 @@ const ContactInfoSection: React.FC = () => {
                       }}
                     >
                       <IconComponent
+                        className="icon"
                         sx={{
-                          fontSize: 28,
+                          fontSize: 32,
                           color: info.color[isDark ? 'dark' : 'light'],
+                          transition: 'all 0.3s ease',
                         }}
                       />
                     </Box>
@@ -312,33 +148,44 @@ const ContactInfoSection: React.FC = () => {
                     {/* Title */}
                     <Typography
                       sx={{
-                        fontSize: '1.2rem',
-                        fontWeight: 600,
+                        fontSize: '1.25rem',
+                        fontWeight: 700,
                         color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
                         mb: 2,
-                        transition: 'color 0.3s ease',
+                        fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                       }}
                     >
                       {info.title}
                     </Typography>
 
                     {/* Details */}
-                    <Box sx={{ flex: 1 }}>
+                    <Box sx={{ flex: 1, mb: 2 }}>
                       {info.details.map((detail, detailIndex) => (
                         <Typography
                           key={detailIndex}
                           sx={{
-                            fontSize: '0.9rem',
-                            color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
+                            fontSize: '1rem',
+                            color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
                             lineHeight: 1.6,
                             mb: 0.5,
-                            transition: 'color 0.3s ease',
+                            fontWeight: 600,
                           }}
                         >
                           {detail}
                         </Typography>
                       ))}
                     </Box>
+
+                    {/* Subtext */}
+                    <Typography
+                      sx={{
+                        fontSize: '0.9rem',
+                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(100, 116, 139, 1)',
+                        fontWeight: 500,
+                      }}
+                    >
+                      {info.subtext}
+                    </Typography>
                   </CardContent>
                 </Card>
               </Grid>
@@ -346,225 +193,31 @@ const ContactInfoSection: React.FC = () => {
           })}
         </Grid>
 
-        {/* Department Contacts */}
-        <Box
-          sx={{
-            mb: { xs: 4, md: 6 },
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: { xs: '1.5rem', md: '1.75rem' },
-              fontWeight: 700,
-              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
-              mb: 2,
-              textAlign: 'center',
-              transition: 'color 0.3s ease',
-            }}
-          >
-            Specialized Departments
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: { xs: '1rem', md: '1.1rem' },
-              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
-              textAlign: 'center',
-              maxWidth: '600px',
-              mx: 'auto',
-              mb: 6,
-              transition: 'color 0.3s ease',
-            }}
-          >
-            Connect directly with the right team for your specific needs
-          </Typography>
-
-          <Grid container spacing={{ xs: 3, md: 4 }}>
-            {departments.map((dept, index) => {
-              const IconComponent = dept.icon;
-              return (
-                <Grid
-                  item
-                  xs={12}
-                  md={6}
-                  key={index}
-                  ref={(el) => {
-                    if (el) deptCardsRef.current[index] = el as HTMLDivElement;
-                  }}
-                >
-                  <Card
-                    elevation={isDark ? 0 : 6}
-                    sx={{
-                      height: '100%',
-                      borderRadius: '12px',
-                      background: isDark
-                        ? 'rgba(31, 41, 55, 0.6)'
-                        : 'rgba(255, 255, 255, 0.9)',
-                      border: isDark
-                        ? '1px solid rgba(75, 85, 99, 0.3)'
-                        : '1px solid rgba(226, 232, 240, 0.5)',
-                      backdropFilter: 'blur(20px)',
-                      transition: 'all 0.3s ease',
-                      cursor: 'pointer',
-                      '&:hover': {
-                        transform: 'translateY(-6px)',
-                        borderColor: dept.color[isDark ? 'dark' : 'light'],
-                        background: isDark
-                          ? 'rgba(31, 41, 55, 0.8)'
-                          : 'rgba(255, 255, 255, 1)',
-                        boxShadow: isDark
-                          ? `0 15px 40px ${dept.color.dark}25`
-                          : `0 15px 40px ${dept.color.light}15`,
-                      },
-                    }}
-                  >
-                    <CardContent
-                      sx={{
-                        p: { xs: 3, md: 4 },
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        '@media (min-width: 960px) and (max-width: 1549px)': {
-                          p: 3,
-                        },
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: 3,
-                          mb: 3,
-                        }}
-                      >
-                        {/* Icon */}
-                        <Box
-                          sx={{
-                            width: 48,
-                            height: 48,
-                            borderRadius: '8px',
-                            background: `${dept.color[isDark ? 'dark' : 'light']}20`,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0,
-                          }}
-                        >
-                          <IconComponent
-                            sx={{
-                              fontSize: 24,
-                              color: dept.color[isDark ? 'dark' : 'light'],
-                            }}
-                          />
-                        </Box>
-
-                        {/* Title and Description */}
-                        <Box sx={{ flex: 1 }}>
-                          <Typography
-                            sx={{
-                              fontSize: '1.1rem',
-                              fontWeight: 600,
-                              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
-                              mb: 1,
-                              transition: 'color 0.3s ease',
-                            }}
-                          >
-                            {dept.title}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: '0.9rem',
-                              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
-                              lineHeight: 1.5,
-                              transition: 'color 0.3s ease',
-                            }}
-                          >
-                            {dept.description}
-                          </Typography>
-                        </Box>
-                      </Box>
-
-                      {/* Contact Details */}
-                      <Box
-                        sx={{
-                          pt: 3,
-                          mt: 'auto',
-                          borderTop: isDark 
-                            ? '1px solid rgba(75, 85, 99, 0.3)'
-                            : '1px solid rgba(226, 232, 240, 0.5)',
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            fontSize: '0.85rem',
-                            color: dept.color[isDark ? 'dark' : 'light'],
-                            fontWeight: 600,
-                            mb: 0.5,
-                          }}
-                        >
-                          {dept.contact}
-                        </Typography>
-                        <Typography
-                          sx={{
-                            fontSize: '0.85rem',
-                            color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(100, 116, 139, 1)',
-                            transition: 'color 0.3s ease',
-                          }}
-                        >
-                          {dept.phone}
-                        </Typography>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              );
-            })}
-          </Grid>
-        </Box>
-
-        {/* Emergency Contact */}
+        {/* Business Hours Card */}
         <Card
-          elevation={isDark ? 0 : 12}
+          elevation={0}
           sx={{
             borderRadius: '16px',
             background: isDark
-              ? 'linear-gradient(135deg, rgba(31, 41, 55, 0.9) 0%, rgba(17, 24, 39, 0.9) 100%)'
-              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+              ? 'rgba(31, 41, 55, 0.8)'
+              : 'rgba(255, 255, 255, 0.9)',
             border: isDark
               ? '1px solid rgba(75, 85, 99, 0.3)'
-              : 'none',
-            backdropFilter: 'blur(30px)',
-            position: 'relative',
-            overflow: 'hidden',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '4px',
-              background: isDark
-                ? 'linear-gradient(90deg, #DC2626 0%, #EF4444 100%)'
-                : 'linear-gradient(90deg, #DC2626 0%, #B91C1C 100%)',
-            },
+              : '1px solid rgba(226, 232, 240, 0.5)',
+            backdropFilter: 'blur(20px)',
+            maxWidth: '600px',
+            mx: 'auto',
           }}
         >
-          <CardContent
-            sx={{
-              p: { xs: 4, md: 6 },
-              textAlign: 'center',
-              '@media (min-width: 960px) and (max-width: 1549px)': {
-                p: 5,
-              },
-            }}
-          >
+          <CardContent sx={{ p: 4, textAlign: 'center' }}>
             <Box
               sx={{
-                width: 64,
-                height: 64,
-                borderRadius: '50%',
+                width: 60,
+                height: 60,
+                borderRadius: '12px',
                 background: isDark
-                  ? 'linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(239, 68, 68, 0.2) 100%)'
-                  : 'linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%)',
+                  ? 'linear-gradient(135deg, #059669 0%, #047857 100%)'
+                  : 'linear-gradient(135deg, #059669 0%, #047857 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -572,76 +225,48 @@ const ContactInfoSection: React.FC = () => {
                 mb: 3,
               }}
             >
-              <Phone
-                sx={{
-                  fontSize: 32,
-                  color: isDark ? '#EF4444' : '#DC2626',
-                }}
-              />
+              <AccessTime sx={{ fontSize: 28, color: '#FFFFFF' }} />
             </Box>
-
+            
             <Typography
               sx={{
-                fontSize: { xs: '1.3rem', md: '1.5rem' },
+                fontSize: '1.3rem',
                 fontWeight: 700,
                 color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
                 mb: 2,
-                transition: 'color 0.3s ease',
+                fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
               }}
             >
-              24/7 Emergency Support
+              Business Hours
             </Typography>
-
+            
             <Typography
               sx={{
-                fontSize: { xs: '1rem', md: '1.1rem' },
+                fontSize: '1rem',
                 color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
-                mb: 3,
-                maxWidth: '500px',
-                mx: 'auto',
-                transition: 'color 0.3s ease',
+                mb: 2,
+                fontWeight: 600,
               }}
             >
-              Critical system issues? Our emergency response team is available around the clock 
-              to minimize downtime and protect your operations.
+              Monday - Friday: 9:00 AM - 6:00 PM EST
             </Typography>
-
+            
             <Box
               sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                flexWrap: 'wrap',
-                gap: 3,
-                alignItems: 'center',
+                p: 2,
+                borderRadius: '8px',
+                background: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(5, 150, 105, 0.1)',
+                border: isDark ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(5, 150, 105, 0.2)',
               }}
             >
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1,
-                }}
-              >
-                <Phone sx={{ fontSize: 20, color: isDark ? '#EF4444' : '#DC2626' }} />
-                <Typography
-                  sx={{
-                    fontSize: '1.1rem',
-                    fontWeight: 600,
-                    color: isDark ? '#EF4444' : '#DC2626',
-                  }}
-                >
-                  +1 (555) 911-HELP
-                </Typography>
-              </Box>
-
               <Typography
                 sx={{
                   fontSize: '0.9rem',
-                  color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(100, 116, 139, 1)',
-                  fontWeight: 500,
+                  color: isDark ? '#10B981' : '#059669',
+                  fontWeight: 600,
                 }}
               >
-                Average response time: &lt; 15 minutes
+                We typically respond within 24 hours
               </Typography>
             </Box>
           </CardContent>
