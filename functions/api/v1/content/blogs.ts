@@ -5,7 +5,7 @@ export const onRequestGet: PagesFunction = async (ctx) => {
     if (!token) return new Response(JSON.stringify({ error: "Missing HUBSPOT_TOKEN" }), { status: 500 });
   
     const url = "https://api.hubapi.com/cms/v3/blogs/posts";
-    const res = await fetch(url, { method: "GET" });
+    const res = await fetch(url, { method: "GET", headers: { Authorization: `Bearer ${token}` } });
     if (!res.ok) return new Response(JSON.stringify({ error: "HubSpot error", status: res.status }), { status: 502 });
   
     const data = await res.json();
