@@ -1,7 +1,7 @@
 import type { BlogApiResponse, SingleBlogApiResponse, BlogPost, BlogArticle } from '../types/blog';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://10.10.10.64:3003/api/v1';
-const BLOG_ENDPOINT = `${API_BASE_URL}/content/blogs`;
+// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://10.10.10.64:3003/api/v1';
+const BLOG_ENDPOINT = `/api/v1/content/blogs`;
 
 // Category mapping from categoryId to category name and color
 const categoryMap: Record<number, { name: string; color: string }> = {
