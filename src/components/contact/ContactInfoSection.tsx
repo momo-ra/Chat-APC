@@ -35,9 +35,7 @@ const ContactInfoSection: React.FC = () => {
       component="section"
       sx={{
         py: { xs: 8, md: 10 },
-        background: isDark
-          ? 'linear-gradient(135deg, #1A202C 0%, #0F1419 100%)'
-          : 'linear-gradient(135deg, #F8FAFC 0%, #FFFFFF 100%)',
+        background: "transparent",
         position: 'relative',
       }}
     >
@@ -192,85 +190,6 @@ const ContactInfoSection: React.FC = () => {
             );
           })}
         </Grid>
-
-        {/* Business Hours Card */}
-        <Card
-          elevation={0}
-          sx={{
-            borderRadius: '16px',
-            background: isDark
-              ? 'rgba(31, 41, 55, 0.8)'
-              : 'rgba(255, 255, 255, 0.9)',
-            border: isDark
-              ? '1px solid rgba(75, 85, 99, 0.3)'
-              : '1px solid rgba(226, 232, 240, 0.5)',
-            backdropFilter: 'blur(20px)',
-            maxWidth: '600px',
-            mx: 'auto',
-          }}
-        >
-          <CardContent sx={{ p: 4, textAlign: 'center' }}>
-            <Box
-              sx={{
-                width: 60,
-                height: 60,
-                borderRadius: '12px',
-                background: isDark
-                  ? 'linear-gradient(135deg, #059669 0%, #047857 100%)'
-                  : 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mx: 'auto',
-                mb: 3,
-              }}
-            >
-              <AccessTime sx={{ fontSize: 28, color: '#FFFFFF' }} />
-            </Box>
-            
-            <Typography
-              sx={{
-                fontSize: '1.3rem',
-                fontWeight: 700,
-                color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
-                mb: 2,
-                fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-              }}
-            >
-              Business Hours
-            </Typography>
-            
-            <Typography
-              sx={{
-                fontSize: '1rem',
-                color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
-                mb: 2,
-                fontWeight: 600,
-              }}
-            >
-              Monday - Friday: 9:00 AM - 6:00 PM EST
-            </Typography>
-            
-            <Box
-              sx={{
-                p: 2,
-                borderRadius: '8px',
-                background: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(5, 150, 105, 0.1)',
-                border: isDark ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(5, 150, 105, 0.2)',
-              }}
-            >
-              <Typography
-                sx={{
-                  fontSize: '0.9rem',
-                  color: isDark ? '#10B981' : '#059669',
-                  fontWeight: 600,
-                }}
-              >
-                We typically respond within 24 hours
-              </Typography>
-            </Box>
-          </CardContent>
-        </Card>
       </Container>
     </Box>
   );

@@ -1,122 +1,113 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Box, Typography, Container, IconButton, Fab } from '@mui/material';
-import { PlayArrow, Pause, Visibility, Fullscreen, VolumeUp, VolumeOff } from '@mui/icons-material';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { Box, Typography, Container, IconButton } from '@mui/material';
+import { PlayArrow, Visibility, Fullscreen } from '@mui/icons-material';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { applySlideUp, applyScaleUp, applyFloatingAnimation, createAnimationTimeline } from '../shared/animationHelpers';
 
+gsap.registerPlugin(ScrollTrigger);
+
 export const DemoVideoSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const playerContainerRef = useRef<HTMLDivElement>(null);
+  const demoRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { isDark } = useThemeMode();
-  
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [hasStartedPlaying, setHasStartedPlaying] = useState(false);
-  const [showControls, setShowControls] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
+
   const [isFullscreen, setIsFullscreen] = useState(false);
-  
-  const { 
-    h2FontSize, 
-    bodyLargeFontSize, 
+  const [isDemoStarted, setIsDemoStarted] = useState(false);
+
+  const {
+    h2FontSize,
+    bodyLargeFontSize,
     containerMaxWidth,
     containerPadding,
-    isMobile 
   } = useResponsiveLayout();
 
-  // YouTube video ID
-  const YOUTUBE_VIDEO_ID = 'OnVBarmGnek';
-
+  // Handle Fullscreen
+  // We must listen for fullscreenchange to keep state in sync, because :fullscreen state and react state can diverge
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Floating animation for the video container
-      if (videoRef.current && !isPlaying) {
-        applyFloatingAnimation(videoRef.current, {
-          distance: 10,
-          duration: 3,
-        });
-      }
-
-      // Section entrance animation
-      const tl = createAnimationTimeline(sectionRef.current);
-      
-      const headerElement = sectionRef.current?.querySelector('.section-header') as HTMLElement;
-      const videoElement = sectionRef.current?.querySelector('.video-container') as HTMLElement;
-      
-      if (headerElement) {
-        applySlideUp(headerElement, { startTrigger: 'top 80%' });
-      }
-      
-      if (videoElement) {
-        applyScaleUp(videoElement, { 
-          delay: 0.3,
-          startTrigger: 'top 80%' 
-        });
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [isPlaying]);
-
-  // Handle play/pause
-  const handlePlayPause = () => {
-    if (iframeRef.current) {
-      const iframe = iframeRef.current;
-      if (isPlaying) {
-        // Send pause command to YouTube iframe
-        iframe.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+    const handleFullscreenChange = () => {
+      if (document.fullscreenElement === containerRef.current) {
+        setIsFullscreen(true);
       } else {
-        // Send play command to YouTube iframe
-        iframe.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-        if (!hasStartedPlaying) {
-          setHasStartedPlaying(true);
-        }
+        setIsFullscreen(false);
       }
-      setIsPlaying(!isPlaying);
-    }
-  };
+    };
 
-  // Handle mute/unmute
-  const handleMuteToggle = () => {
-    if (iframeRef.current) {
-      const iframe = iframeRef.current;
-      if (isMuted) {
-        iframe.contentWindow?.postMessage('{"event":"command","func":"unMute","args":""}', '*');
-      } else {
-        iframe.contentWindow?.postMessage('{"event":"command","func":"mute","args":""}', '*');
-      }
-      setIsMuted(!isMuted);
-    }
-  };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
 
-  // Handle fullscreen
-  const handleFullscreen = () => {
-    if (playerContainerRef.current) {
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  const handleFullscreen = useCallback(() => {
+    if (containerRef.current) {
       if (!isFullscreen) {
-        if (playerContainerRef.current.requestFullscreen) {
-          playerContainerRef.current.requestFullscreen();
+        if (containerRef.current.requestFullscreen) {
+          containerRef.current.requestFullscreen();
         }
       } else {
         if (document.exitFullscreen) {
           document.exitFullscreen();
         }
       }
-      setIsFullscreen(!isFullscreen);
+      // Don't setIsFullscreen(!isFullscreen) here because we listen and update via fullscreenchange
     }
+  }, [isFullscreen]);
+
+  // Handle demo start
+  const handleStartDemo = () => {
+    setIsDemoStarted(true);
   };
 
-  // Handle mouse movement to show/hide controls
-  const handleMouseMove = () => {
-    setShowControls(true);
-    setTimeout(() => {
-      if (isPlaying) {
-        setShowControls(false);
+  useEffect(() => {
+    // Load Storylane script
+    const script = document.createElement('script');
+    script.src = 'https://js.storylane.io/js/v2/storylane.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      // Cleanup script if needed
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
       }
-    }, 3000);
-  };
+    };
+  }, []);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Floating animation for the demo container when not started
+      if (demoRef.current && !isDemoStarted) {
+        applyFloatingAnimation(demoRef.current, {
+          distance: 10,
+          duration: 3,
+        });
+      }
+
+      // Section entrance animation
+      createAnimationTimeline(sectionRef.current);
+
+      const headerElement = sectionRef.current?.querySelector('.section-header') as HTMLElement;
+      const demoElement = sectionRef.current?.querySelector('.demo-container') as HTMLElement;
+
+      if (headerElement) {
+        applySlideUp(headerElement, { startTrigger: 'top 80%' });
+      }
+
+      if (demoElement) {
+        applyScaleUp(demoElement, {
+          delay: 0.3,
+          startTrigger: 'top 80%'
+        });
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [isDemoStarted]);
 
   return (
     <Box
@@ -126,13 +117,13 @@ export const DemoVideoSection: React.FC = () => {
       sx={{
         width: '100vw',
         marginLeft: 'calc(-50vw + 50%)',
-        py: 'clamp(2.5rem, 8vw, 4rem)',
+        py: { xs: 6, sm: 8, md: 10 },
         position: 'relative',
         overflow: 'hidden',
         background: 'transparent',
       }}
     >
-      <Container 
+      <Container
         maxWidth="lg"
         sx={{
           maxWidth: containerMaxWidth,
@@ -170,7 +161,7 @@ export const DemoVideoSection: React.FC = () => {
                   letterSpacing: '0.05em',
                 }}
               >
-                Live Demo
+                Interactive Demo
               </Typography>
             </Box>
 
@@ -190,9 +181,9 @@ export const DemoVideoSection: React.FC = () => {
                 lineHeight: 1.1,
               }}
             >
-              ChatAPC in action
+              Experience ChatAPC Live
             </Typography>
-            
+
             <Typography
               variant="body1"
               sx={{
@@ -204,14 +195,14 @@ export const DemoVideoSection: React.FC = () => {
                 fontWeight: 400,
               }}
             >
-              Instant answers to the questions engineers ask every day. Get clarity on process constraints, shift events, and profit opportunities.
+              Try our interactive demo to see how ChatAPC instantly answers the questions engineers ask every day. Explore process constraints, shift events, and profit opportunities.
             </Typography>
           </Box>
 
-          {/* Custom Video Player */}
+          {/* Interactive Demo Container */}
           <Box
-            ref={videoRef}
-            className="video-container"
+            ref={demoRef}
+            className="demo-container"
             sx={{
               position: 'relative',
               maxWidth: 1000,
@@ -220,67 +211,81 @@ export const DemoVideoSection: React.FC = () => {
             }}
           >
             <Box
-              ref={playerContainerRef}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={() => setShowControls(isPlaying ? false : true)}
+              ref={containerRef}
               sx={{
                 position: 'relative',
                 width: '100%',
-                aspectRatio: '16/9',
                 borderRadius: '24px',
                 overflow: 'hidden',
-                background: '#000',
                 boxShadow: isDark
                   ? '0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05)'
                   : '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.8)',
                 transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                cursor: isPlaying ? (showControls ? 'default' : 'none') : 'pointer',
                 '&:hover': {
-                  transform: isPlaying ? 'none' : 'translateY(-8px)',
+                  transform: isDemoStarted ? 'none' : 'translateY(-8px)',
                   boxShadow: isDark
                     ? '0 35px 70px -12px rgba(0, 155, 228, 0.3)'
                     : '0 35px 70px -12px rgba(59, 130, 246, 0.3)',
                 },
               }}
             >
-              {/* YouTube Embed */}
-              <iframe
-                ref={iframeRef}
-                width="100%"
-                height="100%"
-                src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?enablejsapi=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1`}
-                title="ChatAPC Demo"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
+              {/* Storylane Embed Container */}
+              <Box
+                className="sl-embed"
+                sx={{
+                  position: 'relative',
+                  paddingBottom: 'calc(71.08% + 25px)',
                   width: '100%',
-                  height: '100%',
-                  border: 'none',
-                  pointerEvents: isPlaying ? 'auto' : 'none',
+                  height: 0,
+                  transform: 'scale(1)',
+                  background: isDark ? '#0a0e2e' : '#f8fafc',
+                  borderRadius: '10px',
+                  overflow: 'hidden',
                 }}
-              />
+              >
+                <iframe
+                  loading="lazy"
+                  className="sl-demo"
+                  src="https://chatapc.storylane.io/demo/n2q3pvcx5mtt?embed=inline"
+                  name="sl-embed"
+                  allow="fullscreen"
+                  allowFullScreen
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    border: isDark
+                      ? '1px solid rgba(0, 155, 228, 0.35)'
+                      : '1px solid rgba(63, 95, 172, 0.35)',
+                    boxShadow: '0px 0px 18px rgba(26, 19, 72, 0.15)',
+                    borderRadius: '10px',
+                    boxSizing: 'border-box',
+                  }}
+                  onLoad={() => setIsDemoStarted(true)}
+                />
+              </Box>
 
-              {/* Initial Overlay - only shows before first play */}
-              {!hasStartedPlaying && (
+              {/* Overlay for initial state */}
+              {!isDemoStarted && (
                 <Box
-                  onClick={handlePlayPause}
+                  onClick={handleStartDemo}
                   sx={{
                     position: 'absolute',
                     inset: 0,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), url(https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/maxresdefault.jpg)`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
+                    background: isDark
+                      ? 'linear-gradient(rgba(10, 14, 46, 0.8), rgba(10, 14, 46, 0.4))'
+                      : 'linear-gradient(rgba(248, 250, 252, 0.8), rgba(248, 250, 252, 0.4))',
                     cursor: 'pointer',
                     zIndex: 10,
+                    borderRadius: '10px',
+                    backdropFilter: 'blur(5px)',
                   }}
                 >
-                  {/* Play Button */}
                   <IconButton
                     sx={{
                       width: { xs: 80, md: 100 },
@@ -301,145 +306,86 @@ export const DemoVideoSection: React.FC = () => {
                       },
                     }}
                   >
-                    <PlayArrow sx={{ 
-                      fontSize: { xs: 32, md: 40 }, 
-                      color: 'white', 
+                    <PlayArrow sx={{
+                      fontSize: { xs: 32, md: 40 },
+                      color: 'white',
                       ml: 1,
                       filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
                     }} />
                   </IconButton>
-                </Box>
-              )}
 
-              {/* Custom Controls */}
-              <Box
-                sx={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  background: 'linear-gradient(transparent, rgba(0, 0, 0, 0.8))',
-                  p: 2,
-                  transform: showControls ? 'translateY(0)' : 'translateY(100%)',
-                  transition: 'transform 0.3s ease',
-                  zIndex: 20,
-                }}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  {/* Play/Pause Button */}
-                  <IconButton
-                    onClick={handlePlayPause}
-                    sx={{
-                      color: 'white',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      backdropFilter: 'blur(10px)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      '&:hover': {
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        transform: 'scale(1.05)',
-                      },
-                    }}
-                  >
-                    {isPlaying ? <Pause /> : <PlayArrow />}
-                  </IconButton>
-
-                  {/* Volume Button */}
-                  <IconButton
-                    onClick={handleMuteToggle}
-                    sx={{
-                      color: 'white',
-                      '&:hover': {
-                        color: isDark ? '#009BE4' : '#3B82F6',
-                      },
-                    }}
-                  >
-                    {isMuted ? <VolumeOff /> : <VolumeUp />}
-                  </IconButton>
-
-                  {/* Spacer */}
-                  <Box sx={{ flex: 1 }} />
-
-                  {/* Video Title */}
                   <Typography
                     sx={{
-                      color: 'white',
-                      fontSize: '0.875rem',
-                      fontWeight: 500,
-                      display: { xs: 'none', sm: 'block' },
-                    }}
-                  >
-                    ChatAPC Interactive Demo
-                  </Typography>
-
-                  {/* Fullscreen Button */}
-                  <IconButton
-                    onClick={handleFullscreen}
-                    sx={{
-                      color: 'white',
-                      '&:hover': {
-                        color: isDark ? '#009BE4' : '#3B82F6',
-                      },
-                    }}
-                  >
-                    <Fullscreen />
-                  </IconButton>
-                </Box>
-              </Box>
-
-              {/* Custom Labels - only show before first play */}
-              {!hasStartedPlaying && (
-                <>
-                  {/* Demo Label */}
-                  <Box
-                    sx={{
                       position: 'absolute',
-                      bottom: 20,
-                      right: 20,
+                      bottom: 30,
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(75, 85, 99, 1)',
+                      background: isDark
+                        ? 'rgba(0, 0, 0, 0.6)'
+                        : 'rgba(255, 255, 255, 0.9)',
                       px: 3,
                       py: 1,
                       borderRadius: '50px',
-                      background: 'rgba(0, 0, 0, 0.8)',
                       backdropFilter: 'blur(10px)',
                       border: '1px solid rgba(255, 255, 255, 0.2)',
-                      zIndex: 15,
                     }}
                   >
-                    <Typography
-                      sx={{
-                        fontSize: '0.875rem',
-                        fontWeight: 600,
-                        color: 'white',
-                      }}
-                    >
-                      Interactive Demo
-                    </Typography>
-                  </Box>
+                    Click to Start Interactive Demo
+                  </Typography>
+                </Box>
+              )}
 
-                  {/* Duration */}
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: 20,
-                      left: 20,
-                      px: 2,
-                      py: 0.5,
-                      borderRadius: '8px',
+              {/* Fullscreen Button */}
+              {isDemoStarted && (
+                <IconButton
+                  onClick={handleFullscreen}
+                  sx={{
+                    position: 'absolute',
+                    top: 16,
+                    right: 16,
+                    color: 'white',
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    zIndex: 20,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
                       background: 'rgba(0, 0, 0, 0.8)',
-                      backdropFilter: 'blur(5px)',
-                      zIndex: 15,
+                      transform: 'scale(1.05)',
+                    },
+                  }}
+                >
+                  <Fullscreen />
+                </IconButton>
+              )}
+
+              {/* Demo Label */}
+              {isDemoStarted && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    bottom: 20,
+                    right: 20,
+                    px: 3,
+                    py: 1,
+                    borderRadius: '50px',
+                    background: 'rgba(0, 0, 0, 0.8)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    zIndex: 15,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      color: 'white',
                     }}
                   >
-                    <Typography
-                      sx={{
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        color: 'white',
-                      }}
-                    >
-                      5:42
-                    </Typography>
-                  </Box>
-                </>
+                    Try It Yourself
+                  </Typography>
+                </Box>
               )}
             </Box>
 
@@ -482,6 +428,7 @@ export const DemoVideoSection: React.FC = () => {
               }}
             />
           </Box>
+
         </Box>
       </Container>
     </Box>

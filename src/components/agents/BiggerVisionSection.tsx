@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Typography, Container, Card, CardContent, Button } from '@mui/material';
+import { Box, Container, Typography, Button } from '@mui/material';
 import { 
   Hub, 
   Groups,
@@ -21,21 +21,21 @@ const visionItems = [
     subtitle: 'historians, planning, reporting',
     description: 'Seamlessly integrate with your existing tools and systems',
     icon: Hub,
-    color: { light: '#3B82F6', dark: '#60A5FA' },
+    color: { light: '#10B981', dark: '#34D399' },
   },
   {
     title: 'Collaborate with other AI agents',
     subtitle: 'insights move across operations, maintenance, and supply chain',
     description: 'Create a connected intelligence network across your organization',
     icon: Groups,
-    color: { light: '#10B981', dark: '#34D399' },
+    color: { light: '#F59E0B', dark: '#FBBF24' },
   },
   {
     title: 'Scale across plants and enterprises',
     subtitle: 'making ChatAPC the hub of connected decision-making',
     description: 'Expand intelligent operations throughout your entire enterprise',
     icon: Business,
-    color: { light: '#8B5CF6', dark: '#A78BFA' },
+    color: { light: '#EC4899', dark: '#F472B6' },
   },
 ];
 
@@ -59,7 +59,7 @@ export const BiggerVisionSection: React.FC = () => {
     const ctx = gsap.context(() => {
       // Header animation
       if (headerRef.current) {
-        gsap.from(headerRef.current.children, {
+        gsap.from(headerRef.current, {
           scrollTrigger: {
             trigger: headerRef.current,
             start: 'top 85%',
@@ -68,7 +68,6 @@ export const BiggerVisionSection: React.FC = () => {
           y: 50,
           opacity: 0,
           duration: 0.8,
-          stagger: 0.2,
           ease: 'power3.out',
         });
       }
@@ -84,17 +83,16 @@ export const BiggerVisionSection: React.FC = () => {
             },
             y: 60,
             opacity: 0,
-            scale: 0.9,
             duration: 0.8,
-            delay: index * 0.2,
-            ease: 'back.out(1.7)',
+            delay: index * 0.15,
+            ease: 'power2.out',
           });
         }
       });
 
       // Final section animation
       if (finalRef.current) {
-        gsap.from(finalRef.current.children, {
+        gsap.from(finalRef.current, {
           scrollTrigger: {
             trigger: finalRef.current,
             start: 'top 85%',
@@ -103,7 +101,6 @@ export const BiggerVisionSection: React.FC = () => {
           y: 40,
           opacity: 0,
           duration: 0.8,
-          stagger: 0.2,
           ease: 'power2.out',
         });
       }
@@ -116,24 +113,10 @@ export const BiggerVisionSection: React.FC = () => {
     <Box
       ref={sectionRef}
       component="section"
-      data-section-theme={isDark ? 'dark' : 'light'}
       sx={{
         py: sectionPadding,
         background: 'transparent',
         position: 'relative',
-        overflow: 'hidden',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: '10%',
-          left: '-20%',
-          width: '70%',
-          height: '80%',
-          background: isDark
-            ? 'radial-gradient(ellipse, rgba(139, 92, 246, 0.12) 0%, transparent 70%)'
-            : 'radial-gradient(ellipse, rgba(139, 92, 246, 0.1) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        },
       }}
     >
       <Container
@@ -144,15 +127,28 @@ export const BiggerVisionSection: React.FC = () => {
         }}
       >
         {/* Section Header */}
-        <Box ref={headerRef} sx={{ textAlign: 'center', mb: { xs: 8, md: 12 } }}>
+        <Box ref={headerRef} sx={{ mb: { xs: 8, md: 10 } }}>
+          <Typography
+            sx={{
+              fontSize: { xs: '0.875rem', md: '1rem' },
+              fontWeight: 700,
+              color: isDark ? '#60A5FA' : '#3B82F6',
+              textTransform: 'uppercase',
+              letterSpacing: 2,
+              mb: 2,
+            }}
+          >
+            Future Vision
+          </Typography>
           <Typography
             variant="h2"
             sx={{
               fontSize: h2FontSize,
               fontWeight: 700,
               color: isDark ? '#FFFFFF' : '#0F172A',
-              mb: 4,
+              mb: 3,
               lineHeight: 1.2,
+              maxWidth: 900,
             }}
           >
             The Bigger Vision
@@ -162,7 +158,6 @@ export const BiggerVisionSection: React.FC = () => {
               fontSize: bodyFontSize,
               color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
               maxWidth: '800px',
-              mx: 'auto',
               lineHeight: 1.7,
               mb: 3,
             }}
@@ -173,9 +168,8 @@ export const BiggerVisionSection: React.FC = () => {
             sx={{
               fontSize: { xs: '1.125rem', md: '1.25rem' },
               fontWeight: 600,
-              color: isDark ? '#A78BFA' : '#8B5CF6',
+              color: isDark ? '#60A5FA' : '#3B82F6',
               maxWidth: '600px',
-              mx: 'auto',
               lineHeight: 1.6,
             }}
           >
@@ -183,93 +177,77 @@ export const BiggerVisionSection: React.FC = () => {
           </Typography>
         </Box>
 
-        {/* Vision Items */}
+        {/* Vision Items - Left Border Style */}
         <Box
           sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', lg: 'repeat(3, 1fr)' },
-            gap: { xs: 6, md: 8 },
-            mb: { xs: 8, md: 12 },
+            display: 'flex',
+            flexDirection: 'column',
+            gap: { xs: 4, md: 5 },
+            mb: { xs: 10, md: 14 },
           }}
         >
           {visionItems.map((item, index) => {
             const IconComponent = item.icon;
             return (
-              <Card
+              <Box
                 key={index}
                 ref={(el) => {
                   if (el) visionRef.current[index] = el as HTMLDivElement;
                 }}
-                elevation={0}
                 sx={{
-                  background: isDark
-                    ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.6) 100%)'
-                    : 'rgba(255, 255, 255, 0.9)',
-                  backdropFilter: 'blur(20px)',
-                  border: isDark 
-                    ? `1px solid rgba(71, 85, 105, 0.3)`
-                    : `1px solid rgba(226, 232, 240, 0.8)`,
-                  borderRadius: 4,
-                  height: '100%',
-                  textAlign: 'center',
                   position: 'relative',
-                  transition: 'all 0.4s ease',
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: '80px 1fr' },
+                  gap: { xs: 3, md: 4 },
+                  p: { xs: 3, md: 4 },
+                  borderRadius: 0,
+                  borderLeft: isDark ? '2px solid rgba(71, 85, 105, 0.3)' : '2px solid rgba(226, 232, 240, 1)',
+                  background: 'transparent',
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                   '&:hover': {
-                    transform: 'translateY(-12px) scale(1.02)',
-                    boxShadow: isDark
-                      ? `0 25px 80px ${item.color.dark}25`
-                      : `0 25px 80px ${item.color.light}20`,
-                    borderColor: item.color[isDark ? 'dark' : 'light'],
-                    '&::before': {
-                      opacity: 1,
+                    pl: { xs: 4, md: 5 },
+                    borderLeftColor: item.color[isDark ? 'dark' : 'light'],
+                    borderLeftWidth: '3px',
+                    background: isDark
+                      ? `linear-gradient(90deg, ${item.color.dark}10 0%, transparent 100%)`
+                      : `linear-gradient(90deg, ${item.color.light}08 0%, transparent 100%)`,
+                    '& .vision-icon': {
+                      transform: 'scale(1.1) rotate(5deg)',
                     },
-                  },
-                  '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: 4,
-                    background: `linear-gradient(90deg, ${item.color[isDark ? 'dark' : 'light']} 0%, ${item.color[isDark ? 'dark' : 'light']}80 100%)`,
-                    borderRadius: '4px 4px 0 0',
-                    opacity: 0,
-                    transition: 'opacity 0.3s ease',
                   },
                 }}
               >
-                <CardContent sx={{ p: { xs: 4, md: 5 } }}>
-                  {/* Icon */}
-                  <Box
+                {/* Icon */}
+                <Box
+                  className="vision-icon"
+                  sx={{
+                    width: { xs: 64, md: 72 },
+                    height: { xs: 64, md: 72 },
+                    borderRadius: 2,
+                    background: item.color[isDark ? 'dark' : 'light'],
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.4s ease',
+                    boxShadow: `0 8px 24px ${item.color[isDark ? 'dark' : 'light']}30`,
+                    mx: { xs: 'auto', md: 0 },
+                  }}
+                >
+                  <IconComponent
                     sx={{
-                      width: 80,
-                      height: 80,
-                      borderRadius: 4,
-                      background: `${item.color[isDark ? 'dark' : 'light']}20`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mx: 'auto',
-                      mb: 3,
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'scale(1.1) rotate(5deg)',
-                      },
+                      fontSize: { xs: 32, md: 36 },
+                      color: '#FFFFFF',
                     }}
-                  >
-                    <IconComponent
-                      sx={{
-                        fontSize: 40,
-                        color: item.color[isDark ? 'dark' : 'light'],
-                      }}
-                    />
-                  </Box>
+                  />
+                </Box>
 
+                {/* Content */}
+                <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                   {/* Title */}
                   <Typography
                     variant="h5"
                     sx={{
-                      fontSize: '1.25rem',
+                      fontSize: { xs: '1.25rem', md: '1.5rem' },
                       fontWeight: 700,
                       color: isDark ? '#FFFFFF' : '#0F172A',
                       mb: 1,
@@ -282,12 +260,12 @@ export const BiggerVisionSection: React.FC = () => {
                   {/* Subtitle */}
                   <Typography
                     sx={{
-                      fontSize: '0.9rem',
+                      fontSize: '0.875rem',
                       fontWeight: 600,
                       color: item.color[isDark ? 'dark' : 'light'],
                       mb: 2,
                       fontStyle: 'italic',
-                      lineHeight: 1.4,
+                      lineHeight: 1.5,
                     }}
                   >
                     {item.subtitle}
@@ -296,15 +274,17 @@ export const BiggerVisionSection: React.FC = () => {
                   {/* Description */}
                   <Typography
                     sx={{
-                      fontSize: '1rem',
-                      color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
-                      lineHeight: 1.6,
+                      fontSize: { xs: '1rem', md: '1.125rem' },
+                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
+                      lineHeight: 1.7,
+                      maxWidth: 700,
+                      mx: { xs: 'auto', md: 0 },
                     }}
                   >
                     {item.description}
                   </Typography>
-                </CardContent>
-              </Card>
+                </Box>
+              </Box>
             );
           })}
         </Box>
@@ -313,43 +293,20 @@ export const BiggerVisionSection: React.FC = () => {
         <Box
           ref={finalRef}
           sx={{
-            textAlign: 'center',
-            p: { xs: 6, md: 8 },
-            background: isDark
-              ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%)'
-              : 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%)',
-            borderRadius: 4,
-            border: isDark
-              ? '1px solid rgba(139, 92, 246, 0.3)'
-              : '1px solid rgba(139, 92, 246, 0.2)',
             position: 'relative',
-            overflow: 'hidden',
+            pt: { xs: 8, md: 10 },
+            borderTop: isDark ? '1px solid rgba(71, 85, 105, 0.3)' : '1px solid rgba(226, 232, 240, 1)',
           }}
         >
-          {/* Background Animation */}
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '-50%',
-              left: '-50%',
-              width: '200%',
-              height: '200%',
-              background: isDark
-                ? 'conic-gradient(from 0deg at 50% 50%, rgba(139, 92, 246, 0.1) 0deg, rgba(59, 130, 246, 0.1) 180deg, rgba(139, 92, 246, 0.1) 360deg)'
-                : 'conic-gradient(from 0deg at 50% 50%, rgba(139, 92, 246, 0.05) 0deg, rgba(59, 130, 246, 0.05) 180deg, rgba(139, 92, 246, 0.05) 360deg)',
-              animation: 'rotate 25s linear infinite',
-              zIndex: -1,
-            }}
-          />
-
           <Typography
             variant="h3"
             sx={{
-              fontSize: { xs: '1.75rem', md: '2.25rem' },
+              fontSize: { xs: '1.75rem', md: '2.5rem' },
               fontWeight: 700,
               color: isDark ? '#FFFFFF' : '#0F172A',
-              mb: 3,
+              mb: 4,
               lineHeight: 1.2,
+              maxWidth: 900,
             }}
           >
             Digital Colleagues Who Detect, Explain, and Unlock
@@ -358,9 +315,8 @@ export const BiggerVisionSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: { xs: '1.125rem', md: '1.25rem' },
-              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
-              maxWidth: '700px',
-              mx: 'auto',
+              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
+              maxWidth: '800px',
               lineHeight: 1.7,
               mb: 6,
             }}
@@ -373,8 +329,7 @@ export const BiggerVisionSection: React.FC = () => {
             sx={{
               display: 'flex',
               flexDirection: { xs: 'column', sm: 'row' },
-              alignItems: 'center',
-              justifyContent: 'center',
+              alignItems: { xs: 'stretch', sm: 'center' },
               gap: 3,
             }}
           >
@@ -384,23 +339,25 @@ export const BiggerVisionSection: React.FC = () => {
               startIcon={<PlayArrow />}
               onClick={() => navigate('/demo')}
               sx={{
-                background: isDark
-                  ? 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)'
-                  : 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-                color: 'white',
+                background: isDark ? '#60A5FA' : '#3B82F6',
+                color: '#FFFFFF',
                 px: 5,
                 py: 2,
                 fontSize: '1.125rem',
                 fontWeight: 600,
-                borderRadius: 3,
-                boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)',
+                borderRadius: 2,
+                textTransform: 'none',
+                boxShadow: isDark
+                  ? '0 8px 32px rgba(96, 165, 250, 0.3)'
+                  : '0 8px 32px rgba(59, 130, 246, 0.25)',
                 transition: 'all 0.3s ease',
                 '&:hover': {
                   transform: 'translateY(-2px)',
-                  boxShadow: '0 12px 40px rgba(139, 92, 246, 0.4)',
-                  background: isDark
-                    ? 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)'
-                    : 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)',
+                  boxShadow: isDark
+                    ? '0 12px 40px rgba(96, 165, 250, 0.4)'
+                    : '0 12px 40px rgba(59, 130, 246, 0.3)',
+                  background: isDark ? '#60A5FA' : '#3B82F6',
+                  filter: 'brightness(1.1)',
                 },
               }}
             >
@@ -413,19 +370,22 @@ export const BiggerVisionSection: React.FC = () => {
               startIcon={<CalendarToday />}
               onClick={() => navigate('/company/contact')}
               sx={{
-                borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(71, 85, 105, 0.3)',
+                borderColor: isDark ? 'rgba(71, 85, 105, 0.5)' : 'rgba(226, 232, 240, 1)',
                 color: isDark ? 'rgba(255, 255, 255, 0.9)' : '#475569',
                 px: 5,
                 py: 2,
                 fontSize: '1.125rem',
                 fontWeight: 600,
-                borderRadius: 3,
+                borderRadius: 2,
                 borderWidth: 2,
+                textTransform: 'none',
                 transition: 'all 0.3s ease',
                 '&:hover': {
-                  borderColor: isDark ? '#A78BFA' : '#8B5CF6',
-                  color: isDark ? '#A78BFA' : '#8B5CF6',
-                  background: isDark ? 'rgba(167, 139, 250, 0.05)' : 'rgba(139, 92, 246, 0.05)',
+                  borderColor: isDark ? '#60A5FA' : '#3B82F6',
+                  color: isDark ? '#60A5FA' : '#3B82F6',
+                  background: isDark 
+                    ? 'rgba(96, 165, 250, 0.05)' 
+                    : 'rgba(59, 130, 246, 0.03)',
                   transform: 'translateY(-2px)',
                   borderWidth: 2,
                 },
@@ -436,21 +396,6 @@ export const BiggerVisionSection: React.FC = () => {
           </Box>
         </Box>
       </Container>
-
-      {/* Keyframes */}
-      <Box
-        component="style"
-        sx={{
-          '@keyframes rotate': {
-            '0%': {
-              transform: 'rotate(0deg)',
-            },
-            '100%': {
-              transform: 'rotate(360deg)',
-            },
-          },
-        }}
-      />
     </Box>
   );
 };

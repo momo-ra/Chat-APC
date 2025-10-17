@@ -57,12 +57,12 @@ const exampleScenario = {
       icon: Psychology,
     },
     {
-      step: 'Process Advisor explains the constraint',
+      step: 'Advisor Agent explains the constraint',
       description: 'Specialized agent analyzes the limiting condition',
       icon: Assessment,
     },
     {
-      step: 'Graph Agent adds clear plot with limit line',
+      step: 'Visualize Agent adds clear plot with limit line',
       description: 'Visual representation with context annotations',
       icon: TrendingUp,
     },

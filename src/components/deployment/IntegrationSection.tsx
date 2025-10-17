@@ -1,28 +1,61 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Container, Typography, Grid } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const IntegrationSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const sourcesRef = useRef<HTMLDivElement>(null);
+  const outputsRef = useRef<HTMLDivElement>(null);
   const { isDark } = useThemeMode();
+  const {
+    containerMaxWidth,
+    containerPadding,
+    h2FontSize,
+    h4FontSize,
+    bodyFontSize,
+    sectionPadding,
+  } = useResponsiveLayout();
+
+  const sourceColor = { light: '#3B82F6', dark: '#60A5FA' };
+  const outputColor = { light: '#EC4899', dark: '#F472B6' };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.to('.integration-column', {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none',
-        },
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: 'power2.out',
+      if (headerRef.current) {
+        gsap.from(headerRef.current, {
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+          y: 50,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+        });
+      }
+
+      [sourcesRef, outputsRef].forEach((ref, index) => {
+        if (ref.current) {
+          gsap.from(ref.current, {
+            scrollTrigger: {
+              trigger: ref.current,
+              start: 'top 85%',
+              toggleActions: 'play none none none',
+            },
+            y: 60,
+            opacity: 0,
+            duration: 0.8,
+            delay: index * 0.2,
+            ease: 'power2.out',
+          });
+        }
       });
     }, sectionRef);
 
@@ -41,219 +74,239 @@ const IntegrationSection: React.FC = () => {
     'Automated Reports: Scheduled insights and performance summaries',
     'Data Exports: Flexible formats for external analysis',
     'Write-back Capability: Direct integration with DCS and databases',
-    'API Access: Programmatic integration with third-party applications',
   ];
 
   return (
     <Box
+      ref={sectionRef}
       sx={{
         width: '100%',
-        py: { xs: 8, md: 12 },
+        py: sectionPadding,
         position: 'relative',
-        '@media (min-width: 960px) and (max-width: 1549px)': {
-          py: 10,
-        },
-        '@media (min-width: 1550px)': {
-          py: 12,
-        },
       }}
     >
       <Container 
         maxWidth="lg"
         sx={{
-          '@media (min-width: 960px) and (max-width: 1549px)': {
-            maxWidth: '950px',
-            px: 2.5,
-          },
-          '@media (min-width: 1550px)': {
-            maxWidth: '1200px',
-            px: 3,
-          },
+          maxWidth: containerMaxWidth,
+          px: containerPadding,
         }}
       >
-        <Box ref={sectionRef}>
+        {/* Header */}
+        <Box ref={headerRef} sx={{ mb: { xs: 8, md: 10 } }}>
+          <Typography
+            sx={{
+              fontSize: { xs: '0.875rem', md: '1rem' },
+              fontWeight: 700,
+              color: isDark ? '#60A5FA' : '#3B82F6',
+              textTransform: 'uppercase',
+              letterSpacing: 2,
+              mb: 2,
+            }}
+          >
+            Integration Ecosystem
+          </Typography>
           <Typography
             variant="h2"
             sx={{
-              fontSize: { xs: '2rem', md: '3rem' },
+              fontSize: h2FontSize,
               fontWeight: 700,
-              color: isDark ? '#fff' : 'rgba(0, 0, 0, 0.9)',
-              mb: 2,
-              textAlign: 'center',
-              transition: 'color 0.3s ease',
-              '@media (min-width: 960px) and (max-width: 1549px)': {
-                fontSize: '2.6rem',
-              },
+              color: isDark ? '#FFFFFF' : '#0F172A',
+              mb: 3,
+              lineHeight: 1.2,
             }}
           >
             Comprehensive Integration Ecosystem
           </Typography>
           <Typography
             sx={{
-              fontSize: { xs: '1rem', md: '1.1rem' },
-              color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
-              textAlign: 'center',
-              mb: 8,
+              fontSize: bodyFontSize,
+              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
+              lineHeight: 1.7,
               maxWidth: 800,
-              mx: 'auto',
-              transition: 'color 0.3s ease',
-              '@media (min-width: 960px) and (max-width: 1549px)': {
-                fontSize: '1.05rem',
-                mb: 6,
-                maxWidth: 700,
-              },
             }}
           >
             Future-Ready Architecture: Built-in support for emerging third-party real-time databases and external applications ensures your investment remains valuable as technology evolves.
           </Typography>
+        </Box>
 
-          <Grid container spacing={6}>
-            {/* Data Sources */}
-            <Grid item xs={12} md={6}>
-              <Box
-                className="integration-column"
+        {/* Two Column Layout */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
+            gap: { xs: 6, md: 8 },
+          }}
+        >
+          {/* Data Sources */}
+          <Box ref={sourcesRef}>
+            <Box
+              sx={{
+                width: 56,
+                height: 56,
+                borderRadius: 2,
+                background: sourceColor[isDark ? 'dark' : 'light'],
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mb: 3,
+                boxShadow: `0 8px 24px ${sourceColor[isDark ? 'dark' : 'light']}30`,
+              }}
+            >
+              <Typography
                 sx={{
-                  background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.95)',
-                  backdropFilter: 'blur(20px)',
-                  border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
-                  borderRadius: 4,
-                  padding: 4,
-                  height: '100%',
-                  opacity: 0,
-                  transform: 'translateY(50px)',
-                  boxShadow: isDark ? 'none' : '0 8px 32px rgba(0, 0, 0, 0.08)',
-                  transition: 'all 0.3s ease',
-                  '@media (min-width: 960px) and (max-width: 1549px)': {
-                    padding: 3,
-                  },
+                  fontSize: '1.25rem',
+                  fontWeight: 700,
+                  color: '#FFFFFF',
                 }}
               >
-                <Typography
-                  variant="h4"
+                IN
+              </Typography>
+            </Box>
+
+            <Typography
+              variant="h4"
+              sx={{
+                fontSize: h4FontSize,
+                fontWeight: 700,
+                color: isDark ? '#FFFFFF' : '#0F172A',
+                mb: 4,
+              }}
+            >
+              Data Sources
+            </Typography>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {dataSources.map((source, index) => (
+                <Box
+                  key={index}
                   sx={{
-                    fontSize: { xs: '1.5rem', md: '1.8rem' },
-                    fontWeight: 600,
-                    color: isDark ? '#009BE4' : '#2563EB',
-                    mb: 4,
-                    transition: 'color 0.3s ease',
-                    '@media (min-width: 960px) and (max-width: 1549px)': {
-                      fontSize: '1.65rem',
-                      mb: 3,
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 2,
+                    p: 2,
+                    borderRadius: 0,
+                    borderLeft: isDark ? '2px solid rgba(71, 85, 105, 0.3)' : '2px solid rgba(226, 232, 240, 1)',
+                    background: 'transparent',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      pl: 3,
+                      borderLeftColor: sourceColor[isDark ? 'dark' : 'light'],
+                      borderLeftWidth: '3px',
+                      background: isDark
+                        ? `linear-gradient(90deg, ${sourceColor.dark}10 0%, transparent 100%)`
+                        : `linear-gradient(90deg, ${sourceColor.light}08 0%, transparent 100%)`,
                     },
                   }}
                 >
-                  Data Sources
-                </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-                  {dataSources.map((source, index) => (
-                    <Box
-                      key={index}
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: 2,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: '50%',
-                          backgroundColor: isDark ? '#009BE4' : '#2563EB',
-                          flexShrink: 0,
-                          mt: 1,
-                          transition: 'background-color 0.3s ease',
-                        }}
-                      />
-                      <Typography
-                        sx={{
-                          fontSize: '1rem',
-                          color: isDark ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 0, 0, 0.7)',
-                          lineHeight: 1.6,
-                          transition: 'color 0.3s ease',
-                        }}
-                      >
-                        {source}
-                      </Typography>
-                    </Box>
-                  ))}
+                  <Box
+                    sx={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: '50%',
+                      backgroundColor: sourceColor[isDark ? 'dark' : 'light'],
+                      flexShrink: 0,
+                      mt: 0.75,
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      fontSize: '1rem',
+                      color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {source}
+                  </Typography>
                 </Box>
-              </Box>
-            </Grid>
+              ))}
+            </Box>
+          </Box>
 
-            {/* Data Outputs */}
-            <Grid item xs={12} md={6}>
-              <Box
-                className="integration-column"
+          {/* Data Outputs */}
+          <Box ref={outputsRef}>
+            <Box
+              sx={{
+                width: 56,
+                height: 56,
+                borderRadius: 2,
+                background: outputColor[isDark ? 'dark' : 'light'],
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mb: 3,
+                boxShadow: `0 8px 24px ${outputColor[isDark ? 'dark' : 'light']}30`,
+              }}
+            >
+              <Typography
                 sx={{
-                  background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.95)',
-                  backdropFilter: 'blur(20px)',
-                  border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
-                  borderRadius: 4,
-                  padding: 4,
-                  height: '100%',
-                  opacity: 0,
-                  transform: 'translateY(50px)',
-                  boxShadow: isDark ? 'none' : '0 8px 32px rgba(0, 0, 0, 0.08)',
-                  transition: 'all 0.3s ease',
-                  '@media (min-width: 960px) and (max-width: 1549px)': {
-                    padding: 3,
-                  },
+                  fontSize: '1.25rem',
+                  fontWeight: 700,
+                  color: '#FFFFFF',
                 }}
               >
-                <Typography
-                  variant="h4"
+                OUT
+              </Typography>
+            </Box>
+
+            <Typography
+              variant="h4"
+              sx={{
+                fontSize: h4FontSize,
+                fontWeight: 700,
+                color: isDark ? '#FFFFFF' : '#0F172A',
+                mb: 4,
+              }}
+            >
+              Data Outputs
+            </Typography>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {dataOutputs.map((output, index) => (
+                <Box
+                  key={index}
                   sx={{
-                    fontSize: { xs: '1.5rem', md: '1.8rem' },
-                    fontWeight: 600,
-                    color: isDark ? '#009BE4' : '#2563EB',
-                    mb: 4,
-                    transition: 'color 0.3s ease',
-                    '@media (min-width: 960px) and (max-width: 1549px)': {
-                      fontSize: '1.65rem',
-                      mb: 3,
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 2,
+                    p: 2,
+                    borderRadius: 0,
+                    borderLeft: isDark ? '2px solid rgba(71, 85, 105, 0.3)' : '2px solid rgba(226, 232, 240, 1)',
+                    background: 'transparent',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      pl: 3,
+                      borderLeftColor: outputColor[isDark ? 'dark' : 'light'],
+                      borderLeftWidth: '3px',
+                      background: isDark
+                        ? `linear-gradient(90deg, ${outputColor.dark}10 0%, transparent 100%)`
+                        : `linear-gradient(90deg, ${outputColor.light}08 0%, transparent 100%)`,
                     },
                   }}
                 >
-                  Data Outputs
-                </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-                  {dataOutputs.map((output, index) => (
-                    <Box
-                      key={index}
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: 2,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: '50%',
-                          backgroundColor: isDark ? '#009BE4' : '#2563EB',
-                          flexShrink: 0,
-                          mt: 1,
-                          transition: 'background-color 0.3s ease',
-                        }}
-                      />
-                      <Typography
-                        sx={{
-                          fontSize: '1rem',
-                          color: isDark ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 0, 0, 0.7)',
-                          lineHeight: 1.6,
-                          transition: 'color 0.3s ease',
-                        }}
-                      >
-                        {output}
-                      </Typography>
-                    </Box>
-                  ))}
+                  <Box
+                    sx={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: '50%',
+                      backgroundColor: outputColor[isDark ? 'dark' : 'light'],
+                      flexShrink: 0,
+                      mt: 0.75,
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      fontSize: '1rem',
+                      color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {output}
+                  </Typography>
                 </Box>
-              </Box>
-            </Grid>
-          </Grid>
+              ))}
+            </Box>
+          </Box>
         </Box>
       </Container>
     </Box>
@@ -261,4 +314,3 @@ const IntegrationSection: React.FC = () => {
 };
 
 export default IntegrationSection;
-

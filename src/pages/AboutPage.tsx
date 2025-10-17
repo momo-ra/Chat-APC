@@ -13,18 +13,16 @@ import {
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
+import { usePageTitle } from '../hooks/usePageTitle';
 
-const AboutPage: React.FC = () => {
+  const AboutPage: React.FC = () => {
+  usePageTitle({
+    title: 'Our Story',
+    description: 'Learn about Alpha Process Control\'s journey from traditional process control to AI-driven industrial operations with ChatAPC.',
+  });
   const { isDark } = useThemeMode();
 
   useEffect(() => {
-    // Set page metadata
-    document.title = 'Our Story - Alpha Process Control | ChatAPC';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Learn about Alpha Process Control\'s journey from traditional process control to AI-driven industrial operations with ChatAPC.');
-    }
-
     // Scroll to top on mount
     window.scrollTo(0, 0);
   }, []);

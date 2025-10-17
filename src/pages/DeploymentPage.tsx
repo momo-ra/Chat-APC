@@ -17,34 +17,16 @@ import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { usePageTitle } from '../hooks/usePageTitle';
 
-gsap.registerPlugin(ScrollTrigger);
-
-const DeploymentPage: React.FC = () => {
+  const DeploymentPage: React.FC = () => {
+  
+    usePageTitle({
+    title: 'Deployment Options',
+    description: 'Flexible deployment options for ChatAPC. Choose cloud, on-premise, or hybrid solutions with enterprise-grade security and scalability.',
+  });
+  
   const { isDark } = useThemeMode();
-
-  useEffect(() => {
-    // Set page metadata
-    document.title = 'Deployment Options - ChatAPC | Alpha Process Control';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Flexible deployment options for ChatAPC. Choose cloud, on-premise, or hybrid solutions with enterprise-grade security and scalability.');
-    }
-
-    // Configure ScrollTrigger for better performance
-    ScrollTrigger.config({
-      limitCallbacks: true,
-      syncInterval: 150,
-    });
-    
-    // Scroll to top on mount
-    window.scrollTo(0, 0);
-    
-    return () => {
-      // Clean up on unmount
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
-  }, []);
 
   return (
     <>
@@ -95,7 +77,7 @@ const DeploymentPage: React.FC = () => {
             background: 'transparent',
           }}
         >
-          {/* Content Sections */}
+          {/* Deployment Sections */}
           <Box
             sx={{
               width: '100%',
@@ -107,40 +89,22 @@ const DeploymentPage: React.FC = () => {
               overflow: 'hidden',
             }}
           >
-            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-              <DeploymentHeroSection />
-            </Box>
-            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-              <HostingOptionsSection />
-            </Box>
-            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-              <IntegrationArchitectureSection />
-            </Box>
-            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-              <SecuritySection />
-            </Box>
-            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-              <DeploymentShowcaseSection />
-            </Box>
-            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-              <IntegrationSection />
-            </Box>
-            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-              <ScalableArchitectureSection />
-            </Box>
-            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-              <ReadyToDeploySection />
-            </Box>
-            <Box data-section-theme={isDark ? 'dark' : 'light'} data-section-primary={isDark ? '#009BE4' : '#2563EB'}>
-              <DeploymentCTASection />
-            </Box>
+            <DeploymentHeroSection />
+            <HostingOptionsSection />
+            <IntegrationArchitectureSection />
+            <SecuritySection />
+            <DeploymentShowcaseSection />
+            <IntegrationSection />
+            <ScalableArchitectureSection />
+            <ReadyToDeploySection />
+            <DeploymentCTASection />
           </Box>
 
           {/* Footer */}
-          <Box 
+          <Box
             component="footer"
-            sx={{ 
-              mt: 0, 
+            sx={{
+              mt: 0,
               mb: 0,
               width: '100%',
               marginLeft: 0,

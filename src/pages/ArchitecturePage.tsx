@@ -12,18 +12,17 @@ import {
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
+import { usePageTitle } from '../hooks/usePageTitle';
+
 
 const ArchitecturePage: React.FC = () => {
   const { isDark } = useThemeMode();
-
+  
+  usePageTitle({
+    title: 'Architecture',
+    description: 'Discover how ChatAPC\'s powerful architecture connects to your plant systems, organizes knowledge, and delivers AI-driven insights through specialized agents.',
+  });
   useEffect(() => {
-    // Set page metadata
-    document.title = 'Architecture - Alpha Process Control | ChatAPC';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Discover how ChatAPC\'s powerful architecture connects to your plant systems, organizes knowledge, and delivers AI-driven insights through specialized agents.');
-    }
-
     // Scroll to top on mount
     window.scrollTo(0, 0);
   }, []);

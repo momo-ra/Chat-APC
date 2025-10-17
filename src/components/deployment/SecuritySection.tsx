@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Container, Typography, Grid } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SecurityIcon from '@mui/icons-material/Security';
@@ -7,184 +7,199 @@ import LockIcon from '@mui/icons-material/Lock';
 import IntegrationInstructionsIcon from '@mui/icons-material/IntegrationInstructions';
 import ShieldIcon from '@mui/icons-material/Shield';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const securityFeatures = [
+  {
+    icon: SecurityIcon,
+    title: 'Role-Based Access Control',
+    description: 'Granular permissions ensure users access only the data and functions relevant to their role. Administrators can define custom access levels aligned with your organizational structure.',
+  },
+  {
+    icon: LockIcon,
+    title: 'Encrypted Data Transfer',
+    description: 'All data communication uses industry-standard encryption protocols. End-to-end security protects sensitive operational data throughout transmission and storage.',
+  },
+  {
+    icon: IntegrationInstructionsIcon,
+    title: 'Zero Disruption Integration',
+    description: 'ChatAPC integrates seamlessly without interrupting existing systems. Read-only connections by default ensure your critical operations continue unaffected during deployment.',
+  },
+  {
+    icon: ShieldIcon,
+    title: 'Industrial Cybersecurity Standards',
+    description: 'Built to meet cybersecurity frameworks. Regular security audits and updates maintain compliance with evolving standards.',
+  },
+];
+
 const SecuritySection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const itemsRef = useRef<HTMLDivElement[]>([]);
   const { isDark } = useThemeMode();
+  const {
+    containerMaxWidth,
+    containerPadding,
+    h2FontSize,
+    sectionPadding,
+  } = useResponsiveLayout();
+
+  const accentColor = { light: '#F59E0B', dark: '#FBBF24' };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.to('.security-item', {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none',
-        },
-        x: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: 'power2.out',
+      if (headerRef.current) {
+        gsap.from(headerRef.current, {
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+          y: 50,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+        });
+      }
+
+      itemsRef.current.forEach((item, index) => {
+        if (item) {
+          gsap.from(item, {
+            scrollTrigger: {
+              trigger: item,
+              start: 'top 90%',
+              toggleActions: 'play none none none',
+            },
+            x: -30,
+            opacity: 0,
+            duration: 0.6,
+            delay: index * 0.1,
+            ease: 'power2.out',
+          });
+        }
       });
     }, sectionRef);
 
     return () => ctx.revert();
   }, [isDark]);
 
-  const securityFeatures = [
-    {
-      icon: <SecurityIcon sx={{ fontSize: 40 }} />,
-      title: 'Role-Based Access Control',
-      description: 'Granular permissions ensure users access only the data and functions relevant to their role. Administrators can define custom access levels aligned with your organizational structure.',
-    },
-    {
-      icon: <LockIcon sx={{ fontSize: 40 }} />,
-      title: 'Encrypted Data Transfer',
-      description: 'All data communication uses industry-standard encryption protocols. End-to-end security protects sensitive operational data throughout transmission and storage.',
-    },
-    {
-      icon: <IntegrationInstructionsIcon sx={{ fontSize: 40 }} />,
-      title: 'Zero Disruption Integration',
-      description: 'ChatAPC integrates seamlessly without interrupting existing systems. Read-only connections by default ensure your critical operations continue unaffected during deployment.',
-    },
-    {
-      icon: <ShieldIcon sx={{ fontSize: 40 }} />,
-      title: 'Industrial Cybersecurity Standards',
-      description: 'Built to meet cybersecurity frameworks. Regular security audits and updates maintain compliance with evolving standards.',
-    },
-  ];
-
   return (
     <Box
+      ref={sectionRef}
       sx={{
-        width: '100vw',
+        width: '100%',
+        py: sectionPadding,
         position: 'relative',
-        left: '50%',
-        right: '50%',
-        marginLeft: '-50vw',
-        marginRight: '-50vw',
-        background: isDark 
-          ? 'linear-gradient(180deg, rgba(0, 155, 228, 0.05) 0%, transparent 100%)'
-          : 'linear-gradient(180deg, rgba(37, 99, 235, 0.03) 0%, transparent 100%)',
-        py: { xs: 8, md: 12 },
-        transition: 'background 0.3s ease',
-        '@media (min-width: 960px) and (max-width: 1549px)': {
-          py: 10,
-        },
-        '@media (min-width: 1550px)': {
-          py: 12,
-        },
       }}
     >
       <Container 
         maxWidth="lg"
         sx={{
-          '@media (min-width: 960px) and (max-width: 1549px)': {
-            maxWidth: '950px',
-            px: 2.5,
-          },
-          '@media (min-width: 1550px)': {
-            maxWidth: '1200px',
-            px: 3,
-          },
+          maxWidth: containerMaxWidth,
+          px: containerPadding,
         }}
       >
-        <Box ref={sectionRef}>
+        {/* Header */}
+        <Box ref={headerRef} sx={{ mb: { xs: 8, md: 10 } }}>
+          <Typography
+            sx={{
+              fontSize: { xs: '0.875rem', md: '1rem' },
+              fontWeight: 700,
+              color: accentColor[isDark ? 'dark' : 'light'],
+              textTransform: 'uppercase',
+              letterSpacing: 2,
+              mb: 2,
+            }}
+          >
+            Security
+          </Typography>
           <Typography
             variant="h2"
             sx={{
-              fontSize: { xs: '2rem', md: '3rem' },
+              fontSize: h2FontSize,
               fontWeight: 700,
-              color: isDark ? '#fff' : 'rgba(0, 0, 0, 0.9)',
-              mb: 8,
-              textAlign: 'center',
-              transition: 'color 0.3s ease',
-              '@media (min-width: 960px) and (max-width: 1549px)': {
-                fontSize: '2.6rem',
-                mb: 6,
-              },
-              '@media (min-width: 1550px)': {
-                fontSize: '3rem',
-                mb: 8,
-              },
+              color: isDark ? '#FFFFFF' : '#0F172A',
+              lineHeight: 1.2,
             }}
           >
             Enterprise-Grade Security
           </Typography>
+        </Box>
 
-          <Grid container spacing={4}>
-            {securityFeatures.map((feature, index) => (
-              <Grid item xs={12} md={6} key={index}>
+        {/* Security Features */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
+            gap: { xs: 4, md: 5 },
+          }}
+        >
+          {securityFeatures.map((feature, index) => {
+            const IconComponent = feature.icon;
+            return (
+              <Box
+                key={index}
+                ref={(el) => {
+                  if (el) itemsRef.current[index] = el as HTMLDivElement;
+                }}
+                sx={{
+                  display: 'flex',
+                  gap: 3,
+                  p: { xs: 3, md: 4 },
+                  borderRadius: 0,
+                  borderLeft: isDark ? '2px solid rgba(71, 85, 105, 0.3)' : '2px solid rgba(226, 232, 240, 1)',
+                  background: 'transparent',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    pl: { xs: 4, md: 5 },
+                    borderLeftColor: accentColor[isDark ? 'dark' : 'light'],
+                    borderLeftWidth: '3px',
+                    background: isDark
+                      ? `linear-gradient(90deg, ${accentColor.dark}10 0%, transparent 100%)`
+                      : `linear-gradient(90deg, ${accentColor.light}08 0%, transparent 100%)`,
+                    '& .security-icon': {
+                      transform: 'scale(1.1)',
+                    },
+                  },
+                }}
+              >
                 <Box
-                  className="security-item"
+                  className="security-icon"
                   sx={{
-                    display: 'flex',
-                    gap: 3,
-                    background: isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.9)',
-                    backdropFilter: 'blur(10px)',
-                    border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)',
-                    borderRadius: 4,
-                    padding: 3,
-                    opacity: 0,
-                    transform: 'translateX(-50px)',
+                    color: accentColor[isDark ? 'dark' : 'light'],
+                    flexShrink: 0,
                     transition: 'all 0.3s ease',
-                    boxShadow: isDark ? 'none' : '0 4px 20px rgba(0, 0, 0, 0.06)',
-                    '@media (min-width: 960px) and (max-width: 1549px)': {
-                      gap: 2.5,
-                      padding: 2.5,
-                    },
-                    '&:hover': {
-                      background: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.95)',
-                      borderColor: isDark ? 'rgba(0, 155, 228, 0.2)' : 'rgba(37, 99, 235, 0.3)',
-                      boxShadow: isDark ? 'none' : '0 8px 32px rgba(37, 99, 235, 0.12)',
-                    },
                   }}
                 >
-                  <Box
+                  <IconComponent sx={{ fontSize: 36 }} />
+                </Box>
+                <Box>
+                  <Typography
+                    variant="h6"
                     sx={{
-                      color: isDark ? '#009BE4' : '#2563EB',
-                      flexShrink: 0,
-                      transition: 'color 0.3s ease',
+                      fontSize: { xs: '1.125rem', md: '1.25rem' },
+                      fontWeight: 700,
+                      color: isDark ? '#FFFFFF' : '#0F172A',
+                      mb: 1.5,
                     }}
                   >
-                    {feature.icon}
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontSize: { xs: '1.1rem', md: '1.25rem' },
-                        fontWeight: 600,
-                        color: isDark ? '#fff' : 'rgba(0, 0, 0, 0.9)',
-                        mb: 1.5,
-                        transition: 'color 0.3s ease',
-                        '@media (min-width: 960px) and (max-width: 1549px)': {
-                          fontSize: '1.15rem',
-                        },
-                      }}
-                    >
-                      {feature.title}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: '0.95rem',
-                        color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
-                        lineHeight: 1.7,
-                        transition: 'color 0.3s ease',
-                        '@media (min-width: 960px) and (max-width: 1549px)': {
-                          fontSize: '0.9rem',
-                        },
-                      }}
-                    >
-                      {feature.description}
-                    </Typography>
-                  </Box>
+                    {feature.title}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: { xs: '0.95rem', md: '1rem' },
+                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    {feature.description}
+                  </Typography>
                 </Box>
-              </Grid>
-            ))}
-          </Grid>
+              </Box>
+            );
+          })}
         </Box>
       </Container>
     </Box>
@@ -192,4 +207,3 @@ const SecuritySection: React.FC = () => {
 };
 
 export default SecuritySection;
-

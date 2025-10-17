@@ -52,18 +52,13 @@ const BlogHeroSection: React.FC = () => {
     return () => ctx.revert();
   }, []);
 
-  const blogStats = [
-    { icon: TrendingUp, count: '150+', label: 'Articles' },
-    { icon: Psychology, count: '25K+', label: 'Readers' },
-    { icon: Settings, count: '500+', label: 'Industry Tips' },
-  ];
 
   return (
     <Box
       ref={sectionRef}
       component="section"
       sx={{
-        py: 'clamp(4rem, 10vw, 8rem)',
+        py: 'clamp(4rem, 10vw, 4rem)',
         position: 'relative',
         background: 'transparent',
         overflow: 'hidden',
@@ -196,75 +191,6 @@ const BlogHeroSection: React.FC = () => {
                 <Search sx={{ fontSize: 24 }} />
               </IconButton>
             </Box>
-          </Box>
-
-          {/* Stats */}
-          <Box
-            ref={statsRef}
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: { xs: 4, md: 8 },
-            }}
-          >
-            {blogStats.map((stat, index) => {
-              const IconComponent = stat.icon;
-              return (
-                <Box
-                  key={index}
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: 1,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: '50%',
-                      background: isDark
-                        ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)'
-                        : 'linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mb: 1,
-                    }}
-                  >
-                    <IconComponent
-                      sx={{
-                        fontSize: 24,
-                        color: isDark ? '#009BE4' : '#2563EB',
-                      }}
-                    />
-                  </Box>
-                  <Typography
-                    sx={{
-                      fontSize: '1.5rem',
-                      fontWeight: 700,
-                      color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
-                      transition: 'color 0.3s ease',
-                    }}
-                  >
-                    {stat.count}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: '0.875rem',
-                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(100, 116, 139, 1)',
-                      fontWeight: 500,
-                      transition: 'color 0.3s ease',
-                    }}
-                  >
-                    {stat.label}
-                  </Typography>
-                </Box>
-              );
-            })}
           </Box>
         </Box>
       </Container>

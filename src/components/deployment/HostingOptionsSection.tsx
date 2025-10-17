@@ -1,292 +1,296 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Container, Typography, Grid } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import CloudIcon from '@mui/icons-material/Cloud';
 import StorageIcon from '@mui/icons-material/Storage';
+import CloudIcon from '@mui/icons-material/Cloud';
 import HubIcon from '@mui/icons-material/Hub';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const hostingOptions = [
+  {
+    icon: StorageIcon,
+    title: 'On-Premise',
+    description: 'Deploy fully inside your plant network with no internet connection required. Complete control over your data and infrastructure while maintaining existing security protocols and compliance standards.',
+    benefits: [
+      'Air-gapped deployment',
+      'Full data sovereignty',
+      'Zero cloud dependencies',
+      'Custom hardware optimization'
+    ],
+    color: { light: '#3B82F6', dark: '#60A5FA' },
+  },
+  {
+    icon: CloudIcon,
+    title: 'Private Cloud',
+    description: 'Run securely in Cloud Platforms with enterprise-grade security. Benefit from cloud scalability while maintaining dedicated, isolated environments for your industrial data.',
+    benefits: [
+      'Elastic scalability',
+      'Managed infrastructure',
+      'Global availability',
+      'Enterprise SLA guarantees'
+    ],
+    color: { light: '#10B981', dark: '#34D399' },
+  },
+  {
+    icon: HubIcon,
+    title: 'Hybrid',
+    description: 'Combine both approaches for maximum flexibility. Keep sensitive data on-premise while leveraging cloud resources for advanced analytics and reporting capabilities.',
+    benefits: [
+      'Best of both worlds',
+      'Flexible data residency',
+      'Cost optimization',
+      'Seamless integration'
+    ],
+    color: { light: '#F59E0B', dark: '#FBBF24' },
+  },
+];
+
 const HostingOptionsSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement[]>([]);
   const { isDark } = useThemeMode();
+  const {
+    containerMaxWidth,
+    containerPadding,
+    h2FontSize,
+    bodyFontSize,
+    sectionPadding,
+  } = useResponsiveLayout();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.to('.hosting-card', {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none',
-        },
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power2.out',
+      if (headerRef.current) {
+        gsap.from(headerRef.current, {
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+          y: 50,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+        });
+      }
+
+      cardsRef.current.forEach((card, index) => {
+        if (card) {
+          gsap.from(card, {
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 90%',
+              toggleActions: 'play none none none',
+            },
+            y: 60,
+            opacity: 0,
+            duration: 0.8,
+            delay: index * 0.15,
+            ease: 'power2.out',
+          });
+        }
       });
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  const hostingOptions = [
-    {
-      icon: <StorageIcon sx={{ fontSize: 48 }} />,
-      title: 'On-Premise',
-      description: 'Deploy fully inside your plant network with no internet connection required. Complete control over your data and infrastructure while maintaining existing security protocols and compliance standards.',
-      benefits: [
-        'Air-gapped deployment',
-        'Full data sovereignty',
-        'Zero cloud dependencies',
-        'Custom hardware optimization'
-      ],
-      imagePlaceholder: true,
-    },
-    {
-      icon: <CloudIcon sx={{ fontSize: 48 }} />,
-      title: 'Private Cloud',
-      description: 'Run securely in Cloud Platforms with enterprise-grade security. Benefit from cloud scalability while maintaining dedicated, isolated environments for your industrial data.',
-      benefits: [
-        'Elastic scalability',
-        'Managed infrastructure',
-        'Global availability',
-        'Enterprise SLA guarantees'
-      ],
-      imagePlaceholder: true,
-    },
-    {
-      icon: <HubIcon sx={{ fontSize: 48 }} />,
-      title: 'Hybrid',
-      description: 'Combine both approaches for maximum flexibility. Keep sensitive data on-premise while leveraging cloud resources for advanced analytics and reporting capabilities.',
-      benefits: [
-        'Best of both worlds',
-        'Flexible data residency',
-        'Cost optimization',
-        'Seamless integration'
-      ],
-      imagePlaceholder: true,
-    },
-  ];
-
   return (
     <Box
+      ref={sectionRef}
       sx={{
         width: '100%',
-        py: { xs: 8, md: 12 },
+        py: sectionPadding,
         position: 'relative',
-        '@media (min-width: 960px) and (max-width: 1549px)': {
-          py: 10,
-        },
-        '@media (min-width: 1550px)': {
-          py: 12,
-        },
       }}
     >
       <Container 
         maxWidth="lg"
         sx={{
-          '@media (min-width: 960px) and (max-width: 1549px)': {
-            maxWidth: '950px',
-            px: 2.5,
-          },
-          '@media (min-width: 1550px)': {
-            maxWidth: '1200px',
-            px: 3,
-          },
+          maxWidth: containerMaxWidth,
+          px: containerPadding,
         }}
       >
-        <Box ref={sectionRef}>
+        {/* Header */}
+        <Box ref={headerRef} sx={{ mb: { xs: 8, md: 10 } }}>
+          <Typography
+            sx={{
+              fontSize: { xs: '0.875rem', md: '1rem' },
+              fontWeight: 700,
+              color: isDark ? '#60A5FA' : '#3B82F6',
+              textTransform: 'uppercase',
+              letterSpacing: 2,
+              mb: 2,
+            }}
+          >
+            Hosting Options
+          </Typography>
           <Typography
             variant="h2"
             sx={{
-              fontSize: { xs: '2rem', md: '3rem' },
+              fontSize: h2FontSize,
               fontWeight: 700,
-              color: isDark ? '#fff' : '#0F172A',
-              mb: 2,
-              textAlign: 'center',
-              transition: 'color 0.3s ease',
-              '@media (min-width: 960px) and (max-width: 1549px)': {
-                fontSize: '2.6rem',
-              },
-              '@media (min-width: 1550px)': {
-                fontSize: '3rem',
-              },
+              color: isDark ? '#FFFFFF' : '#0F172A',
+              mb: 3,
+              lineHeight: 1.2,
             }}
           >
             Flexible Hosting Options
           </Typography>
           <Typography
             sx={{
-              fontSize: { xs: '1rem', md: '1.1rem' },
-              color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.6)',
-              textAlign: 'center',
-              mb: 8,
+              fontSize: bodyFontSize,
+              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
+              lineHeight: 1.7,
               maxWidth: 700,
-              mx: 'auto',
-              transition: 'color 0.3s ease',
-              '@media (min-width: 960px) and (max-width: 1549px)': {
-                fontSize: '1.05rem',
-                maxWidth: 650,
-                mb: 6,
-              },
-              '@media (min-width: 1550px)': {
-                fontSize: '1.1rem',
-                mb: 8,
-              },
             }}
           >
             Choose what works best for your IT policies and operational requirements. Our deployment experts work with your team to ensure optimal configuration for your specific environment.
           </Typography>
+        </Box>
 
-          <Grid container spacing={4} sx={{
-            '@media (min-width: 960px) and (max-width: 1549px)': {
-              spacing: 3,
-            },
-          }}>
-            {hostingOptions.map((option, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <Box
-                  className="hosting-card"
-                  sx={{
-                    background: isDark 
-                      ? 'rgba(255, 255, 255, 0.03)' 
-                      : 'rgba(255, 255, 255, 0.8)',
-                    backdropFilter: 'blur(20px)',
-                    border: isDark 
-                      ? '1px solid rgba(255, 255, 255, 0.1)' 
-                      : '1px solid rgba(0, 0, 0, 0.08)',
-                    borderRadius: 4,
-                    padding: 0,
-                    height: '100%',
-                    opacity: 0,
-                    transform: 'translateY(60px)',
-                    overflow: 'hidden',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    transition: 'all 0.3s ease',
-                    boxShadow: isDark 
-                      ? 'none' 
-                      : '0 4px 20px rgba(0, 0, 0, 0.08)',
-                    '&:hover': {
-                      transform: 'translateY(-8px)',
-                      borderColor: isDark 
-                        ? 'rgba(0, 155, 228, 0.3)' 
-                        : 'rgba(37, 99, 235, 0.4)',
-                      boxShadow: isDark 
-                        ? '0 12px 40px rgba(0, 155, 228, 0.15)' 
-                        : '0 16px 48px rgba(37, 99, 235, 0.2)',
+        {/* Options List */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: { xs: 4, md: 5 },
+          }}
+        >
+          {hostingOptions.map((option, index) => {
+            const IconComponent = option.icon;
+            return (
+              <Box
+                key={index}
+                ref={(el) => {
+                  if (el) cardsRef.current[index] = el as HTMLDivElement;
+                }}
+                sx={{
+                  position: 'relative',
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: '80px 1fr' },
+                  gap: { xs: 3, md: 4 },
+                  p: { xs: 3, md: 4 },
+                  borderRadius: 0,
+                  borderLeft: isDark ? '2px solid rgba(71, 85, 105, 0.3)' : '2px solid rgba(226, 232, 240, 1)',
+                  background: 'transparent',
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': {
+                    pl: { xs: 4, md: 5 },
+                    borderLeftColor: option.color[isDark ? 'dark' : 'light'],
+                    borderLeftWidth: '3px',
+                    background: isDark
+                      ? `linear-gradient(90deg, ${option.color.dark}10 0%, transparent 100%)`
+                      : `linear-gradient(90deg, ${option.color.light}08 0%, transparent 100%)`,
+                    '& .hosting-icon': {
+                      transform: 'scale(1.1) rotate(5deg)',
                     },
+                  },
+                }}
+              >
+                {/* Icon */}
+                <Box
+                  className="hosting-icon"
+                  sx={{
+                    width: { xs: 64, md: 72 },
+                    height: { xs: 64, md: 72 },
+                    borderRadius: 2,
+                    background: option.color[isDark ? 'dark' : 'light'],
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.4s ease',
+                    boxShadow: `0 8px 24px ${option.color[isDark ? 'dark' : 'light']}30`,
+                    mx: { xs: 'auto', md: 0 },
                   }}
                 >
-
-                  {/* Content Area */}
-                  <Box
+                  <IconComponent
                     sx={{
-                      padding: 4,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      flex: 1,
-                      '@media (min-width: 960px) and (max-width: 1549px)': {
-                        padding: 3,
-                      },
+                      fontSize: { xs: 32, md: 36 },
+                      color: '#FFFFFF',
+                    }}
+                  />
+                </Box>
+
+                {/* Content */}
+                <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                  {/* Title */}
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontSize: { xs: '1.25rem', md: '1.5rem' },
+                      fontWeight: 700,
+                      color: isDark ? '#FFFFFF' : '#0F172A',
+                      mb: 2,
+                      lineHeight: 1.3,
                     }}
                   >
-                    {/* Icon Badge */}
-                    <Box
-                      sx={{
-                        width: 64,
-                        height: 64,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mb: 3,
-                        transition: 'all 0.3s ease',
-                        '@media (min-width: 960px) and (max-width: 1549px)': {
-                          width: 56,
-                          height: 56,
-                          mb: 2.5,
-                        },
-                      }}
-                    >
-                      <Box sx={{ 
-                        color: isDark ? '#009BE4' : '#2563EB',
-                        transition: 'color 0.3s ease',
-                      }}>
-                        {option.icon}
-                      </Box>
-                    </Box>
+                    {option.title}
+                  </Typography>
 
-                    <Typography
-                      variant="h5"
-                      sx={{
-                        fontSize: { xs: '1.3rem', md: '1.5rem' },
-                        fontWeight: 600,
-                        color: isDark ? '#fff' : '#0F172A',
-                        mb: 2,
-                        transition: 'color 0.3s ease',
-                        '@media (min-width: 960px) and (max-width: 1549px)': {
-                          fontSize: '1.35rem',
-                        },
-                      }}
-                    >
-                      {option.title}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: '0.95rem',
-                        color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.6)',
-                        lineHeight: 1.7,
-                        mb: 3,
-                        transition: 'color 0.3s ease',
-                        '@media (min-width: 960px) and (max-width: 1549px)': {
-                          fontSize: '0.9rem',
-                        },
-                      }}
-                    >
-                      {option.description}
-                    </Typography>
+                  {/* Description */}
+                  <Typography
+                    sx={{
+                      fontSize: { xs: '1rem', md: '1.125rem' },
+                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
+                      lineHeight: 1.7,
+                      mb: 3,
+                      maxWidth: 700,
+                      mx: { xs: 'auto', md: 0 },
+                    }}
+                  >
+                    {option.description}
+                  </Typography>
 
-                    {/* Benefits List */}
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 'auto' }}>
-                      {option.benefits.map((benefit, idx) => (
+                  {/* Benefits */}
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+                      gap: 2,
+                      maxWidth: 700,
+                      mx: { xs: 'auto', md: 0 },
+                    }}
+                  >
+                    {option.benefits.map((benefit, idx) => (
+                      <Box
+                        key={idx}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1.5,
+                          justifyContent: { xs: 'center', md: 'flex-start' },
+                        }}
+                      >
                         <Box
-                          key={idx}
                           sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1.5,
+                            width: 6,
+                            height: 6,
+                            borderRadius: '50%',
+                            background: option.color[isDark ? 'dark' : 'light'],
+                            flexShrink: 0,
+                          }}
+                        />
+                        <Typography
+                          sx={{
+                            fontSize: '0.875rem',
+                            color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#475569',
+                            lineHeight: 1.5,
                           }}
                         >
-                          <CheckCircleOutlineIcon 
-                            sx={{ 
-                              fontSize: 18, 
-                              color: isDark ? '#009BE4' : '#2563EB',
-                              flexShrink: 0,
-                              transition: 'color 0.3s ease',
-                            }} 
-                          />
-                          <Typography
-                            sx={{
-                              fontSize: '0.875rem',
-                              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.65)',
-                              lineHeight: 1.5,
-                              transition: 'color 0.3s ease',
-                            }}
-                          >
-                            {benefit}
-                          </Typography>
-                        </Box>
-                      ))}
-                    </Box>
+                          {benefit}
+                        </Typography>
+                      </Box>
+                    ))}
                   </Box>
                 </Box>
-              </Grid>
-            ))}
-          </Grid>
+              </Box>
+            );
+          })}
         </Box>
       </Container>
     </Box>
@@ -294,4 +298,3 @@ const HostingOptionsSection: React.FC = () => {
 };
 
 export default HostingOptionsSection;
-

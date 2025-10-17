@@ -22,23 +22,6 @@ import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { applyStaggerAnimation, applyScaleUp } from '../shared/animationHelpers';
 
-const subscriptionBenefits = [
-  {
-    icon: TrendingUp,
-    title: 'Industry Insights',
-    description: 'Weekly roundup of the latest trends and breakthroughs in process control and industrial AI.',
-  },
-  {
-    icon: School,
-    title: 'Expert Knowledge',
-    description: 'Exclusive content from industry veterans and technical experts sharing their experience.',
-  },
-  {
-    icon: Notifications,
-    title: 'Early Access',
-    description: 'Be the first to know about new features, product updates, and upcoming webinars.',
-  },
-];
 
 const BlogSubscribeSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -198,23 +181,10 @@ const BlogSubscribeSection: React.FC = () => {
             backdropFilter: 'blur(30px)',
             position: 'relative',
             zIndex: 10,
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: -2,
-              left: -2,
-              right: -2,
-              bottom: -2,
-              background: isDark
-                ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.3) 0%, rgba(139, 92, 246, 0.3) 100%)'
-                : 'linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)',
-              borderRadius: '20px',
-              opacity: 0,
-              zIndex: -1,
-              transition: 'opacity 0.3s ease',
-            },
-            '&:hover::before': {
-              opacity: 1,
+            '&:hover': {
+              boxShadow: isDark
+                ? '0 0 0 2px #009BE4'
+                : '0 0 0 2px #2563EB',
             },
           }}
         >
@@ -284,10 +254,6 @@ const BlogSubscribeSection: React.FC = () => {
                     : '0 8px 32px rgba(37, 99, 235, 0.3)',
                   transition: 'all 0.3s ease',
                   '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: isDark
-                      ? '0 12px 40px rgba(0, 155, 228, 0.4)'
-                      : '0 12px 40px rgba(37, 99, 235, 0.4)',
                     background: isDark
                       ? 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)'
                       : 'linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)',
@@ -328,99 +294,6 @@ const BlogSubscribeSection: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Benefits */}
-        <Grid container spacing={{ xs: 3, md: 4 }}>
-          {subscriptionBenefits.map((benefit, index) => {
-            const IconComponent = benefit.icon;
-            return (
-              <Grid
-                item
-                xs={12}
-                md={4}
-                key={index}
-                ref={(el) => {
-                  if (el) benefitsRef.current[index] = el as HTMLDivElement;
-                }}
-              >
-                <Box
-                  sx={{
-                    textAlign: 'center',
-                    p: { xs: 3, md: 4 },
-                    borderRadius: '16px',
-                    background: isDark
-                      ? 'rgba(31, 41, 55, 0.6)'
-                      : 'rgba(255, 255, 255, 0.7)',
-                    border: isDark
-                      ? '1px solid rgba(75, 85, 99, 0.2)'
-                      : '1px solid rgba(226, 232, 240, 0.5)',
-                    backdropFilter: 'blur(20px)',
-                    transition: 'all 0.3s ease',
-                    height: '100%',
-                    '@media (min-width: 960px) and (max-width: 1549px)': {
-                      p: 3,
-                    },
-                    '&:hover': {
-                      transform: 'translateY(-8px)',
-                      background: isDark
-                        ? 'rgba(31, 41, 55, 0.8)'
-                        : 'rgba(255, 255, 255, 0.9)',
-                      borderColor: isDark ? 'rgba(0, 155, 228, 0.3)' : 'rgba(37, 99, 235, 0.2)',
-                    },
-                  }}
-                >
-                  {/* Icon */}
-                  <Box
-                    sx={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: '50%',
-                      background: isDark
-                        ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)'
-                        : 'linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mx: 'auto',
-                      mb: 3,
-                    }}
-                  >
-                    <IconComponent
-                      sx={{
-                        fontSize: 32,
-                        color: isDark ? '#009BE4' : '#2563EB',
-                      }}
-                    />
-                  </Box>
-
-                  {/* Title */}
-                  <Typography
-                    sx={{
-                      fontSize: '1.25rem',
-                      fontWeight: 600,
-                      color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 41, 59, 1)',
-                      mb: 2,
-                      transition: 'color 0.3s ease',
-                    }}
-                  >
-                    {benefit.title}
-                  </Typography>
-
-                  {/* Description */}
-                  <Typography
-                    sx={{
-                      fontSize: '0.95rem',
-                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
-                      lineHeight: 1.6,
-                      transition: 'color 0.3s ease',
-                    }}
-                  >
-                    {benefit.description}
-                  </Typography>
-                </Box>
-              </Grid>
-            );
-          })}
-        </Grid>
       </Container>
     </Box>
   );

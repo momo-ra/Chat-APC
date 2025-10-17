@@ -17,14 +17,44 @@ import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // Register plugin
 gsap.registerPlugin(ScrollTrigger);
 
 const HomePage: React.FC = () => {
+  usePageTitle({
+    title: 'ChatAPC',
+    noSuffix: true,
+    description: 'ChatAPC: AI-powered assistant for industrial process control. Analyze constraints, optimize operations, and improve plant efficiency with conversational intelligence.',
+  });
   const { isDark } = useThemeMode();
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [isMediumScreen, setIsMediumScreen] = React.useState(false);
+
+  // ANIMATION LOCK - Prevent scroll and interaction until hero animation is complete
+  const [animationComplete, setAnimationComplete] = React.useState(false);
+
+  // Pass DOWN to HeroSearchSection
+  // We'll block scroll until animationComplete === true
+  React.useEffect(() => {
+    if (!animationComplete) {
+      // Lock scroll at body level
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
+    // Clean up on unmount
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    };
+  }, [animationComplete]);
 
   // Detect sidebar state based on screen size and user interaction
   React.useEffect(() => {
@@ -33,22 +63,22 @@ const HomePage: React.FC = () => {
     if (stored !== null) {
       setSidebarCollapsed(stored === 'true');
     }
-    
+
     const handleResize = () => {
       const width = window.innerWidth;
       // Detect if we're on medium screen (960-1549px)
       const isMedium = width >= 960 && width <= 1549;
       setIsMediumScreen(isMedium);
     };
-    
+
     const handleSidebarToggle = (event: CustomEvent) => {
       setSidebarCollapsed(event.detail.collapsed);
     };
-    
+
     handleResize();
     window.addEventListener('resize', handleResize);
     window.addEventListener('sidebarToggle', handleSidebarToggle as EventListener);
-    
+
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('sidebarToggle', handleSidebarToggle as EventListener);
@@ -57,22 +87,15 @@ const HomePage: React.FC = () => {
 
   // Configure ScrollTrigger for better performance
   React.useEffect(() => {
-    // Set page metadata
-    document.title = 'ChatAPC - AI Assistant for Process Control | Alpha Process Control';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'ChatAPC: AI-powered assistant for industrial process control. Analyze constraints, optimize operations, and improve plant efficiency with conversational intelligence.');
-    }
-
     // Configure ScrollTrigger but don't kill animations
     ScrollTrigger.config({
       limitCallbacks: true,
       syncInterval: 150,
     });
-    
+
     // Scroll to top on mount
     window.scrollTo(0, 0);
-    
+
     return () => {
       // Clean up on unmount
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
@@ -112,9 +135,14 @@ const HomePage: React.FC = () => {
           transition: 'background 0.3s ease',
         }}
       >
-        <AppSidebar items={sidebarItems} />
-        <ThemeToggle />
-  
+        {/* Sidebar and Theme Toggle - Will be animated by GSAP */}
+        <Box data-sidebar>
+          <AppSidebar items={sidebarItems} />
+        </Box>
+        <Box data-theme-toggle>
+          <ThemeToggle />
+        </Box>
+
         {/* Main Content */}
         <Box
           id="main-content"
@@ -128,7 +156,7 @@ const HomePage: React.FC = () => {
             background: 'transparent',
           }}
         >
-          {/* Hero Section */}
+          {/* Hero Section - Always visible */}
           <Box
             data-section-theme={isDark ? 'dark' : 'light'}
             data-section-primary={isDark ? '#009BE4' : '#2563EB'}
@@ -143,60 +171,88 @@ const HomePage: React.FC = () => {
               background: 'transparent',
             }}
           >
-            {/* Hero Chat Section */}
-            <HeroSearchSection />
+            <HeroSearchSection
+              setAnimationComplete={setAnimationComplete}
+              animationComplete={animationComplete}
+            />
           </Box>
 
-          {/* Content Sections */}
-          <Box
-            sx={{
-              width: '100%',
-              maxWidth: '100vw',
-              display: 'flex',
-              flexDirection: 'column',
-              position: 'relative',
-              zIndex: 2,
-              overflow: 'hidden',
-            }}
-          >
-            {/* DemoVideoSection */}
-            <DemoVideoSection />
-            
-            {/* ExpandingBackgroundSlider */}
-            {/* <ExpandingBackgroundSlider /> */}
-            
-            {/* HorizontalScrollSlider */}
-            {/* <HorizontalScrollSlider /> */}
+          {/* Content Sections - Hidden until animation completes */}
+          {animationComplete && (
+            <Box
+              sx={{
+                width: '100%',
+                maxWidth: '100vw',
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'relative',
+                zIndex: 2,
+                overflow: 'hidden',
+                animation: 'smoothFadeIn 1.2s ease-out',
+                '@keyframes smoothFadeIn': {
+                  '0%': { 
+                    opacity: 0,
+                    transform: 'translateY(20px)',
+                  },
+                  '100%': { 
+                    opacity: 1,
+                    transform: 'translateY(0)',
+                  },
+                },
+              }}
+            >
+              {/* DemoVideoSection */}
+              <DemoVideoSection />
 
-            {/* BenefitsSection */}
-            <BenefitsSection />
+              {/* ExpandingBackgroundSlider */}
+              {/* <ExpandingBackgroundSlider /> */}
 
-            {/* ArchitectureSection */}
-            <ArchitectureSection />
+              {/* HorizontalScrollSlider */}
+              {/* <HorizontalScrollSlider /> */}
 
-            {/* TeamSection */}
-            <TeamSection />
+              {/* BenefitsSection */}
+              <BenefitsSection />
 
-            {/* CTASection */}
-            <CTASection />
+              {/* ArchitectureSection */}
+              <ArchitectureSection />
 
-            {/* Contact Section */}
-            <ContactSection />
-          </Box>
+              {/* TeamSection */}
+              <TeamSection />
 
-          {/* Footer */}
-          <Box 
-            component="footer"
-            sx={{ 
-              mt: 0, 
-              mb: 0,
-              width: '100%',
-              marginLeft: 0,
-              paddingLeft: 0,
-            }}
-          >
-            <Footer />
-          </Box>
+              {/* CTASection */}
+              <CTASection />
+
+              {/* Contact Section */}
+              <ContactSection />
+            </Box>
+          )}
+
+          {/* Footer - Hidden until animation completes */}
+          {animationComplete && (
+            <Box
+              component="footer"
+              sx={{
+                mt: 0,
+                mb: 0,
+                width: '100%',
+                marginLeft: 0,
+                paddingLeft: 0,
+                animation: 'smoothFadeIn 1.2s ease-out 0.2s backwards',
+                '@keyframes smoothFadeIn': {
+                  '0%': { 
+                    opacity: 0,
+                    transform: 'translateY(20px)',
+                  },
+                  '100%': { 
+                    opacity: 1,
+                    transform: 'translateY(0)',
+                  },
+                },
+              }}
+            >
+              <Footer />
+            </Box>
+          )}
         </Box>
       </Box>
     </>

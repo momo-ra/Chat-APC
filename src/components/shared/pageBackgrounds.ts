@@ -32,6 +32,12 @@ export const pageBackgrounds = {
         rgba(59, 130, 246, 0.08) 0%,    /* Blue core */
         transparent 60%
       ),
+      /* ========== NEW CODE ADDED HERE ========== */
+      /* Subtle aurora overlay for extra glow */
+      linear-gradient(105deg, 
+        rgba(22, 190, 230, 0.10) 0%, 
+        rgba(0,0,0,0) 60%
+      ),
       /* Main cosmic background */
       linear-gradient(165deg, 
         #0a0e2e 0%,                     /* Deep space start */
@@ -69,6 +75,12 @@ export const pageBackgrounds = {
       radial-gradient(ellipse 350px 200px at 90% 40%, 
         rgba(0, 155, 228, 0.03) 0%,     /* Cyan accent */
         transparent 50%
+      ),
+      /* ========== NEW CODE ADDED HERE ========== */
+      /* Subtle aurora overlay for extra glow (light mode) */
+      linear-gradient(105deg, 
+        rgba(22, 190, 230, 0.06) 0%, 
+        rgba(255,255,255,0) 60%
       ),
       /* Pristine base with subtle depth */
       linear-gradient(160deg, 

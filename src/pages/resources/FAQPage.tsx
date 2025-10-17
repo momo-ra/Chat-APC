@@ -10,6 +10,7 @@ import { AppSidebar, Footer, ThemeToggle } from '../../components/layout';
 import { sidebarItems } from '../../data/layout/sidebarData';
 import { getHomeBackground } from '../../components/shared/pageBackgrounds';
 import { applySlideUp, applyCardGridAnimation, applyScaleUp } from '../../components/shared/animationHelpers';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -75,6 +76,10 @@ const faqData = [
 ];
 
 const FAQPage: React.FC = () => {
+  usePageTitle({
+    title: 'FAQ',
+    description: 'Frequently asked questions about ChatAPC - AI assistant for industrial process control. Learn about integration, security, and implementation.',
+  });
   const sectionRef = useRef<HTMLDivElement>(null);
   const faqRefs = useRef<HTMLDivElement[]>([]);
   const answerRefs = useRef<HTMLDivElement[]>([]);
@@ -94,6 +99,12 @@ const FAQPage: React.FC = () => {
     isMobile
   } = useResponsiveLayout();
 
+  // Fix scroll position on mount (always go to top when page is navigated to)
+  useEffect(() => {
+    // This makes sure when arriving on FAQ page, scroll is at the top
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, []);
+
   // Configure ScrollTrigger for better performance
   useEffect(() => {
     ScrollTrigger.config({
@@ -112,13 +123,6 @@ const FAQPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Set page metadata
-    document.title = 'FAQ - ChatAPC | Alpha Process Control';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Frequently asked questions about ChatAPC - AI assistant for industrial process control. Learn about integration, security, and implementation.');
-    }
-
     const ctx = gsap.context(() => {
       // Animate header with unified system
       applySlideUp(headerRef.current, { startTrigger: 'top 80%' });

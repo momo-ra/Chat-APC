@@ -42,11 +42,11 @@ export const BenefitsSection: React.FC = () => {
   const headerRef = useRef<HTMLDivElement>(null);
   const roiRef = useRef<HTMLDivElement>(null);
   const { isDark } = useThemeMode();
-  const { 
-    h2FontSize, 
-    bodyLargeFontSize, 
+  const {
+    h2FontSize,
+    bodyLargeFontSize,
     containerMaxWidth,
-    containerPadding 
+    containerPadding
   } = useResponsiveLayout();
 
   // Unified animation system
@@ -59,9 +59,9 @@ export const BenefitsSection: React.FC = () => {
       applyCardGridAnimation(cardsRef.current, sectionRef.current);
 
       // Animate ROI statement
-      applyScaleUp(roiRef.current, { 
+      applyScaleUp(roiRef.current, {
         delay: 0.25,
-        startTrigger: 'top 90%' 
+        startTrigger: 'top 90%'
       });
     }, sectionRef);
 
@@ -82,7 +82,7 @@ export const BenefitsSection: React.FC = () => {
         background: 'transparent',
       }}
     >
-      <Container 
+      <Container
         maxWidth="lg"
         sx={{
           maxWidth: containerMaxWidth,
@@ -108,7 +108,7 @@ export const BenefitsSection: React.FC = () => {
             }}
           >
             Transform operations into
-            <Box component="span" sx={{ 
+            <Box component="span" sx={{
               background: isDark
                 ? 'linear-gradient(135deg, #009BE4 0%, #00D4AA 100%)'
                 : 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
@@ -120,7 +120,7 @@ export const BenefitsSection: React.FC = () => {
               continuous improvement
             </Box>
           </Typography>
-          
+
           <Typography
             variant="body1"
             sx={{
@@ -143,9 +143,7 @@ export const BenefitsSection: React.FC = () => {
             return (
               <Grid item xs={12} md={4} key={index}>
                 <Card
-                  ref={(el) => {
-                    cardsRef.current[index] = el;
-                  }}
+                  ref={(el) => { cardsRef.current[index] = el; }}
                   elevation={0}
                   sx={{
                     height: '100%',
@@ -159,20 +157,16 @@ export const BenefitsSection: React.FC = () => {
                       : '1px solid rgba(0, 0, 0, 0.05)',
                     borderRadius: '32px',
                     overflow: 'visible',
-                    transition: 'box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: 'box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                     cursor: 'pointer',
                     '&:hover': {
                       boxShadow: isDark
-                        ? `0 8px 32px -8px ${benefit.color}22, 0 1.5px 14px 2px ${benefit.color}09`
-                        : `0 16px 32px -8px ${benefit.color}1C, 0 1.5px 14px 2px ${benefit.color}12`,
-                      transform: 'translateY(-8px) scale(1.025)',
+                        ? `0 4px 18px -4px ${benefit.color}22`
+                        : `0 8px 18px -4px ${benefit.color}1C`,
+                      transform: 'translateY(-4px) scale(1.025)',
                       border: isDark
                         ? `1px solid ${benefit.color}33`
                         : `1px solid ${benefit.color}22`,
-                      '& .benefit-icon': {
-                        transform: 'scale(1.07) rotate(3deg)',
-                        background: benefit.gradient,
-                      }
                     },
                   }}
                 >
@@ -191,7 +185,7 @@ export const BenefitsSection: React.FC = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         mb: 4,
-                        transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1), background 0.35s cubic-bezier(0.4,0,0.2,1)',
+                        transition: 'background 0.35s cubic-bezier(0.4,0,0.2,1)',
                         position: 'relative',
                         boxShadow: isDark
                           ? `0 2px 16px 0 ${benefit.color}20`

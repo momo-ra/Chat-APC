@@ -1,143 +1,720 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Box, Typography, Container, Chip } from '@mui/material';
-import { 
-  AccountTree, 
-  Explore, 
-  TrendingUp,
-  Psychology,
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { Box, Typography, Container, Chip, IconButton, Tooltip, Paper, ButtonGroup, Button, useMediaQuery } from '@mui/material';
+import {
+  AccountTree,
+  Speed,
+  Thermostat,
+  Opacity,
+  Memory,
+  ZoomIn,
+  ZoomOut,
+  CenterFocusStrong,
   Engineering,
-  Insights
+  Psychology,
+  Insights,
+  TrendingUp,
+  Settings,
+  RestartAlt,
+  ViewComfy,
 } from '@mui/icons-material';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ReactFlow, {
+  Node,
+  Edge,
+  Controls,
+  Background,
+  useNodesState,
+  useEdgesState,
+  useReactFlow,
+  ReactFlowProvider,
+  MarkerType,
+  Panel,
+  Position,
+  Handle,
+  ConnectionLineType,
+  getBezierPath,
+} from 'reactflow';
+import type { DefaultEdgeOptions, EdgeProps } from 'reactflow';
+import 'reactflow/dist/style.css';
+import dagre from 'dagre';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
-gsap.registerPlugin(ScrollTrigger);
+// Unified color palette
+const PRIMARY_COLOR = '#1890FF';
+const SECONDARY_COLOR = '#91D5FF';
+const TERTIARY_COLOR = '#BAE7FF';
 
-const mapFeatures = [
-  {
-    title: 'Context-rich',
-    description: 'TI100 isn\'t just a number — it\'s a temperature indicator, tied to E-200, controlling feed flow',
-    icon: Psychology,
-    color: { light: '#8B5CF6', dark: '#A78BFA' },
-  },
-  {
-    title: 'Structured',
-    description: 'Equipment, loops, variables, and alarms are linked in meaningful relationships',
-    icon: AccountTree,
-    color: { light: '#10B981', dark: '#34D399' },
-  },
-  {
-    title: 'Explorable',
-    description: 'Navigate the map directly, zooming into loops, units, or entire process areas',
-    icon: Explore,
-    color: { light: '#F59E0B', dark: '#FBBF24' },
-  },
-  {
-    title: 'Evolving',
-    description: 'As you add more, the map grows — becoming your single source of truth',
-    icon: TrendingUp,
-    color: { light: '#EC4899', dark: '#F472B6' },
-  },
-];
+// Node dimensions for Dagre
+const NODE_WIDTH = 110;
+const NODE_HEIGHT = 110;
 
-// Define the nodes for the interactive knowledge graph.  Each node has
-// a unique id, display label, size category, color palette, relative
-// position expressed as percentages, and an optional icon component.
-// Colors are provided as objects with `light` and `dark` keys so that
-// they can adapt to the current theme.
-const graphNodes = [
-  {
-    id: 'central',
-    label: 'Process Knowledge',
-    size: 'xlarge',
-    color: { light: '#8B5CF6', dark: '#A78BFA' },
-    x: 50,
-    y: 50,
-    icon: Engineering,
-  },
-  {
-    id: 'ti100',
-    label: 'TI-100',
-    size: 'large',
-    color: { light: '#10B981', dark: '#34D399' },
-    x: 50,
-    y: 12,
-    icon: Psychology,
-  },
-  {
-    id: 'equipment',
-    label: 'E-200',
-    size: 'large',
-    color: { light: '#F59E0B', dark: '#FBBF24' },
-    x: 20,
-    y: 35,
-    icon: AccountTree,
-  },
-  {
-    id: 'feed',
-    label: 'Feed Flow',
-    size: 'large',
-    color: { light: '#EC4899', dark: '#F472B6' },
-    x: 80,
-    y: 40,
-    icon: TrendingUp,
-  },
-  {
-    id: 'control',
-    label: 'Control Loop',
-    size: 'large',
-    color: { light: '#3B82F6', dark: '#60A5FA' },
-    x: 75,
-    y: 78,
-    icon: Explore,
-  },
-  {
-    id: 'alarms',
-    label: 'Alarms',
-    size: 'large',
-    color: { light: '#A855F7', dark: '#C084FC' },
-    x: 25,
-    y: 78,
-    icon: Insights,
-  },
-  // Satellite nodes without labels to hint at more context
-  { id: 'sat1', label: '', size: 'small', color: { light: '#F472B6', dark: '#F472B6' }, x: 15, y: 20 },
-  { id: 'sat2', label: '', size: 'small', color: { light: '#A78BFA', dark: '#A78BFA' }, x: 70, y: 18 },
-  { id: 'sat3', label: '', size: 'small', color: { light: '#FBBF24', dark: '#FBBF24' }, x: 90, y: 35 },
-  { id: 'sat4', label: '', size: 'small', color: { light: '#34D399', dark: '#34D399' }, x: 90, y: 70 },
-  { id: 'sat5', label: '', size: 'small', color: { light: '#60A5FA', dark: '#60A5FA' }, x: 55, y: 90 },
-  { id: 'sat6', label: '', size: 'small', color: { light: '#F59E0B', dark: '#F59E0B' }, x: 12, y: 70 },
-  { id: 'sat7', label: '', size: 'medium', color: { light: '#EC4899', dark: '#EC4899' }, x: 40, y: 25 },
-  { id: 'sat8', label: '', size: 'small', color: { light: '#FBBF24', dark: '#FBBF24' }, x: 90, y: 50 },
-];
+// Use a single consistent node size across the graph
+const NODE_SIZE = 110; // square nodes
 
-// Define edges between nodes.  Each connection describes the relationship
-// from one node to another and optionally includes a label that will be
-// displayed at the midpoint of the connecting line.  These labels
-// explain the relationship in plain language.
-const graphConnections = [
-  { from: 'central', to: 'ti100', label: 'monitors' },
-  { from: 'central', to: 'equipment', label: 'controls' },
-  { from: 'central', to: 'feed', label: 'regulates' },
-  { from: 'central', to: 'control', label: 'manages' },
-  { from: 'central', to: 'alarms', label: 'triggers' },
-  { from: 'ti100', to: 'feed', label: 'measures' },
-  { from: 'equipment', to: 'alarms', label: 'connected' },
-  { from: 'equipment', to: 'sat7', label: '' },
-  { from: 'ti100', to: 'sat1', label: '' },
-  { from: 'ti100', to: 'sat2', label: '' },
-  { from: 'feed', to: 'sat3', label: '' },
-  { from: 'feed', to: 'control', label: 'feeds into' },
-  { from: 'control', to: 'sat4', label: '' },
-  { from: 'control', to: 'sat5', label: '' },
-  { from: 'alarms', to: 'sat6', label: '' },
-  { from: 'feed', to: 'sat8', label: '' },
-];
+// Professional smooth edge with gradient + soft shadow
+const ProEdge = (props: EdgeProps) => {
+  const {
+    id,
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    sourcePosition,
+    targetPosition,
+    markerEnd,
+  } = props;
+  const [edgePath] = getBezierPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX,
+    targetY,
+    targetPosition,
+  });
+  const gradId = `edge-grad-${id}`;
+  const shadowId = `edge-shadow`;
 
+  return (
+    <g>
+      <defs>
+        <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#A7D8FF" />
+          <stop offset="100%" stopColor="#1890FF" />
+        </linearGradient>
+        <filter id={shadowId} x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="#000" floodOpacity="0.18" />
+        </filter>
+      </defs>
+      <path
+        d={edgePath}
+        fill="none"
+        stroke={`url(#${gradId})`}
+        strokeWidth={2.5}
+        strokeLinecap="round"
+        filter={`url(#${shadowId})`}
+        markerEnd={markerEnd}
+      />
+    </g>
+  );
+};
 
-export const KnowledgeMapSection: React.FC = () => {
+// Enhanced Knowledge Node
+const KnowledgeNode = ({ data, selected }: any) => {
+  const { isDark } = useThemeMode();
+  const [isHovered, setIsHovered] = useState(false);
+
+  const nodeColor = data.color || PRIMARY_COLOR;
+  const IconComponent = data.icon;
+  const size = NODE_SIZE;
+  const iconSize = 40;
+
+  // We don't show handles to avoid the visible dots around nodes.
+
+  return (
+    <Box
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      sx={{
+        width: size,
+        height: size,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        position: 'relative',
+      }}
+    >
+      {/* Hidden handles to satisfy React Flow without visual dots */}
+      <Handle type="target" position={Position.Top} id="top" style={{ opacity: 0, width: 0, height: 0, border: 0, background: 'transparent', pointerEvents: 'none' }} />
+      <Handle type="source" position={Position.Bottom} id="bottom" style={{ opacity: 0, width: 0, height: 0, border: 0, background: 'transparent', pointerEvents: 'none' }} />
+      <Handle type="source" position={Position.Right} id="right" style={{ opacity: 0, width: 0, height: 0, border: 0, background: 'transparent', pointerEvents: 'none' }} />
+      <Handle type="target" position={Position.Left} id="left" style={{ opacity: 0, width: 0, height: 0, border: 0, background: 'transparent', pointerEvents: 'none' }} />
+
+      {/* Glow Effect */}
+      <Box
+        sx={{
+          position: 'absolute',
+          inset: -12,
+          borderRadius: '50%',
+          background: `radial-gradient(circle, ${nodeColor}40 0%, transparent 70%)`,
+          opacity: selected ? 1 : isHovered ? 0.8 : 0,
+          transition: 'opacity 0.3s ease',
+          filter: 'blur(8px)',
+          zIndex: 0,
+        }}
+      />
+
+      {/* Main Circle */}
+      <Box
+        sx={{
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%',
+          background: isDark
+            ? `linear-gradient(135deg, ${nodeColor}20 0%, ${nodeColor}10 100%)`
+            : `linear-gradient(135deg, ${nodeColor}15 0%, ${nodeColor}05 100%)`,
+          border: selected
+            ? `3px solid ${nodeColor}`
+            : isHovered
+            ? `2px solid ${nodeColor}`
+            : isDark
+            ? `2px solid ${nodeColor}40`
+            : `2px solid ${nodeColor}30`,
+          boxShadow: selected
+            ? `0 0 0 4px ${nodeColor}30, 0 12px 32px rgba(0,0,0,0.25)`
+            : isHovered
+            ? `0 0 0 3px ${nodeColor}20, 0 8px 24px rgba(0,0,0,0.2)`
+            : '0 4px 16px rgba(0,0,0,0.12)',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          transform: isHovered ? 'scale(1.08)' : selected ? 'scale(1.05)' : 'scale(1)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 1,
+          position: 'relative',
+          zIndex: 1,
+          backdropFilter: 'blur(12px)',
+        }}
+      >
+        {/* Icon Container */}
+        <Box
+          sx={{
+            width: iconSize,
+            height: iconSize,
+            borderRadius: '50%',
+            background: nodeColor,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: `0 6px 20px ${nodeColor}50`,
+            transition: 'all 0.3s ease',
+            transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+          }}
+        >
+          {IconComponent && (
+            <IconComponent
+              sx={{
+                fontSize: iconSize * 0.6,
+                color: '#FFFFFF',
+                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
+              }}
+            />
+          )}
+        </Box>
+
+        {/* Label */}
+        <Typography
+          sx={{
+            fontSize: data.size === 'xlarge' ? '0.95rem' : data.size === 'large' ? '0.85rem' : '0.75rem',
+            fontWeight: 700,
+            color: isDark ? '#FFFFFF' : '#0F172A',
+            textAlign: 'center',
+            maxWidth: size - 24,
+            lineHeight: 1.2,
+            textShadow: isDark ? '0 1px 2px rgba(0,0,0,0.3)' : 'none',
+            px: 1,
+          }}
+        >
+          {data.label}
+        </Typography>
+
+        {/* Type Badge */}
+        {data.type && (
+          <Chip
+            label={data.type}
+            size="small"
+            sx={{
+              height: 18,
+              fontSize: '0.65rem',
+              fontWeight: 600,
+              backgroundColor: `${nodeColor}30`,
+              color: nodeColor,
+              border: `1px solid ${nodeColor}50`,
+              '& .MuiChip-label': {
+                px: 1,
+              },
+            }}
+          />
+        )}
+      </Box>
+    </Box>
+  );
+};
+
+const nodeTypes = {
+  custom: KnowledgeNode,
+};
+
+const edgeTypes = {
+  'pro-edge': ProEdge,
+} as const;
+
+const defaultEdgeOptions: DefaultEdgeOptions = {
+  type: 'pro-edge',
+  animated: false,
+  style: { strokeWidth: 3, strokeLinecap: 'round' },
+  markerEnd: { type: MarkerType.ArrowClosed, color: PRIMARY_COLOR, width: 14, height: 14 },
+};
+
+// --- Post-layout spacing helper: keep nodes on the same rank from crowding ---
+function enforceSameRankSpacing(
+  nodes: Node[],
+  direction: 'TB' | 'LR',
+  minGap: number
+) {
+  // We group nodes by their rank coordinate (y for TB, x for LR) with a small tolerance
+  const tol = 16;
+  type RankKey = string;
+  const byRank = new Map<RankKey, Node[]>();
+
+  nodes.forEach((n) => {
+    const cx = n.position.x + NODE_SIZE / 2;
+    const cy = n.position.y + NODE_SIZE / 2;
+    const keyVal = direction === 'LR' ? cx : cy; // LR ranks along x, TB ranks along y
+    const bucket = Math.round(keyVal / tol);
+    const key = `${bucket}`;
+    if (!byRank.has(key)) byRank.set(key, []);
+    byRank.get(key)!.push(n);
+  });
+
+  // For each rank, sort by the orthogonal axis and push apart to satisfy minGap
+  byRank.forEach((group) => {
+    if (group.length < 2) return;
+
+    if (direction === 'TB') {
+      // Same Y rank; sort left-to-right by center X
+      group.sort(
+        (a, b) =>
+          a.position.x + NODE_SIZE / 2 - (b.position.x + NODE_SIZE / 2)
+      );
+      // Sweep left→right, pushing nodes to the right if needed
+      let lastCenterX = group[0].position.x + NODE_SIZE / 2;
+      for (let i = 1; i < group.length; i++) {
+        const n = group[i];
+        let cx = n.position.x + NODE_SIZE / 2;
+        if (cx - lastCenterX < minGap) {
+          const needed = minGap - (cx - lastCenterX);
+          n.position.x += needed; // push right
+          cx = n.position.x + NODE_SIZE / 2;
+        }
+        lastCenterX = cx;
+      }
+    } else {
+      // LR: Same X rank; sort top-to-bottom by center Y
+      group.sort(
+        (a, b) =>
+          a.position.y + NODE_SIZE / 2 - (b.position.y + NODE_SIZE / 2)
+      );
+      let lastCenterY = group[0].position.y + NODE_SIZE / 2;
+      for (let i = 1; i < group.length; i++) {
+        const n = group[i];
+        let cy = n.position.y + NODE_SIZE / 2;
+        if (cy - lastCenterY < minGap) {
+          const needed = minGap - (cy - lastCenterY);
+          n.position.y += needed; // push down
+          cy = n.position.y + NODE_SIZE / 2;
+        }
+        lastCenterY = cy;
+      }
+    }
+  });
+
+  return nodes;
+}
+
+// Dagre Layout Function - من knowledge-graph-unified.tsx
+function getLayoutedElements(nodes: Node[], edges: Edge[], direction: 'TB' | 'LR' = 'LR') {
+  const isHorizontal = direction === 'LR';
+  const g = new dagre.graphlib.Graph();
+  g.setDefaultEdgeLabel(() => ({}));
+  
+  const nodeCount = nodes.length;
+  let nodesep = 100;
+  let ranksep = 150;
+  
+  // Adjust spacing based on node count
+  if (nodeCount > 50) {
+    nodesep = 200;
+    ranksep = 250;
+  } else if (nodeCount > 20) {
+    nodesep = 150;
+    ranksep = 200;
+  }
+  
+  g.setGraph({ 
+    rankdir: direction, 
+    nodesep: nodesep, 
+    ranksep: ranksep,
+    marginx: 50,
+    marginy: 50,
+    align: 'UL',
+    ranker: 'network-simplex',
+  });
+
+  nodes.forEach((n) => {
+    const width = NODE_SIZE;
+    const height = NODE_SIZE;
+    g.setNode(n.id, { width, height });
+  });
+  
+  edges.forEach((e) => {
+    g.setEdge(e.source, e.target);
+  });
+
+  dagre.layout(g);
+
+  let layoutedNodes = nodes.map((n) => {
+    const nodeWithPosition = g.node(n.id);
+    if (nodeWithPosition) {
+      const { x, y } = nodeWithPosition;
+      const width = NODE_SIZE;
+      const height = NODE_SIZE;
+      return {
+        ...n,
+        position: {
+          x: x - width / 2,
+          y: y - height / 2,
+        },
+        sourcePosition: isHorizontal ? Position.Right : Position.Bottom,
+        targetPosition: isHorizontal ? Position.Left : Position.Top,
+      };
+    }
+    return n;
+  });
+
+  // Center parents relative to their children for both TB (vertical) and LR (horizontal)
+  {
+    const idToNode = new Map(layoutedNodes.map((n) => [n.id, n]));
+    const childrenByParent = new Map<string, string[]>();
+    edges.forEach((e) => {
+      if (!childrenByParent.has(e.source)) childrenByParent.set(e.source, []);
+      childrenByParent.get(e.source)!.push(e.target);
+    });
+    layoutedNodes = layoutedNodes.map((n) => {
+      const childIds = childrenByParent.get(n.id);
+      if (!childIds || childIds.length === 0) return n;
+      const w = NODE_SIZE;
+      const h = NODE_SIZE;
+      const childNodes = childIds.map((cid) => idToNode.get(cid)).filter(Boolean) as any[];
+      if (childNodes.length === 0) return n;
+
+      if (!isHorizontal) {
+        // TB: center X above children
+        const childCentersX = childNodes.map((cn) => {
+          const cw = NODE_SIZE;
+          return cn.position.x + cw / 2;
+        });
+        const avgCX = childCentersX.reduce((a, b) => a + b, 0) / childCentersX.length;
+        return { ...n, position: { ...n.position, x: avgCX - w / 2 } };
+      } else {
+        // LR: center Y beside children
+        const childCentersY = childNodes.map((cn) => {
+          const ch = NODE_SIZE;
+          return cn.position.y + ch / 2;
+        });
+        const avgCY = childCentersY.reduce((a, b) => a + b, 0) / childCentersY.length;
+        return { ...n, position: { ...n.position, y: avgCY - h / 2 } };
+      }
+    });
+  }
+
+  // Enforce a minimum same-rank spacing to avoid crowding when expanding children
+  {
+    const nodeCount = layoutedNodes.length;
+    // Base gap is node width plus padding; scale slightly with graph size
+    const baseGap = NODE_SIZE + 80;
+    const scaledGap =
+      nodeCount > 50 ? baseGap + 100 : nodeCount > 20 ? baseGap + 50 : baseGap;
+    layoutedNodes = enforceSameRankSpacing(layoutedNodes, direction, scaledGap);
+  }
+  // Keep edges unchanged; positions handle side selection
+  const layoutedEdges = edges;
+
+  return { nodes: layoutedNodes, edges: layoutedEdges };
+}
+
+// Initial graph creation
+const createInitialGraph = () => {
+  const nodes: Node[] = [
+    {
+      id: 'root',
+      type: 'custom',
+      position: { x: 450, y: 300 },
+      data: {
+        label: 'Process Unit',
+        icon: Engineering,
+        color: PRIMARY_COLOR,
+        size: 'xlarge',
+        type: 'Control',
+      },
+    },
+    {
+      id: 'equipment',
+      type: 'custom',
+      position: { x: 120, y: 180 },
+      data: {
+        label: 'E-200',
+        icon: Memory,
+        color: PRIMARY_COLOR,
+        size: 'large',
+        type: 'Equipment',
+      },
+    },
+    {
+      id: 'control',
+      type: 'custom',
+      position: { x: 780, y: 180 },
+      data: {
+        label: 'Control',
+        icon: AccountTree,
+        color: PRIMARY_COLOR,
+        size: 'large',
+        type: 'System',
+      },
+    },
+    {
+      id: 'sensors',
+      type: 'custom',
+      position: { x: 180, y: 480 },
+      data: {
+        label: 'Sensors',
+        icon: Speed,
+        color: PRIMARY_COLOR,
+        size: 'large',
+        type: 'I/O',
+      },
+    },
+    {
+      id: 'alarms',
+      type: 'custom',
+      position: { x: 720, y: 480 },
+      data: {
+        label: 'Alarms',
+        icon: Insights,
+        color: PRIMARY_COLOR,
+        size: 'large',
+        type: 'Safety',
+      },
+    },
+  ];
+
+  const edges: Edge[] = [
+    {
+      id: 'e-root-equipment',
+      source: 'root',
+      target: 'equipment',
+      animated: false,
+      style: { stroke: SECONDARY_COLOR, strokeWidth: 2 },
+      label: 'monitors',
+      labelStyle: { fontSize: 12, fontWeight: 700, fill: SECONDARY_COLOR },
+      labelBgStyle: { fill: '#FFFFFF', fillOpacity: 0.9 },
+      markerEnd: { type: MarkerType.ArrowClosed, color: SECONDARY_COLOR },
+    },
+    {
+      id: 'e-root-control',
+      source: 'root',
+      target: 'control',
+      animated: false,
+      style: { stroke: SECONDARY_COLOR, strokeWidth: 2 },
+      label: 'manages',
+      labelStyle: { fontSize: 12, fontWeight: 700, fill: SECONDARY_COLOR },
+      labelBgStyle: { fill: '#FFFFFF', fillOpacity: 0.9 },
+      markerEnd: { type: MarkerType.ArrowClosed, color: SECONDARY_COLOR },
+    },
+    {
+      id: 'e-root-sensors',
+      source: 'root',
+      target: 'sensors',
+      animated: false,
+      style: { stroke: SECONDARY_COLOR, strokeWidth: 2 },
+      label: 'reads data',
+      labelStyle: { fontSize: 12, fontWeight: 700, fill: SECONDARY_COLOR },
+      labelBgStyle: { fill: '#FFFFFF', fillOpacity: 0.9 },
+      markerEnd: { type: MarkerType.ArrowClosed, color: SECONDARY_COLOR },
+    },
+    {
+      id: 'e-root-alarms',
+      source: 'root',
+      target: 'alarms',
+      animated: false,
+      style: { stroke: SECONDARY_COLOR, strokeWidth: 2 },
+      label: 'triggers',
+      labelStyle: { fontSize: 12, fontWeight: 700, fill: SECONDARY_COLOR },
+      labelBgStyle: { fill: '#FFFFFF', fillOpacity: 0.9 },
+      markerEnd: { type: MarkerType.ArrowClosed, color: SECONDARY_COLOR },
+    },
+  ];
+  
+  return { nodes, edges };
+};
+
+// Detail nodes
+const detailNodes: { [key: string]: { nodes: Node[]; edges: Edge[] } } = {
+  equipment: {
+    nodes: [
+      {
+        id: 'temp1',
+        type: 'custom',
+        position: { x: 0, y: 0 },
+        data: { label: 'TI-100', icon: Thermostat, color: SECONDARY_COLOR, size: 'medium', type: 'Temp' },
+      },
+      {
+        id: 'pressure1',
+        type: 'custom',
+        position: { x: 0, y: 0 },
+        data: { label: 'PI-101', icon: Speed, color: SECONDARY_COLOR, size: 'medium', type: 'Press' },
+      },
+    ],
+    edges: [
+      {
+        id: 'e-equipment-temp1',
+        source: 'equipment',
+        target: 'temp1',
+        animated: false,
+        style: { stroke: SECONDARY_COLOR, strokeWidth: 2 },
+        label: 'measures',
+        labelStyle: { fontSize: 11, fontWeight: 700, fill: SECONDARY_COLOR },
+        labelBgStyle: { fill: '#FFFFFF', fillOpacity: 0.9 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: SECONDARY_COLOR },
+      },
+      {
+        id: 'e-equipment-pressure1',
+        source: 'equipment',
+        target: 'pressure1',
+        animated: false,
+        style: { stroke: SECONDARY_COLOR, strokeWidth: 2 },
+        label: 'monitors',
+        labelStyle: { fontSize: 11, fontWeight: 700, fill: SECONDARY_COLOR },
+        labelBgStyle: { fill: '#FFFFFF', fillOpacity: 0.9 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: SECONDARY_COLOR },
+      },
+    ],
+  },
+  control: {
+    nodes: [
+      {
+        id: 'loop1',
+        type: 'custom',
+        position: { x: 0, y: 0 },
+        data: { label: 'PID-200', icon: Psychology, color: SECONDARY_COLOR, size: 'medium', type: 'Loop' },
+      },
+      {
+        id: 'loop2',
+        type: 'custom',
+        position: { x: 0, y: 0 },
+        data: { label: 'PID-201', icon: Settings, color: SECONDARY_COLOR, size: 'medium', type: 'Loop' },
+      },
+    ],
+    edges: [
+      {
+        id: 'e-control-loop1',
+        source: 'control',
+        target: 'loop1',
+        animated: false,
+        style: { stroke: SECONDARY_COLOR, strokeWidth: 2 },
+        label: 'executes',
+        labelStyle: { fontSize: 11, fontWeight: 700, fill: SECONDARY_COLOR },
+        labelBgStyle: { fill: '#FFFFFF', fillOpacity: 0.9 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: SECONDARY_COLOR },
+      },
+      {
+        id: 'e-control-loop2',
+        source: 'control',
+        target: 'loop2',
+        animated: false,
+        style: { stroke: SECONDARY_COLOR, strokeWidth: 2 },
+        label: 'runs',
+        labelStyle: { fontSize: 11, fontWeight: 700, fill: SECONDARY_COLOR },
+        labelBgStyle: { fill: '#FFFFFF', fillOpacity: 0.9 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: SECONDARY_COLOR },
+      }
+    ],
+  },
+  sensors: {
+    nodes: [
+      {
+        id: 'ti100',
+        type: 'custom',
+        position: { x: 0, y: 0 },
+        data: { label: 'TI-100', icon: Thermostat, color: SECONDARY_COLOR, size: 'medium', type: 'Input' },
+      },
+      {
+        id: 'fi100',
+        type: 'custom',
+        position: { x: 0, y: 0 },
+        data: { label: 'FI-100', icon: Opacity, color: SECONDARY_COLOR, size: 'medium', type: 'Flow' },
+      },
+    ],
+    edges: [
+      {
+        id: 'e-sensors-ti100',
+        source: 'sensors',
+        target: 'ti100',
+        animated: false,
+        style: { stroke: SECONDARY_COLOR, strokeWidth: 2 },
+        label: 'reads',
+        labelStyle: { fontSize: 11, fontWeight: 700, fill: SECONDARY_COLOR },
+        labelBgStyle: { fill: '#FFFFFF', fillOpacity: 0.9 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: SECONDARY_COLOR },
+      },
+      {
+        id: 'e-sensors-fi100',
+        source: 'sensors',
+        target: 'fi100',
+        animated: false,
+        style: { stroke: SECONDARY_COLOR, strokeWidth: 2 },
+        label: 'tracks',
+        labelStyle: { fontSize: 11, fontWeight: 700, fill: SECONDARY_COLOR },
+        labelBgStyle: { fill: '#FFFFFF', fillOpacity: 0.9 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: SECONDARY_COLOR },
+      },
+    ],
+  },
+  alarms: {
+    nodes: [
+      {
+        id: 'alarm1',
+        type: 'custom',
+        position: { x: 0, y: 0 },
+        data: { label: 'TAH-100', icon: Insights, color: SECONDARY_COLOR, size: 'medium', type: 'High' },
+      },
+      {
+        id: 'alarm2',
+        type: 'custom',
+        position: { x: 0, y: 0 },
+        data: { label: 'PAH-101', icon: TrendingUp, color: SECONDARY_COLOR, size: 'medium', type: 'Critical' },
+      },
+    ],
+    edges: [
+      {
+        id: 'e-alarms-alarm1',
+        source: 'alarms',
+        target: 'alarm1',
+        animated: false,
+        style: { stroke: SECONDARY_COLOR, strokeWidth: 2 },
+        label: 'monitors',
+        labelStyle: { fontSize: 11, fontWeight: 700, fill: SECONDARY_COLOR },
+        labelBgStyle: { fill: '#FFFFFF', fillOpacity: 0.9 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: SECONDARY_COLOR },
+      },
+      {
+        id: 'e-alarms-alarm2',
+        source: 'alarms',
+        target: 'alarm2',
+        animated: false,
+        style: { stroke: SECONDARY_COLOR, strokeWidth: 2 },
+        label: 'watches',
+        labelStyle: { fontSize: 11, fontWeight: 700, fill: SECONDARY_COLOR },
+        labelBgStyle: { fill: '#FFFFFF', fillOpacity: 0.9 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: SECONDARY_COLOR },
+      },
+    ],
+  },
+};
+
+const KnowledgeMapContent: React.FC = () => {
   const { isDark } = useThemeMode();
   const {
     containerMaxWidth,
@@ -146,161 +723,121 @@ export const KnowledgeMapSection: React.FC = () => {
     bodyFontSize,
     sectionPadding,
   } = useResponsiveLayout();
+  const isSmall = useMediaQuery('(max-width:600px)');
 
-  // Section and element refs
-  const sectionRef = useRef<HTMLDivElement>(null);
+  // Prepare initial auto-layout so first paint is already organized
+  const initialGraphRef = useRef(createInitialGraph());
+  const initialLayoutRef = useRef(
+    getLayoutedElements(initialGraphRef.current.nodes, initialGraphRef.current.edges, 'TB')
+  );
+
   const headerRef = useRef<HTMLDivElement>(null);
-  const visualRef = useRef<HTMLDivElement>(null);
-  const featuresRef = useRef<HTMLDivElement[]>([]);
+  const reactFlowInstance = useReactFlow();
 
-  // Graph refs for nodes and connections
-  const graphNodesRef = useRef<HTMLDivElement[]>([]);
-  const connectionRefs = useRef<SVGGElement[]>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialLayoutRef.current.nodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialLayoutRef.current.edges);
+  const [selectedNode, setSelectedNode] = useState<string | null>('root');
+  const [layoutDirection, setLayoutDirection] = useState<'TB' | 'LR'>('TB'); // Changed to TB (Vertical)
 
-  // Visibility state for the graph; triggers animations when it enters viewport
-  const [graphVisible, setGraphVisible] = useState(false);
+  // Apply auto layout using Dagre
+  const applyAutoLayout = useCallback((direction: 'TB' | 'LR' = 'TB') => {
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodes, edges, direction);
+    setNodes(layoutedNodes);
+    setEdges(layoutedEdges);
+    // Ensure viewport updates after DOM paints
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        reactFlowInstance.fitView({ padding: 0.2, duration: 500, includeHiddenNodes: true });
+      });
+    });
+  }, [nodes, edges, setNodes, setEdges, reactFlowInstance]);
 
-  // Helper to convert node size labels to pixel values
-  const getNodeSize = (size: 'small' | 'medium' | 'large' | 'xlarge'): number => {
-    switch (size) {
-      case 'small':
-        return 40;
-      case 'medium':
-        return 70;
-      case 'large':
-        return 110;
-      case 'xlarge':
-        return 180;
-      default:
-        return 60;
-    }
-  };
-
-  // Observe the visual graph container to trigger animations when it becomes visible
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setGraphVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    if (visualRef.current) {
-      observer.observe(visualRef.current);
-    }
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  // Animate header, graph elements, and feature cards
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Header animation: slide and fade in
-      if (headerRef.current) {
-        gsap.from(headerRef.current.children, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          y: 60,
-          scale: 0.95,
-          opacity: 0,
-          duration: 0.7,
-          stagger: 0.2,
-          ease: 'back.out(1.4)',
-        });
-      }
-
-      // Animate graph only after it becomes visible
-      if (graphVisible) {
-        // Nodes scale in with slight delay between each
-        if (graphNodesRef.current.length) {
-          graphNodesRef.current.forEach((node, idx) => {
-            gsap.from(node, {
-              scale: 0.5,
-              opacity: 0,
-              duration: 0.6,
-              delay: 0.3 + idx * 0.08,
-              ease: 'back.out(1.5)',
+  const onNodeClick = useCallback(
+    (event: React.MouseEvent, node: Node) => {
+      setSelectedNode(node.id);
+      // Check if this node has details
+      if (detailNodes[node.id]) {
+        const { nodes: newNodes, edges: newEdges } = detailNodes[node.id];
+        const existingNodeIds = new Set(nodes.map((n) => n.id));
+        const nodesToAdd = newNodes.filter((n) => !existingNodeIds.has(n.id));
+        if (nodesToAdd.length > 0) {
+          const existingEdgeIds = new Set(edges.map((e) => e.id));
+          const edgesToAdd = newEdges.filter((e) => !existingEdgeIds.has(e.id));
+          const allNodes = [...nodes, ...nodesToAdd];
+          const allEdges = [...edges, ...edgesToAdd];
+          const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(allNodes, allEdges, layoutDirection);
+          setNodes(layoutedNodes);
+          setEdges(layoutedEdges);
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              reactFlowInstance.fitView({ padding: 0.2, duration: 500, includeHiddenNodes: true });
             });
           });
         }
-        // Draw connection lines and fade in labels
-        if (connectionRefs.current.length) {
-          connectionRefs.current.forEach((conn, idx) => {
-            const line = conn.querySelector('line');
-            const label = conn.querySelector('text');
-            if (line) {
-              const length = (line as SVGLineElement).getTotalLength();
-              // Set up dasharray and initial dashoffset
-              gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
-              gsap.to(line, {
-                strokeDashoffset: 0,
-                duration: 1.0,
-                delay: 0.5 + idx * 0.05,
-                ease: 'power2.out',
-              });
-            }
-            if (label) {
-              gsap.from(label, {
-                opacity: 0,
-                duration: 0.5,
-                delay: 1.3 + idx * 0.05,
-                ease: 'power2.out',
-              });
-            }
-          });
-        }
       }
+    },
+    [nodes, edges, setNodes, setEdges, reactFlowInstance, layoutDirection]
+  );
 
-      // Feature cards animation: staggered fade and slide up
-      featuresRef.current.forEach((feature, index) => {
-        if (feature) {
-          gsap.from(feature, {
-            scrollTrigger: {
-              trigger: feature,
-              start: 'top 90%',
-              toggleActions: 'play none none none',
-            },
-            y: 80,
-            scale: 0.95,
-            opacity: 0,
-            duration: 0.7,
-            delay: index * 0.12,
-            ease: 'back.out(1.4)',
-          });
-        }
+  const handleReset = useCallback(() => {
+    const initial = createInitialGraph();
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(initial.nodes, initial.edges, layoutDirection);
+    setNodes(layoutedNodes);
+    setEdges(layoutedEdges);
+    setSelectedNode('root');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        reactFlowInstance.fitView({ padding: 0.2, duration: 500, includeHiddenNodes: true });
       });
-    }, sectionRef);
-    return () => ctx.revert();
-  }, [graphVisible]);
+    });
+  }, [setNodes, setEdges, reactFlowInstance, layoutDirection]);
+
+  const handleLayoutDirectionChange = useCallback((direction: 'TB' | 'LR') => {
+    setLayoutDirection(direction);
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodes, edges, direction);
+    setNodes(layoutedNodes);
+    setEdges(layoutedEdges);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        reactFlowInstance.fitView({ padding: 0.2, duration: 500, includeHiddenNodes: true });
+      });
+    });
+  }, [nodes, edges, setNodes, setEdges, reactFlowInstance]);
+
+  // Auto focus when graph content changes (existing useEffect already calls fitView)
+  useEffect(() => {
+    if (!nodes.length) return;
+    // Re-focus viewport whenever nodes/edges change (after layout settles)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        reactFlowInstance.fitView({ padding: isSmall ? 0.1 : 0.15, duration: 500, includeHiddenNodes: true });
+      });
+    });
+  }, [nodes.length, edges.length, isSmall]);
+
+  // Header animation
+  useEffect(() => {
+    if (!headerRef.current) return;
+    const header = headerRef.current;
+    const items = Array.from(header.children);
+    items.forEach((el, idx) => {
+      (el as HTMLElement).style.opacity = '0';
+      (el as HTMLElement).style.transform = 'translateY(30px)';
+      setTimeout(() => {
+        (el as HTMLElement).style.transition = 'all 0.6s ease-out';
+        (el as HTMLElement).style.opacity = '1';
+        (el as HTMLElement).style.transform = 'translateY(0)';
+      }, idx * 150);
+    });
+  }, []);
 
   return (
     <Box
-      ref={sectionRef}
       component="section"
-      data-section-theme={isDark ? 'dark' : 'light'}
       sx={{
         py: sectionPadding,
-        background: 'transparent',
         position: 'relative',
-        overflow: 'hidden',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: '20%',
-          left: '-5%',
-          width: '60%',
-          height: '60%',
-          background: isDark
-            ? 'radial-gradient(ellipse, rgba(139, 92, 246, 0.1) 0%, transparent 70%)'
-            : 'radial-gradient(ellipse, rgba(139, 92, 246, 0.08) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        },
+        background: 'transparent',
       }}
     >
       <Container
@@ -308,19 +845,18 @@ export const KnowledgeMapSection: React.FC = () => {
         sx={{
           maxWidth: containerMaxWidth,
           px: containerPadding,
+          position: 'relative',
+          zIndex: 1,
         }}
       >
-        {/* Section Header */}
-        <Box ref={headerRef} sx={{ textAlign: 'center', mb: { xs: 8, md: 12 } }}>
+        <Box ref={headerRef} sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
           <Chip
-            label="Context Made Visible"
+            label="Interactive Knowledge Graph"
             sx={{
-              mb: 3,
+              mb: 2,
               fontSize: '0.875rem',
               fontWeight: 600,
-              background: isDark
-                ? 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)'
-                : 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+              background: PRIMARY_COLOR,
               color: 'white',
               px: 2,
             }}
@@ -331,366 +867,184 @@ export const KnowledgeMapSection: React.FC = () => {
               fontSize: h2FontSize,
               fontWeight: 700,
               color: isDark ? '#FFFFFF' : '#0F172A',
-              mb: 3,
+              mb: 2,
               lineHeight: 1.2,
             }}
           >
-            The Knowledge Map
+            Navigate Your Process Knowledge
           </Typography>
           <Typography
             sx={{
               fontSize: bodyFontSize,
-              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
-              maxWidth: '800px',
+              color: isDark ? 'rgba(255, 255, 255, 0.85)' : '#64748B',
+              maxWidth: '700px',
               mx: 'auto',
               lineHeight: 1.7,
-              mb: 2,
             }}
           >
-            Raw tags alone don't explain a process. ChatAPC builds a knowledge map: a living model of your plant.
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: '1.125rem',
-              fontWeight: 600,
-              color: isDark ? '#A78BFA' : '#7C3AED',
-              fontStyle: 'italic',
-            }}
-          >
-            The map lets ChatAPC understand your plant like an experienced engineer would
+            Click on nodes to explore relationships between equipment, sensors, and control systems
           </Typography>
         </Box>
 
-        {/* Visual Knowledge Map Representation */}
-        <Box
-          ref={visualRef}
+        <Paper
+          elevation={isDark ? 0 : 12}
           sx={{
             position: 'relative',
             width: '100%',
-            // Maintain a responsive height while leaving room for aspect ratio on larger screens
-            height: { xs: 320, md: 420 },
-            mb: { xs: 8, md: 12 },
-            // Subtle gradient background that adapts to the current theme
+            height: { xs: 460, sm: 560, md: 650 },
+            borderRadius: 4,
+            overflow: 'visible',
             background: isDark
-              ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%)'
-              : 'linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(255, 255, 255, 0.96) 100%)',
-            borderRadius: 6,
+              ? 'linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.9) 100%)'
+              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
+            backdropFilter: 'blur(20px)',
             border: isDark
-              ? '1px solid rgba(71, 85, 105, 0.35)'
-              : '1px solid rgba(226, 232, 240, 0.85)',
+              ? '1px solid rgba(255, 255, 255, 0.08)'
+              : '1px solid rgba(0, 0, 0, 0.06)',
             boxShadow: isDark
-              ? '0 15px 40px rgba(0, 0, 0, 0.5)'
-              : '0 15px 40px rgba(0, 0, 0, 0.1)',
-            overflow: 'hidden',
+              ? '0 25px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
+              : '0 25px 60px rgba(0, 0, 0, 0.12)',
           }}
         >
-          {/* Subtle radial background effect */}
-          <Box
-            sx={{
-              position: 'absolute',
-              inset: 0,
-              background: isDark
-                ? 'radial-gradient(circle at center, rgba(167, 139, 250, 0.08) 0%, transparent 70%)'
-                : 'radial-gradient(circle at center, rgba(167, 139, 250, 0.06) 0%, transparent 70%)',
-              pointerEvents: 'none',
-              zIndex: 0,
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onNodeClick={onNodeClick}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            defaultEdgeOptions={defaultEdgeOptions}
+            connectionLineType={ConnectionLineType.Bezier}
+            onInit={(instance) => {
+              // First fit instantly to avoid showing any offset, then refine after paints
+              instance.fitView({ padding: isSmall ? 0.1 : 0.2, duration: 0, includeHiddenNodes: true });
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                  instance.fitView({ padding: isSmall ? 0.1 : 0.2, duration: 500, includeHiddenNodes: true });
+                });
+              });
             }}
-          />
-
-          {/* SVG for connections */}
-          <Box
-            component="svg"
-            sx={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              zIndex: 1,
-            }}
+            fitView
+            fitViewOptions={{ padding: isSmall ? 0.1 : 0.2, duration: 800 }}
+            style={{ width: '100%', height: '100%' }}
+            minZoom={isSmall ? 0.25 : 0.4}
+            maxZoom={isSmall ? 1.4 : 1.8}
+            nodesDraggable={false}
+            nodesConnectable={false}
+            elementsSelectable={true}
+            proOptions={{ hideAttribution: true }}
           >
-            <defs>
-              {/* Define an arrowhead marker for directed edges */}
-              <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-                <polygon points="0 0, 10 3, 0 6" fill={isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(100, 116, 139, 0.3)'} />
-              </marker>
-            </defs>
-            {graphConnections.map((conn, idx) => {
-              const fromNode = graphNodes.find((n) => n.id === conn.from);
-              const toNode = graphNodes.find((n) => n.id === conn.to);
-              if (!fromNode || !toNode) return null;
-              const x1 = `${fromNode.x}%`;
-              const y1 = `${fromNode.y}%`;
-              const x2 = `${toNode.x}%`;
-              const y2 = `${toNode.y}%`;
-              // Midpoint for optional label
-              const midX = (fromNode.x + toNode.x) / 2;
-              const midY = (fromNode.y + toNode.y) / 2;
-              // Determine stroke color based on theme
-              const strokeColor = isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(71, 85, 105, 0.3)';
-              return (
-                <g
-                  key={`conn-${idx}`}
-                  ref={(el) => {
-                    if (el) connectionRefs.current[idx] = el as SVGGElement;
-                  }}
-                  style={{ transformOrigin: 'center center' }}
-                >
-                  <line
-                    x1={x1}
-                    y1={y1}
-                    x2={x2}
-                    y2={y2}
-                    stroke={strokeColor}
-                    strokeWidth={2}
-                    markerEnd="url(#arrowhead)"
-                  />
-                  {conn.label && (
-                    <text
-                      x={`${midX}%`}
-                      y={`${midY}%`}
-                      fill={isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 0.7)'}
-                      fontSize="11"
-                      fontStyle="italic"
-                      textAnchor="middle"
-                      dy={-4}
-                    >
-                      {conn.label}
-                    </text>
-                  )}
-                </g>
-              );
-            })}
-          </Box>
-
-          {/* Nodes */}
-          {graphNodes.map((node, idx) => {
-            const size = getNodeSize(node.size as any);
-            const nodeColor = (node.color as any)[isDark ? 'dark' : 'light'] || node.color;
-            const IconComponent = node.icon as any;
-            return (
-              <Box
-                key={node.id}
-                ref={(el) => {
-                  if (el) graphNodesRef.current[idx] = el as HTMLDivElement;
-                }}
-                sx={{
-                  position: 'absolute',
-                  left: `${node.x}%`,
-                  top: `${node.y}%`,
-                  transform: 'translate(-50%, -50%)',
-                  width: size,
-                  height: size,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: node.label ? 'pointer' : 'default',
-                  zIndex: 2,
-                }}
-              >
-                {/* Node circle */}
-                <Box
-                  sx={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: '50%',
-                    // Fill the circle completely with the node's color for a bold appearance
-                    background: nodeColor,
-                    border: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
-                    boxShadow: `0 8px 32px ${nodeColor}40`,
-                    transition: 'transform 0.3s ease',
-                    '&:hover': {
-                      transform: 'scale(1.1)',
-                    },
-                  }}
-                >
-                  {IconComponent && (
-                    <IconComponent
-                      sx={{
-                        fontSize:
-                          node.size === 'xlarge'
-                            ? 48
-                            : node.size === 'large'
-                            ? 36
-                            : node.size === 'medium'
-                            ? 28
-                            : 20,
-                        // Icons are white to contrast the colored circle
-                        color: '#FFFFFF',
-                      }}
-                    />
-                  )}
-                  {/* Glow effect */}
-                  <Box
-                    className="glow"
+            <Panel position="top-right">
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Tooltip title="Zoom In" placement="left">
+                  <IconButton
+                    onClick={() => reactFlowInstance.zoomIn({ duration: 300 })}
                     sx={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: '50%',
-                      background: `radial-gradient(circle, ${nodeColor}60 0%, transparent 70%)`,
-                      opacity: 0,
-                      transition: 'opacity 0.4s ease',
-                      zIndex: -1,
-                      pointerEvents: 'none',
-                      '.MuiBox-root:hover &': {
-                        opacity: 1,
-                      },
-                    }}
-                  />
-                </Box>
-                {/* Label */}
-                {node.label && (
-                  <Typography
-                    sx={{
-                      mt: 1,
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      color: nodeColor,
-                      background: `${nodeColor}15`,
-                      px: 1.5,
-                      py: 0.5,
-                      borderRadius: 1.5,
-                      backdropFilter: 'blur(6px)',
-                      transition: 'transform 0.3s ease',
+                      width: { xs: 40, sm: 44 },
+                      height: { xs: 40, sm: 44 },
+                      backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.98)',
+                      backdropFilter: 'blur(12px)',
+                      border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
                       '&:hover': {
+                        backgroundColor: isDark ? 'rgba(55, 65, 81, 0.95)' : 'rgba(249, 250, 251, 1)',
                         transform: 'scale(1.05)',
+                        boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
                       },
+                      transition: 'all 0.2s ease',
                     }}
                   >
-                    {node.label}
-                  </Typography>
-                )}
-              </Box>
-            );
-          })}
-
-          {/* Floating Label */}
-          <Typography
-            sx={{
-              position: 'absolute',
-              top: '8%',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              fontSize: { xs: '0.8rem', md: '0.9rem' },
-              fontWeight: 600,
-              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
-              background: isDark ? 'rgba(0, 0, 0, 0.35)' : 'rgba(255, 255, 255, 0.85)',
-              px: 2,
-              py: 0.5,
-              borderRadius: 2,
-              backdropFilter: 'blur(12px)',
-              zIndex: 3,
-            }}
-          >
-            Process Knowledge Map
-          </Typography>
-        </Box>
-
-        {/* Features Grid */}
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
-            gap: { xs: 4, md: 6 },
-          }}
-        >
-          {mapFeatures.map((feature, index) => {
-            const featureColor = feature.color[isDark ? 'dark' : 'light'];
-            const IconComponent = feature.icon;
-            return (
-              <Box
-                key={index}
-                ref={(el) => {
-                  if (el) featuresRef.current[index] = el as HTMLDivElement;
-                }}
-                sx={{
-                  p: { xs: 3, md: 4 },
-                  borderRadius: 4,
-                  border: isDark
-                    ? `1px solid rgba(71, 85, 105, 0.35)`
-                    : `1px solid rgba(226, 232, 240, 0.85)`,
-                  background: isDark
-                    ? 'rgba(30, 41, 59, 0.8)'
-                    : 'rgba(255, 255, 255, 0.95)',
-                  backdropFilter: 'blur(20px)',
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-6px)',
-                    boxShadow: isDark
-                      ? `0 20px 40px ${feature.color.dark}30`
-                      : `0 20px 40px ${feature.color.light}20`,
-                    borderColor: featureColor,
-                  },
-                }}
-              >
-                {/* Icon container */}
-                <Box
-                  sx={{
-                    width: 56,
-                    height: 56,
-                    borderRadius: 3,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    mb: 3,
-                    backgroundColor: `${featureColor}20`,
-                  }}
-                >
-                  <Box
+                    <ZoomIn sx={{ color: isDark ? '#FFFFFF' : '#0F172A', fontSize: 22 }} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Zoom Out" placement="left">
+                  <IconButton
+                    onClick={() => reactFlowInstance.zoomOut({ duration: 300 })}
                     sx={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: '50%',
-                      backgroundColor: featureColor,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      width: { xs: 40, sm: 44 },
+                      height: { xs: 40, sm: 44 },
+                      backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.98)',
+                      backdropFilter: 'blur(12px)',
+                      border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                      '&:hover': {
+                        backgroundColor: isDark ? 'rgba(55, 65, 81, 0.95)' : 'rgba(249, 250, 251, 1)',
+                        transform: 'scale(1.05)',
+                        boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
+                      },
+                      transition: 'all 0.2s ease',
                     }}
                   >
-                    {/* Render the feature icon within the inner circle */}
-                    <IconComponent
-                      sx={{
-                        fontSize: 18,
-                        color: '#FFFFFF',
-                      }}
-                    />
-                  </Box>
-                </Box>
-                {/* Title */}
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontSize: '1.4rem',
-                    fontWeight: 700,
-                    color: isDark ? '#FFFFFF' : '#0F172A',
-                    mb: 1.5,
-                    lineHeight: 1.3,
-                  }}
-                >
-                  {feature.title}
-                </Typography>
-                {/* Description */}
-                <Typography
-                  sx={{
-                    fontSize: '1rem',
-                    color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {feature.description}
-                </Typography>
+                    <ZoomOut sx={{ color: isDark ? '#FFFFFF' : '#0F172A', fontSize: 22 }} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Auto Layout" placement="left">
+                  <IconButton
+                    onClick={() => applyAutoLayout()}
+                    sx={{
+                      width: { xs: 40, sm: 44 },
+                      height: { xs: 40, sm: 44 },
+                      backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.98)',
+                      backdropFilter: 'blur(12px)',
+                      border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                      '&:hover': {
+                        backgroundColor: isDark ? 'rgba(55, 65, 81, 0.95)' : 'rgba(249, 250, 251, 1)',
+                        transform: 'scale(1.05)',
+                        boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
+                      },
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <ViewComfy sx={{ color: isDark ? '#FFFFFF' : '#0F172A', fontSize: 22 }} />
+                  </IconButton>
+                </Tooltip>
               </Box>
-            );
-          })}
-        </Box>
+            </Panel>
+
+            <Panel position="top-left">
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Tooltip title="Auto Layout">
+                  <IconButton
+                    onClick={() => applyAutoLayout('TB')}
+                    sx={{
+                      width: { xs: 40, sm: 44 },
+                      height: { xs: 40, sm: 44 },
+                      backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.98)',
+                      backdropFilter: 'blur(12px)',
+                      border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                      '&:hover': {
+                        backgroundColor: isDark ? 'rgba(55, 65, 81, 0.95)' : 'rgba(249, 250, 251, 1)',
+                        transform: 'scale(1.05)',
+                        boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
+                      },
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <ViewComfy sx={{ color: isDark ? '#FFFFFF' : '#0F172A', fontSize: 22 }} />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Panel>
+
+            <Background
+              gap={20}
+              size={1.5}
+              color={isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'}
+            />
+          </ReactFlow>
+        </Paper>
       </Container>
     </Box>
+  );
+};
+
+export const KnowledgeMapSection: React.FC = () => {
+  return (
+    <ReactFlowProvider>
+      <KnowledgeMapContent />
+    </ReactFlowProvider>
   );
 };

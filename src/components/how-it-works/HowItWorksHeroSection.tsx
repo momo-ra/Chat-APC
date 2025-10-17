@@ -418,42 +418,6 @@ export const HowItWorksHeroSection: React.FC = () => {
             </Button>
           </Box>
 
-          {/* Scroll Indicator */}
-          <Box
-            ref={scrollIndicatorRef}
-            onClick={handleScrollToProcess}
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              cursor: 'pointer',
-              opacity: 0.7,
-              transition: 'opacity 0.3s ease',
-              '&:hover': {
-                opacity: 1,
-              },
-            }}
-          >
-            <Typography
-              variant="body2"
-              sx={{
-                fontSize: '0.875rem',
-                color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(71, 85, 105, 0.7)',
-                mb: 1,
-                fontWeight: 500,
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-              }}
-            >
-              Explore Process
-            </Typography>
-            <ArrowDownward 
-              sx={{ 
-                fontSize: 24,
-                color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(71, 85, 105, 0.7)',
-              }} 
-            />
-          </Box>
         </Box>
       </Container>
     </Box>

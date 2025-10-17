@@ -101,36 +101,7 @@ const ContactFormSection: React.FC = () => {
       sx={{
         py: { xs: 8, md: 12 },
         position: 'relative',
-        background: isDark
-          ? 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(59, 130, 246, 0.1) 0%, transparent 60%), linear-gradient(135deg, #0F1419 0%, #1A202C 50%, #0F1419 100%)'
-          : 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(59, 130, 246, 0.05) 0%, transparent 60%), linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: "url('https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=1920&q=60')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: isDark ? 0.03 : 0.02,
-          zIndex: 0,
-          pointerEvents: 'none',
-        },
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: isDark 
-            ? 'rgba(15, 20, 25, 0.95)'
-            : 'rgba(255, 255, 255, 0.98)',
-          zIndex: 1,
-          pointerEvents: 'none',
-        },
+        background: "transparent",
       }}
     >
       <Container 

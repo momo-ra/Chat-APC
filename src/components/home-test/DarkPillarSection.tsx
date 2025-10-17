@@ -29,11 +29,11 @@ const pillars = [
     gradient: 'linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)',
     glowColor: 'rgba(78, 205, 196, 0.2)',
     features: [
-      'Graph Agent → Plots variables, limits, and events',
+      'Visualize Agent → Plots variables, limits, and events',
       'Event Agent → Detects violations and alarms',
       'Navigator Agent → Explores equipment, tags, and knowledge map',
-      'Process Advisor → Explains how to stabilize or test "what-if" scenarios',
-      'Profit Advisor → Highlights which constraints are cutting profit',
+      'Advisor Agent → Explains how to stabilize or test "what-if" scenarios',
+      'Optimizer Agent → Highlights which constraints are cutting profit',
     ],
   },
   {

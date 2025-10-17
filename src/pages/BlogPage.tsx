@@ -11,18 +11,17 @@ import {
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const BlogPage: React.FC = () => {
   const { isDark } = useThemeMode();
 
-  useEffect(() => {
-    // Set page metadata
-    document.title = 'Blog - Alpha Process Control | Industrial AI Insights';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Explore the latest insights on industrial AI, process control optimization, and ChatAPC features from Alpha Process Control experts.');
-    }
+  usePageTitle({
+    title: 'Blog',
+    description: 'Explore the latest insights on industrial AI, process control optimization, and ChatAPC features from Alpha Process Control experts.',
+  });
 
+  useEffect(() => {
     // Scroll to top on mount
     window.scrollTo(0, 0);
   }, []);
@@ -89,8 +88,8 @@ const BlogPage: React.FC = () => {
             }}
           >
             <BlogHeroSection />
-            <BlogCategoriesSection />
-            <BlogFeaturedSection />
+            {/* <BlogCategoriesSection /> */}
+            {/* <BlogFeaturedSection /> */}
             <BlogListSection />
             <BlogSubscribeSection />
           </Box>

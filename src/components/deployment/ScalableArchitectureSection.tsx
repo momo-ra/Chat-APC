@@ -1,193 +1,199 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Container, Typography, Grid } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const scaleSteps = [
+  {
+    title: 'Start Small',
+    description: 'Begin with a single process unit or production line. Minimal initial investment with immediate value demonstration for stakeholders and operators.',
+  },
+  {
+    title: 'Scale Gradually',
+    description: 'Add agents and connectors step by step as your confidence grows. Each expansion builds on proven success, reducing implementation risk.',
+  },
+  {
+    title: 'Enterprise-Wide',
+    description: 'Expand across multiple sites and facilities. Centralized management with distributed deployment maintains performance and security standards.',
+  },
+];
+
 const ScalableArchitectureSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const stepsRef = useRef<HTMLDivElement[]>([]);
   const { isDark } = useThemeMode();
+  const {
+    containerMaxWidth,
+    containerPadding,
+    h2FontSize,
+    bodyFontSize,
+    sectionPadding,
+  } = useResponsiveLayout();
+
+  const accentColor = { light: '#EC4899', dark: '#F472B6' };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.to('.scale-step', {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none',
-        },
-        scale: 1,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'back.out(1.7)',
+      if (headerRef.current) {
+        gsap.from(headerRef.current, {
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+          y: 50,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+        });
+      }
+
+      stepsRef.current.forEach((step, index) => {
+        if (step) {
+          gsap.from(step, {
+            scrollTrigger: {
+              trigger: step,
+              start: 'top 90%',
+              toggleActions: 'play none none none',
+            },
+            y: 60,
+            opacity: 0,
+            duration: 0.8,
+            delay: index * 0.15,
+            ease: 'power2.out',
+          });
+        }
       });
     }, sectionRef);
 
     return () => ctx.revert();
   }, [isDark]);
 
-  const scaleSteps = [
-    {
-      title: 'Start Small',
-      description: 'Begin with a single process unit or production line. Minimal initial investment with immediate value demonstration for stakeholders and operators.',
-    },
-    {
-      title: 'Scale Gradually',
-      description: 'Add agents and connectors step by step as your confidence grows. Each expansion builds on proven success, reducing implementation risk.',
-    },
-    {
-      title: 'Enterprise-Wide',
-      description: 'Expand across multiple sites and facilities. Centralized management with distributed deployment maintains performance and security standards.',
-    },
-  ];
-
   return (
     <Box
+      ref={sectionRef}
       sx={{
-        width: '100vw',
-        left: '50%',
-        right: '50%',
-        marginLeft: '-50vw',
-        marginRight: '-50vw',
-        background: isDark 
-          ? 'linear-gradient(180deg, transparent 0%, rgba(0, 155, 228, 0.05) 100%)'
-          : 'linear-gradient(180deg, transparent 0%, rgba(37, 99, 235, 0.03) 100%)',
-        py: { xs: 8, md: 12 },
+        width: '100%',
+        py: sectionPadding,
         position: 'relative',
-        transition: 'background 0.3s ease',
-        '@media (min-width: 960px) and (max-width: 1549px)': {
-          py: 10,
-        },
-        '@media (min-width: 1550px)': {
-          py: 12,
-        },
       }}
     >
       <Container 
         maxWidth="lg"
         sx={{
-          '@media (min-width: 960px) and (max-width: 1549px)': {
-            maxWidth: '950px',
-            px: 2.5,
-          },
-          '@media (min-width: 1550px)': {
-            maxWidth: '1200px',
-            px: 3,
-          },
+          maxWidth: containerMaxWidth,
+          px: containerPadding,
         }}
       >
-        <Box ref={sectionRef}>
+        {/* Header */}
+        <Box ref={headerRef} sx={{ mb: { xs: 8, md: 10 } }}>
+          <Typography
+            sx={{
+              fontSize: { xs: '0.875rem', md: '1rem' },
+              fontWeight: 700,
+              color: accentColor[isDark ? 'dark' : 'light'],
+              textTransform: 'uppercase',
+              letterSpacing: 2,
+              mb: 2,
+            }}
+          >
+            Scalability
+          </Typography>
           <Typography
             variant="h2"
             sx={{
-              fontSize: { xs: '2rem', md: '3rem' },
+              fontSize: h2FontSize,
               fontWeight: 700,
-              color: isDark ? '#fff' : 'rgba(0, 0, 0, 0.9)',
-              mb: 2,
-              textAlign: 'center',
-              transition: 'color 0.3s ease',
-              '@media (min-width: 960px) and (max-width: 1549px)': {
-                fontSize: '2.6rem',
-              },
+              color: isDark ? '#FFFFFF' : '#0F172A',
+              mb: 3,
+              lineHeight: 1.2,
             }}
           >
             Scalable Architecture for Growth
           </Typography>
           <Typography
             sx={{
-              fontSize: { xs: '1rem', md: '1.1rem' },
-              color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
-              textAlign: 'center',
-              mb: 8,
-              transition: 'color 0.3s ease',
+              fontSize: bodyFontSize,
+              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
+              lineHeight: 1.7,
               maxWidth: 800,
-              mx: 'auto',
-              '@media (min-width: 960px) and (max-width: 1549px)': {
-                fontSize: '1.05rem',
-                mb: 6,
-                maxWidth: 700,
-              },
             }}
           >
             Performance engineered for high-speed, real-time data streams processing thousands of tags per second without compromising system responsiveness or data integrity.
           </Typography>
+        </Box>
 
-          <Grid container spacing={4}>
-            {scaleSteps.map((step, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <Box
-                  className="scale-step"
-                  sx={{
-                    background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.95)',
-                    backdropFilter: 'blur(20px)',
-                    border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
-                    borderRadius: 4,
-                    padding: 4,
-                    height: '100%',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    opacity: 0,
-                    transform: 'scale(0.9)',
-                    transition: 'all 0.3s ease',
-                    boxShadow: isDark ? 'none' : '0 8px 32px rgba(0, 0, 0, 0.08)',
-                    '@media (min-width: 960px) and (max-width: 1549px)': {
-                      padding: 3,
-                    },
-                    '&:hover': {
-                      transform: 'translateY(-8px)',
-                      borderColor: isDark ? 'rgba(0, 155, 228, 0.3)' : 'rgba(37, 99, 235, 0.3)',
-                      boxShadow: isDark ? '0 12px 40px rgba(0, 155, 228, 0.15)' : '0 16px 48px rgba(37, 99, 235, 0.15)',
-                    },
-                    '&::before': {
-                      content: `"${index + 1}"`,
-                      position: 'absolute',
-                      top: 20,
-                      right: 20,
-                      fontSize: '4rem',
-                      fontWeight: 700,
-                      color: isDark ? 'rgba(0, 155, 228, 0.1)' : 'rgba(37, 99, 235, 0.08)',
-                      lineHeight: 1,
-                      '@media (min-width: 960px) and (max-width: 1549px)': {
-                        fontSize: '3.5rem',
-                      },
-                    },
-                  }}
-                >
-                  <Typography
-                    variant="h5"
-                    sx={{
-                      fontSize: { xs: '1.3rem', md: '1.5rem' },
-                      fontWeight: 600,
-                      color: isDark ? '#009BE4' : '#2563EB',
-                      mb: 2,
-                      transition: 'color 0.3s ease',
-                      '@media (min-width: 960px) and (max-width: 1549px)': {
-                        fontSize: '1.35rem',
-                      },
-                    }}
-                  >
-                    {step.title}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: '1rem',
-                      color: isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
-                      lineHeight: 1.7,
-                      transition: 'color 0.3s ease',
-                      '@media (min-width: 960px) and (max-width: 1549px)': {
-                        fontSize: '0.95rem',
-                      },
-                    }}
-                  >
-                    {step.description}
-                  </Typography>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
+        {/* Scale Steps */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
+            gap: { xs: 4, md: 5 },
+          }}
+        >
+          {scaleSteps.map((step, index) => (
+            <Box
+              key={index}
+              ref={(el) => {
+                if (el) stepsRef.current[index] = el as HTMLDivElement;
+              }}
+              sx={{
+                position: 'relative',
+                p: { xs: 3, md: 4 },
+                borderRadius: 0,
+                borderLeft: isDark ? '2px solid rgba(71, 85, 105, 0.3)' : '2px solid rgba(226, 232, 240, 1)',
+                background: 'transparent',
+                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  pl: { xs: 4, md: 5 },
+                  borderLeftColor: accentColor[isDark ? 'dark' : 'light'],
+                  borderLeftWidth: '3px',
+                  background: isDark
+                    ? `linear-gradient(90deg, ${accentColor.dark}10 0%, transparent 100%)`
+                    : `linear-gradient(90deg, ${accentColor.light}08 0%, transparent 100%)`,
+                },
+                '&::before': {
+                  content: `"${index + 1}"`,
+                  position: 'absolute',
+                  top: 16,
+                  right: 16,
+                  fontSize: '3rem',
+                  fontWeight: 700,
+                  color: isDark 
+                    ? `${accentColor.dark}20`
+                    : `${accentColor.light}15`,
+                  lineHeight: 1,
+                },
+              }}
+            >
+              <Typography
+                variant="h5"
+                sx={{
+                  fontSize: { xs: '1.25rem', md: '1.4rem' },
+                  fontWeight: 700,
+                  color: isDark ? '#FFFFFF' : '#0F172A',
+                  mb: 2,
+                  lineHeight: 1.3,
+                }}
+              >
+                {step.title}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: { xs: '0.95rem', md: '1rem' },
+                  color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
+                  lineHeight: 1.7,
+                }}
+              >
+                {step.description}
+              </Typography>
+            </Box>
+          ))}
         </Box>
       </Container>
     </Box>
@@ -195,4 +201,3 @@ const ScalableArchitectureSection: React.FC = () => {
 };
 
 export default ScalableArchitectureSection;
-

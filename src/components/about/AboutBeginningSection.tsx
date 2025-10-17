@@ -6,6 +6,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
+// Import the control room image
+import controlRoomImg from '../../assets/control_room.png';
+
 gsap.registerPlugin(ScrollTrigger);
 
 export const AboutBeginningSection: React.FC = () => {
@@ -177,12 +180,28 @@ export const AboutBeginningSection: React.FC = () => {
                   : 'linear-gradient(135deg, #475569 0%, #334155 100%)',
               }}
             >
-              {/* Control room aesthetic overlay */}
+              {/* Control room image */}
+              <Box
+                component="img"
+                src={controlRoomImg}
+                alt="Control Room"
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                  position: 'absolute',
+                  inset: 0,
+                }}
+              />
+
+              {/* Overlay aesthetic */}
               <Box
                 sx={{
                   position: 'absolute',
                   inset: 0,
                   background: 'radial-gradient(circle at 30% 50%, rgba(59, 130, 246, 0.2), transparent 50%)',
+                  pointerEvents: 'none',
                 }}
               />
               <Box
@@ -190,31 +209,9 @@ export const AboutBeginningSection: React.FC = () => {
                   position: 'absolute',
                   inset: 0,
                   background: 'radial-gradient(circle at 70% 50%, rgba(99, 102, 241, 0.2), transparent 50%)',
+                  pointerEvents: 'none',
                 }}
               />
-              <Box
-                sx={{
-                  position: 'absolute',
-                  inset: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'column',
-                  gap: 2,
-                }}
-              >
-                <Gauge size={80} style={{ color: '#60A5FA', opacity: 0.5 }} />
-                <Typography
-                  sx={{
-                    color: '#94A3B8',
-                    fontSize: '0.875rem',
-                    fontFamily: 'monospace',
-                  }}
-                >
-                  Control Room Operations
-                </Typography>
-              </Box>
-
               {/* Floating badge */}
               <Box
                 sx={{
@@ -257,6 +254,7 @@ export const AboutBeginningSection: React.FC = () => {
           {/* Content Side */}
           <Grid item xs={12} lg={6}>
             <Box ref={contentRef} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {/* Summarized Paragraph */}
               <Typography
                 sx={{
                   fontSize: bodyFontSize,
@@ -265,36 +263,7 @@ export const AboutBeginningSection: React.FC = () => {
                   transition: 'color 0.3s ease',
                 }}
               >
-                We started in control rooms — surrounded by alarms, trends, and
-                operators making tough calls under pressure.
-              </Typography>
-
-              <Typography
-                sx={{
-                  fontSize: bodyFontSize,
-                  color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
-                  lineHeight: 1.7,
-                  transition: 'color 0.3s ease',
-                }}
-              >
-                For years, our team at Alpha Process Control worked side by side with
-                engineers and operators in refineries, chemical plants, and energy sites.
-                We tuned controllers, solved constraint problems, and optimized
-                processes — sometimes in the middle of the night, sometimes when
-                every decision meant millions for the plant.
-              </Typography>
-
-              <Typography
-                sx={{
-                  fontSize: bodyFontSize,
-                  color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
-                  lineHeight: 1.7,
-                  transition: 'color 0.3s ease',
-                }}
-              >
-                Our roots run deep in the trenches of industrial operations. We've felt the weight of critical decisions, understood the complexity of real-time process
-                management, and experienced firsthand the challenges that keep operators alert during overnight shifts. This isn't theoretical knowledge — it's
-                earned through countless hours in the field, troubleshooting systems when stakes were highest.
+                We started in the control rooms—working side by side with engineers and operators, solving complex problems and making high-stakes, real-time decisions. Our expertise wasn't built in a lab, but shaped through decades of experience in live operations where every choice mattered.
               </Typography>
 
               {/* Highlights */}

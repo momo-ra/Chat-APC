@@ -13,10 +13,36 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
-// Register the ScrollTrigger plugin.
+// --- Color Palette for Consistency Across All Pages ---
+const colors = {
+  blue: {
+    dark: "#60A5FA",
+    light: "#3B82F6",
+  },
+  green: {
+    dark: "#34D399",
+    light: "#10B981"
+  },
+  yellow: {
+    dark: "#FBBF24",
+    light: "#F59E0B"
+  },
+  pink: {
+    dark: "#F472B6",
+    light: "#EC4899"
+  },
+  neutral: {
+    darkBackground: "#1E293B",
+    lightBackground: "#FFFFFF",
+    darkText: "#FFFFFF",
+    lightText: "#1E293B",
+    lightGray: "#CBD5E1",
+    darkGray: "#64748B"
+  }
+};
+
 gsap.registerPlugin(ScrollTrigger);
 
-// Data describing each step of the process.
 const processSteps = [
   {
     step: '01',
@@ -25,11 +51,13 @@ const processSteps = [
     description:
       'Anyone can ask questions naturally. No commands, no SQL, no scripting required. Just speak like you would to a colleague. Our AI understands context and intent, making process analysis accessible to everyone on your team.',
     icon: QuestionAnswer,
-    examples: [
-      'Why is the feed not increasing?',
-      'Which constraints limited margin yesterday?',
-      'What happens if I adjust reflux flow?',
-    ],
+    details: [
+      { label: "Examples", items: [
+        'Why is the feed not increasing?',
+        'Which constraints limited margin yesterday?',
+        'What happens if I adjust reflux flow?',
+      ] }
+    ]
   },
   {
     step: '02',
@@ -38,6 +66,13 @@ const processSteps = [
     description:
       'ChatAPC uses advanced AI to interpret your question, understand the context, and select the right specialist agent for your needs. Our system analyzes the intent behind your words and routes to the most appropriate processing engine.',
     icon: Psychology,
+    details: [
+      { label: "Examples", items: [
+        'Understands historical and live data context',
+        'Detects process, equipment, and KPI references',
+        'Selects the most relevant process AI agent'
+      ] }
+    ]
   },
   {
     step: '03',
@@ -46,12 +81,14 @@ const processSteps = [
     description:
       'The AI activates specialized agents to analyze your data, each designed for specific types of industrial process questions. These agents work in parallel to provide comprehensive analysis from multiple perspectives.',
     icon: SmartToy,
-    agents: [
-      'Graph Agent - Visual data analysis',
-      'Event Agent - Alarm and violation detection',
-      'Process Advisor - Operational guidance',
-      'Profit Advisor - Margin optimization',
-    ],
+    details: [
+      { label: "Agents", items: [
+        'Visualize Agent - Visual data analysis',
+        'Event Agent - Alarm and violation detection',
+        'Advisor Agent - Operational guidance',
+        'Optimizer Agent - Margin optimization'
+      ] }
+    ]
   },
   {
     step: '04',
@@ -60,12 +97,14 @@ const processSteps = [
     description:
       'Agents tap into your comprehensive process knowledge map, ensuring answers are contextual and accurate. We combine real-time data with historical patterns and expert knowledge to provide informed insights.',
     icon: Hub,
-    knowledge: [
-      'Live Process Data',
-      'Historical Records',
-      'Operating Procedures',
-      'Expert Knowledge',
-    ],
+    details: [
+      { label: "Knowledge Sources", items: [
+        'Live Process Data',
+        'Historical Records',
+        'Operating Procedures',
+        'Expert Knowledge'
+      ] }
+    ]
   },
   {
     step: '05',
@@ -74,6 +113,14 @@ const processSteps = [
     description:
       'The system produces actionable artifacts with clear visualizations and comprehensive analysis. Every insight is backed by data and presented in formats that support quick decision-making.',
     icon: Description,
+    details: [
+      { label: "Examples", items: [
+        'Summary cards with actionable recommendations',
+        'Visual graphs and plots',
+        'Root cause & constraint analysis',
+        'Margin optimization suggestions'
+      ] }
+    ]
   },
   {
     step: '06',
@@ -82,12 +129,89 @@ const processSteps = [
     description:
       'Complex technical insights are translated into clear, actionable recommendations that anyone can understand. No technical jargon - just clear answers that help you optimize your process operations.',
     icon: ChatBubbleOutline,
-  },
+    details: [
+      { label: "Examples", items: [
+        'Insightful narratives in plain language',
+        'Step-by-step recommendations',
+        'Clear next actions for your team'
+      ] }
+    ]
+  }
 ];
 
-/**
- * Mobile-optimized HowItWorksProcessSection with consistent spacing and layout
- */
+// Get alignment direction for this step index (even: left, odd: right)
+const getStepDirection = (index: number) => (index % 2 === 0 ? 'left' : 'right');
+
+// Helper for aligning the details for border-radius and text
+const getDetailConfig = (
+  stepIndex: number,
+  detailLabel: string
+) => {
+  // Default for desktop: step = even -> left side, odd -> right side
+  const isLeft = stepIndex % 2 === 0;
+
+  // "Examples" are aligned with the step/card, rest (Agents, Knowledge Sources) are always centered
+  if (detailLabel === "Examples") {
+    return {
+      justifyContent: { xs: 'flex-start', md: isLeft ? 'flex-start' : 'flex-end' },
+      textAlign:      { xs: 'left',      md: isLeft ? 'left'      : 'right' },
+      pillRadius:     { xs: '0 8px 8px 0', md: isLeft ? '0 8px 8px 0' : '8px 0 0 8px' }
+    };
+  } else if (detailLabel === "Knowledge Sources" ) {
+    return {
+      justifyContent: { xs: 'flex-start', md: isLeft ? 'flex-start' : 'flex-end' },
+      textAlign:      { xs: 'left',      md: isLeft ? 'left'      : 'right' },
+      pillRadius:     { xs: '0 8px 8px 0', md: isLeft ? '0 8px 8px 0' : '8px 0 0 8px' }
+    };
+  } else {
+    return {
+      justifyContent: { xs: 'flex-start', md: isLeft ? 'flex-start' : 'flex-end' },
+      textAlign:      { xs: 'left',      md: isLeft ? 'left'      : 'right' },
+      pillRadius:     { xs: '0 8px 8px 0', md: isLeft ? '0 8px 8px 0' : '8px 0 0 8px' }
+    };
+  }
+};
+
+// Get pill style (background, border, color) by type
+const getDetailStyle = (label: string, isDark: boolean, paletteBlue: string) => {
+  if (label === "Agents") {
+    return {
+      background: isDark
+        ? colors.pink.dark + "25"
+        : colors.pink.light + "10",
+      border: isDark
+        ? `1px solid ${colors.pink.dark}80`
+        : `1px solid ${colors.pink.light}40`,
+      color: isDark
+        ? 'rgba(255,255,255,0.85)'
+        : '#475569'
+    };
+  } else if (label === "Knowledge Sources") {
+    return {
+      background: isDark
+        ? colors.green.dark + "25"
+        : colors.green.light + "19",
+      border: isDark
+        ? `1px solid ${colors.green.dark}66`
+        : `1px solid ${colors.green.light}40`,
+      color: isDark
+        ? 'rgba(255,255,255,0.8)'
+        : '#475569'
+    };
+  } else {
+    // Examples or general
+    return {
+      background: isDark
+        ? paletteBlue + "25"
+        : paletteBlue + "13",
+      border: `1px solid ${paletteBlue}55`,
+      color: isDark
+        ? 'rgba(255,255,255,0.9)'
+        : '#334155'
+    };
+  }
+};
+
 export const HowItWorksProcessSection = () => {
   const { isDark } = useThemeMode();
   const {
@@ -99,22 +223,18 @@ export const HowItWorksProcessSection = () => {
   const sectionRef = useRef(null);
   const stepsRef = useRef([]);
 
-  // Primary colour for interactive accents.
-  const primaryColor = isDark ? '#009BE4' : '#171B83';
-
-  // Base colour for the timeline line segments.
-  const lineBaseColor = isDark
-    ? 'rgba(75, 85, 99, 0.3)'
-    : 'rgba(203, 213, 225, 0.5)';
+  const paletteBlue = isDark ? colors.blue.dark : colors.blue.light;
+  const baseBG = isDark ? colors.neutral.darkBackground : colors.neutral.lightBackground;
+  const baseText = isDark ? colors.neutral.darkText : colors.neutral.lightText;
+  const mutedText = isDark ? "rgba(255,255,255,0.7)" : colors.neutral.darkGray;
+  const lineBaseColor = isDark ? `${paletteBlue}40` : `${paletteBlue}30`;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Hide content to prepare for animation.
       stepsRef.current.forEach((step) => {
         if (!step) return;
         const content = step.querySelector('.step-content');
         const detailItems = step.querySelectorAll('.detail-item');
-
         gsap.set(content, {
           opacity: 0,
           y: 30,
@@ -122,7 +242,6 @@ export const HowItWorksProcessSection = () => {
         gsap.set(detailItems, { opacity: 0, y: 20 });
       });
 
-      // ScrollTriggers for each step.
       stepsRef.current.forEach((step, index) => {
         if (!step) return;
         ScrollTrigger.create({
@@ -133,8 +252,6 @@ export const HowItWorksProcessSection = () => {
             const tl = gsap.timeline();
             const content = step.querySelector('.step-content');
             const detailItems = step.querySelectorAll('.detail-item');
-
-            // Animate content and details.
             tl.to(content, {
               opacity: 1,
               y: 0,
@@ -179,8 +296,8 @@ export const HowItWorksProcessSection = () => {
         }}
       >
         {/* Header */}
-        <Box sx={{ 
-          textAlign: 'center', 
+        <Box sx={{
+          textAlign: 'center',
           mb: 'clamp(3rem, 8vw, 6rem)',
           px: { xs: 1, sm: 2 }
         }}>
@@ -189,7 +306,7 @@ export const HowItWorksProcessSection = () => {
             sx={{
               fontSize: 'clamp(2rem, 6vw, 3.5rem)',
               fontWeight: 700,
-              color: isDark ? '#FFFFFF' : '#1E293B',
+              color: baseText,
               mb: 'clamp(1rem, 3vw, 2rem)',
               lineHeight: 1.1,
             }}
@@ -200,7 +317,7 @@ export const HowItWorksProcessSection = () => {
             variant="h6"
             sx={{
               fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
-              color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
+              color: mutedText,
               maxWidth: '600px',
               mx: 'auto',
               fontWeight: 400,
@@ -210,7 +327,7 @@ export const HowItWorksProcessSection = () => {
           </Typography>
         </Box>
 
-        {/* Steps Container - Mobile-First Design */}
+        {/* Steps */}
         <Box
           sx={{
             position: 'relative',
@@ -224,19 +341,18 @@ export const HowItWorksProcessSection = () => {
           {processSteps.map((step, index) => {
             const IconComponent = step.icon;
             const isLast = index === processSteps.length - 1;
-            
+            const direction = getStepDirection(index);
+
             return (
               <Box
                 key={index}
-                ref={(el) => {
-                  stepsRef.current[index] = el;
-                }}
+                ref={(el) => { stepsRef.current[index] = el; }}
                 sx={{
                   position: 'relative',
                   width: '100%',
                 }}
               >
-                {/* Mobile Timeline Line - Consistent positioning */}
+                {/* Mobile Timeline Line - Use palette blue */}
                 {!isLast && (
                   <Box
                     className="timeline-line"
@@ -247,22 +363,21 @@ export const HowItWorksProcessSection = () => {
                       width: '3px',
                       height: 'calc(100% + clamp(2rem, 5vw, 3rem) - clamp(70px, 15vw, 80px))',
                       background: isDark
-                        ? `linear-gradient(180deg, ${primaryColor}40, ${primaryColor}10)`
-                        : `linear-gradient(180deg, ${primaryColor}30, ${primaryColor}05)`,
+                        ? `linear-gradient(180deg, ${paletteBlue}99, ${paletteBlue}11)`
+                        : `linear-gradient(180deg, ${paletteBlue}70, ${paletteBlue}11)`,
                       borderRadius: '2px',
                       zIndex: 0,
                       display: { xs: 'block', md: 'none' },
                     }}
                   />
                 )}
-
                 {/* Desktop Timeline Lines */}
                 <Box
                   className="timeline-line timeline-line--top"
                   sx={{
                     position: 'absolute',
                     left: '50%',
-                    top: -16,
+                    top: -48,
                     transform: 'translateX(-50%)',
                     width: '2px',
                     height: 'calc(50% - 4rem)',
@@ -296,62 +411,49 @@ export const HowItWorksProcessSection = () => {
                     transform: 'translateX(-50%)',
                     fontSize: '7rem',
                     fontWeight: 800,
-                    color: isDark ? '#FFFFFF' : '#1E293B',
+                    color: isDark ? colors.neutral.darkText : colors.neutral.lightText,
                     fontFamily: 'Inter, sans-serif',
                     lineHeight: 0.8,
                     zIndex: 4,
                     top: 'calc(50% - 4rem)',
                     userSelect: 'none',
                     display: { xs: 'none', md: 'block' },
+                    opacity: 0.08,
                   }}
                 >
                   {step.step}
                 </Box>
 
-                {/* Mobile Card Container - Consistent spacing */}
                 <Box
                   className="step-content"
                   sx={{
                     width: '100%',
                     background: {
                       xs: isDark
-                        ? 'rgba(30, 41, 59, 0.5)'
-                        : 'rgba(255, 255, 255, 0.8)',
+                        ? 'rgba(24,30,42,0.9)'
+                        : 'rgba(255,255,255,0.8)',
                       md: 'transparent',
                     },
                     borderRadius: { xs: '20px', md: 0 },
                     border: {
-                      xs: isDark
-                        ? '1px solid rgba(255, 255, 255, 0.08)'
-                        : '1px solid rgba(148, 163, 184, 0.15)',
+                      xs: `1px solid ${isDark ? paletteBlue + '22' : paletteBlue + '22'}`,
                       md: 'none',
                     },
                     overflow: 'hidden',
                     backdropFilter: { xs: 'blur(20px)', md: 'none' },
                     boxShadow: {
                       xs: isDark
-                        ? '0 10px 40px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2)'
-                        : '0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)',
+                        ? `0 10px 40px ${paletteBlue}30, 0 2px 8px ${paletteBlue}10`
+                        : `0 8px 32px ${paletteBlue}11, 0 2px 8px ${paletteBlue}06`,
                       md: 'none',
                     },
                     transition: 'all 0.3s ease',
-                    // Desktop positioning
-                    ...(index % 2 === 0 ? {
-                      // Even items - Left side on desktop
-                      width: { md: '40%' },
-                      marginRight: { md: 'auto' },
-                      paddingRight: { md: '3rem' },
-                      textAlign: { md: 'left' }
-                    } : {
-                      // Odd items - Right side on desktop
-                      width: { md: '40%' },
-                      marginLeft: { md: 'auto' },
-                      paddingLeft: { md: '3rem' },
-                      textAlign: { md: 'right' }
-                    })
+                    ...(direction === 'left'
+                      ? { width: { md: '40%' }, marginRight: { md: 'auto' }, paddingRight: { md: '3rem' }, textAlign: { md: 'left' } }
+                      : { width: { md: '40%' }, marginLeft: { md: 'auto' }, paddingLeft: { md: '3rem' }, textAlign: { md: 'right' } })
                   }}
                 >
-                  {/* Mobile Header with Icon and Step Badge */}
+                  {/* Mobile Header */}
                   <Box
                     sx={{
                       display: { xs: 'flex', md: 'none' },
@@ -361,7 +463,6 @@ export const HowItWorksProcessSection = () => {
                       pb: 'clamp(1rem, 3vw, 1.5rem)',
                     }}
                   >
-                    {/* Icon */}
                     <Box
                       sx={{
                         display: 'flex',
@@ -370,8 +471,8 @@ export const HowItWorksProcessSection = () => {
                         width: 'clamp(60px, 15vw, 72px)',
                         height: 'clamp(60px, 15vw, 72px)',
                         borderRadius: '18px',
-                        background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}DD)`,
-                        boxShadow: `0 12px 32px ${primaryColor}50`,
+                        background: `linear-gradient(135deg, ${paletteBlue}, ${paletteBlue}DD)`,
+                        boxShadow: `0 12px 32px ${paletteBlue}33`,
                         flexShrink: 0,
                       }}
                     >
@@ -382,28 +483,22 @@ export const HowItWorksProcessSection = () => {
                         }}
                       />
                     </Box>
-
-                    {/* Step Badge */}
                     <Box
                       sx={{
                         px: 'clamp(1rem, 3vw, 1.5rem)',
                         py: 'clamp(0.5rem, 2vw, 0.75rem)',
                         borderRadius: '12px',
                         background: isDark
-                          ? 'rgba(255, 255, 255, 0.05)'
-                          : 'rgba(0, 0, 0, 0.05)',
-                        border: isDark
-                          ? '1px solid rgba(255, 255, 255, 0.1)'
-                          : '1px solid rgba(0, 0, 0, 0.1)',
+                          ? `${paletteBlue}1A`
+                          : `${paletteBlue}11`,
+                        border: `1px solid ${paletteBlue}55`
                       }}
                     >
                       <Typography
                         sx={{
                           fontSize: 'clamp(0.7rem, 2vw, 0.85rem)',
                           fontWeight: 700,
-                          color: isDark
-                            ? 'rgba(255, 255, 255, 0.6)'
-                            : 'rgba(0, 0, 0, 0.5)',
+                          color: paletteBlue,
                           fontFamily: 'Inter, sans-serif',
                           letterSpacing: '0.1em',
                         }}
@@ -412,8 +507,6 @@ export const HowItWorksProcessSection = () => {
                       </Typography>
                     </Box>
                   </Box>
-
-                  {/* Content Section - Consistent padding */}
                   <Box
                     sx={{
                       p: { xs: 'clamp(1.5rem, 4vw, 2rem)', md: 0 },
@@ -421,13 +514,12 @@ export const HowItWorksProcessSection = () => {
                       pb: { xs: 'clamp(1.5rem, 4vw, 2rem)', md: 0 },
                     }}
                   >
-                    {/* Tagline */}
                     <Typography
                       variant="overline"
                       sx={{
                         fontSize: 'clamp(0.7rem, 1.8vw, 0.75rem)',
                         fontWeight: 600,
-                        color: primaryColor,
+                        color: paletteBlue,
                         letterSpacing: '0.15em',
                         textTransform: 'uppercase',
                         mb: 'clamp(0.75rem, 2vw, 1rem)',
@@ -436,8 +528,6 @@ export const HowItWorksProcessSection = () => {
                     >
                       {step.tagline}
                     </Typography>
-
-                    {/* Title */}
                     <Typography
                       variant="h3"
                       sx={{
@@ -446,214 +536,139 @@ export const HowItWorksProcessSection = () => {
                           md: '2.5rem'
                         },
                         fontWeight: 700,
-                        color: isDark ? '#FFFFFF' : '#1E293B',
+                        color: baseText,
                         mb: 'clamp(1rem, 3vw, 1.5rem)',
                         lineHeight: 1.2,
                       }}
                     >
                       {step.title}
                     </Typography>
-
-                    {/* Description */}
                     <Typography
                       sx={{
                         fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)',
-                        color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
+                        color: isDark ? 'rgba(255,255,255,0.8)' : '#475569',
                         lineHeight: 1.6,
-                        mb: (step.examples || step.agents || step.knowledge)
-                          ? 'clamp(1.5rem, 4vw, 2rem)'
-                          : 0,
+                        mb: step.details?.length ? 'clamp(1.5rem, 4vw, 2rem)' : 0,
                       }}
                     >
                       {step.description}
                     </Typography>
 
-                    {/* Examples List */}
-                    {step.examples && (
-                      <Box sx={{ mb: 'clamp(1rem, 3vw, 1.5rem)' }}>
-                        {step.examples.map((example, idx) => (
-                          <Box
-                            key={idx}
-                            className="detail-item"
-                            sx={{
-                              p: 'clamp(1rem, 3vw, 1.5rem)',
-                              mb: 'clamp(0.75rem, 2vw, 1rem)',
-                              background: isDark
-                                ? `${primaryColor}15`
-                                : `${primaryColor}08`,
-                              borderLeft: `3px solid ${primaryColor}`,
-                              borderRadius: '0 8px 8px 0',
-                              backdropFilter: 'blur(10px)',
-                              transition: 'all 0.3s ease',
-                              '&:hover': {
-                                background: isDark
-                                  ? `${primaryColor}25`
-                                  : `${primaryColor}12`,
-                                transform: 'translateY(-2px)',
-                              },
-                              '&:last-child': {
-                                mb: 0,
-                              }
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                fontSize: 'clamp(0.9rem, 2.2vw, 0.95rem)',
-                                color: isDark
-                                  ? 'rgba(255, 255, 255, 0.9)'
-                                  : '#334155',
-                                fontStyle: 'italic',
-                                lineHeight: 1.5,
-                              }}
-                            >
-                              "{example}"
-                            </Typography>
-                          </Box>
-                        ))}
-                      </Box>
-                    )}
+                    {/* Details List */}
+                    {step.details && (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 'clamp(1.25rem, 2vw, 1.8rem)',
+                        }}
+                      >
+                        {step.details.map((detail, detailIdx) => {
+                          const config = getDetailConfig(index, detail.label);
+                          const style = getDetailStyle(detail.label, isDark, paletteBlue);
 
-                    {/* Agents List */}
-                    {step.agents && (
-                      <Box sx={{ mb: 'clamp(1rem, 3vw, 1.5rem)' }}>
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontSize: 'clamp(1rem, 2.5vw, 1.1rem)',
-                            fontWeight: 600,
-                            color: isDark
-                              ? 'rgba(255, 255, 255, 0.9)'
-                              : '#334155',
-                            mb: 'clamp(1rem, 2.5vw, 1.25rem)',
-                          }}
-                        >
-                          Available Agents:
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 'clamp(0.75rem, 2vw, 1rem)',
-                          }}
-                        >
-                          {step.agents.map((agent, idx) => (
-                            <Box
-                              key={idx}
-                              className="detail-item"
-                              sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 'clamp(1rem, 2.5vw, 1.5rem)',
-                                p: 'clamp(1rem, 2.5vw, 1.25rem)',
-                                background: isDark
-                                  ? 'rgba(168, 85, 247, 0.1)'
-                                  : 'rgba(168, 85, 247, 0.05)',
-                                borderRadius: '12px',
-                                border: isDark
-                                  ? '1px solid rgba(168, 85, 247, 0.2)'
-                                  : '1px solid rgba(168, 85, 247, 0.1)',
-                                backdropFilter: 'blur(10px)',
-                                transition: 'all 0.3s ease',
-                                '&:hover': {
-                                  background: isDark
-                                    ? 'rgba(168, 85, 247, 0.15)'
-                                    : 'rgba(168, 85, 247, 0.08)',
-                                  transform: 'translateY(-2px)',
-                                },
-                              }}
-                            >
+                          return (
+                            <Box key={detailIdx}>
+                              <Typography
+                                variant="h6"
+                                sx={{
+                                  fontSize: 'clamp(1rem, 2.5vw, 1.1rem)',
+                                  fontWeight: 600,
+                                  color: isDark
+                                    ? 'rgba(255,255,255,0.9)'
+                                    : '#334155',
+                                  mb: 'clamp(1rem, 2.5vw, 1.25rem)',
+                                  textAlign: config.textAlign,
+                                }}
+                              >
+                                {detail.label}
+                              </Typography>
                               <Box
                                 sx={{
-                                  width: 'clamp(8px, 2vw, 10px)',
-                                  height: 'clamp(8px, 2vw, 10px)',
-                                  borderRadius: '50%',
-                                  backgroundColor: '#A855F7',
-                                  flexShrink: 0,
-                                }}
-                              />
-                              <Typography
-                                sx={{
-                                  fontSize: 'clamp(0.9rem, 2.2vw, 0.95rem)',
-                                  color: isDark
-                                    ? 'rgba(255, 255, 255, 0.8)'
-                                    : '#475569',
-                                  fontWeight: 500,
-                                  lineHeight: 1.5,
-                                  flex: 1,
+                                  display: 'flex',
+                                  flexWrap: 'wrap',
+                                  gap: 'clamp(0.75rem, 2vw, 1rem)',
+                                  justifyContent: config.justifyContent,
+                                  textAlign: config.textAlign,
                                 }}
                               >
-                                {agent}
-                              </Typography>
+                                {detail.items.map((item, idx2) => (
+                                  <Box
+                                    key={idx2}
+                                    className="detail-item"
+                                    sx={{
+                                      px: detail.label === "Agents" || detail.label === "Knowledge Sources"
+                                        ? 'clamp(1rem, 2.5vw, 1.25rem)'
+                                        : 'clamp(1rem, 3vw, 1.5rem)',
+                                      py: detail.label === "Examples"
+                                        ? 'clamp(0.75rem, 2vw, 1rem)'
+                                        : 'clamp(0.75rem, 2vw, 1rem)',
+                                      minWidth: detail.label === "Examples" ? undefined : '180px',
+                                      display: detail.label === "Agents"
+                                        ? 'flex'
+                                        : 'block',
+                                      alignItems: detail.label === "Agents"
+                                        ? 'center'
+                                        : 'initial',
+                                      gap: detail.label === "Agents"
+                                        ? 'clamp(1rem, 2.5vw, 1.5rem)'
+                                        : undefined,
+                                      borderRadius: config.pillRadius,
+                                      border: style.border,
+                                      background: style.background,
+                                      color: style.color,
+                                      mb: 0,
+                                      fontStyle:
+                                        detail.label === "Examples" ? 'italic' : 'normal',
+                                      lineHeight: 1.5,
+                                      fontWeight: detail.label === "Knowledge Sources" ? 500 : 400,
+                                      fontSize:
+                                        detail.label === "Knowledge Sources"
+                                          ? 'clamp(0.85rem, 2vw, 0.9rem)'
+                                          : 'clamp(0.9rem, 2.2vw, 0.95rem)',
+                                      transition: 'all 0.3s ease',
+                                      backdropFilter: 'blur(10px)',
+                                      '&:hover': {
+                                        background:
+                                          detail.label === "Agents"
+                                            ? (isDark
+                                              ? colors.pink.dark + "33"
+                                              : colors.pink.light + "24")
+                                            : detail.label === "Knowledge Sources"
+                                              ? (isDark
+                                                ? colors.green.dark + "40"
+                                                : colors.green.light + "26")
+                                              : (isDark
+                                                ? paletteBlue + "40"
+                                                : paletteBlue + "20"),
+                                        transform: 'translateY(-2px) scale(1.02)'
+                                      },
+                                      textAlign: config.textAlign,
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        fontSize:
+                                          detail.label === "Knowledge Sources"
+                                            ? 'clamp(0.85rem, 2vw, 0.9rem)'
+                                            : 'clamp(0.9rem, 2.2vw, 0.95rem)',
+                                        color: style.color,
+                                        fontWeight: detail.label === "Knowledge Sources" ? 500 : 400,
+                                        fontStyle: detail.label === "Examples" ? 'italic' : 'normal',
+                                        lineHeight: 1.5,
+                                        flex: 1,
+                                        whiteSpace: (detail.label === "Knowledge Sources" || detail.label === "Agents") ? 'nowrap' : undefined,
+                                        textAlign: config.textAlign
+                                      }}
+                                    >
+                                      {detail.label === "Examples" ? `"${item}"` : item}
+                                    </Typography>
+                                  </Box>
+                                ))}
+                              </Box>
                             </Box>
-                          ))}
-                        </Box>
-                      </Box>
-                    )}
-
-                    {/* Knowledge Sources List */}
-                    {step.knowledge && (
-                      <Box sx={{ mb: 'clamp(1rem, 3vw, 1.5rem)' }}>
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontSize: 'clamp(1rem, 2.5vw, 1.1rem)',
-                            fontWeight: 600,
-                            color: isDark
-                              ? 'rgba(255, 255, 255, 0.9)'
-                              : '#334155',
-                            mb: 'clamp(1rem, 2.5vw, 1.25rem)',
-                          }}
-                        >
-                          Knowledge Sources:
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: 'clamp(0.75rem, 2vw, 1rem)',
-                            justifyContent: 'flex-start',
-                          }}
-                        >
-                          {step.knowledge.map((item, idx) => (
-                            <Box
-                              key={idx}
-                              className="detail-item"
-                              sx={{
-                                px: 'clamp(1rem, 2.5vw, 1.25rem)',
-                                py: 'clamp(0.75rem, 2vw, 1rem)',
-                                background: isDark
-                                  ? 'rgba(168, 85, 247, 0.1)'
-                                  : 'rgba(168, 85, 247, 0.05)',
-                                borderRadius: '20px',
-                                border: isDark
-                                  ? '1px solid rgba(168, 85, 247, 0.2)'
-                                  : '1px solid rgba(168, 85, 247, 0.1)',
-                                backdropFilter: 'blur(10px)',
-                                transition: 'all 0.3s ease',
-                                '&:hover': {
-                                  background: isDark
-                                    ? 'rgba(168, 85, 247, 0.15)'
-                                    : 'rgba(168, 85, 247, 0.08)',
-                                  transform: 'translateY(-2px) scale(1.02)',
-                                },
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                  fontSize: 'clamp(0.85rem, 2vw, 0.9rem)',
-                                  color: isDark
-                                    ? 'rgba(255, 255, 255, 0.8)'
-                                    : '#475569',
-                                  fontWeight: 500,
-                                  lineHeight: 1.4,
-                                  whiteSpace: 'nowrap',
-                                }}
-                              >
-                                {item}
-                              </Typography>
-                            </Box>
-                          ))}
-                        </Box>
+                          );
+                        })}
                       </Box>
                     )}
                   </Box>

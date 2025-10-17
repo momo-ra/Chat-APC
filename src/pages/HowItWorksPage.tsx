@@ -9,18 +9,16 @@ import {
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
+import { usePageTitle } from '../hooks/usePageTitle';
 
-const HowItWorksPage: React.FC = () => {
+  const HowItWorksPage: React.FC = () => {
+  usePageTitle({
+    title: 'How ChatAPC Works',
+    description: 'Discover how ChatAPC transforms natural language questions into actionable industrial insights through AI-powered agents, process knowledge mapping, and intelligent analysis.',
+  });
   const { isDark } = useThemeMode();
 
   useEffect(() => {
-    // Set page metadata
-    document.title = 'How ChatAPC Works - AI Process Control Assistant | Alpha Process Control';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Discover how ChatAPC transforms natural language questions into actionable industrial insights through AI-powered agents, process knowledge mapping, and intelligent analysis.');
-    }
-
     // Scroll to top on mount
     window.scrollTo(0, 0);
   }, []);

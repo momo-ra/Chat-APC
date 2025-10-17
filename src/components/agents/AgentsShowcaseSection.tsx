@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Typography, Container, Card, CardContent, Chip } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { 
-  Assessment, 
-  AccountTree, 
-  Psychology,
-  TrendingUp,
-  EventNote
+  SmartToy, 
+  Tune, 
+  Explore,
+  Chat,
+  TrendingUp
 } from '@mui/icons-material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -14,66 +14,34 @@ import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const agents = [
+const agentCapabilities = [
   {
-    name: 'Graph Agent',
-    tagline: 'Brings your process data to life — and lets you shape it.',
-    description: 'Turns raw numbers into a clear story you can explore interactively',
-    icon: Assessment,
+    title: 'Adjust time window or tags',
+    agent: 'Visualize Agent',
+    description: 'Customize your data visualization in real-time',
+    icon: Tune,
     color: { light: '#3B82F6', dark: '#60A5FA' },
-    features: [
-      'Instantly plot variables, add limits, overlay alarms',
-      'Highlight critical events with labels like "Constraint violated"',
-      'Build and customize plots yourself, choosing tags, time ranges, and overlays',
-    ],
   },
   {
-    name: 'Process Navigator',
-    tagline: 'Your interactive map of the plant.',
-    description: 'Gives both a visual overview and plain-language explanations',
-    icon: AccountTree,
+    title: 'Explore and zoom through equipment',
+    agent: 'Process Navigator',
+    description: 'Navigate your plant\'s knowledge map interactively',
+    icon: Explore,
     color: { light: '#10B981', dark: '#34D399' },
-    features: [
-      'Explore equipment, controllers, and loops in a connected graph',
-      'Ask "What is TI100?" or "Show me all loops linked to E-200"',
-      'Zoom, click, and navigate the plant map directly',
-    ],
   },
   {
-    name: 'Process Advisor',
-    tagline: 'Explains plant behavior in plain English.',
-    description: 'Acts like your most experienced operator, always available',
-    icon: Psychology,
-    color: { light: '#8B5CF6', dark: '#A78BFA' },
-    features: [
-      'Monitors controllers and tells you why they act as they do',
-      'Builds shift narratives: alarms, mode changes, operator actions',
-      'Ask it follow-up questions: "Why did this drop?", "What if I increase feed?"',
-    ],
-  },
-  {
-    name: 'Profit Advisor',
-    tagline: 'Your always-on margin hunter.',
-    description: 'Works continuously as a profit watchdog',
-    icon: TrendingUp,
+    title: 'Question decisions or shifts',
+    agent: 'Advisor Agent',
+    description: 'Get explanations about process behavior and changes',
+    icon: Chat,
     color: { light: '#F59E0B', dark: '#FBBF24' },
-    features: [
-      'Spots opportunities for throughput, yield, or efficiency gains',
-      'Gives clear recommendations: "This constraint has freed up, feed can go higher"',
-      'Interact directly: test scenarios, explore "what-if" changes, and see potential gains',
-    ],
   },
   {
-    name: 'Events Manager',
-    tagline: 'Your timeline of truth.',
-    description: 'Keeps everyone aligned with a shared operational memory',
-    icon: EventNote,
+    title: 'Review and filter events',
+    agent: 'Events Manager',
+    description: 'Track and analyze operational events over time',
+    icon: TrendingUp,
     color: { light: '#EC4899', dark: '#F472B6' },
-    features: [
-      'Logs alarms, shutdowns, and mode changes automatically',
-      'Summarizes a shift, a day, or a whole week',
-      'Let users search or filter events, drill down, and connect them to process data',
-    ],
   },
 ];
 
@@ -83,12 +51,14 @@ export const AgentsShowcaseSection: React.FC = () => {
     containerMaxWidth, 
     containerPadding,
     h2FontSize,
+    bodyFontSize,
     sectionPadding 
   } = useResponsiveLayout();
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const agentRefs = useRef<HTMLDivElement[]>([]);
+  const cardsRef = useRef<HTMLDivElement[]>([]);
+  const visionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -107,39 +77,38 @@ export const AgentsShowcaseSection: React.FC = () => {
         });
       }
 
-      // Agent cards animation
-      agentRefs.current.forEach((agent, index) => {
-        if (agent) {
-          gsap.from(agent, {
+      // Cards animation
+      cardsRef.current.forEach((card, index) => {
+        if (card) {
+          gsap.from(card, {
             scrollTrigger: {
-              trigger: agent,
+              trigger: card,
               start: 'top 90%',
               toggleActions: 'play none none none',
             },
-            y: 80,
+            y: 60,
             opacity: 0,
-            duration: 0.9,
-            delay: index * 0.2,
-            ease: 'power2.out',
-          });
-
-          // Animate internal elements
-          const elements = agent.querySelectorAll('.agent-content > *');
-          gsap.from(elements, {
-            scrollTrigger: {
-              trigger: agent,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-            y: 30,
-            opacity: 0,
-            duration: 0.6,
-            delay: index * 0.2 + 0.3,
-            stagger: 0.1,
+            duration: 0.8,
+            delay: index * 0.15,
             ease: 'power2.out',
           });
         }
       });
+
+      // Vision section animation
+      if (visionRef.current) {
+        gsap.from(visionRef.current, {
+          scrollTrigger: {
+            trigger: visionRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+          y: 40,
+          opacity: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+        });
+      }
     }, sectionRef);
 
     return () => ctx.revert();
@@ -149,7 +118,6 @@ export const AgentsShowcaseSection: React.FC = () => {
     <Box
       ref={sectionRef}
       component="section"
-      data-section-theme={isDark ? 'dark' : 'light'}
       sx={{
         py: sectionPadding,
         background: 'transparent',
@@ -164,7 +132,19 @@ export const AgentsShowcaseSection: React.FC = () => {
         }}
       >
         {/* Section Header */}
-        <Box ref={headerRef} sx={{ textAlign: 'center', mb: { xs: 8, md: 12 } }}>
+        <Box ref={headerRef} sx={{ mb: { xs: 8, md: 10 } }}>
+          <Typography
+            sx={{
+              fontSize: { xs: '0.875rem', md: '1rem' },
+              fontWeight: 700,
+              color: isDark ? '#60A5FA' : '#3B82F6',
+              textTransform: 'uppercase',
+              letterSpacing: 2,
+              mb: 2,
+            }}
+          >
+            How it Works
+          </Typography>
           <Typography
             variant="h2"
             sx={{
@@ -175,219 +155,240 @@ export const AgentsShowcaseSection: React.FC = () => {
               lineHeight: 1.2,
             }}
           >
-            The Agents
+            What are Agents?
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: bodyFontSize,
+              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
+              maxWidth: '800px',
+              lineHeight: 1.7,
+              mb: 3,
+            }}
+          >
+            Agents are specialized digital co-workers inside ChatAPC. Each one has a role: 
+            one shows you the graph, another explains process behavior, another watches profit, 
+            another keeps track of events.
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: { xs: '1.125rem', md: '1.25rem' },
+              fontWeight: 600,
+              color: isDark ? '#60A5FA' : '#3B82F6',
+              maxWidth: '700px',
+              lineHeight: 1.6,
+            }}
+          >
+            You don't just receive static answers — you can drive the interaction:
           </Typography>
         </Box>
 
-        {/* Agents Grid */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 8, md: 12 } }}>
-          {agents.map((agent, index) => {
-            const IconComponent = agent.icon;
-            const isEven = index % 2 === 0;
-            
+        {/* Interactive Capabilities - Grid Layout */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+            gap: { xs: 3, md: 4 },
+            mb: { xs: 10, md: 14 },
+          }}
+        >
+          {agentCapabilities.map((capability, index) => {
+            const IconComponent = capability.icon;
             return (
               <Box
                 key={index}
                 ref={(el) => {
-                  if (el) agentRefs.current[index] = el as HTMLDivElement;
+                  if (el) cardsRef.current[index] = el as HTMLDivElement;
                 }}
                 sx={{
-                  display: 'flex',
-                  flexDirection: { 
-                    xs: 'column', 
-                    md: isEven ? 'row' : 'row-reverse' 
-                  },
-                  alignItems: 'center',
-                  gap: { xs: 6, md: 8 },
                   position: 'relative',
+                  p: { xs: 3, md: 4 },
+                  borderRadius: 0,
+                  borderLeft: isDark ? '2px solid rgba(71, 85, 105, 0.3)' : '2px solid rgba(226, 232, 240, 1)',
+                  background: 'transparent',
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': {
+                    pl: { xs: 4, md: 5 },
+                    borderLeftColor: capability.color[isDark ? 'dark' : 'light'],
+                    borderLeftWidth: '3px',
+                    background: isDark
+                      ? `linear-gradient(90deg, ${capability.color.dark}10 0%, transparent 100%)`
+                      : `linear-gradient(90deg, ${capability.color.light}08 0%, transparent 100%)`,
+                    '& .capability-icon': {
+                      transform: 'scale(1.1) rotate(5deg)',
+                    },
+                  },
                 }}
               >
-                {/* Icon Section */}
+                {/* Icon */}
                 <Box
+                  className="capability-icon"
                   sx={{
+                    width: 56,
+                    height: 56,
                     display: 'flex',
-                    flexDirection: 'column',
                     alignItems: 'center',
-                    minWidth: { xs: 'auto', md: 300 },
-                    position: 'relative',
+                    justifyContent: 'center',
+                    mb: 3,
+                    transition: 'all 0.4s ease',
                   }}
                 >
-                  {/* Large Icon Circle */}
-                  <Box
+                  <IconComponent
                     sx={{
-                      width: { xs: 120, md: 150 },
-                      height: { xs: 120, md: 150 },
-                      borderRadius: '50%',
-                      background: `${agent.color[isDark ? 'dark' : 'light']}15`,
-                      border: `3px solid ${agent.color[isDark ? 'dark' : 'light']}`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      position: 'relative',
+                      fontSize: 36,
+                      color: capability.color[isDark ? 'dark' : 'light'],
                       transition: 'all 0.4s ease',
-                      '&:hover': {
-                        transform: 'scale(1.1) rotate(5deg)',
-                        boxShadow: `0 20px 60px ${agent.color[isDark ? 'dark' : 'light']}30`,
-                      },
-                      '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        inset: -10,
-                        background: `conic-gradient(from 0deg, ${agent.color[isDark ? 'dark' : 'light']}20, transparent, ${agent.color[isDark ? 'dark' : 'light']}20)`,
-                        borderRadius: '50%',
-                        animation: 'rotate 8s linear infinite',
-                        zIndex: -1,
-                        opacity: 0.6,
-                      },
-                    }}
-                  >
-                    <IconComponent 
-                      sx={{ 
-                        fontSize: { xs: 48, md: 60 },
-                        color: agent.color[isDark ? 'dark' : 'light'],
-                      }} 
-                    />
-                  </Box>
-
-                  {/* Agent Name Chip */}
-                  <Chip
-                    label={agent.name}
-                    sx={{
-                      mt: 3,
-                      fontSize: { xs: '0.875rem', md: '1rem' },
-                      fontWeight: 700,
-                      px: 3,
-                      py: 1,
-                      background: `${agent.color[isDark ? 'dark' : 'light']}20`,
-                      color: agent.color[isDark ? 'dark' : 'light'],
-                      border: `2px solid ${agent.color[isDark ? 'dark' : 'light']}`,
                     }}
                   />
                 </Box>
 
-                {/* Content Section */}
-                <Card
-                  elevation={0}
+                {/* Agent Label */}
+                <Typography
                   sx={{
-                    flex: 1,
-                    maxWidth: { xs: '100%', md: 600 },
-                    background: isDark
-                      ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.6) 100%)'
-                      : 'rgba(255, 255, 255, 0.9)',
-                    backdropFilter: 'blur(20px)',
-                    border: isDark 
-                      ? `1px solid rgba(71, 85, 105, 0.3)`
-                      : `1px solid rgba(226, 232, 240, 0.8)`,
-                    borderRadius: 4,
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      transform: 'translateY(-8px)',
-                      boxShadow: isDark
-                        ? `0 25px 80px ${agent.color.dark}20`
-                        : `0 25px 80px ${agent.color.light}15`,
-                      borderColor: agent.color[isDark ? 'dark' : 'light'],
-                    },
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    color: capability.color[isDark ? 'dark' : 'light'],
+                    textTransform: 'uppercase',
+                    letterSpacing: 1.5,
+                    mb: 1,
                   }}
                 >
-                  <CardContent className="agent-content" sx={{ p: { xs: 4, md: 6 } }}>
-                    {/* Tagline */}
-                    <Typography
-                      variant="h4"
-                      sx={{
-                        fontSize: { xs: '1.5rem', md: '1.75rem' },
-                        fontWeight: 700,
-                        color: isDark ? '#FFFFFF' : '#0F172A',
-                        mb: 2,
-                        lineHeight: 1.3,
-                      }}
-                    >
-                      {agent.tagline}
-                    </Typography>
+                  {capability.agent}
+                </Typography>
 
-                    {/* Description */}
-                    <Typography
-                      sx={{
-                        fontSize: { xs: '1rem', md: '1.125rem' },
-                        color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
-                        mb: 4,
-                        lineHeight: 1.6,
-                        fontStyle: 'italic',
-                      }}
-                    >
-                      {agent.description}
-                    </Typography>
+                {/* Title */}
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontSize: { xs: '1.25rem', md: '1.4rem' },
+                    fontWeight: 700,
+                    color: isDark ? '#FFFFFF' : '#0F172A',
+                    mb: 2,
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {capability.title}
+                </Typography>
 
-                    {/* Features List */}
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                      {agent.features.map((feature, featureIndex) => (
-                        <Box
-                          key={featureIndex}
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            gap: 2,
-                            p: 2.5,
-                            background: isDark 
-                              ? 'rgba(71, 85, 105, 0.2)' 
-                              : 'rgba(248, 250, 252, 0.8)',
-                            borderRadius: 3,
-                            border: isDark
-                              ? '1px solid rgba(71, 85, 105, 0.3)'
-                              : '1px solid rgba(226, 232, 240, 0.6)',
-                            transition: 'all 0.2s ease',
-                            '&:hover': {
-                              transform: 'translateX(8px)',
-                              borderColor: agent.color[isDark ? 'dark' : 'light'],
-                              background: isDark 
-                                ? `${agent.color.dark}10`
-                                : `${agent.color.light}05`,
-                            },
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              width: 8,
-                              height: 8,
-                              borderRadius: '50%',
-                              backgroundColor: agent.color[isDark ? 'dark' : 'light'],
-                              flexShrink: 0,
-                              mt: 0.5,
-                            }}
-                          />
-                          <Typography
-                            sx={{
-                              fontSize: '1rem',
-                              color: isDark ? 'rgba(255, 255, 255, 0.9)' : '#475569',
-                              lineHeight: 1.6,
-                            }}
-                          >
-                            {feature}
-                          </Typography>
-                        </Box>
-                      ))}
-                    </Box>
-                  </CardContent>
-                </Card>
+                {/* Description */}
+                <Typography
+                  sx={{
+                    fontSize: '1rem',
+                    color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
+                    lineHeight: 1.7,
+                  }}
+                >
+                  {capability.description}
+                </Typography>
               </Box>
             );
           })}
         </Box>
-      </Container>
 
-      {/* Keyframes */}
-      <Box
-        component="style"
-        sx={{
-          '@keyframes rotate': {
-            '0%': {
-              transform: 'rotate(0deg)',
-            },
-            '100%': {
-              transform: 'rotate(360deg)',
-            },
-          },
-        }}
-      />
+        {/* Vision Section - Simplified */}
+        <Box
+          ref={visionRef}
+          sx={{
+            position: 'relative',
+            pt: { xs: 8, md: 10 },
+            borderTop: isDark ? '1px solid rgba(71, 85, 105, 0.3)' : '1px solid rgba(226, 232, 240, 1)',
+          }}
+        >
+          {/* Icon */}
+          <Box
+            sx={{
+              width: 72,
+              height: 72,
+              borderRadius: 2,
+              background: isDark ? '#60A5FA' : '#3B82F6',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mb: 4,
+              boxShadow: isDark
+                ? '0 8px 24px rgba(96, 165, 250, 0.3)'
+                : '0 8px 24px rgba(59, 130, 246, 0.25)',
+            }}
+          >
+            <SmartToy
+              sx={{
+                fontSize: 40,
+                color: '#FFFFFF',
+              }}
+            />
+          </Box>
+
+          <Typography
+            variant="h3"
+            sx={{
+              fontSize: { xs: '1.75rem', md: '2.25rem' },
+              fontWeight: 700,
+              color: isDark ? '#FFFFFF' : '#0F172A',
+              mb: 3,
+              lineHeight: 1.2,
+              maxWidth: 800,
+            }}
+          >
+            Agents Work Together as an Ecosystem
+          </Typography>
+
+          <Typography
+            sx={{
+              fontSize: { xs: '1rem', md: '1.125rem' },
+              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
+              maxWidth: '800px',
+              lineHeight: 1.7,
+              mb: 5,
+            }}
+          >
+            Because they share the same foundation, agents work together as an ecosystem. Our vision is to connect them with external apps and agents — extending insights across dashboards, planning tools, or even other AI copilots.
+          </Typography>
+
+          {/* Integration Tags */}
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 2,
+            }}
+          >
+            {['Dashboards', 'Planning Tools', 'AI Copilots'].map((tool) => (
+              <Box
+                key={tool}
+                sx={{
+                  px: 3,
+                  py: 1.5,
+                  borderRadius: 2,
+                  background: isDark
+                    ? 'rgba(71, 85, 105, 0.3)'
+                    : 'rgba(241, 245, 249, 0.8)',
+                  border: isDark
+                    ? '1px solid rgba(71, 85, 105, 0.5)'
+                    : '1px solid rgba(226, 232, 240, 1)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'default',
+                  '&:hover': {
+                    background: isDark
+                      ? 'rgba(96, 165, 250, 0.1)'
+                      : 'rgba(59, 130, 246, 0.04)',
+                    borderColor: isDark ? '#60A5FA' : '#3B82F6',
+                  },
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
+                  }}
+                >
+                  {tool}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      </Container>
     </Box>
   );
 };

@@ -10,18 +10,16 @@ import {
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
+import { usePageTitle } from '../hooks/usePageTitle';
 
-const AgentsPage: React.FC = () => {
+  const AgentsPage: React.FC = () => {
+  usePageTitle({
+    title: 'AI Agents',
+    description: 'Meet your ecosystem of digital colleagues. ChatAPC\'s specialized AI agents detect, explain, and advise on process operations with interactive, conversational intelligence.',
+  });
   const { isDark } = useThemeMode();
 
   useEffect(() => {
-    // Set page metadata
-    document.title = 'AI Agents - Alpha Process Control | ChatAPC';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Meet your ecosystem of digital colleagues. ChatAPC\'s specialized AI agents detect, explain, and advise on process operations with interactive, conversational intelligence.');
-    }
-
     // Scroll to top on mount
     window.scrollTo(0, 0);
   }, []);

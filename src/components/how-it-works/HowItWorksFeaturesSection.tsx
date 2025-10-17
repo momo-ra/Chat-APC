@@ -19,31 +19,42 @@ import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Reorganized to 4 features for better grid balance
-const directAccessFeatures = [
+// Color palette for consistency throughout the app
+const PALETTE = {
+  blue: { dark: '#60A5FA', light: '#3B82F6' },
+  green: { dark: '#34D399', light: '#10B981' },
+  yellow: { dark: '#FBBF24', light: '#F59E0B' },
+  pink: { dark: '#F472B6', light: '#EC4899' },
+};
+
+const getColor = (isDark: boolean, colorObj: {dark: string, light: string}) =>
+  isDark ? colorObj.dark : colorObj.light;
+
+// Features using the palette for consistent experience
+const getFeatures = (isDark: boolean) => [
   {
     icon: BarChart,
     title: "Custom Analytics",
     description: "Build custom graphs, dashboards, and reports with your plant data. Add variables, set time ranges, and create the exact analysis you need.",
-    color: '#3B82F6',
+    color: getColor(isDark, PALETTE.blue),
   },
   {
     icon: Event,
     title: "Smart Monitoring",
     description: "Define intelligent events, set dynamic thresholds, and get alerts that matter. Monitor what's critical to your operations.",
-    color: '#10B981',
+    color: getColor(isDark, PALETTE.green),
   },
   {
     icon: Science,
     title: "Scenario Testing",
-    description: "Run comprehensive \"what if\" scenarios with the Process Advisor. Test changes before implementation.",
-    color: '#EC4899',
+    description: "Run comprehensive \"what if\" scenarios with the Advisor Agent. Test changes before implementation.",
+    color: getColor(isDark, PALETTE.pink),
   },
   {
     icon: TrendingUp,
     title: "Economic Optimization",
-    description: "Analyze economics in real-time with the Profit Advisor. Optimize for maximum efficiency and profitability.",
-    color: '#F59E0B',
+    description: "Analyze economics in real-time with the Optimizer Agent. Optimize for maximum efficiency and profitability.",
+    color: getColor(isDark, PALETTE.yellow),
   },
 ];
 
@@ -56,6 +67,8 @@ export const HowItWorksFeaturesSection: React.FC = () => {
     h2FontSize,
     sectionPadding 
   } = useResponsiveLayout();
+
+  const directAccessFeatures = getFeatures(isDark);
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -212,42 +225,22 @@ export const HowItWorksFeaturesSection: React.FC = () => {
                     position: 'relative',
                     p: { xs: 4, md: 5 },
                     background: isDark 
-                      ? 'linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(55, 65, 81, 0.6) 100%)'
-                      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(249, 250, 251, 0.8) 100%)',
+                      ? 'linear-gradient(135deg, rgba(31, 41, 55, 0.85) 0%, rgba(55, 65, 81, 0.7) 100%)'
+                      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.97) 0%, rgba(249, 250, 251, 0.92) 100%)',
                     backdropFilter: 'blur(20px)',
                     borderRadius: 3,
                     border: isDark 
-                      ? '1px solid rgba(55, 65, 81, 0.6)' 
-                      : '1px solid rgba(226, 232, 240, 0.8)',
-                    transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                      ? `1px solid ${feature.color}80` 
+                      : `1px solid ${feature.color}30`,
+                    transition: 'box-shadow 0.3s ease, border 0.3s ease, background 0.3s ease',
                     cursor: 'pointer',
                     overflow: 'hidden',
-                    '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: 4,
-                      background: `linear-gradient(90deg, ${feature.color} 0%, ${feature.color}aa 100%)`,
-                      transform: 'scaleX(0)',
-                      transformOrigin: 'left',
-                      transition: 'transform 0.4s ease',
-                    },
                     '&:hover': {
-                      transform: 'translateY(-8px)',
-                      background: isDark 
-                        ? 'linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(55, 65, 81, 0.8) 100%)'
-                        : 'linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(249, 250, 251, 0.95) 100%)',
-                      boxShadow: `0 20px 60px -8px ${feature.color}40`,
-                      border: `1px solid ${feature.color}50`,
-                      '&::before': {
-                        transform: 'scaleX(1)',
-                      },
-                      '& .feature-icon': {
-                        background: feature.color,
-                        transform: 'scale(1.05)',
-                      }
+                      boxShadow: `0 8px 32px -4px ${feature.color}55`,
+                      border: `1.5px solid ${feature.color}`,
+                      background: isDark
+                        ? `linear-gradient(135deg, ${feature.color}22 0%, rgba(55, 65, 81, 0.92) 100%)`
+                        : `linear-gradient(135deg, #fff 0%, ${feature.color}0A 100%)`,
                     },
                   }}
                 >
@@ -258,12 +251,12 @@ export const HowItWorksFeaturesSection: React.FC = () => {
                       width: 56,
                       height: 56,
                       borderRadius: 2,
-                      background: `${feature.color}20`,
+                      background: `${feature.color}25`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       mb: 3,
-                      transition: 'all 0.4s ease',
+                      transition: 'background 0.3s ease',
                     }}
                   >
                     <IconComponent 
@@ -336,8 +329,8 @@ export const HowItWorksFeaturesSection: React.FC = () => {
                     height: 64,
                     borderRadius: '50%',
                     background: isDark
-                      ? 'linear-gradient(135deg, #009BE4 0%, #2563EB 100%)'
-                      : 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+                      ? `linear-gradient(135deg, ${PALETTE.blue.dark} 0%, ${PALETTE.blue.dark}99 100%)`
+                      : `linear-gradient(135deg, ${PALETTE.blue.light} 0%, ${PALETTE.blue.light}BB 100%)`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -372,8 +365,8 @@ export const HowItWorksFeaturesSection: React.FC = () => {
                     height: 64,
                     borderRadius: '50%',
                     background: isDark
-                      ? 'linear-gradient(135deg, #A855F7 0%, #8B5CF6 100%)'
-                      : 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+                      ? `linear-gradient(135deg, ${PALETTE.pink.dark} 0%, ${PALETTE.pink.dark}99 100%)`
+                      : `linear-gradient(135deg, ${PALETTE.pink.light} 0%, ${PALETTE.pink.light}BB 100%)`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -408,8 +401,8 @@ export const HowItWorksFeaturesSection: React.FC = () => {
                     height: 64,
                     borderRadius: '50%',
                     background: isDark
-                      ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
-                      : 'linear-gradient(135deg, #10B981 0%, #047857 100%)',
+                      ? `linear-gradient(135deg, ${PALETTE.green.dark} 0%, ${PALETTE.green.dark}99 100%)`
+                      : `linear-gradient(135deg, ${PALETTE.green.light} 0%, ${PALETTE.green.light}BB 100%)`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -475,13 +468,13 @@ export const HowItWorksFeaturesSection: React.FC = () => {
                 fontSize: '1.125rem',
                 fontWeight: 600,
                 background: isDark
-                  ? 'linear-gradient(135deg, #009BE4 0%, #2563EB 100%)'
-                  : 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+                  ? `linear-gradient(135deg, ${PALETTE.blue.dark} 0%, ${PALETTE.blue.dark}CC 100%)`
+                  : `linear-gradient(135deg, ${PALETTE.blue.light} 0%, ${PALETTE.blue.light}99 100%)`,
                 borderRadius: 2,
                 minWidth: 180,
                 '&:hover': {
                   transform: 'translateY(-2px)',
-                  boxShadow: '0 8px 25px rgba(37, 99, 235, 0.4)',
+                  boxShadow: `0 8px 25px ${getColor(isDark, PALETTE.blue)}44`,
                 },
               }}
             >
@@ -492,19 +485,19 @@ export const HowItWorksFeaturesSection: React.FC = () => {
               variant="outlined"
               size="large"
               startIcon={<Visibility />}
-              onClick={() => navigate('/about')}
+              onClick={() => navigate('/company/about')}
               sx={{
                 px: 6,
                 py: 2.5,
                 fontSize: '1.125rem',
                 fontWeight: 600,
-                borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(75, 85, 99, 0.4)',
-                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(75, 85, 99, 1)',
+                borderColor: isDark ? `${PALETTE.blue.dark}88` : `${PALETTE.blue.light}66`,
+                color: isDark ? 'rgba(255, 255, 255, 0.9)' : `${PALETTE.blue.light}`,
                 borderRadius: 2,
                 minWidth: 180,
                 '&:hover': {
-                  borderColor: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(75, 85, 99, 0.6)',
-                  background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(75, 85, 99, 0.05)',
+                  borderColor: isDark ? `${PALETTE.blue.dark}` : `${PALETTE.blue.light}`,
+                  background: isDark ? `${PALETTE.blue.dark}15` : `${PALETTE.blue.light}10`,
                   transform: 'translateY(-2px)',
                 },
               }}

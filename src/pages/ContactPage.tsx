@@ -4,16 +4,17 @@ import { AppSidebar, Footer, ThemeToggle } from '../components/layout';
 import { ContactFormSection, ContactMapSection, ContactInfoSection } from '../components/contact';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
+import { getHomeBackground } from '../components/shared/pageBackgrounds';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const ContactPage: React.FC = () => {
+  usePageTitle({
+    title: 'Contact Us',
+    description: 'Contact Alpha Process Control for expert consultation on industrial AI solutions, ChatAPC implementation, and process optimization services. Located in Houston, Texas.',
+  });
   const { isDark } = useThemeMode();
 
   useEffect(() => {
-    document.title = 'Contact Us - Alpha Process Control | Industrial AI Solutions';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Contact Alpha Process Control for expert consultation on industrial AI solutions, ChatAPC implementation, and process optimization services. Located in Houston, Texas.');
-    }
     window.scrollTo(0, 0);
   }, []);
 
@@ -44,11 +45,10 @@ const ContactPage: React.FC = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          background: isDark
-            ? 'linear-gradient(135deg, #0F1419 0%, #1A202C 50%, #0F1419 100%)'
-            : 'linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
+          background: getHomeBackground(isDark),
           position: 'relative',
           overflow: 'visible',
+          transition: 'background 0.3s ease',
         }}
       >
         <AppSidebar items={sidebarItems} />

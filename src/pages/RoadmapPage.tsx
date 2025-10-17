@@ -9,18 +9,18 @@ import {
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
+import { usePageTitle } from '../hooks/usePageTitle';
+
 
 const RoadmapPage: React.FC = () => {
   const { isDark } = useThemeMode();
+ 
+  usePageTitle({
+    title: 'Product Roadmap',
+    description: 'Discover the future of ChatAPC with our comprehensive product roadmap, featuring upcoming features, integrations, and innovations in industrial AI.',
+  });
 
   useEffect(() => {
-    // Set page metadata
-    document.title = 'Product Roadmap - Alpha Process Control | ChatAPC';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Discover the future of ChatAPC with our comprehensive product roadmap, featuring upcoming features, integrations, and innovations in industrial AI.');
-    }
-
     // Scroll to top on mount
     window.scrollTo(0, 0);
   }, []);

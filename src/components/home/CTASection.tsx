@@ -269,7 +269,7 @@ export const CTASection: React.FC = () => {
                     },
                   }}
                 >
-                  Request Demo
+                  Go To Demo
                 </Button>
                 
                 <Button
