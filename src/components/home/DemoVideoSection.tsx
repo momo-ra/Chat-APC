@@ -2,12 +2,13 @@ import React, { useRef, useState, useCallback } from 'react';
 import { Box, IconButton } from '@mui/material';
 import { Fullscreen } from '@mui/icons-material';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
 export const DemoVideoSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { isDark } = useThemeMode();
   const [isFullscreen, setIsFullscreen] = useState(false);
-
+  const { isMobile } = useResponsiveLayout();
   // Only manage fullscreen
   const handleFullscreen = useCallback(() => {
     if (containerRef.current) {
@@ -46,7 +47,7 @@ export const DemoVideoSection: React.FC = () => {
       ref={containerRef}
       sx={{
         maxWidth: 800,
-        mx: { xs: 2, sm: 2, md: 6 },
+        mx: isMobile ? 2 : "auto",
         my: { xs: 8, sm: 12 },
         position: 'relative',
         borderRadius: '16px',
