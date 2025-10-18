@@ -1,11 +1,21 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Container, Button } from '@mui/material';
-import { PlayArrow, Visibility, ArrowDownward } from '@mui/icons-material';
+import { PlayArrow, Visibility } from '@mui/icons-material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useNavigate } from 'react-router-dom';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { 
+  themeConfig, 
+  getColor, 
+  getGradient, 
+  getBackground,
+  getShadow,
+  getTextColor,
+  getButtonStyles,
+  withOpacity 
+} from '../shared/themeConfig';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,8 +25,6 @@ export const HowItWorksHeroSection: React.FC = () => {
   const { 
     containerMaxWidth, 
     containerPadding, 
-    h1FontSize,
-    bodyLargeFontSize,
     sectionPadding 
   } = useResponsiveLayout();
 
@@ -24,8 +32,15 @@ export const HowItWorksHeroSection: React.FC = () => {
   const heroContentRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLDivElement>(null);
-  const buttonsRef = useRef<HTMLDivElement>(null);
+  // REMOVE the buttonsRef that isn't necessary for showing the buttons
+  // const buttonsRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
+
+  // Get unified theme values
+  const { colors, gradients, backgrounds, shadows, typography, animations, transitions } = themeConfig;
+  const primaryColor = getColor(colors.blue, isDark);
+  const purpleColor = getColor(colors.purple, isDark);
+  const greenColor = getColor(colors.green, isDark);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -36,8 +51,8 @@ export const HowItWorksHeroSection: React.FC = () => {
         tl.from(titleRef.current, {
           opacity: 0,
           y: 60,
-          duration: 1.2,
-          ease: 'power3.out',
+          duration: animations.duration.slow,
+          ease: animations.easing.easeOut,
         }, 0.2);
       }
 
@@ -45,27 +60,31 @@ export const HowItWorksHeroSection: React.FC = () => {
         tl.from(subtitleRef.current, {
           opacity: 0,
           y: 40,
-          duration: 1,
-          ease: 'power2.out',
+          duration: animations.duration.normal,
+          ease: animations.easing.sharp,
         }, 0.6);
       }
 
+      // REMOVE the animation that targets children of possibly empty buttonsRef
+      // This may have set children opacity to 0 and never animated in if gsap context/refs got confused.
+      /*
       if (buttonsRef.current) {
         tl.from(buttonsRef.current.children, {
           opacity: 0,
           y: 30,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: 'back.out(1.7)',
+          duration: animations.duration.normal,
+          stagger: animations.stagger,
+          ease: animations.easing.bounce,
         }, 1);
       }
+      */
 
       if (scrollIndicatorRef.current) {
         tl.from(scrollIndicatorRef.current, {
           opacity: 0,
           y: 20,
-          duration: 0.8,
-          ease: 'power2.out',
+          duration: animations.duration.normal,
+          ease: animations.easing.sharp,
         }, 1.5);
 
         // Continuous bounce animation
@@ -74,7 +93,7 @@ export const HowItWorksHeroSection: React.FC = () => {
           duration: 2,
           repeat: -1,
           yoyo: true,
-          ease: 'power2.inOut',
+          ease: animations.easing.easeInOut,
           delay: 2,
         });
       }
@@ -96,7 +115,7 @@ export const HowItWorksHeroSection: React.FC = () => {
           duration: 6 + index * 2,
           repeat: -1,
           yoyo: true,
-          ease: 'power2.inOut',
+          ease: animations.easing.easeInOut,
           delay: index * 0.5,
         });
       });
@@ -115,12 +134,18 @@ export const HowItWorksHeroSection: React.FC = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [animations]);
 
   const handleScrollToProcess = () => {
     const processSection = document.getElementById('process-section');
     processSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+
+  // Get button styles from unified config
+  const primaryButtonStyles = getButtonStyles('primary', isDark, 'default');
+  const primaryButtonHoverStyles = getButtonStyles('primary', isDark, 'hover');
+  const outlinedButtonStyles = getButtonStyles('outlined', isDark, 'default');
+  const outlinedButtonHoverStyles = getButtonStyles('outlined', isDark, 'hover');
 
   return (
     <Box
@@ -142,9 +167,7 @@ export const HowItWorksHeroSection: React.FC = () => {
           left: 0,
           right: 0,
           bottom: 0,
-          background: isDark
-            ? 'radial-gradient(ellipse at center top, rgba(59, 130, 246, 0.1) 0%, transparent 50%)'
-            : 'radial-gradient(ellipse at center top, rgba(59, 130, 246, 0.05) 0%, transparent 50%)',
+          background: getBackground('radialBlue', isDark),
           pointerEvents: 'none',
         },
       }}
@@ -160,8 +183,8 @@ export const HowItWorksHeroSection: React.FC = () => {
           height: { xs: 300, md: 400 },
           borderRadius: '50%',
           background: isDark
-            ? 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 50%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.03) 50%, transparent 70%)',
+            ? `radial-gradient(circle, ${withOpacity(primaryColor, 0.15)} 0%, ${withOpacity(primaryColor, 0.05)} 50%, transparent 70%)`
+            : `radial-gradient(circle, ${withOpacity(primaryColor, 0.1)} 0%, ${withOpacity(primaryColor, 0.03)} 50%, transparent 70%)`,
           filter: 'blur(60px)',
           pointerEvents: 'none',
         }}
@@ -176,9 +199,7 @@ export const HowItWorksHeroSection: React.FC = () => {
           width: { xs: 200, md: 300 },
           height: { xs: 200, md: 300 },
           borderRadius: '50%',
-          background: isDark
-            ? 'radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, rgba(168, 85, 247, 0.04) 50%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, rgba(168, 85, 247, 0.02) 50%, transparent 70%)',
+          background: getBackground('radialPurple', isDark),
           filter: 'blur(50px)',
           pointerEvents: 'none',
         }}
@@ -193,9 +214,7 @@ export const HowItWorksHeroSection: React.FC = () => {
           width: { xs: 150, md: 250 },
           height: { xs: 150, md: 250 },
           borderRadius: '50%',
-          background: isDark
-            ? 'radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.03) 50%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, rgba(16, 185, 129, 0.02) 50%, transparent 70%)',
+          background: getBackground('radialGreen', isDark),
           filter: 'blur(40px)',
           pointerEvents: 'none',
         }}
@@ -210,8 +229,8 @@ export const HowItWorksHeroSection: React.FC = () => {
           width: 2,
           height: 120,
           background: isDark
-            ? 'linear-gradient(180deg, transparent 0%, rgba(59, 130, 246, 0.4) 50%, transparent 100%)'
-            : 'linear-gradient(180deg, transparent 0%, rgba(59, 130, 246, 0.3) 50%, transparent 100%)',
+            ? `linear-gradient(180deg, transparent 0%, ${withOpacity(primaryColor, 0.4)} 50%, transparent 100%)`
+            : `linear-gradient(180deg, transparent 0%, ${withOpacity(primaryColor, 0.3)} 50%, transparent 100%)`,
           transform: 'rotate(15deg)',
           opacity: 0.6,
         }}
@@ -225,8 +244,8 @@ export const HowItWorksHeroSection: React.FC = () => {
           width: 2,
           height: 100,
           background: isDark
-            ? 'linear-gradient(180deg, transparent 0%, rgba(168, 85, 247, 0.4) 50%, transparent 100%)'
-            : 'linear-gradient(180deg, transparent 0%, rgba(168, 85, 247, 0.3) 50%, transparent 100%)',
+            ? `linear-gradient(180deg, transparent 0%, ${withOpacity(purpleColor, 0.4)} 50%, transparent 100%)`
+            : `linear-gradient(180deg, transparent 0%, ${withOpacity(purpleColor, 0.3)} 50%, transparent 100%)`,
           transform: 'rotate(-20deg)',
           opacity: 0.5,
         }}
@@ -259,15 +278,13 @@ export const HowItWorksHeroSection: React.FC = () => {
                 xs: 'clamp(2.5rem, 8vw, 3.5rem)',
                 md: 'clamp(3.5rem, 6vw, 5rem)',
               },
-              fontWeight: 800,
-              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
+              fontWeight: typography.h1.weight,
+              color: getTextColor('primary', isDark),
               mb: 4,
-              lineHeight: 1.1,
+              lineHeight: typography.h1.lineHeight,
               letterSpacing: '-0.03em',
               position: 'relative',
-              background: isDark
-                ? 'linear-gradient(135deg, #FFFFFF 0%, #60A5FA 25%, #A78BFA 50%, #F472B6 75%, #FFFFFF 100%)'
-                : 'linear-gradient(135deg, #0F172A 0%, #1E40AF 25%, #7C3AED 50%, #DC2626 75%, #0F172A 100%)',
+              background: getGradient(gradients.multiColor, isDark),
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -285,10 +302,8 @@ export const HowItWorksHeroSection: React.FC = () => {
                 transform: 'translateX(-50%)',
                 width: 60,
                 height: 4,
-                background: isDark
-                  ? 'linear-gradient(90deg, #60A5FA 0%, #A78BFA 100%)'
-                  : 'linear-gradient(90deg, #1E40AF 0%, #7C3AED 100%)',
-                borderRadius: 2,
+                background: getGradient(gradients.blueToPurple, isDark),
+                borderRadius: themeConfig.borderRadius.sm,
               },
             }}
           >
@@ -304,12 +319,12 @@ export const HowItWorksHeroSection: React.FC = () => {
                 xs: 'clamp(1.1rem, 3vw, 1.25rem)',
                 md: 'clamp(1.25rem, 2vw, 1.5rem)',
               },
-              color: isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(71, 85, 105, 0.9)',
-              lineHeight: 1.7,
+              color: getTextColor('secondary', isDark),
+              lineHeight: typography.bodyLarge.lineHeight,
               maxWidth: 800,
               mx: 'auto',
               mb: 6,
-              fontWeight: 400,
+              fontWeight: typography.bodyLarge.weight,
               textShadow: isDark ? '0 2px 10px rgba(0, 0, 0, 0.3)' : 'none',
             }}
           >
@@ -320,7 +335,7 @@ export const HowItWorksHeroSection: React.FC = () => {
 
           {/* Enhanced Action Buttons */}
           <Box 
-            ref={buttonsRef}
+            // ref={buttonsRef} // Removed the ref to prevent animation bugs
             sx={{
               display: 'flex',
               flexDirection: { xs: 'column', sm: 'row' },
@@ -328,8 +343,17 @@ export const HowItWorksHeroSection: React.FC = () => {
               justifyContent: 'center',
               alignItems: 'center',
               mb: 8,
+              // Make sure nothing implicitly hides children (i.e., don't set opacity:0 or display:none here)
             }}
           >
+            {/* Primary Button - "See How It Works" */}
+            {/* 
+              To ensure both buttons are the same size:
+                - Use identical padding (px and py)
+                - Use identical fontSize and fontWeight
+                - Use minWidth to force same width
+                - Outlined button gets same minWidth as contained
+            */}
             <Button
               variant="contained"
               size="large"
@@ -338,19 +362,18 @@ export const HowItWorksHeroSection: React.FC = () => {
               sx={{
                 px: 6,
                 py: 3,
+                minWidth: { xs: 220, md: 235 }, // force minimum width to match
                 fontSize: { xs: '1rem', md: '1.125rem' },
                 fontWeight: 700,
-                background: isDark
-                  ? 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)'
-                  : 'linear-gradient(135deg, #1E40AF 0%, #7C3AED 100%)',
-                borderRadius: '50px',
+                background: primaryButtonStyles.background,
+                borderRadius: themeConfig.borderRadius.full,
                 textTransform: 'none',
-                boxShadow: isDark
-                  ? '0 8px 32px rgba(59, 130, 246, 0.4)'
-                  : '0 8px 32px rgba(30, 64, 175, 0.3)',
+                boxShadow: primaryButtonStyles.shadow,
                 border: 'none',
+                color: primaryButtonStyles.text,
                 position: 'relative',
                 overflow: 'hidden',
+                transition: transitions.allNormal,
                 '&::before': {
                   content: '""',
                   position: 'absolute',
@@ -359,13 +382,12 @@ export const HowItWorksHeroSection: React.FC = () => {
                   width: '100%',
                   height: '100%',
                   background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                  transition: 'left 0.5s',
+                  transition: transitions.slow,
                 },
                 '&:hover': {
                   transform: 'translateY(-3px)',
-                  boxShadow: isDark
-                    ? '0 12px 40px rgba(59, 130, 246, 0.5)'
-                    : '0 12px 40px rgba(30, 64, 175, 0.4)',
+                  background: primaryButtonHoverStyles.background,
+                  boxShadow: primaryButtonHoverStyles.shadow,
                   '&::before': {
                     left: '100%',
                   },
@@ -373,11 +395,16 @@ export const HowItWorksHeroSection: React.FC = () => {
                 '&:active': {
                   transform: 'translateY(-1px)',
                 },
+                opacity: 1,
+                display: 'inline-flex',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
               See How It Works
             </Button>
             
+            {/* Outlined Button - "Try Interactive Demo" */}
             <Button
               variant="outlined"
               size="large"
@@ -386,32 +413,30 @@ export const HowItWorksHeroSection: React.FC = () => {
               sx={{
                 px: 6,
                 py: 3,
+                minWidth: { xs: 220, md: 235 }, // force identical minWidth as above
                 fontSize: { xs: '1rem', md: '1.125rem' },
-                fontWeight: 600,
-                borderColor: isDark 
-                  ? 'rgba(255, 255, 255, 0.25)' 
-                  : 'rgba(59, 130, 246, 0.4)',
-                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(59, 130, 246, 1)',
-                borderRadius: '50px',
+                fontWeight: 700, // match contained button's fontWeight
+                borderColor: outlinedButtonStyles.border,
+                color: outlinedButtonStyles.text,
+                borderRadius: themeConfig.borderRadius.full,
                 borderWidth: 2,
                 textTransform: 'none',
                 backdropFilter: 'blur(10px)',
-                background: isDark 
-                  ? 'rgba(255, 255, 255, 0.05)' 
-                  : 'rgba(255, 255, 255, 0.8)',
+                background: outlinedButtonStyles.background,
+                transition: transitions.allNormal,
                 '&:hover': {
                   borderWidth: 2,
-                  borderColor: isDark 
-                    ? 'rgba(255, 255, 255, 0.4)' 
-                    : 'rgba(59, 130, 246, 0.6)',
-                  background: isDark 
-                    ? 'rgba(255, 255, 255, 0.1)' 
-                    : 'rgba(255, 255, 255, 0.95)',
+                  borderColor: outlinedButtonHoverStyles.border,
+                  background: outlinedButtonHoverStyles.background,
                   transform: 'translateY(-2px)',
                   boxShadow: isDark
-                    ? '0 8px 25px rgba(255, 255, 255, 0.1)'
-                    : '0 8px 25px rgba(59, 130, 246, 0.2)',
+                    ? getShadow('sm', isDark)
+                    : getShadow('blue', isDark),
                 },
+                opacity: 1,
+                display: 'inline-flex',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
               Try Interactive Demo

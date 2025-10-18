@@ -11,39 +11,48 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { 
+  themeConfig, 
+  getColor, 
+  getTextColor,
+  withOpacity 
+} from '../shared/themeConfig';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const agentCapabilities = [
-  {
-    title: 'Adjust time window or tags',
-    agent: 'Visualize Agent',
-    description: 'Customize your data visualization in real-time',
-    icon: Tune,
-    color: { light: '#3B82F6', dark: '#60A5FA' },
-  },
-  {
-    title: 'Explore and zoom through equipment',
-    agent: 'Process Navigator',
-    description: 'Navigate your plant\'s knowledge map interactively',
-    icon: Explore,
-    color: { light: '#10B981', dark: '#34D399' },
-  },
-  {
-    title: 'Question decisions or shifts',
-    agent: 'Advisor Agent',
-    description: 'Get explanations about process behavior and changes',
-    icon: Chat,
-    color: { light: '#F59E0B', dark: '#FBBF24' },
-  },
-  {
-    title: 'Review and filter events',
-    agent: 'Events Manager',
-    description: 'Track and analyze operational events over time',
-    icon: TrendingUp,
-    color: { light: '#EC4899', dark: '#F472B6' },
-  },
-];
+const getAgentCapabilities = (isDark: boolean) => {
+  const { colors } = themeConfig;
+  return [
+    {
+      title: 'Adjust time window or tags',
+      agent: 'Visualize Agent',
+      description: 'Customize your data visualization in real-time',
+      icon: Tune,
+      color: getColor(colors.blue, isDark),
+    },
+    {
+      title: 'Explore and zoom through equipment',
+      agent: 'Process Navigator',
+      description: 'Navigate your plant\'s knowledge map interactively',
+      icon: Explore,
+      color: getColor(colors.green, isDark),
+    },
+    {
+      title: 'Question decisions or shifts',
+      agent: 'Advisor Agent',
+      description: 'Get explanations about process behavior and changes',
+      icon: Chat,
+      color: getColor(colors.yellow, isDark),
+    },
+    {
+      title: 'Review and filter events',
+      agent: 'Events Manager',
+      description: 'Track and analyze operational events over time',
+      icon: TrendingUp,
+      color: getColor(colors.pink, isDark),
+    },
+  ];
+};
 
 export const AgentsShowcaseSection: React.FC = () => {
   const { isDark } = useThemeMode();
@@ -60,6 +69,11 @@ export const AgentsShowcaseSection: React.FC = () => {
   const cardsRef = useRef<HTMLDivElement[]>([]);
   const visionRef = useRef<HTMLDivElement>(null);
 
+  // Get unified theme values
+  const { typography, borderRadius, transitions, animations, colors, shadows } = themeConfig;
+  const agentCapabilities = getAgentCapabilities(isDark);
+  const primaryColor = getColor(colors.blue, isDark);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Header animation
@@ -72,8 +86,8 @@ export const AgentsShowcaseSection: React.FC = () => {
           },
           y: 50,
           opacity: 0,
-          duration: 0.8,
-          ease: 'power3.out',
+          duration: animations.duration.normal,
+          ease: animations.easing.easeOut,
         });
       }
 
@@ -88,9 +102,9 @@ export const AgentsShowcaseSection: React.FC = () => {
             },
             y: 60,
             opacity: 0,
-            duration: 0.8,
-            delay: index * 0.15,
-            ease: 'power2.out',
+            duration: animations.duration.normal,
+            delay: index * animations.stagger,
+            ease: animations.easing.sharp,
           });
         }
       });
@@ -106,13 +120,13 @@ export const AgentsShowcaseSection: React.FC = () => {
           y: 40,
           opacity: 0,
           duration: 0.6,
-          ease: 'power2.out',
+          ease: animations.easing.sharp,
         });
       }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [animations]);
 
   return (
     <Box
@@ -137,7 +151,7 @@ export const AgentsShowcaseSection: React.FC = () => {
             sx={{
               fontSize: { xs: '0.875rem', md: '1rem' },
               fontWeight: 700,
-              color: isDark ? '#60A5FA' : '#3B82F6',
+              color: primaryColor,
               textTransform: 'uppercase',
               letterSpacing: 2,
               mb: 2,
@@ -149,10 +163,10 @@ export const AgentsShowcaseSection: React.FC = () => {
             variant="h2"
             sx={{
               fontSize: h2FontSize,
-              fontWeight: 700,
-              color: isDark ? '#FFFFFF' : '#0F172A',
+              fontWeight: typography.h2.weight,
+              color: getTextColor('primary', isDark),
               mb: 3,
-              lineHeight: 1.2,
+              lineHeight: typography.h2.lineHeight,
             }}
           >
             What are Agents?
@@ -160,9 +174,9 @@ export const AgentsShowcaseSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: bodyFontSize,
-              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
+              color: getTextColor('secondary', isDark),
               maxWidth: '800px',
-              lineHeight: 1.7,
+              lineHeight: typography.body.lineHeight,
               mb: 3,
             }}
           >
@@ -174,7 +188,7 @@ export const AgentsShowcaseSection: React.FC = () => {
             sx={{
               fontSize: { xs: '1.125rem', md: '1.25rem' },
               fontWeight: 600,
-              color: isDark ? '#60A5FA' : '#3B82F6',
+              color: primaryColor,
               maxWidth: '700px',
               lineHeight: 1.6,
             }}
@@ -204,16 +218,18 @@ export const AgentsShowcaseSection: React.FC = () => {
                   position: 'relative',
                   p: { xs: 3, md: 4 },
                   borderRadius: 0,
-                  borderLeft: isDark ? '2px solid rgba(71, 85, 105, 0.3)' : '2px solid rgba(226, 232, 240, 1)',
+                  borderLeft: isDark 
+                    ? `2px solid ${withOpacity(colors.neutral.darkBorder, 0.3)}` 
+                    : `2px solid ${colors.neutral.lightBorder}`,
                   background: 'transparent',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transition: transitions.allNormal,
                   '&:hover': {
                     pl: { xs: 4, md: 5 },
-                    borderLeftColor: capability.color[isDark ? 'dark' : 'light'],
+                    borderLeftColor: capability.color,
                     borderLeftWidth: '3px',
                     background: isDark
-                      ? `linear-gradient(90deg, ${capability.color.dark}10 0%, transparent 100%)`
-                      : `linear-gradient(90deg, ${capability.color.light}08 0%, transparent 100%)`,
+                      ? `linear-gradient(90deg, ${withOpacity(capability.color, 0.06)} 0%, transparent 100%)`
+                      : `linear-gradient(90deg, ${withOpacity(capability.color, 0.05)} 0%, transparent 100%)`,
                     '& .capability-icon': {
                       transform: 'scale(1.1) rotate(5deg)',
                     },
@@ -230,14 +246,14 @@ export const AgentsShowcaseSection: React.FC = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     mb: 3,
-                    transition: 'all 0.4s ease',
+                    transition: transitions.normal,
                   }}
                 >
                   <IconComponent
                     sx={{
                       fontSize: 36,
-                      color: capability.color[isDark ? 'dark' : 'light'],
-                      transition: 'all 0.4s ease',
+                      color: capability.color,
+                      transition: transitions.normal,
                     }}
                   />
                 </Box>
@@ -247,7 +263,7 @@ export const AgentsShowcaseSection: React.FC = () => {
                   sx={{
                     fontSize: '0.75rem',
                     fontWeight: 600,
-                    color: capability.color[isDark ? 'dark' : 'light'],
+                    color: capability.color,
                     textTransform: 'uppercase',
                     letterSpacing: 1.5,
                     mb: 1,
@@ -261,10 +277,10 @@ export const AgentsShowcaseSection: React.FC = () => {
                   variant="h5"
                   sx={{
                     fontSize: { xs: '1.25rem', md: '1.4rem' },
-                    fontWeight: 700,
-                    color: isDark ? '#FFFFFF' : '#0F172A',
+                    fontWeight: typography.h5.weight,
+                    color: getTextColor('primary', isDark),
                     mb: 2,
-                    lineHeight: 1.3,
+                    lineHeight: typography.h5.lineHeight,
                   }}
                 >
                   {capability.title}
@@ -273,9 +289,9 @@ export const AgentsShowcaseSection: React.FC = () => {
                 {/* Description */}
                 <Typography
                   sx={{
-                    fontSize: '1rem',
-                    color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
-                    lineHeight: 1.7,
+                    fontSize: typography.body.size,
+                    color: getTextColor('muted', isDark),
+                    lineHeight: typography.body.lineHeight,
                   }}
                 >
                   {capability.description}
@@ -291,7 +307,9 @@ export const AgentsShowcaseSection: React.FC = () => {
           sx={{
             position: 'relative',
             pt: { xs: 8, md: 10 },
-            borderTop: isDark ? '1px solid rgba(71, 85, 105, 0.3)' : '1px solid rgba(226, 232, 240, 1)',
+            borderTop: isDark 
+              ? `1px solid ${withOpacity(colors.neutral.darkBorder, 0.3)}` 
+              : `1px solid ${colors.neutral.lightBorder}`,
           }}
         >
           {/* Icon */}
@@ -299,15 +317,15 @@ export const AgentsShowcaseSection: React.FC = () => {
             sx={{
               width: 72,
               height: 72,
-              borderRadius: 2,
-              background: isDark ? '#60A5FA' : '#3B82F6',
+              borderRadius: borderRadius.sm,
+              background: primaryColor,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               mb: 4,
               boxShadow: isDark
-                ? '0 8px 24px rgba(96, 165, 250, 0.3)'
-                : '0 8px 24px rgba(59, 130, 246, 0.25)',
+                ? `0 8px 24px ${withOpacity(primaryColor, 0.3)}`
+                : `0 8px 24px ${withOpacity(primaryColor, 0.25)}`,
             }}
           >
             <SmartToy
@@ -321,11 +339,11 @@ export const AgentsShowcaseSection: React.FC = () => {
           <Typography
             variant="h3"
             sx={{
-              fontSize: { xs: '1.75rem', md: '2.25rem' },
-              fontWeight: 700,
-              color: isDark ? '#FFFFFF' : '#0F172A',
+              fontSize: typography.h3.size,
+              fontWeight: typography.h3.weight,
+              color: getTextColor('primary', isDark),
               mb: 3,
-              lineHeight: 1.2,
+              lineHeight: typography.h3.lineHeight,
               maxWidth: 800,
             }}
           >
@@ -335,9 +353,9 @@ export const AgentsShowcaseSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: { xs: '1rem', md: '1.125rem' },
-              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
+              color: getTextColor('secondary', isDark),
               maxWidth: '800px',
-              lineHeight: 1.7,
+              lineHeight: typography.body.lineHeight,
               mb: 5,
             }}
           >
@@ -358,28 +376,28 @@ export const AgentsShowcaseSection: React.FC = () => {
                 sx={{
                   px: 3,
                   py: 1.5,
-                  borderRadius: 2,
+                  borderRadius: borderRadius.sm,
                   background: isDark
-                    ? 'rgba(71, 85, 105, 0.3)'
-                    : 'rgba(241, 245, 249, 0.8)',
+                    ? withOpacity(colors.neutral.darkBackground, 0.3)
+                    : withOpacity('#F1F5F9', 0.8),
                   border: isDark
-                    ? '1px solid rgba(71, 85, 105, 0.5)'
-                    : '1px solid rgba(226, 232, 240, 1)',
-                  transition: 'all 0.3s ease',
+                    ? `1px solid ${withOpacity(colors.neutral.darkBorder, 0.5)}`
+                    : `1px solid ${colors.neutral.lightBorder}`,
+                  transition: transitions.normal,
                   cursor: 'default',
                   '&:hover': {
                     background: isDark
-                      ? 'rgba(96, 165, 250, 0.1)'
-                      : 'rgba(59, 130, 246, 0.04)',
-                    borderColor: isDark ? '#60A5FA' : '#3B82F6',
+                      ? withOpacity(primaryColor, 0.1)
+                      : withOpacity(primaryColor, 0.04),
+                    borderColor: primaryColor,
                   },
                 }}
               >
                 <Typography
                   sx={{
-                    fontSize: '0.875rem',
+                    fontSize: typography.bodySmall.size,
                     fontWeight: 600,
-                    color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
+                    color: getTextColor('secondary', isDark),
                   }}
                 >
                   {tool}

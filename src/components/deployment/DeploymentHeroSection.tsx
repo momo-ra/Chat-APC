@@ -50,20 +50,6 @@ const DeploymentHeroSection: React.FC = () => {
         }}
       >
         <Box ref={heroRef}>
-          {/* Label */}
-          <Typography
-            sx={{
-              fontSize: { xs: '0.875rem', md: '1rem' },
-              fontWeight: 700,
-              color: accentColor[isDark ? 'dark' : 'light'],
-              textTransform: 'uppercase',
-              letterSpacing: 2,
-              mb: 3,
-            }}
-          >
-            Deployment Options
-          </Typography>
-
           {/* Main Heading */}
           <Typography
             variant="h1"

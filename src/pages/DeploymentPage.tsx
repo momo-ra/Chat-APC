@@ -15,18 +15,19 @@ import {
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { usePageTitle } from '../hooks/usePageTitle';
 
-  const DeploymentPage: React.FC = () => {
-  
-    usePageTitle({
+const DeploymentPage: React.FC = () => {
+  usePageTitle({
     title: 'Deployment Options',
     description: 'Flexible deployment options for ChatAPC. Choose cloud, on-premise, or hybrid solutions with enterprise-grade security and scalability.',
   });
-  
   const { isDark } = useThemeMode();
+
+  useEffect(() => {
+    // Scroll to top on mount (to match AgentsPage.tsx)
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <>
@@ -77,7 +78,6 @@ import { usePageTitle } from '../hooks/usePageTitle';
             background: 'transparent',
           }}
         >
-          {/* Deployment Sections */}
           <Box
             sx={{
               width: '100%',
@@ -120,4 +120,3 @@ import { usePageTitle } from '../hooks/usePageTitle';
 };
 
 export default DeploymentPage;
-

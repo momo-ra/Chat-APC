@@ -5,36 +5,48 @@ import { gsap } from 'gsap';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { applySlideUp, applyCardGridAnimation, applyScaleUp } from '../shared/animationHelpers';
+import { 
+  themeConfig, 
+  getColor, 
+  getGradient, 
+  getTextColor,
+  getCardStyles,
+  withOpacity 
+} from '../shared/themeConfig';
 
-const benefits = [
-  {
-    icon: TrendingUp,
-    title: 'Hidden Margin',
-    description: 'Finds constraints and inefficiencies automatically.',
-    detail: 'Typical plants add $1M-$4M+ per year. Continuous optimization identifies profit opportunities others miss.',
-    color: '#10B981',
-    gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-    bgGradient: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%)',
-  },
-  {
-    icon: AccessTime,
-    title: 'Time Saved',
-    description: 'Replaces hours of manual trend-hunting with instant answers.',
-    detail: 'Get insights in seconds, not hours. Focus on decisions instead of data collection.',
-    color: '#3B82F6',
-    gradient: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
-    bgGradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.05) 100%)',
-  },
-  {
-    icon: School,
-    title: 'Knowledge Retention',
-    description: 'Captures and shares expertise across all shifts.',
-    detail: 'Plant knowledge stays accessible. New engineers and operators learn faster with AI-guided insights.',
-    color: '#8B5CF6',
-    gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-    bgGradient: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%)',
-  },
-];
+const getBenefits = (isDark: boolean) => {
+  const { colors, gradients } = themeConfig;
+  const greenColor = getColor(colors.green, isDark);
+  const blueColor = getColor(colors.blue, isDark);
+  const purpleColor = getColor(colors.purple, isDark);
+  
+  return [
+    {
+      icon: TrendingUp,
+      title: 'Hidden Margin',
+      description: 'Finds constraints and inefficiencies automatically.',
+      detail: 'Typical plants add $1M-$4M+ per year. Continuous optimization identifies profit opportunities others miss.',
+      color: greenColor,
+      gradient: getGradient(gradients.green, isDark),
+    },
+    {
+      icon: AccessTime,
+      title: 'Time Saved',
+      description: 'Replaces hours of manual trend-hunting with instant answers.',
+      detail: 'Get insights in seconds, not hours. Focus on decisions instead of data collection.',
+      color: blueColor,
+      gradient: getGradient(gradients.blue, isDark),
+    },
+    {
+      icon: School,
+      title: 'Knowledge Retention',
+      description: 'Captures and shares expertise across all shifts.',
+      detail: 'Plant knowledge stays accessible. New engineers and operators learn faster with AI-guided insights.',
+      color: purpleColor,
+      gradient: getGradient(gradients.purple, isDark),
+    },
+  ];
+};
 
 export const BenefitsSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -46,8 +58,14 @@ export const BenefitsSection: React.FC = () => {
     h2FontSize,
     bodyLargeFontSize,
     containerMaxWidth,
-    containerPadding
+    containerPadding,
+    sectionPadding
   } = useResponsiveLayout();
+
+  // Get unified theme values
+  const { colors, gradients, typography, borderRadius, transitions, shadows } = themeConfig;
+  const benefits = getBenefits(isDark);
+  const cardStyles = getCardStyles(isDark, 'default');
 
   // Unified animation system
   useEffect(() => {
@@ -76,7 +94,7 @@ export const BenefitsSection: React.FC = () => {
       sx={{
         width: '100vw',
         marginLeft: 'calc(-50vw + 50%)',
-        py: 'clamp(3rem, 10vw, 5rem)',
+        py: sectionPadding,
         position: 'relative',
         overflow: 'hidden',
         background: 'transparent',
@@ -90,12 +108,20 @@ export const BenefitsSection: React.FC = () => {
         }}
       >
         {/* Section Header */}
-        <Box ref={headerRef} sx={{ textAlign: 'center', mb: 'clamp(2rem, 8vw, 3rem)', position: 'relative', zIndex: 2 }}>
+        <Box 
+          ref={headerRef} 
+          sx={{ 
+            textAlign: 'center', 
+            mb: 'clamp(2rem, 8vw, 3rem)', 
+            position: 'relative', 
+            zIndex: 2 
+          }}
+        >
           <Typography
             variant="h2"
             sx={{
               fontSize: h2FontSize,
-              fontWeight: 900,
+              fontWeight: typography.h2.weight,
               background: isDark
                 ? 'linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 100%)'
                 : 'linear-gradient(135deg, #0F172A 0%, #475569 100%)',
@@ -104,19 +130,22 @@ export const BenefitsSection: React.FC = () => {
               WebkitTextFillColor: 'transparent',
               mb: 4,
               letterSpacing: '-0.02em',
-              lineHeight: 1.1,
+              lineHeight: typography.h2.lineHeight,
             }}
           >
             Transform operations into
-            <Box component="span" sx={{
-              background: isDark
-                ? 'linear-gradient(135deg, #009BE4 0%, #00D4AA 100%)'
-                : 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              display: 'block',
-            }}>
+            <Box 
+              component="span" 
+              sx={{
+                background: isDark
+                  ? getGradient(gradients.blueToBlue, true)
+                  : getGradient(gradients.blueToBlue, false),
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                display: 'block',
+              }}
+            >
               continuous improvement
             </Box>
           </Typography>
@@ -125,11 +154,11 @@ export const BenefitsSection: React.FC = () => {
             variant="body1"
             sx={{
               fontSize: bodyLargeFontSize,
-              color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
+              color: getTextColor('secondary', isDark),
               maxWidth: 700,
               mx: 'auto',
-              lineHeight: 1.7,
-              fontWeight: 300,
+              lineHeight: typography.bodyLarge.lineHeight,
+              fontWeight: typography.bodyLarge.weight,
             }}
           >
             ChatAPC monitors your process and detects issues early. Clear explanations turn daily operations into continuous improvement — delivering real results for process teams.
@@ -137,7 +166,15 @@ export const BenefitsSection: React.FC = () => {
         </Box>
 
         {/* Benefits Cards */}
-        <Grid container spacing={4} sx={{ mb: 'clamp(2rem, 10vw, 4rem)', position: 'relative', zIndex: 2 }}>
+        <Grid 
+          container 
+          spacing={4} 
+          sx={{ 
+            mb: 'clamp(2rem, 10vw, 4rem)', 
+            position: 'relative', 
+            zIndex: 2 
+          }}
+        >
           {benefits.map((benefit, index) => {
             const IconComponent = benefit.icon;
             return (
@@ -148,60 +185,67 @@ export const BenefitsSection: React.FC = () => {
                   sx={{
                     height: '100%',
                     position: 'relative',
-                    background: isDark
-                      ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%)'
-                      : 'linear-gradient(145deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                    background: cardStyles.background,
                     backdropFilter: 'blur(20px)',
-                    border: isDark
-                      ? '1px solid rgba(255, 255, 255, 0.08)'
-                      : '1px solid rgba(0, 0, 0, 0.05)',
-                    borderRadius: '32px',
+                    border: cardStyles.border,
+                    borderRadius: borderRadius.xl,
                     overflow: 'visible',
-                    transition: 'box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: transitions.allNormal,
                     cursor: 'pointer',
                     '&:hover': {
                       boxShadow: isDark
-                        ? `0 4px 18px -4px ${benefit.color}22`
-                        : `0 8px 18px -4px ${benefit.color}1C`,
+                        ? `0 4px 18px -4px ${withOpacity(benefit.color, 0.13)}`
+                        : `0 8px 18px -4px ${withOpacity(benefit.color, 0.11)}`,
                       transform: 'translateY(-4px) scale(1.025)',
                       border: isDark
-                        ? `1px solid ${benefit.color}33`
-                        : `1px solid ${benefit.color}22`,
+                        ? `1px solid ${withOpacity(benefit.color, 0.2)}`
+                        : `1px solid ${withOpacity(benefit.color, 0.13)}`,
                     },
                   }}
                 >
-                  <CardContent sx={{ p: 5, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                  <CardContent 
+                    sx={{ 
+                      p: 5, 
+                      height: '100%', 
+                      display: 'flex', 
+                      flexDirection: 'column' 
+                    }}
+                  >
                     {/* Icon */}
                     <Box
                       className="benefit-icon"
                       sx={{
                         width: 80,
                         height: 80,
-                        borderRadius: '24px',
-                        background: isDark
-                          ? `${benefit.color}19`
-                          : `${benefit.color}13`,
+                        borderRadius: borderRadius.lg,
+                        background: withOpacity(benefit.color, 0.1),
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         mb: 4,
-                        transition: 'background 0.35s cubic-bezier(0.4,0,0.2,1)',
+                        transition: transitions.normal,
                         position: 'relative',
                         boxShadow: isDark
-                          ? `0 2px 16px 0 ${benefit.color}20`
-                          : `0 2px 16px 0 ${benefit.color}1A`,
+                          ? `0 2px 16px 0 ${withOpacity(benefit.color, 0.13)}`
+                          : `0 2px 16px 0 ${withOpacity(benefit.color, 0.1)}`,
                         '&::after': {
                           content: '""',
                           position: 'absolute',
                           inset: 0,
-                          borderRadius: '24px',
+                          borderRadius: borderRadius.lg,
                           background: benefit.gradient,
                           opacity: 0.13,
-                          transition: 'opacity 0.3s ease',
+                          transition: transitions.normal,
                         },
                       }}
                     >
-                      <IconComponent sx={{ fontSize: 40, color: benefit.color, zIndex: 1 }} />
+                      <IconComponent 
+                        sx={{ 
+                          fontSize: 40, 
+                          color: benefit.color, 
+                          zIndex: 1 
+                        }} 
+                      />
                     </Box>
 
                     {/* Content */}
@@ -209,10 +253,11 @@ export const BenefitsSection: React.FC = () => {
                       <Typography
                         variant="h4"
                         sx={{
-                          fontSize: '1.5rem',
-                          fontWeight: 700,
-                          color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 1)',
+                          fontSize: typography.h4.size,
+                          fontWeight: typography.h4.weight,
+                          color: getTextColor('primary', isDark),
                           mb: 2,
+                          lineHeight: typography.h4.lineHeight,
                         }}
                       >
                         {benefit.title}
@@ -221,10 +266,10 @@ export const BenefitsSection: React.FC = () => {
                       <Typography
                         variant="body1"
                         sx={{
-                          color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
+                          color: getTextColor('secondary', isDark),
                           mb: 3,
                           fontWeight: 500,
-                          lineHeight: 1.6,
+                          lineHeight: typography.body.lineHeight,
                         }}
                       >
                         {benefit.description}
@@ -233,9 +278,9 @@ export const BenefitsSection: React.FC = () => {
                       <Typography
                         variant="body2"
                         sx={{
-                          color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(100, 116, 139, 1)',
-                          lineHeight: 1.7,
-                          fontSize: '0.95rem',
+                          color: getTextColor('muted', isDark),
+                          lineHeight: typography.bodySmall.lineHeight,
+                          fontSize: typography.bodySmall.size,
                         }}
                       >
                         {benefit.detail}
@@ -262,31 +307,38 @@ export const BenefitsSection: React.FC = () => {
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              px: 8,
-              py: 4,
-              borderRadius: '50px',
+              px: { xs: 2, sm: 4, md: 8 },
+              py: { xs: 2, sm: 3, md: 4 },
+              borderRadius: borderRadius.full,
               background: isDark
-                ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.09) 0%, rgba(139, 92, 246, 0.10) 100%)'
-                : 'linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.10) 100%)',
+                ? `linear-gradient(135deg, ${withOpacity(getColor(colors.cyan, true), 0.09)} 0%, ${withOpacity(getColor(colors.purple, true), 0.1)} 100%)`
+                : `linear-gradient(135deg, ${withOpacity(getColor(colors.blue, false), 0.08)} 0%, ${withOpacity(getColor(colors.purple, false), 0.1)} 100%)`,
               backdropFilter: 'blur(20px)',
               border: isDark
-                ? '2px solid rgba(255, 255, 255, 0.08)'
-                : '2px solid rgba(0, 0, 0, 0.045)',
+                ? `2px solid ${withOpacity('#FFFFFF', 0.08)}`
+                : `2px solid ${withOpacity('#000000', 0.045)}`,
               boxShadow: isDark
-                ? '0 12px 32px rgba(0, 0, 0, 0.25)'
-                : '0 12px 32px rgba(0, 0, 0, 0.09)',
+                ? shadows.dark.xl
+                : shadows.light.xl,
+              width: { xs: '100%', md: 'auto' },
+              maxWidth: { xs: '100%', sm: 420, md: 'none' },
+              mx: { xs: 'auto', md: 0 },
             }}
           >
             <Typography
               sx={{
-                fontSize: 'clamp(1.20rem, 2.5vw, 1.65rem)',
+                fontSize: { xs: '1.04rem', sm: '1.22rem', md: 'clamp(1.20rem, 2.5vw, 1.65rem)' },
                 fontWeight: 700,
                 background: isDark
-                  ? 'linear-gradient(135deg, #009BE4 0%, #8B5CF6 100%)'
-                  : 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
+                  ? getGradient(gradients.blueToBlue, true)
+                  : getGradient(gradients.blueToBlue, false),
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
+                textAlign: 'center',
+                lineHeight: { xs: 1.36, sm: 1.24, md: 1.15 },
+                wordBreak: 'break-word',
+                width: '100%',
               }}
             >
               ROI in as little as a few weeks — typically under 6 months

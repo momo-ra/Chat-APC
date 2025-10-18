@@ -12,36 +12,46 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { 
+  themeConfig, 
+  getColor, 
+  getGradient, 
+  getTextColor,
+  withOpacity 
+} from '../shared/themeConfig';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const workflowSteps = [
-  {
-    title: 'Connect to plant systems',
-    number: 1,
-    color: '#3B82F6',
-  },
-  {
-    title: 'Organize with knowledge map',
-    number: 2,
-    color: '#10B981',
-  },
-  {
-    title: 'Ask question in chat',
-    number: 3,
-    color: '#F59E0B',
-  },
-  {
-    title: 'AI routes to right agent',
-    number: 4,
-    color: '#EC4899',
-  },
-  {
-    title: 'Answer delivered',
-    number: 5,
-    color: '#8B5CF6',
-  },
-];
+const getWorkflowSteps = (isDark: boolean) => {
+  const { colors } = themeConfig;
+  return [
+    {
+      title: 'Connect to plant systems',
+      number: 1,
+      color: getColor(colors.blue, isDark),
+    },
+    {
+      title: 'Organize with knowledge map',
+      number: 2,
+      color: getColor(colors.green, isDark),
+    },
+    {
+      title: 'Ask question in chat',
+      number: 3,
+      color: getColor(colors.yellow, isDark),
+    },
+    {
+      title: 'AI routes to right agent',
+      number: 4,
+      color: getColor(colors.pink, isDark),
+    },
+    {
+      title: 'Answer delivered',
+      number: 5,
+      color: getColor(colors.purple, isDark),
+    },
+  ];
+};
 
 const exampleScenario = {
   question: "Why isn't feed increasing?",
@@ -93,6 +103,12 @@ export const WorkflowExampleSection: React.FC = () => {
   const exampleRef = useRef<HTMLDivElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
+  // Get unified theme values
+  const { colors, gradients, typography, borderRadius, transitions, animations } = themeConfig;
+  const workflowSteps = getWorkflowSteps(isDark);
+  const blueColor = getColor(colors.blue, isDark);
+  const greenColor = getColor(colors.green, isDark);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Header animation
@@ -107,7 +123,7 @@ export const WorkflowExampleSection: React.FC = () => {
           opacity: 0,
           duration: 0.8,
           stagger: 0.2,
-          ease: 'power3.out',
+          ease: animations.easing.easeOut,
         });
       }
 
@@ -124,7 +140,7 @@ export const WorkflowExampleSection: React.FC = () => {
             opacity: 0,
             duration: 0.6,
             delay: index * 0.1,
-            ease: 'power2.out',
+            ease: animations.easing.sharp,
           });
         }
       });
@@ -142,7 +158,7 @@ export const WorkflowExampleSection: React.FC = () => {
           opacity: 0,
           duration: 0.6,
           stagger: 0.15,
-          ease: 'power2.out',
+          ease: animations.easing.sharp,
         });
       }
 
@@ -158,13 +174,13 @@ export const WorkflowExampleSection: React.FC = () => {
           opacity: 0,
           duration: 0.6,
           stagger: 0.1,
-          ease: 'power2.out',
+          ease: animations.easing.sharp,
         });
       }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [animations]);
 
   return (
     <Box
@@ -192,10 +208,8 @@ export const WorkflowExampleSection: React.FC = () => {
               mb: 3,
               fontSize: '0.875rem',
               fontWeight: 600,
-              background: isDark
-                ? 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)'
-                : 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
-              color: 'white',
+              background: getGradient(gradients.purple, isDark),
+              color: '#FFFFFF',
               px: 2,
             }}
           />
@@ -203,10 +217,10 @@ export const WorkflowExampleSection: React.FC = () => {
             variant="h2"
             sx={{
               fontSize: h2FontSize,
-              fontWeight: 700,
-              color: isDark ? '#FFFFFF' : '#0F172A',
+              fontWeight: typography.h2.weight,
+              color: getTextColor('primary', isDark),
               mb: 3,
-              lineHeight: 1.2,
+              lineHeight: typography.h2.lineHeight,
             }}
           >
             From Question to Answer
@@ -243,17 +257,17 @@ export const WorkflowExampleSection: React.FC = () => {
                 sx={{
                   width: { xs: 60, md: 80 },
                   height: { xs: 60, md: 80 },
-                  borderRadius: '50%',
-                  background: `${step.color}20`,
+                  borderRadius: borderRadius.full,
+                  background: withOpacity(step.color, 0.13),
                   border: `3px solid ${step.color}`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   mb: 2,
-                  transition: 'all 0.3s ease',
+                  transition: transitions.allNormal,
                   '&:hover': {
                     transform: 'scale(1.1)',
-                    boxShadow: `0 8px 32px ${step.color}40`,
+                    boxShadow: `0 8px 32px ${withOpacity(step.color, 0.25)}`,
                   },
                 }}
               >
@@ -271,7 +285,7 @@ export const WorkflowExampleSection: React.FC = () => {
                 sx={{
                   fontSize: { xs: '0.95rem', md: '1rem' },
                   fontWeight: 600,
-                  color: isDark ? '#FFFFFF' : '#0F172A',
+                  color: getTextColor('primary', isDark),
                   lineHeight: 1.4,
                 }}
               >
@@ -286,24 +300,25 @@ export const WorkflowExampleSection: React.FC = () => {
           sx={{
             background: isDark
               ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.6) 100%)'
-              : 'rgba(255, 255, 255, 0.9)',
+              : withOpacity(colors.neutral.lightBackground, 0.9),
             backdropFilter: 'blur(20px)',
-            borderRadius: 4,
+            borderRadius: borderRadius.xl,
             p: { xs: 4, md: 6 },
             border: isDark 
-              ? '1px solid rgba(71, 85, 105, 0.3)'
-              : '1px solid rgba(226, 232, 240, 0.8)',
+              ? `1px solid ${withOpacity(colors.neutral.darkBorder, 0.3)}`
+              : `1px solid ${withOpacity(colors.neutral.lightBorder, 0.8)}`,
             mb: { xs: 6, md: 8 },
           }}
         >
           <Typography
             variant="h3"
             sx={{
-              fontSize: { xs: '1.75rem', md: '2.25rem' },
-              fontWeight: 700,
-              color: isDark ? '#FFFFFF' : '#0F172A',
+              fontSize: typography.h3.size,
+              fontWeight: typography.h3.weight,
+              color: getTextColor('primary', isDark),
               textAlign: 'center',
               mb: 6,
+              lineHeight: typography.h3.lineHeight,
             }}
           >
             Real Example
@@ -316,18 +331,18 @@ export const WorkflowExampleSection: React.FC = () => {
               mb: 6,
               p: 3,
               background: isDark
-                ? 'rgba(59, 130, 246, 0.1)'
-                : 'rgba(59, 130, 246, 0.05)',
-              borderRadius: 3,
+                ? withOpacity(blueColor, 0.1)
+                : withOpacity(blueColor, 0.05),
+              borderRadius: borderRadius.lg,
               border: isDark
-                ? '2px solid rgba(59, 130, 246, 0.3)'
-                : '2px solid rgba(59, 130, 246, 0.2)',
+                ? `2px solid ${withOpacity(blueColor, 0.3)}`
+                : `2px solid ${withOpacity(blueColor, 0.2)}`,
             }}
           >
             <QuestionMark
               sx={{
                 fontSize: 32,
-                color: isDark ? '#60A5FA' : '#3B82F6',
+                color: blueColor,
                 mb: 1,
               }}
             />
@@ -335,7 +350,7 @@ export const WorkflowExampleSection: React.FC = () => {
               sx={{
                 fontSize: '0.875rem',
                 fontWeight: 600,
-                color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
+                color: getTextColor('secondary', isDark),
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em',
                 mb: 1,
@@ -347,7 +362,7 @@ export const WorkflowExampleSection: React.FC = () => {
               sx={{
                 fontSize: { xs: '1.25rem', md: '1.5rem' },
                 fontWeight: 700,
-                color: isDark ? '#FFFFFF' : '#0F172A',
+                color: getTextColor('primary', isDark),
                 fontStyle: 'italic',
               }}
             >
@@ -361,7 +376,7 @@ export const WorkflowExampleSection: React.FC = () => {
               sx={{
                 fontSize: '1rem',
                 fontWeight: 600,
-                color: isDark ? 'rgba(255, 255, 255, 0.9)' : '#334155',
+                color: getTextColor('primary', isDark),
                 mb: 4,
                 textAlign: 'center',
                 textTransform: 'uppercase',
@@ -390,36 +405,34 @@ export const WorkflowExampleSection: React.FC = () => {
                       gap: 3,
                       p: 3,
                       background: isDark
-                        ? 'rgba(71, 85, 105, 0.2)'
-                        : 'rgba(248, 250, 252, 0.8)',
-                      borderRadius: 3,
+                        ? withOpacity(colors.neutral.darkBorder, 0.2)
+                        : withOpacity('#F8FAFC', 0.8),
+                      borderRadius: borderRadius.lg,
                       border: isDark
-                        ? '1px solid rgba(71, 85, 105, 0.3)'
-                        : '1px solid rgba(226, 232, 240, 0.6)',
+                        ? `1px solid ${withOpacity(colors.neutral.darkBorder, 0.3)}`
+                        : `1px solid ${withOpacity(colors.neutral.lightBorder, 0.6)}`,
                     }}
                   >
                     <Box
                       sx={{
                         width: 40,
                         height: 40,
-                        borderRadius: 2,
-                        background: isDark
-                          ? 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)'
-                          : 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+                        borderRadius: borderRadius.sm,
+                        background: getGradient(gradients.blue, isDark),
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         flexShrink: 0,
                       }}
                     >
-                      <IconComponent sx={{ fontSize: 20, color: 'white' }} />
+                      <IconComponent sx={{ fontSize: 20, color: '#FFFFFF' }} />
                     </Box>
                     <Box>
                       <Typography
                         sx={{
                           fontSize: '1rem',
                           fontWeight: 600,
-                          color: isDark ? '#FFFFFF' : '#0F172A',
+                          color: getTextColor('primary', isDark),
                           mb: 0.5,
                         }}
                       >
@@ -427,9 +440,9 @@ export const WorkflowExampleSection: React.FC = () => {
                       </Typography>
                       <Typography
                         sx={{
-                          fontSize: '0.875rem',
-                          color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
-                          lineHeight: 1.5,
+                          fontSize: typography.bodySmall.size,
+                          color: getTextColor('muted', isDark),
+                          lineHeight: typography.bodySmall.lineHeight,
                         }}
                       >
                         {item.description}
@@ -443,33 +456,40 @@ export const WorkflowExampleSection: React.FC = () => {
 
           {/* Result */}
           <Box ref={resultRef}>
-            <Divider sx={{ mb: 4, opacity: 0.3 }} />
+            <Divider 
+              sx={{ 
+                mb: 4, 
+                opacity: 0.3,
+                borderColor: getTextColor('muted', isDark),
+              }} 
+            />
             
             <Box
               sx={{
                 textAlign: 'center',
                 p: 4,
                 background: isDark
-                  ? 'rgba(16, 185, 129, 0.1)'
-                  : 'rgba(16, 185, 129, 0.05)',
-                borderRadius: 3,
+                  ? withOpacity(greenColor, 0.1)
+                  : withOpacity(greenColor, 0.05),
+                borderRadius: borderRadius.lg,
                 border: isDark
-                  ? '2px solid rgba(16, 185, 129, 0.3)'
-                  : '2px solid rgba(16, 185, 129, 0.2)',
+                  ? `2px solid ${withOpacity(greenColor, 0.3)}`
+                  : `2px solid ${withOpacity(greenColor, 0.2)}`,
               }}
             >
               <Visibility
                 sx={{
                   fontSize: 32,
-                  color: isDark ? '#34D399' : '#10B981',
+                  color: greenColor,
                   mb: 1,
                 }}
               />
               <Typography
                 sx={{
                   fontSize: '0.875rem',
+                  textAlign: 'center',
                   fontWeight: 600,
-                  color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
+                  color: getTextColor('secondary', isDark),
                   textTransform: 'uppercase',
                   letterSpacing: '0.1em',
                   mb: 2,
@@ -482,7 +502,7 @@ export const WorkflowExampleSection: React.FC = () => {
                 sx={{
                   fontSize: { xs: '1.125rem', md: '1.25rem' },
                   fontWeight: 700,
-                  color: isDark ? '#FFFFFF' : '#0F172A',
+                  color: getTextColor('primary', isDark),
                   mb: 3,
                   fontStyle: 'italic',
                 }}
@@ -513,15 +533,15 @@ export const WorkflowExampleSection: React.FC = () => {
                       sx={{
                         width: 6,
                         height: 6,
-                        borderRadius: '50%',
-                        backgroundColor: isDark ? '#34D399' : '#10B981',
+                        borderRadius: borderRadius.full,
+                        backgroundColor: greenColor,
                         flexShrink: 0,
                       }}
                     />
                     <Typography
                       sx={{
-                        fontSize: '0.95rem',
-                        color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
+                        fontSize: typography.bodySmall.size,
+                        color: getTextColor('secondary', isDark),
                         textAlign: 'left',
                       }}
                     >
@@ -540,7 +560,7 @@ export const WorkflowExampleSection: React.FC = () => {
             sx={{
               fontSize: { xs: '1.25rem', md: '1.5rem' },
               fontWeight: 600,
-              color: isDark ? '#FFFFFF' : '#0F172A',
+              color: getTextColor('primary', isDark),
               mb: 2,
             }}
           >
@@ -549,11 +569,11 @@ export const WorkflowExampleSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: '1rem',
-              color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
+              color: getTextColor('muted', isDark),
               fontStyle: 'italic',
               maxWidth: '600px',
               mx: 'auto',
-              lineHeight: 1.6,
+              lineHeight: typography.body.lineHeight,
             }}
           >
             It's like having your best engineer — backed by connectors, a knowledge map, 

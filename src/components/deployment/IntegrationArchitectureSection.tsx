@@ -1,18 +1,20 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, Container, Typography } from '@mui/material';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
-
-gsap.registerPlugin(ScrollTrigger);
+// Import the unified animation system helpers
+import {
+  applyEntranceAnimation,
+  applyStaggerAnimation,
+} from '../shared/animationHelpers';
 
 const IntegrationArchitectureSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const diagramRef = useRef<HTMLDivElement>(null);
-  const featuresRef = useRef<HTMLDivElement>(null);
+  // Use an array of refs for feature items to ensure proper GSAP animation
+  const featureItemsRef = useRef<Array<HTMLDivElement | null>>([]);
   const { isDark } = useThemeMode();
   const {
     containerMaxWidth,
@@ -25,53 +27,25 @@ const IntegrationArchitectureSection: React.FC = () => {
   const accentColor = { light: '#10B981', dark: '#34D399' };
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (headerRef.current) {
-        gsap.from(headerRef.current, {
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          y: 50,
-          opacity: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-        });
-      }
-
-      if (diagramRef.current) {
-        gsap.from(diagramRef.current, {
-          scrollTrigger: {
-            trigger: diagramRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none',
-          },
-          scale: 0.9,
-          opacity: 0,
-          duration: 0.8,
-          ease: 'power2.out',
-        });
-      }
-
-      if (featuresRef.current) {
-        const items = featuresRef.current.querySelectorAll('.feature-item');
-        gsap.from(items, {
-          scrollTrigger: {
-            trigger: featuresRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          x: -30,
-          opacity: 0,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'power2.out',
-        });
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
+    // Header Animation (entire box: fade in + slide up)
+    applyEntranceAnimation(headerRef.current, 'slideUp', {
+      delay: 0,
+      startTrigger: 'top 85%',
+    });
+    // Diagram Animation (scale up, fade in)
+    applyEntranceAnimation(diagramRef.current, 'scaleUp', {
+      delay: 0.06,
+      startTrigger: 'top 80%',
+    });
+    // Features Animation (stagger from left)
+    const validItems = featureItemsRef.current.filter(Boolean);
+    if (validItems.length > 0) {
+      applyStaggerAnimation(validItems, 'slideLeft', {
+        staggerDelay: 0.12,
+        triggerElement: validItems[0]?.parentElement,
+        startTrigger: 'top 85%',
+      });
+    }
   }, [isDark]);
 
   const features = [
@@ -196,11 +170,12 @@ const IntegrationArchitectureSection: React.FC = () => {
           </Box>
 
           {/* Features List */}
-          <Box ref={featuresRef}>
+          <Box>
             {features.map((feature, index) => (
               <Box
                 key={index}
                 className="feature-item"
+                ref={el => featureItemsRef.current[index] = el as HTMLDivElement}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',

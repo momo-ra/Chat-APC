@@ -14,52 +14,64 @@ import {
   EventNote,
   ArrowForward
 } from '@mui/icons-material';
-import { alpha } from '@mui/material/styles';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { 
+  themeConfig, 
+  getColor, 
+  getGradient, 
+  getTextColor,
+  withOpacity 
+} from '../shared/themeConfig';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const processSteps = [
-  { label: 'AI interprets the request', color: '#3B82F6' },
-  { label: 'Checks real-time data and knowledge map', color: '#10B981' },
-  { label: 'Selects the right agent', color: '#F59E0B' },
-  { label: 'Agent gathers and analyzes data', color: '#EC4899' },
-  { label: 'Result returned in most useful form', color: '#8B5CF6' },
-];
+const getProcessSteps = (isDark: boolean) => {
+  const { colors } = themeConfig;
+  return [
+    { label: 'AI interprets the request', color: getColor(colors.blue, isDark) },
+    { label: 'Checks real-time data and knowledge map', color: getColor(colors.green, isDark) },
+    { label: 'Selects the right agent', color: getColor(colors.yellow, isDark) },
+    { label: 'Agent gathers and analyzes data', color: getColor(colors.pink, isDark) },
+    { label: 'Result returned in most useful form', color: getColor(colors.purple, isDark) },
+  ];
+};
 
-const agents = [
-  {
-    name: 'Visualize Agent',
-    description: 'Creates visual representations with annotated insights',
-    icon: Assessment,
-    color: { light: '#3B82F6', dark: '#60A5FA' },
-    outputs: ['Time series plots', 'Trend analysis', 'Limit annotations'],
-  },
-  {
-    name: 'Advisor Agent',
-    description: 'Explains constraints and provides operational guidance',
-    icon: SmartToy,
-    color: { light: '#10B981', dark: '#34D399' },
-    outputs: ['Constraint analysis', 'What-if scenarios', 'Optimization tips'],
-  },
-  {
-    name: 'Optimizer Agent',
-    description: 'Shows which limits affect margin and identifies opportunities',
-    icon: TrendingUp,
-    color: { light: '#F59E0B', dark: '#FBBF24' },
-    outputs: ['Margin impact', 'Profit optimization', 'Cost analysis'],
-  },
-  {
-    name: 'Events Agent',
-    description: 'Detects violations, alarms, and process deviations',
-    icon: EventNote,
-    color: { light: '#EC4899', dark: '#F472B6' },
-    outputs: ['Alarm analysis', 'Event timeline', 'Root cause'],
-  },
-];
+const getAgents = (isDark: boolean) => {
+  const { colors } = themeConfig;
+  return [
+    {
+      name: 'Visualize Agent',
+      description: 'Creates visual representations with annotated insights',
+      icon: Assessment,
+      color: getColor(colors.blue, isDark),
+      outputs: ['Time series plots', 'Trend analysis', 'Limit annotations'],
+    },
+    {
+      name: 'Advisor Agent',
+      description: 'Explains constraints and provides operational guidance',
+      icon: SmartToy,
+      color: getColor(colors.green, isDark),
+      outputs: ['Constraint analysis', 'What-if scenarios', 'Optimization tips'],
+    },
+    {
+      name: 'Optimizer Agent',
+      description: 'Shows which limits affect margin and identifies opportunities',
+      icon: TrendingUp,
+      color: getColor(colors.yellow, isDark),
+      outputs: ['Margin impact', 'Profit optimization', 'Cost analysis'],
+    },
+    {
+      name: 'Events Agent',
+      description: 'Detects violations, alarms, and process deviations',
+      icon: EventNote,
+      color: getColor(colors.pink, isDark),
+      outputs: ['Alarm analysis', 'Event timeline', 'Root cause'],
+    },
+  ];
+};
 
 const outputTypes = [
   { type: 'Graph', description: 'Visual data with insights' },
@@ -84,6 +96,11 @@ export const AIBrainSection: React.FC = () => {
   const agentsRef = useRef<HTMLDivElement[]>([]);
   const outputsRef = useRef<HTMLDivElement>(null);
 
+  // Get unified theme values
+  const { typography, borderRadius, transitions, animations, gradients, colors } = themeConfig;
+  const processSteps = getProcessSteps(isDark);
+  const agents = getAgents(isDark);
+
   useEffect(() => {
     const prefersReduced =
       typeof window !== 'undefined' &&
@@ -105,7 +122,7 @@ export const AIBrainSection: React.FC = () => {
           opacity: 0,
           duration: 0.7,
           stagger: 0.12,
-          ease: 'power3.out',
+          ease: animations.easing.easeOut,
           willChange: 'transform, opacity',
         });
       }
@@ -123,7 +140,7 @@ export const AIBrainSection: React.FC = () => {
           opacity: 0,
           duration: 0.5,
           stagger: 0.1,
-          ease: 'power2.out',
+          ease: animations.easing.sharp,
           willChange: 'transform, opacity',
         });
       }
@@ -141,7 +158,7 @@ export const AIBrainSection: React.FC = () => {
             opacity: 0,
             duration: 0.6,
             delay: index * 0.06,
-            ease: 'power2.out',
+            ease: animations.easing.sharp,
             willChange: 'transform, opacity',
           });
         }
@@ -159,14 +176,14 @@ export const AIBrainSection: React.FC = () => {
           opacity: 0,
           duration: 0.45,
           stagger: 0.08,
-          ease: 'power2.out',
+          ease: animations.easing.sharp,
           willChange: 'transform, opacity',
         });
       }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [animations]);
 
   return (
     <Box
@@ -175,7 +192,7 @@ export const AIBrainSection: React.FC = () => {
       data-section-theme={isDark ? 'dark' : 'light'}
       sx={{
         py: sectionPadding,
-        background: 'transparent', // keep as requested
+        background: 'transparent',
         position: 'relative',
       }}
       aria-label="AI Brain and Agents section"
@@ -204,20 +221,20 @@ export const AIBrainSection: React.FC = () => {
               fontWeight: 700,
               letterSpacing: 0.3,
               textTransform: 'uppercase',
-              background: 'linear-gradient(135deg, #EC4899 0%, #DB2777 100%)',
-              color: 'white',
+              background: getGradient(gradients.pink, isDark),
+              color: '#FFFFFF',
               px: 2,
-              borderRadius: 2,
+              borderRadius: borderRadius.sm,
             }}
           />
           <Typography
             variant="h2"
             sx={{
               fontSize: h2FontSize,
-              fontWeight: 800,
-              color: isDark ? '#FFFFFF' : '#0F172A',
+              fontWeight: typography.h2.weight,
+              color: getTextColor('primary', isDark),
               mb: 1.5,
-              lineHeight: 1.15,
+              lineHeight: typography.h2.lineHeight,
               letterSpacing: '-0.02em',
             }}
           >
@@ -226,13 +243,13 @@ export const AIBrainSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: bodyFontSize,
-              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
+              color: getTextColor('secondary', isDark),
               maxWidth: 760,
               mx: 'auto',
-              lineHeight: 1.7,
+              lineHeight: typography.body.lineHeight,
             }}
           >
-            When you ask a question, here’s the high-level journey it takes:
+            When you ask a question, here's the high-level journey it takes:
           </Typography>
         </Box>
 
@@ -242,12 +259,14 @@ export const AIBrainSection: React.FC = () => {
           sx={{
             mb: { xs: 7, md: 10 },
             p: { xs: 3, md: 4 },
-            borderRadius: 3,
-            border: `1px solid ${isDark ? 'rgba(71, 85, 105, 0.35)' : 'rgba(226, 232, 240, 0.9)'}`,
+            borderRadius: borderRadius.lg,
+            border: isDark 
+              ? `1px solid ${withOpacity(colors.neutral.darkBorder, 0.35)}` 
+              : `1px solid ${withOpacity(colors.neutral.lightBorder, 0.9)}`,
             backdropFilter: 'blur(18px)',
             background: isDark
-              ? alpha('#0B1220', 0.2)
-              : alpha('#FFFFFF', 0.75),
+              ? withOpacity('#0B1220', 0.2)
+              : withOpacity(colors.neutral.lightBackground, 0.75),
           }}
           aria-label="Process steps"
         >
@@ -271,7 +290,7 @@ export const AIBrainSection: React.FC = () => {
                     top: 54,
                     width: 2,
                     height: 20,
-                    borderRadius: 2,
+                    borderRadius: borderRadius.xs,
                     background: `linear-gradient(180deg, ${step.color} 0%, ${processSteps[index + 1].color} 100%)`,
                   },
                 }),
@@ -282,13 +301,13 @@ export const AIBrainSection: React.FC = () => {
                 sx={{
                   width: 48,
                   height: 48,
-                  borderRadius: '50%',
+                  borderRadius: borderRadius.full,
                   border: `2px solid ${step.color}`,
-                  background: alpha(step.color, 0.08),
+                  background: withOpacity(step.color, 0.08),
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  outline: `3px solid ${alpha(step.color, 0.12)}`,
+                  outline: `3px solid ${withOpacity(step.color, 0.12)}`,
                   outlineOffset: 0,
                   flexShrink: 0,
                 }}
@@ -310,7 +329,7 @@ export const AIBrainSection: React.FC = () => {
                 sx={{
                   fontSize: '1.05rem',
                   fontWeight: 600,
-                  color: isDark ? '#E5E7EB' : '#0F172A',
+                  color: getTextColor('primary', isDark),
                   letterSpacing: 0.1,
                 }}
               >
@@ -325,11 +344,12 @@ export const AIBrainSection: React.FC = () => {
           <Typography
             variant="h3"
             sx={{
-              fontSize: { xs: '1.4rem', md: '1.9rem' },
-              fontWeight: 800,
-              color: isDark ? '#FFFFFF' : '#0F172A',
+              fontSize: typography.h3.size,
+              fontWeight: typography.h3.weight,
+              color: getTextColor('primary', isDark),
               textAlign: 'center',
               mb: 4.5,
+              lineHeight: typography.h3.lineHeight,
               letterSpacing: '-0.01em',
             }}
           >
@@ -345,7 +365,8 @@ export const AIBrainSection: React.FC = () => {
           >
             {agents.map((agent, index) => {
               const IconComponent = agent.icon;
-              const accent = agent.color[isDark ? 'dark' : 'light'];
+              const accent = agent.color;
+              
               return (
                 <Card
                   key={index}
@@ -357,23 +378,25 @@ export const AIBrainSection: React.FC = () => {
                   aria-label={`${agent.name} card`}
                   sx={{
                     background: isDark
-                      ? alpha('#0B1220', 0.35)
-                      : alpha('#FFFFFF', 0.9),
-                    border: `1px solid ${isDark ? 'rgba(71, 85, 105, 0.35)' : 'rgba(226, 232, 240, 0.9)'}`,
-                    borderRadius: 3,
+                      ? withOpacity('#0B1220', 0.35)
+                      : withOpacity(colors.neutral.lightBackground, 0.9),
+                    border: isDark 
+                      ? `1px solid ${withOpacity(colors.neutral.darkBorder, 0.35)}` 
+                      : `1px solid ${withOpacity(colors.neutral.lightBorder, 0.9)}`,
+                    borderRadius: borderRadius.lg,
                     height: '100%',
-                    transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
+                    transition: transitions.allNormal,
                     willChange: 'transform, box-shadow',
                     '&:hover': {
                       transform: 'translateY(-6px)',
                       boxShadow: isDark
-                        ? `0 18px 50px ${alpha(accent, 0.25)}`
-                        : `0 18px 50px ${alpha(accent, 0.18)}`,
+                        ? `0 18px 50px ${withOpacity(accent, 0.25)}`
+                        : `0 18px 50px ${withOpacity(accent, 0.18)}`,
                       borderColor: accent,
                     },
                     '&:focus-within': {
                       borderColor: accent,
-                      boxShadow: `0 0 0 3px ${alpha(accent, 0.25)}`,
+                      boxShadow: `0 0 0 3px ${withOpacity(accent, 0.25)}`,
                     },
                   }}
                 >
@@ -384,13 +407,15 @@ export const AIBrainSection: React.FC = () => {
                         sx={{
                           width: 48,
                           height: 48,
-                          borderRadius: 2,
-                          background: alpha(accent, 0.12),
+                          borderRadius: borderRadius.sm,
+                          background: withOpacity(accent, 0.12),
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          border: `1px solid ${alpha(accent, 0.35)}`,
-                          boxShadow: `inset 0 0 0 1px ${alpha('#fff', isDark ? 0.02 : 0.25)}`,
+                          border: `1px solid ${withOpacity(accent, 0.35)}`,
+                          boxShadow: isDark 
+                            ? `inset 0 0 0 1px ${withOpacity('#fff', 0.02)}` 
+                            : `inset 0 0 0 1px ${withOpacity('#fff', 0.25)}`,
                         }}
                         aria-hidden
                       >
@@ -404,9 +429,9 @@ export const AIBrainSection: React.FC = () => {
                       <Typography
                         variant="h6"
                         sx={{
-                          fontSize: '1.2rem',
-                          fontWeight: 800,
-                          color: isDark ? '#FFFFFF' : '#0F172A',
+                          fontSize: typography.h6.size,
+                          fontWeight: typography.h6.weight,
+                          color: getTextColor('primary', isDark),
                         }}
                       >
                         {agent.name}
@@ -416,9 +441,9 @@ export const AIBrainSection: React.FC = () => {
                     {/* Description */}
                     <Typography
                       sx={{
-                        fontSize: '0.98rem',
-                        color: isDark ? 'rgba(255, 255, 255, 0.82)' : '#475569',
-                        lineHeight: 1.65,
+                        fontSize: typography.bodySmall.size,
+                        color: getTextColor('secondary', isDark),
+                        lineHeight: typography.body.lineHeight,
                         mb: 2.25,
                       }}
                     >
@@ -430,7 +455,7 @@ export const AIBrainSection: React.FC = () => {
                       sx={{
                         height: 1,
                         width: '100%',
-                        background: `linear-gradient(90deg, transparent 0%, ${alpha(accent, 0.4)} 20%, ${alpha(accent, 0.4)} 80%, transparent 100%)`,
+                        background: `linear-gradient(90deg, transparent 0%, ${withOpacity(accent, 0.4)} 20%, ${withOpacity(accent, 0.4)} 80%, transparent 100%)`,
                         mb: 1.75,
                       }}
                       aria-hidden
@@ -442,7 +467,7 @@ export const AIBrainSection: React.FC = () => {
                         sx={{
                           fontSize: '0.8rem',
                           fontWeight: 800,
-                          color: isDark ? 'rgba(255, 255, 255, 0.9)' : '#0F172A',
+                          color: getTextColor('primary', isDark),
                           mb: 1,
                           textTransform: 'uppercase',
                           letterSpacing: '0.08em',
@@ -464,17 +489,17 @@ export const AIBrainSection: React.FC = () => {
                               sx={{
                                 width: 6,
                                 height: 6,
-                                borderRadius: '50%',
+                                borderRadius: borderRadius.full,
                                 backgroundColor: accent,
-                                boxShadow: `0 0 0 3px ${alpha(accent, 0.15)}`,
+                                boxShadow: `0 0 0 3px ${withOpacity(accent, 0.15)}`,
                                 flexShrink: 0,
                               }}
                               aria-hidden
                             />
                             <Typography
                               sx={{
-                                fontSize: '0.9rem',
-                                color: isDark ? 'rgba(255, 255, 255, 0.75)' : '#5B6B7C',
+                                fontSize: typography.bodySmall.size,
+                                color: getTextColor('muted', isDark),
                               }}
                             >
                               {output}
@@ -495,12 +520,14 @@ export const AIBrainSection: React.FC = () => {
           ref={outputsRef}
           sx={{
             textAlign: 'center',
-            borderRadius: 3,
+            borderRadius: borderRadius.lg,
             p: { xs: 3.25, md: 4.25 },
-            border: `1px solid ${isDark ? 'rgba(71, 85, 105, 0.35)' : 'rgba(226, 232, 240, 0.9)'}`,
+            border: isDark 
+              ? `1px solid ${withOpacity(colors.neutral.darkBorder, 0.35)}` 
+              : `1px solid ${withOpacity(colors.neutral.lightBorder, 0.9)}`,
             background: isDark
-              ? alpha('#0B1220', 0.25)
-              : alpha('#FFFFFF', 0.8),
+              ? withOpacity('#0B1220', 0.25)
+              : withOpacity(colors.neutral.lightBackground, 0.8),
             backdropFilter: 'blur(16px)',
           }}
           aria-label="Output types"
@@ -508,10 +535,11 @@ export const AIBrainSection: React.FC = () => {
           <Typography
             variant="h4"
             sx={{
-              fontSize: { xs: '1.35rem', md: '1.65rem' },
-              fontWeight: 800,
-              color: isDark ? '#FFFFFF' : '#0F172A',
+              fontSize: typography.h4.size,
+              fontWeight: typography.h4.weight,
+              color: getTextColor('primary', isDark),
               mb: 3,
+              lineHeight: typography.h4.lineHeight,
               letterSpacing: '-0.01em',
             }}
           >
@@ -524,7 +552,7 @@ export const AIBrainSection: React.FC = () => {
               flexDirection: { xs: 'column', sm: 'row' },
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 2.25,
+              gap: 2,
               flexWrap: 'wrap',
             }}
           >
@@ -533,11 +561,15 @@ export const AIBrainSection: React.FC = () => {
                 <Box
                   sx={{
                     minWidth: 160,
-                    px: 1.5,
+                    px: 1,
                     py: 1.25,
-                    borderRadius: 2,
-                    border: `1px solid ${isDark ? 'rgba(148, 163, 184, 0.25)' : 'rgba(203, 213, 225, 0.8)'}`,
-                    background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(248, 250, 252, 0.85)',
+                    borderRadius: borderRadius.md,
+                    border: isDark 
+                      ? `1px solid ${withOpacity(colors.neutral.lightGray, 0.25)}` 
+                      : `1px solid ${withOpacity(colors.neutral.lightGray, 0.8)}`,
+                    background: isDark 
+                      ? withOpacity('#FFFFFF', 0.03) 
+                      : withOpacity('#F8FAFC', 0.85),
                   }}
                   role="figure"
                   aria-label={`${output.type} output`}
@@ -546,7 +578,7 @@ export const AIBrainSection: React.FC = () => {
                     sx={{
                       fontSize: '1.05rem',
                       fontWeight: 800,
-                      color: isDark ? '#FFFFFF' : '#0F172A',
+                      color: getTextColor('primary', isDark),
                       mb: 0.25,
                       letterSpacing: '-0.01em',
                     }}
@@ -555,8 +587,8 @@ export const AIBrainSection: React.FC = () => {
                   </Typography>
                   <Typography
                     sx={{
-                      fontSize: '0.9rem',
-                      color: isDark ? 'rgba(255, 255, 255, 0.72)' : '#5B6B7C',
+                      fontSize: typography.bodySmall.size,
+                      color: getTextColor('muted', isDark),
                     }}
                   >
                     {output.description}
@@ -567,7 +599,7 @@ export const AIBrainSection: React.FC = () => {
                   <ArrowForward
                     sx={{
                       fontSize: 18,
-                      color: isDark ? 'rgba(255, 255, 255, 0.5)' : '#94A3B8',
+                      color: getTextColor('muted', isDark),
                       display: { xs: 'none', sm: 'block' },
                     }}
                     aria-hidden

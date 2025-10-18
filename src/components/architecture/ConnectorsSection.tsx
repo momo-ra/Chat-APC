@@ -14,16 +14,25 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { 
+  themeConfig, 
+  getColor, 
+  getGradient, 
+  getTextColor,
+  getCardStyles,
+  withOpacity 
+} from '../shared/themeConfig';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const connectorTypes = [
+const getConnectorTypes = (isDark: boolean) => [
   {
     title: 'Live Systems',
     subtitle: 'OPC-UA for real-time signals',
     description: 'Stream live data directly from OPC-UA servers. Always answer with the latest, most relevant information.',
     icon: Cable,
-    color: { light: '#3B82F6', dark: '#60A5FA' },
+    color: getColor(themeConfig.colors.blue, isDark),
+    colorKey: 'blue',
     features: [
       'Real-time data streaming',
       'Secure OPC-UA connections',
@@ -36,7 +45,8 @@ const connectorTypes = [
     subtitle: 'SQL, historians, structured process data',
     description: 'Connect to historians, SQL databases, and structured data sources for comprehensive process insights.',
     icon: Storage,
-    color: { light: '#10B981', dark: '#34D399' },
+    color: getColor(themeConfig.colors.green, isDark),
+    colorKey: 'green',
     features: [
       'Historical data access',
       'SQL database integration',
@@ -49,7 +59,8 @@ const connectorTypes = [
     subtitle: 'Excel, CSV, custom formats',
     description: 'Import operational data from spreadsheets, reports, and custom file formats to enrich process knowledge.',
     icon: Description,
-    color: { light: '#F59E0B', dark: '#FBBF24' },
+    color: getColor(themeConfig.colors.yellow, isDark),
+    colorKey: 'yellow',
     features: [
       'Excel file processing',
       'CSV data import',
@@ -62,7 +73,8 @@ const connectorTypes = [
     subtitle: 'Export reports, send alerts, write values back',
     description: 'Export insights as reports, send automated alerts, and write control values back to your systems.',
     icon: CloudUpload,
-    color: { light: '#EC4899', dark: '#F472B6' },
+    color: getColor(themeConfig.colors.pink, isDark),
+    colorKey: 'pink',
     features: [
       'Report generation',
       'Alert notifications',
@@ -105,6 +117,12 @@ export const ConnectorsSection: React.FC = () => {
   const cardsRef = useRef<HTMLDivElement[]>([]);
   const benefitsRef = useRef<HTMLDivElement>(null);
 
+  // Get unified theme values
+  const { colors, gradients, typography, animations, transitions, borderRadius, shadows } = themeConfig;
+  const connectorTypes = getConnectorTypes(isDark);
+  const cardStyles = getCardStyles(isDark, 'default');
+  const cardHoverStyles = getCardStyles(isDark, 'hover');
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Header animation
@@ -127,7 +145,7 @@ export const ConnectorsSection: React.FC = () => {
             opacity: 1,
             duration: 0.7,
             stagger: 0.2,
-            ease: 'back.out(1.4)',
+            ease: animations.easing.bounce,
           }
         );
       }
@@ -153,7 +171,7 @@ export const ConnectorsSection: React.FC = () => {
               opacity: 1,
               duration: 0.7,
               delay: index * 0.12,
-              ease: 'back.out(1.4)',
+              ease: animations.easing.bounce,
             }
           );
         }
@@ -179,14 +197,14 @@ export const ConnectorsSection: React.FC = () => {
             opacity: 1,
             duration: 0.5,
             stagger: 0.12,
-            ease: 'back.out(1.4)',
+            ease: animations.easing.bounce,
           }
         );
       }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [animations]);
 
   return (
     <Box
@@ -214,10 +232,8 @@ export const ConnectorsSection: React.FC = () => {
               mb: 3,
               fontSize: '0.875rem',
               fontWeight: 600,
-              background: isDark
-                ? 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)'
-                : 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
-              color: 'white',
+              background: getGradient(gradients.blue, isDark),
+              color: '#FFFFFF',
               px: 2,
             }}
           />
@@ -225,10 +241,10 @@ export const ConnectorsSection: React.FC = () => {
             variant="h2"
             sx={{
               fontSize: h2FontSize,
-              fontWeight: 700,
-              color: isDark ? '#FFFFFF' : '#0F172A',
+              fontWeight: typography.h2.weight,
+              color: getTextColor('primary', isDark),
               mb: 3,
-              lineHeight: 1.2,
+              lineHeight: typography.h2.lineHeight,
             }}
           >
             Connectors — the data gateways
@@ -236,10 +252,10 @@ export const ConnectorsSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: bodyFontSize,
-              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
+              color: getTextColor('secondary', isDark),
               maxWidth: '700px',
               mx: 'auto',
-              lineHeight: 1.7,
+              lineHeight: typography.body.lineHeight,
             }}
           >
             Connectors make ChatAPC fit your world — without replacing existing systems
@@ -265,22 +281,18 @@ export const ConnectorsSection: React.FC = () => {
                 }}
                 elevation={0}
                 sx={{
-                  background: isDark
-                    ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.6) 100%)'
-                    : 'rgba(255, 255, 255, 0.94)',
+                  background: cardStyles.background,
                   backdropFilter: 'blur(24px)',
-                  border: isDark
-                    ? `1px solid rgba(71, 85, 105, 0.3)`
-                    : `1px solid rgba(226, 232, 240, 0.8)`,
-                  borderRadius: 3,
+                  border: cardStyles.border,
+                  borderRadius: borderRadius.lg,
                   height: '100%',
-                  transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
+                  transition: transitions.allNormal,
                   '&:hover': {
                     transform: 'translateY(-10px) scale(1.02)',
                     boxShadow: isDark
-                      ? `0 30px 60px ${connector.color.dark}25`
-                      : `0 30px 60px ${connector.color.light}20`,
-                    borderColor: connector.color[isDark ? 'dark' : 'light'],
+                      ? `0 30px 60px ${withOpacity(connector.color, 0.15)}`
+                      : `0 30px 60px ${withOpacity(connector.color, 0.13)}`,
+                    borderColor: connector.color,
                   },
                 }}
               >
@@ -290,8 +302,8 @@ export const ConnectorsSection: React.FC = () => {
                     sx={{
                       width: 72,
                       height: 72,
-                      borderRadius: 2,
-                      background: `${connector.color[isDark ? 'dark' : 'light']}1A`,
+                      borderRadius: borderRadius.sm,
+                      background: withOpacity(connector.color, 0.1),
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -301,7 +313,7 @@ export const ConnectorsSection: React.FC = () => {
                     <IconComponent
                       sx={{
                         fontSize: 36,
-                        color: connector.color[isDark ? 'dark' : 'light'],
+                        color: connector.color,
                       }}
                     />
                   </Box>
@@ -310,11 +322,11 @@ export const ConnectorsSection: React.FC = () => {
                   <Typography
                     variant="h5"
                     sx={{
-                      fontSize: '1.5rem',
-                      fontWeight: 700,
-                      color: isDark ? '#FFFFFF' : '#0F172A',
+                      fontSize: typography.h5.size,
+                      fontWeight: typography.h5.weight,
+                      color: getTextColor('primary', isDark),
                       mb: 1,
-                      lineHeight: 1.3,
+                      lineHeight: typography.h5.lineHeight,
                     }}
                   >
                     {connector.title}
@@ -324,7 +336,7 @@ export const ConnectorsSection: React.FC = () => {
                     sx={{
                       fontSize: '1rem',
                       fontWeight: 600,
-                      color: connector.color[isDark ? 'dark' : 'light'],
+                      color: connector.color,
                       mb: 2,
                     }}
                   >
@@ -334,9 +346,9 @@ export const ConnectorsSection: React.FC = () => {
                   {/* Description */}
                   <Typography
                     sx={{
-                      fontSize: '0.95rem',
-                      color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#475569',
-                      lineHeight: 1.6,
+                      fontSize: typography.bodySmall.size,
+                      color: getTextColor('secondary', isDark),
+                      lineHeight: typography.body.lineHeight,
                       mb: 3,
                     }}
                   >
@@ -354,22 +366,19 @@ export const ConnectorsSection: React.FC = () => {
                           gap: 1.5,
                         }}
                       >
-                        {/* Use a check icon for each feature instead of a simple dot.  This adds
-                            clarity and modernity to the list while tying the icon color to the
-                            connector’s accent color. */}
                         <CheckCircle
                           sx={{
                             fontSize: 16,
                             mt: '2px',
-                            color: connector.color[isDark ? 'dark' : 'light'],
+                            color: connector.color,
                             flexShrink: 0,
                           }}
                         />
                         <Typography
                           sx={{
-                            fontSize: '0.9rem',
-                            color: isDark ? 'rgba(255, 255, 255, 0.75)' : '#475569',
-                            lineHeight: 1.5,
+                            fontSize: typography.bodySmall.size,
+                            color: getTextColor('muted', isDark),
+                            lineHeight: typography.bodySmall.lineHeight,
                           }}
                         >
                           {feature}
@@ -402,19 +411,19 @@ export const ConnectorsSection: React.FC = () => {
                   textAlign: 'center',
                   p: 3,
                   background: isDark
-                    ? 'rgba(30, 41, 59, 0.4)'
-                    : 'rgba(248, 250, 252, 0.9)',
-                  borderRadius: 3,
+                    ? withOpacity(colors.neutral.darkBackground, 0.4)
+                    : withOpacity(colors.neutral.lightBackground, 0.9),
+                  borderRadius: borderRadius.lg,
                   border: isDark
-                    ? '1px solid rgba(71, 85, 105, 0.25)'
-                    : '1px solid rgba(226, 232, 240, 0.6)',
+                    ? `1px solid ${withOpacity(colors.neutral.darkBorder, 0.25)}`
+                    : `1px solid ${withOpacity(colors.neutral.lightBorder, 0.6)}`,
                   backdropFilter: 'blur(16px)',
-                  transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
+                  transition: transitions.allNormal,
                   '&:hover': {
                     transform: 'translateY(-6px) scale(1.02)',
                     boxShadow: isDark
-                      ? '0 20px 40px rgba(0, 0, 0, 0.3)'
-                      : '0 20px 40px rgba(0, 0, 0, 0.1)',
+                      ? shadows.dark.lg
+                      : shadows.light.lg,
                   },
                 }}
               >
@@ -422,10 +431,8 @@ export const ConnectorsSection: React.FC = () => {
                   sx={{
                     width: 56,
                     height: 56,
-                    borderRadius: '50%',
-                    background: isDark
-                      ? 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)'
-                      : 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+                    borderRadius: borderRadius.full,
+                    background: getGradient(gradients.blue, isDark),
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -433,14 +440,14 @@ export const ConnectorsSection: React.FC = () => {
                     mb: 2,
                   }}
                 >
-                  <IconComponent sx={{ fontSize: 28, color: 'white' }} />
+                  <IconComponent sx={{ fontSize: 28, color: '#FFFFFF' }} />
                 </Box>
                 <Typography
                   variant="h6"
                   sx={{
-                    fontSize: '1.2rem',
-                    fontWeight: 600,
-                    color: isDark ? '#FFFFFF' : '#0F172A',
+                    fontSize: typography.h6.size,
+                    fontWeight: typography.h6.weight,
+                    color: getTextColor('primary', isDark),
                     mb: 1,
                   }}
                 >
@@ -448,9 +455,9 @@ export const ConnectorsSection: React.FC = () => {
                 </Typography>
                 <Typography
                   sx={{
-                    fontSize: '0.95rem',
-                    color: isDark ? 'rgba(255, 255, 255, 0.75)' : '#475569',
-                    lineHeight: 1.5,
+                    fontSize: typography.bodySmall.size,
+                    color: getTextColor('muted', isDark),
+                    lineHeight: typography.bodySmall.lineHeight,
                   }}
                 >
                   {benefit.description}

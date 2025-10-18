@@ -4,36 +4,48 @@ import { gsap } from 'gsap';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { applySlideUp, applyStaggerAnimation } from '../shared/animationHelpers';
+import { 
+  themeConfig, 
+  getColor, 
+  getGradient, 
+  getTextColor,
+  getCardStyles,
+  withOpacity 
+} from '../shared/themeConfig';
 
-const layers = [
-  {
-    title: 'Data & Knowledge Layer',
-    subtitle: 'Foundation',
-    description: 'Connects to DCS, historian, and lab systems. Organizes process knowledge, lab data and control system into a knowledge map, linking variables, units, control loops, and relationships.',
-    color: '#3B82F6',
-    gradient: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
-    icon: '01',
-    features: ['DCS Integration', 'Historian Data', 'Knowledge Mapping', 'Tag Contextualization'],
-  },
-  {
-    title: 'AI & Engineering Engine',
-    subtitle: 'Intelligence',
-    description: 'ChatAPC combines AI reasoning with engineering logic and physical relationships. It understands mass and energy balances, correlations, and constraints — validating insights with process fundamentals.',
-    color: '#10B981',
-    gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-    icon: '02',
-    features: ['AI Reasoning', 'Engineering Logic', 'Physical Models', 'Validation Engine'],
-  },
-  {
-    title: 'Chat Interface',
-    subtitle: 'Experience',
-    description: 'Clear explanations in plain language. "Why" and "what-if" questions uncover causes, effects, and opportunities. Every answer traces back to the underlying data and engineering model.',
-    color: '#8B5CF6',
-    gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-    icon: '03',
-    features: ['Natural Language', 'Why Analysis', 'What-If Scenarios', 'Transparency'],
-  },
-];
+const getLayers = (isDark: boolean) => {
+  const { colors, gradients } = themeConfig;
+  
+  return [
+    {
+      title: 'Data & Knowledge Layer',
+      subtitle: 'Foundation',
+      description: 'Connects to DCS, historian, and lab systems. Organizes process knowledge, lab data and control system into a knowledge map, linking variables, units, control loops, and relationships.',
+      color: getColor(colors.blue, isDark),
+      gradient: getGradient(gradients.blue, isDark),
+      icon: '01',
+      features: ['DCS Integration', 'Historian Data', 'Knowledge Mapping', 'Tag Contextualization'],
+    },
+    {
+      title: 'AI & Engineering Engine',
+      subtitle: 'Intelligence',
+      description: 'ChatAPC combines AI reasoning with engineering logic and physical relationships. It understands mass and energy balances, correlations, and constraints — validating insights with process fundamentals.',
+      color: getColor(colors.green, isDark),
+      gradient: getGradient(gradients.green, isDark),
+      icon: '02',
+      features: ['AI Reasoning', 'Engineering Logic', 'Physical Models', 'Validation Engine'],
+    },
+    {
+      title: 'Chat Interface',
+      subtitle: 'Experience',
+      description: 'Clear explanations in plain language. "Why" and "what-if" questions uncover causes, effects, and opportunities. Every answer traces back to the underlying data and engineering model.',
+      color: getColor(colors.purple, isDark),
+      gradient: getGradient(gradients.purple, isDark),
+      icon: '03',
+      features: ['Natural Language', 'Why Analysis', 'What-If Scenarios', 'Transparency'],
+    },
+  ];
+};
 
 export const ArchitectureSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -46,8 +58,14 @@ export const ArchitectureSection: React.FC = () => {
     bodyLargeFontSize, 
     containerMaxWidth,
     containerPadding,
+    sectionPadding,
     isMobile 
   } = useResponsiveLayout();
+
+  // Get unified theme values
+  const { colors, gradients, typography, borderRadius, transitions, shadows } = themeConfig;
+  const layers = getLayers(isDark);
+  const cardStyles = getCardStyles(isDark, 'default');
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -74,7 +92,7 @@ export const ArchitectureSection: React.FC = () => {
       sx={{
         width: '100vw',
         marginLeft: 'calc(-50vw + 50%)',
-        py: 'clamp(3rem, 8vw, 5rem)',
+        py: sectionPadding,
         position: 'relative',
         overflow: 'hidden',
         background: 'transparent',
@@ -88,7 +106,15 @@ export const ArchitectureSection: React.FC = () => {
         }}
       >
         {/* Section Header */}
-        <Box ref={headerRef} sx={{ textAlign: 'center', mb: 'clamp(3rem, 8vw, 5rem)', position: 'relative', zIndex: 2 }}>
+        <Box 
+          ref={headerRef} 
+          sx={{ 
+            textAlign: 'center', 
+            mb: 'clamp(3rem, 8vw, 5rem)', 
+            position: 'relative', 
+            zIndex: 2 
+          }}
+        >
           <Chip
             label="Architecture"
             sx={{
@@ -98,12 +124,12 @@ export const ArchitectureSection: React.FC = () => {
               py: 1,
               mb: 3,
               background: isDark
-                ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%)'
-                : 'linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%)',
-              color: isDark ? '#009BE4' : '#3B82F6',
+                ? `linear-gradient(135deg, ${withOpacity(getColor(colors.blue, true), 0.12)} 0%, ${withOpacity(getColor(colors.blue, true), 0.12)} 100%)`
+                : `linear-gradient(135deg, ${withOpacity(getColor(colors.blue, false), 0.12)} 0%, ${withOpacity(getColor(colors.blue, false), 0.12)} 100%)`,
+              color: getColor(isDark ? colors.blue : colors.blue, isDark),
               border: 'none',
               backdropFilter: 'blur(10px)',
-              borderRadius: '50px',
+              borderRadius: borderRadius.full,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
             }}
@@ -113,8 +139,8 @@ export const ArchitectureSection: React.FC = () => {
             variant="h2"
             sx={{
               fontSize: h2FontSize,
-              fontWeight: 800,
-              lineHeight: 1.2,
+              fontWeight: typography.h2.weight,
+              lineHeight: typography.h2.lineHeight,
               mb: 3,
               letterSpacing: '-0.01em',
             }}
@@ -137,9 +163,7 @@ export const ArchitectureSection: React.FC = () => {
             <Box
               component="span"
               sx={{
-                background: isDark
-                  ? 'linear-gradient(135deg, #009BE4 0%, #10B981 100%)'
-                  : 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
+                background: getGradient(gradients.blueToBlue, isDark),
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -153,11 +177,11 @@ export const ArchitectureSection: React.FC = () => {
             variant="body1"
             sx={{
               fontSize: bodyLargeFontSize,
-              color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
+              color: getTextColor('secondary', isDark),
               maxWidth: 600,
               mx: 'auto',
-              lineHeight: 1.6,
-              fontWeight: 400,
+              lineHeight: typography.bodyLarge.lineHeight,
+              fontWeight: typography.bodyLarge.weight,
             }}
           >
             ChatAPC combines rigorous chemical engineering with conversational AI. Deep process understanding meets intuitive interaction.
@@ -181,27 +205,23 @@ export const ArchitectureSection: React.FC = () => {
               }}
               elevation={0}
               sx={{
-                background: isDark
-                  ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%)'
-                  : 'linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                background: cardStyles.background,
                 backdropFilter: 'blur(16px)',
-                border: isDark
-                  ? '1px solid rgba(255, 255, 255, 0.06)'
-                  : '1px solid rgba(0, 0, 0, 0.04)',
-                borderRadius: 'clamp(20px, 4vw, 28px)',
+                border: cardStyles.border,
+                borderRadius: borderRadius.xl,
                 overflow: 'hidden',
                 position: 'relative',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                transition: transitions.allNormal,
                 '&:hover': {
                   transform: isMobile ? 'none' : 'translateY(-4px)',
                   border: isDark
-                    ? `1px solid ${layer.color}30`
-                    : `1px solid ${layer.color}25`,
+                    ? `1px solid ${withOpacity(layer.color, 0.19)}`
+                    : `1px solid ${withOpacity(layer.color, 0.15)}`,
                   boxShadow: isMobile 
                     ? 'none'
                     : isDark
-                      ? `0 20px 40px -12px ${layer.color}10`
-                      : `0 20px 40px -12px ${layer.color}12`,
+                      ? `0 20px 40px -12px ${withOpacity(layer.color, 0.06)}`
+                      : `0 20px 40px -12px ${withOpacity(layer.color, 0.07)}`,
                   '& .layer-icon': {
                     transform: isMobile ? 'none' : 'scale(1.05)',
                   },
@@ -216,8 +236,14 @@ export const ArchitectureSection: React.FC = () => {
                   display: 'flex', 
                   flexDirection: { xs: 'column', sm: 'row' },
                   gap: { xs: 3, sm: 4 }, 
-                  alignItems: { xs: 'center', sm: 'flex-start' },
-                  textAlign: { xs: 'center', sm: 'left' },
+                  alignItems: { 
+                    xs: 'flex-start', // <-- left align on mobile
+                    sm: 'flex-start' 
+                  },
+                  textAlign: { 
+                    xs: 'left',   // <-- left align on mobile
+                    sm: 'left' 
+                  },
                 }}>
                   {/* Icon Number */}
                   <Box
@@ -226,27 +252,30 @@ export const ArchitectureSection: React.FC = () => {
                       minWidth: { xs: 80, sm: 100, md: 120 },
                       width: { xs: 80, sm: 100, md: 120 },
                       height: { xs: 80, sm: 100, md: 120 },
-                      borderRadius: 'clamp(16px, 3vw, 24px)',
+                      borderRadius: borderRadius.lg,
                       background: isDark
-                        ? `linear-gradient(135deg, ${layer.color}12 0%, ${layer.color}08 100%)`
-                        : `linear-gradient(135deg, ${layer.color}08 0%, ${layer.color}04 100%)`,
+                        ? `linear-gradient(135deg, ${withOpacity(layer.color, 0.07)} 0%, ${withOpacity(layer.color, 0.03)} 100%)`
+                        : `linear-gradient(135deg, ${withOpacity(layer.color, 0.05)} 0%, ${withOpacity(layer.color, 0.02)} 100%)`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      transition: 'all 0.3s ease',
+                      transition: transitions.normal,
                       border: isDark
-                        ? `1px solid ${layer.color}15`
-                        : `1px solid ${layer.color}12`,
+                        ? `1px solid ${withOpacity(layer.color, 0.08)}`
+                        : `1px solid ${withOpacity(layer.color, 0.07)}`,
                       position: 'relative',
                       flexShrink: 0,
+                      ml: { xs: 0, sm: 0 }, // remove default margin for mobile
                     }}
                   >
+                    {/* To keep icon left-align on mobile but centered on desktop */}
                     <Typography
                       sx={{
                         fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' },
                         fontWeight: 800,
                         color: layer.color,
                         zIndex: 1,
+                        mx: { xs: 0, sm: 'auto' }, // no horizontal margin on mobile, auto (center) on sm+
                       }}
                     >
                       {layer.icon}
@@ -272,11 +301,11 @@ export const ArchitectureSection: React.FC = () => {
                       <Typography
                         variant="h3"
                         sx={{
-                          fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
-                          fontWeight: 700,
-                          color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 1)',
+                          fontSize: typography.h3.size,
+                          fontWeight: typography.h3.weight,
+                          color: getTextColor('primary', isDark),
                           mb: { xs: 1.5, md: 2 },
-                          lineHeight: 1.3,
+                          lineHeight: typography.h3.lineHeight,
                         }}
                       >
                         {layer.title}
@@ -286,9 +315,9 @@ export const ArchitectureSection: React.FC = () => {
                         variant="body1"
                         sx={{
                           fontSize: 'clamp(0.95rem, 2.5vw, 1.125rem)',
-                          color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
-                          lineHeight: 1.6,
-                          fontWeight: 400,
+                          color: getTextColor('secondary', isDark),
+                          lineHeight: typography.body.lineHeight,
+                          fontWeight: typography.body.weight,
                         }}
                       >
                         {layer.description}
@@ -318,20 +347,20 @@ export const ArchitectureSection: React.FC = () => {
                             sx={{
                               width: 6,
                               height: 6,
-                              borderRadius: '50%',
+                              borderRadius: borderRadius.full,
                               background: isDark
-                                ? 'rgba(255, 255, 255, 0.3)'
-                                : 'rgba(71, 85, 105, 0.3)',
-                              transition: 'background 0.3s ease',
+                                ? withOpacity('#FFFFFF', 0.3)
+                                : withOpacity(colors.neutral.darkGray, 0.3),
+                              transition: transitions.normal,
                               flexShrink: 0,
                             }}
                           />
                           <Typography
                             sx={{
-                              fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+                              fontSize: typography.bodySmall.size,
                               fontWeight: 500,
-                              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(100, 116, 139, 1)',
-                              lineHeight: 1.4,
+                              color: getTextColor('muted', isDark),
+                              lineHeight: typography.bodySmall.lineHeight,
                             }}
                           >
                             {feature}
@@ -357,14 +386,12 @@ export const ArchitectureSection: React.FC = () => {
           <Box
             sx={{
               p: { xs: 4, sm: 6, md: 8 },
-              borderRadius: 'clamp(20px, 4vw, 28px)',
+              borderRadius: borderRadius.xl,
               background: isDark
-                ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.06) 0%, rgba(139, 92, 246, 0.06) 100%)'
-                : 'linear-gradient(135deg, rgba(219, 234, 254, 0.4) 0%, rgba(237, 233, 254, 0.4) 100%)',
+                ? `linear-gradient(135deg, ${withOpacity(getColor(colors.cyan, true), 0.06)} 0%, ${withOpacity(getColor(colors.purple, true), 0.06)} 100%)`
+                : `linear-gradient(135deg, ${withOpacity(getColor(colors.blue, false), 0.04)} 0%, ${withOpacity(getColor(colors.purple, false), 0.04)} 100%)`,
               backdropFilter: 'blur(16px)',
-              border: isDark
-                ? '1px solid rgba(255, 255, 255, 0.06)'
-                : '1px solid rgba(0, 0, 0, 0.04)',
+              border: cardStyles.border,
               textAlign: 'center',
               position: 'relative',
               overflow: 'hidden',
@@ -374,8 +401,8 @@ export const ArchitectureSection: React.FC = () => {
               sx={{
                 fontSize: 'clamp(1.125rem, 3vw, 1.375rem)',
                 fontWeight: 600,
-                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(15, 23, 42, 1)',
-                lineHeight: 1.6,
+                color: getTextColor('primary', isDark),
+                lineHeight: typography.bodyLarge.lineHeight,
                 maxWidth: 700,
                 mx: 'auto',
                 position: 'relative',
@@ -385,9 +412,7 @@ export const ArchitectureSection: React.FC = () => {
               <Box
                 component="span"
                 sx={{
-                  background: isDark
-                    ? 'linear-gradient(135deg, #009BE4 0%, #8B5CF6 100%)'
-                    : 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
+                  background: getGradient(gradients.blueToBlue, isDark),
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',

@@ -12,32 +12,42 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { useNavigate } from 'react-router-dom';
+import { 
+  themeConfig, 
+  getColor, 
+  getTextColor,
+  getButtonStyles,
+  withOpacity 
+} from '../shared/themeConfig';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const visionItems = [
-  {
-    title: 'Connect with external apps',
-    subtitle: 'historians, planning, reporting',
-    description: 'Seamlessly integrate with your existing tools and systems',
-    icon: Hub,
-    color: { light: '#10B981', dark: '#34D399' },
-  },
-  {
-    title: 'Collaborate with other AI agents',
-    subtitle: 'insights move across operations, maintenance, and supply chain',
-    description: 'Create a connected intelligence network across your organization',
-    icon: Groups,
-    color: { light: '#F59E0B', dark: '#FBBF24' },
-  },
-  {
-    title: 'Scale across plants and enterprises',
-    subtitle: 'making ChatAPC the hub of connected decision-making',
-    description: 'Expand intelligent operations throughout your entire enterprise',
-    icon: Business,
-    color: { light: '#EC4899', dark: '#F472B6' },
-  },
-];
+const getVisionItems = (isDark: boolean) => {
+  const { colors } = themeConfig;
+  return [
+    {
+      title: 'Connect with external apps',
+      subtitle: 'historians, planning, reporting',
+      description: 'Seamlessly integrate with your existing tools and systems',
+      icon: Hub,
+      color: getColor(colors.green, isDark),
+    },
+    {
+      title: 'Collaborate with other AI agents',
+      subtitle: 'insights move across operations, maintenance, and supply chain',
+      description: 'Create a connected intelligence network across your organization',
+      icon: Groups,
+      color: getColor(colors.yellow, isDark),
+    },
+    {
+      title: 'Scale across plants and enterprises',
+      subtitle: 'making ChatAPC the hub of connected decision-making',
+      description: 'Expand intelligent operations throughout your entire enterprise',
+      icon: Business,
+      color: getColor(colors.pink, isDark),
+    },
+  ];
+};
 
 export const BiggerVisionSection: React.FC = () => {
   const { isDark } = useThemeMode();
@@ -55,6 +65,17 @@ export const BiggerVisionSection: React.FC = () => {
   const visionRef = useRef<HTMLDivElement[]>([]);
   const finalRef = useRef<HTMLDivElement>(null);
 
+  // Get unified theme values
+  const { typography, borderRadius, transitions, animations, colors } = themeConfig;
+  const visionItems = getVisionItems(isDark);
+  const primaryColor = getColor(colors.blue, isDark);
+  
+  // Get button styles
+  const primaryButtonStyles = getButtonStyles('primary', isDark, 'default');
+  const primaryButtonHoverStyles = getButtonStyles('primary', isDark, 'hover');
+  const outlinedButtonStyles = getButtonStyles('outlined', isDark, 'default');
+  const outlinedButtonHoverStyles = getButtonStyles('outlined', isDark, 'hover');
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Header animation
@@ -67,8 +88,8 @@ export const BiggerVisionSection: React.FC = () => {
           },
           y: 50,
           opacity: 0,
-          duration: 0.8,
-          ease: 'power3.out',
+          duration: animations.duration.normal,
+          ease: animations.easing.easeOut,
         });
       }
 
@@ -83,9 +104,9 @@ export const BiggerVisionSection: React.FC = () => {
             },
             y: 60,
             opacity: 0,
-            duration: 0.8,
-            delay: index * 0.15,
-            ease: 'power2.out',
+            duration: animations.duration.normal,
+            delay: index * animations.stagger,
+            ease: animations.easing.sharp,
           });
         }
       });
@@ -100,14 +121,14 @@ export const BiggerVisionSection: React.FC = () => {
           },
           y: 40,
           opacity: 0,
-          duration: 0.8,
-          ease: 'power2.out',
+          duration: animations.duration.normal,
+          ease: animations.easing.sharp,
         });
       }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [animations]);
 
   return (
     <Box
@@ -132,7 +153,7 @@ export const BiggerVisionSection: React.FC = () => {
             sx={{
               fontSize: { xs: '0.875rem', md: '1rem' },
               fontWeight: 700,
-              color: isDark ? '#60A5FA' : '#3B82F6',
+              color: primaryColor,
               textTransform: 'uppercase',
               letterSpacing: 2,
               mb: 2,
@@ -144,10 +165,10 @@ export const BiggerVisionSection: React.FC = () => {
             variant="h2"
             sx={{
               fontSize: h2FontSize,
-              fontWeight: 700,
-              color: isDark ? '#FFFFFF' : '#0F172A',
+              fontWeight: typography.h2.weight,
+              color: getTextColor('primary', isDark),
               mb: 3,
-              lineHeight: 1.2,
+              lineHeight: typography.h2.lineHeight,
               maxWidth: 900,
             }}
           >
@@ -156,9 +177,9 @@ export const BiggerVisionSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: bodyFontSize,
-              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
+              color: getTextColor('secondary', isDark),
               maxWidth: '800px',
-              lineHeight: 1.7,
+              lineHeight: typography.body.lineHeight,
               mb: 3,
             }}
           >
@@ -168,7 +189,7 @@ export const BiggerVisionSection: React.FC = () => {
             sx={{
               fontSize: { xs: '1.125rem', md: '1.25rem' },
               fontWeight: 600,
-              color: isDark ? '#60A5FA' : '#3B82F6',
+              color: primaryColor,
               maxWidth: '600px',
               lineHeight: 1.6,
             }}
@@ -201,16 +222,18 @@ export const BiggerVisionSection: React.FC = () => {
                   gap: { xs: 3, md: 4 },
                   p: { xs: 3, md: 4 },
                   borderRadius: 0,
-                  borderLeft: isDark ? '2px solid rgba(71, 85, 105, 0.3)' : '2px solid rgba(226, 232, 240, 1)',
+                  borderLeft: isDark 
+                    ? `2px solid ${withOpacity(colors.neutral.darkBorder, 0.3)}` 
+                    : `2px solid ${colors.neutral.lightBorder}`,
                   background: 'transparent',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transition: transitions.allNormal,
                   '&:hover': {
                     pl: { xs: 4, md: 5 },
-                    borderLeftColor: item.color[isDark ? 'dark' : 'light'],
+                    borderLeftColor: item.color,
                     borderLeftWidth: '3px',
                     background: isDark
-                      ? `linear-gradient(90deg, ${item.color.dark}10 0%, transparent 100%)`
-                      : `linear-gradient(90deg, ${item.color.light}08 0%, transparent 100%)`,
+                      ? `linear-gradient(90deg, ${withOpacity(item.color, 0.06)} 0%, transparent 100%)`
+                      : `linear-gradient(90deg, ${withOpacity(item.color, 0.05)} 0%, transparent 100%)`,
                     '& .vision-icon': {
                       transform: 'scale(1.1) rotate(5deg)',
                     },
@@ -223,13 +246,13 @@ export const BiggerVisionSection: React.FC = () => {
                   sx={{
                     width: { xs: 64, md: 72 },
                     height: { xs: 64, md: 72 },
-                    borderRadius: 2,
-                    background: item.color[isDark ? 'dark' : 'light'],
+                    borderRadius: borderRadius.sm,
+                    background: item.color,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    transition: 'all 0.4s ease',
-                    boxShadow: `0 8px 24px ${item.color[isDark ? 'dark' : 'light']}30`,
+                    transition: transitions.normal,
+                    boxShadow: `0 8px 24px ${withOpacity(item.color, 0.19)}`,
                     mx: { xs: 'auto', md: 0 },
                   }}
                 >
@@ -248,10 +271,10 @@ export const BiggerVisionSection: React.FC = () => {
                     variant="h5"
                     sx={{
                       fontSize: { xs: '1.25rem', md: '1.5rem' },
-                      fontWeight: 700,
-                      color: isDark ? '#FFFFFF' : '#0F172A',
+                      fontWeight: typography.h5.weight,
+                      color: getTextColor('primary', isDark),
                       mb: 1,
-                      lineHeight: 1.3,
+                      lineHeight: typography.h5.lineHeight,
                     }}
                   >
                     {item.title}
@@ -260,12 +283,12 @@ export const BiggerVisionSection: React.FC = () => {
                   {/* Subtitle */}
                   <Typography
                     sx={{
-                      fontSize: '0.875rem',
+                      fontSize: typography.bodySmall.size,
                       fontWeight: 600,
-                      color: item.color[isDark ? 'dark' : 'light'],
+                      color: item.color,
                       mb: 2,
                       fontStyle: 'italic',
-                      lineHeight: 1.5,
+                      lineHeight: typography.bodySmall.lineHeight,
                     }}
                   >
                     {item.subtitle}
@@ -275,8 +298,8 @@ export const BiggerVisionSection: React.FC = () => {
                   <Typography
                     sx={{
                       fontSize: { xs: '1rem', md: '1.125rem' },
-                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#64748B',
-                      lineHeight: 1.7,
+                      color: getTextColor('muted', isDark),
+                      lineHeight: typography.body.lineHeight,
                       maxWidth: 700,
                       mx: { xs: 'auto', md: 0 },
                     }}
@@ -295,17 +318,19 @@ export const BiggerVisionSection: React.FC = () => {
           sx={{
             position: 'relative',
             pt: { xs: 8, md: 10 },
-            borderTop: isDark ? '1px solid rgba(71, 85, 105, 0.3)' : '1px solid rgba(226, 232, 240, 1)',
+            borderTop: isDark 
+              ? `1px solid ${withOpacity(colors.neutral.darkBorder, 0.3)}` 
+              : `1px solid ${colors.neutral.lightBorder}`,
           }}
         >
           <Typography
             variant="h3"
             sx={{
-              fontSize: { xs: '1.75rem', md: '2.5rem' },
-              fontWeight: 700,
-              color: isDark ? '#FFFFFF' : '#0F172A',
+              fontSize: typography.h3.size,
+              fontWeight: typography.h3.weight,
+              color: getTextColor('primary', isDark),
               mb: 4,
-              lineHeight: 1.2,
+              lineHeight: typography.h3.lineHeight,
               maxWidth: 900,
             }}
           >
@@ -315,9 +340,9 @@ export const BiggerVisionSection: React.FC = () => {
           <Typography
             sx={{
               fontSize: { xs: '1.125rem', md: '1.25rem' },
-              color: isDark ? 'rgba(255, 255, 255, 0.8)' : '#64748B',
+              color: getTextColor('secondary', isDark),
               maxWidth: '800px',
-              lineHeight: 1.7,
+              lineHeight: typography.body.lineHeight,
               mb: 6,
             }}
           >
@@ -339,24 +364,20 @@ export const BiggerVisionSection: React.FC = () => {
               startIcon={<PlayArrow />}
               onClick={() => navigate('/demo')}
               sx={{
-                background: isDark ? '#60A5FA' : '#3B82F6',
-                color: '#FFFFFF',
+                background: primaryButtonStyles.background,
+                color: primaryButtonStyles.text,
                 px: 5,
                 py: 2,
                 fontSize: '1.125rem',
                 fontWeight: 600,
-                borderRadius: 2,
+                borderRadius: borderRadius.full,
                 textTransform: 'none',
-                boxShadow: isDark
-                  ? '0 8px 32px rgba(96, 165, 250, 0.3)'
-                  : '0 8px 32px rgba(59, 130, 246, 0.25)',
-                transition: 'all 0.3s ease',
+                boxShadow: primaryButtonStyles.shadow,
+                transition: transitions.normal,
                 '&:hover': {
                   transform: 'translateY(-2px)',
-                  boxShadow: isDark
-                    ? '0 12px 40px rgba(96, 165, 250, 0.4)'
-                    : '0 12px 40px rgba(59, 130, 246, 0.3)',
-                  background: isDark ? '#60A5FA' : '#3B82F6',
+                  boxShadow: primaryButtonHoverStyles.shadow,
+                  background: primaryButtonHoverStyles.background,
                   filter: 'brightness(1.1)',
                 },
               }}
@@ -370,22 +391,20 @@ export const BiggerVisionSection: React.FC = () => {
               startIcon={<CalendarToday />}
               onClick={() => navigate('/company/contact')}
               sx={{
-                borderColor: isDark ? 'rgba(71, 85, 105, 0.5)' : 'rgba(226, 232, 240, 1)',
-                color: isDark ? 'rgba(255, 255, 255, 0.9)' : '#475569',
+                borderColor: outlinedButtonStyles.border,
+                color: outlinedButtonStyles.text,
+                background: outlinedButtonStyles.background,
                 px: 5,
                 py: 2,
                 fontSize: '1.125rem',
                 fontWeight: 600,
-                borderRadius: 2,
+                borderRadius: borderRadius.full,
                 borderWidth: 2,
                 textTransform: 'none',
-                transition: 'all 0.3s ease',
+                transition: transitions.normal,
                 '&:hover': {
-                  borderColor: isDark ? '#60A5FA' : '#3B82F6',
-                  color: isDark ? '#60A5FA' : '#3B82F6',
-                  background: isDark 
-                    ? 'rgba(96, 165, 250, 0.05)' 
-                    : 'rgba(59, 130, 246, 0.03)',
+                  borderColor: outlinedButtonHoverStyles.border,
+                  background: outlinedButtonHoverStyles.background,
                   transform: 'translateY(-2px)',
                   borderWidth: 2,
                 },

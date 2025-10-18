@@ -1,71 +1,71 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Container, Button, Stack } from '@mui/material';
-import { 
-  BarChart, 
-  Event, 
-  Explore, 
-  Science, 
+import {
+  BarChart,
+  Event,
+  Science,
   TrendingUp,
   ArrowForward,
   Visibility,
   PlayArrow,
-  Settings
 } from '@mui/icons-material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useNavigate } from 'react-router-dom';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { 
+  themeConfig, 
+  getColor, 
+  getGradient, 
+  getTextColor,
+  getButtonStyles,
+  getCardStyles,
+  withOpacity 
+} from '../shared/themeConfig';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Color palette for consistency throughout the app
-const PALETTE = {
-  blue: { dark: '#60A5FA', light: '#3B82F6' },
-  green: { dark: '#34D399', light: '#10B981' },
-  yellow: { dark: '#FBBF24', light: '#F59E0B' },
-  pink: { dark: '#F472B6', light: '#EC4899' },
-};
-
-const getColor = (isDark: boolean, colorObj: {dark: string, light: string}) =>
-  isDark ? colorObj.dark : colorObj.light;
-
-// Features using the palette for consistent experience
+// Define feature configuration with color keys
 const getFeatures = (isDark: boolean) => [
   {
     icon: BarChart,
     title: "Custom Analytics",
-    description: "Build custom graphs, dashboards, and reports with your plant data. Add variables, set time ranges, and create the exact analysis you need.",
-    color: getColor(isDark, PALETTE.blue),
+    description:
+      "Build custom graphs, dashboards, and reports with your plant data. Add variables, set time ranges, and create the exact analysis you need.",
+    color: getColor(themeConfig.colors.blue, isDark),
   },
   {
     icon: Event,
     title: "Smart Monitoring",
-    description: "Define intelligent events, set dynamic thresholds, and get alerts that matter. Monitor what's critical to your operations.",
-    color: getColor(isDark, PALETTE.green),
+    description:
+      "Define intelligent events, set dynamic thresholds, and get alerts that matter. Monitor what's critical to your operations.",
+    color: getColor(themeConfig.colors.green, isDark),
   },
   {
     icon: Science,
     title: "Scenario Testing",
-    description: "Run comprehensive \"what if\" scenarios with the Advisor Agent. Test changes before implementation.",
-    color: getColor(isDark, PALETTE.pink),
+    description:
+      'Run comprehensive "what if" scenarios with the Advisor Agent. Test changes before implementation.',
+    color: getColor(themeConfig.colors.pink, isDark),
   },
   {
     icon: TrendingUp,
     title: "Economic Optimization",
-    description: "Analyze economics in real-time with the Optimizer Agent. Optimize for maximum efficiency and profitability.",
-    color: getColor(isDark, PALETTE.yellow),
+    description:
+      "Analyze economics in real-time with the Optimizer Agent. Optimize for maximum efficiency and profitability.",
+    color: getColor(themeConfig.colors.yellow, isDark),
   },
 ];
 
 export const HowItWorksFeaturesSection: React.FC = () => {
   const navigate = useNavigate();
   const { isDark } = useThemeMode();
-  const { 
-    containerMaxWidth, 
-    containerPadding, 
+  const {
+    containerMaxWidth,
+    containerPadding,
     h2FontSize,
-    sectionPadding 
+    sectionPadding,
   } = useResponsiveLayout();
 
   const directAccessFeatures = getFeatures(isDark);
@@ -76,6 +76,22 @@ export const HowItWorksFeaturesSection: React.FC = () => {
   const processRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const featureItemsRef = useRef<HTMLDivElement[]>([]);
+
+  // Get unified theme values
+  const { colors, animations, transitions, typography, borderRadius } = themeConfig;
+  const primaryColor = getColor(colors.blue, isDark);
+  const pinkColor = getColor(colors.pink, isDark);
+  const greenColor = getColor(colors.green, isDark);
+
+  // Get button styles
+  const primaryButtonStyles = getButtonStyles('primary', isDark, 'default');
+  const primaryButtonHoverStyles = getButtonStyles('primary', isDark, 'hover');
+  const outlinedButtonStyles = getButtonStyles('outlined', isDark, 'default');
+  const outlinedButtonHoverStyles = getButtonStyles('outlined', isDark, 'hover');
+
+  // Get card styles
+  const cardStyles = getCardStyles(isDark, 'default');
+  const cardHoverStyles = getCardStyles(isDark, 'hover');
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -89,9 +105,9 @@ export const HowItWorksFeaturesSection: React.FC = () => {
           },
           opacity: 0,
           y: 30,
-          duration: 0.8,
+          duration: animations.duration.normal,
           stagger: 0.2,
-          ease: 'power3.out',
+          ease: animations.easing.easeOut,
         });
       }
 
@@ -107,8 +123,8 @@ export const HowItWorksFeaturesSection: React.FC = () => {
             opacity: 0,
             y: 40,
             duration: 0.7,
-            delay: index * 0.15,
-            ease: 'power2.out',
+            delay: index * animations.stagger,
+            ease: animations.easing.sharp,
           });
         }
       });
@@ -123,9 +139,9 @@ export const HowItWorksFeaturesSection: React.FC = () => {
           },
           opacity: 0,
           y: 30,
-          duration: 0.8,
+          duration: animations.duration.normal,
           stagger: 0.1,
-          ease: 'power3.out',
+          ease: animations.easing.easeOut,
         });
       }
 
@@ -141,13 +157,13 @@ export const HowItWorksFeaturesSection: React.FC = () => {
           y: 20,
           duration: 0.6,
           stagger: 0.1,
-          ease: 'power2.out',
+          ease: animations.easing.sharp,
         });
       }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [animations]);
 
   return (
     <Box
@@ -160,18 +176,18 @@ export const HowItWorksFeaturesSection: React.FC = () => {
         position: 'relative',
       }}
     >
-      <Container 
-        maxWidth="lg" 
+      <Container
+        maxWidth="lg"
         sx={{
           maxWidth: containerMaxWidth,
           px: containerPadding,
         }}
       >
         {/* Main Header */}
-        <Box 
-          ref={headerRef} 
-          sx={{ 
-            textAlign: 'center', 
+        <Box
+          ref={headerRef}
+          sx={{
+            textAlign: 'center',
             mb: { xs: 8, md: 12 },
           }}
         >
@@ -179,21 +195,21 @@ export const HowItWorksFeaturesSection: React.FC = () => {
             variant="h2"
             sx={{
               fontSize: h2FontSize,
-              fontWeight: 700,
-              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
+              fontWeight: typography.h2.weight,
+              color: getTextColor('primary', isDark),
               mb: 3,
-              lineHeight: 1.2,
+              lineHeight: typography.h2.lineHeight,
             }}
           >
             Advanced Agent Access
           </Typography>
-          
+
           <Typography
             variant="body1"
             sx={{
               fontSize: { xs: '1.125rem', md: '1.375rem' },
-              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(75, 85, 99, 1)',
-              lineHeight: 1.6,
+              color: getTextColor('secondary', isDark),
+              lineHeight: typography.bodyLarge.lineHeight,
               maxWidth: 700,
               mx: 'auto',
             }}
@@ -202,7 +218,7 @@ export const HowItWorksFeaturesSection: React.FC = () => {
           </Typography>
         </Box>
 
-        {/* Features Section - Now with 4 items for better balance */}
+        {/* Features Section */}
         <Box ref={featuresRef} sx={{ mb: { xs: 12, md: 16 } }}>
           <Box
             sx={{
@@ -215,6 +231,8 @@ export const HowItWorksFeaturesSection: React.FC = () => {
           >
             {directAccessFeatures.map((feature, index) => {
               const IconComponent = feature.icon;
+              const featureColor = feature.color;
+              
               return (
                 <Box
                   key={index}
@@ -224,23 +242,21 @@ export const HowItWorksFeaturesSection: React.FC = () => {
                   sx={{
                     position: 'relative',
                     p: { xs: 4, md: 5 },
-                    background: isDark 
-                      ? 'linear-gradient(135deg, rgba(31, 41, 55, 0.85) 0%, rgba(55, 65, 81, 0.7) 100%)'
-                      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.97) 0%, rgba(249, 250, 251, 0.92) 100%)',
+                    background: cardStyles.background,
                     backdropFilter: 'blur(20px)',
-                    borderRadius: 3,
-                    border: isDark 
-                      ? `1px solid ${feature.color}80` 
-                      : `1px solid ${feature.color}30`,
-                    transition: 'box-shadow 0.3s ease, border 0.3s ease, background 0.3s ease',
+                    borderRadius: borderRadius.lg,
+                    border: isDark
+                      ? `1px solid ${withOpacity(featureColor, 0.5)}`
+                      : `1px solid ${withOpacity(featureColor, 0.19)}`,
+                    transition: transitions.allNormal,
                     cursor: 'pointer',
                     overflow: 'hidden',
                     '&:hover': {
-                      boxShadow: `0 8px 32px -4px ${feature.color}55`,
-                      border: `1.5px solid ${feature.color}`,
+                      boxShadow: `0 8px 32px -4px ${withOpacity(featureColor, 0.33)}`,
+                      border: `1.5px solid ${featureColor}`,
                       background: isDark
-                        ? `linear-gradient(135deg, ${feature.color}22 0%, rgba(55, 65, 81, 0.92) 100%)`
-                        : `linear-gradient(135deg, #fff 0%, ${feature.color}0A 100%)`,
+                        ? `linear-gradient(135deg, ${withOpacity(featureColor, 0.13)} 0%, ${cardHoverStyles.background} 100%)`
+                        : `linear-gradient(135deg, #fff 0%, ${withOpacity(featureColor, 0.04)} 100%)`,
                     },
                   }}
                 >
@@ -250,21 +266,21 @@ export const HowItWorksFeaturesSection: React.FC = () => {
                     sx={{
                       width: 56,
                       height: 56,
-                      borderRadius: 2,
-                      background: `${feature.color}25`,
+                      borderRadius: borderRadius.sm,
+                      background: withOpacity(featureColor, 0.15),
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       mb: 3,
-                      transition: 'background 0.3s ease',
+                      transition: transitions.normal,
                     }}
                   >
-                    <IconComponent 
-                      sx={{ 
-                        fontSize: 28, 
-                        color: feature.color,
-                        transition: 'color 0.3s ease',
-                      }} 
+                    <IconComponent
+                      sx={{
+                        fontSize: 28,
+                        color: featureColor,
+                        transition: transitions.normal,
+                      }}
                     />
                   </Box>
 
@@ -272,22 +288,22 @@ export const HowItWorksFeaturesSection: React.FC = () => {
                   <Typography
                     variant="h5"
                     sx={{
-                      fontSize: '1.5rem',
-                      fontWeight: 700,
-                      color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
+                      fontSize: typography.h5.size,
+                      fontWeight: typography.h5.weight,
+                      color: getTextColor('primary', isDark),
                       mb: 2,
-                      lineHeight: 1.3,
+                      lineHeight: typography.h5.lineHeight,
                     }}
                   >
                     {feature.title}
                   </Typography>
-                  
+
                   <Typography
                     variant="body1"
                     sx={{
-                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(75, 85, 99, 1)',
-                      lineHeight: 1.6,
-                      fontSize: '1rem',
+                      color: getTextColor('secondary', isDark),
+                      lineHeight: typography.body.lineHeight,
+                      fontSize: typography.body.size,
                     }}
                   >
                     {feature.description}
@@ -304,121 +320,168 @@ export const HowItWorksFeaturesSection: React.FC = () => {
             <Typography
               variant="h3"
               sx={{
-                fontSize: { xs: '2rem', md: '2.5rem' },
-                fontWeight: 700,
-                color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
+                fontSize: typography.h3.size,
+                fontWeight: typography.h3.weight,
+                color: getTextColor('primary', isDark),
                 mb: 4,
+                lineHeight: typography.h3.lineHeight,
               }}
             >
               How It Works
             </Typography>
 
-            <Stack 
-              direction={{ xs: 'column', md: 'row' }} 
-              spacing={4} 
-              sx={{ 
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              spacing={4}
+              sx={{
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                mb: 6 
+                mb: 6,
               }}
             >
+              {/* Step 1 */}
               <Box sx={{ textAlign: 'center', flex: 1 }}>
                 <Box
                   sx={{
                     width: 64,
                     height: 64,
-                    borderRadius: '50%',
-                    background: isDark
-                      ? `linear-gradient(135deg, ${PALETTE.blue.dark} 0%, ${PALETTE.blue.dark}99 100%)`
-                      : `linear-gradient(135deg, ${PALETTE.blue.light} 0%, ${PALETTE.blue.light}BB 100%)`,
+                    borderRadius: borderRadius.full,
+                    background: getGradient(themeConfig.gradients.blue, isDark),
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     mx: 'auto',
                     mb: 2,
-                    color: 'white',
+                    color: '#FFFFFF',
                     fontSize: '1.5rem',
                     fontWeight: 700,
+                    boxShadow: isDark
+                      ? `0 4px 20px ${withOpacity(primaryColor, 0.4)}`
+                      : `0 4px 20px ${withOpacity(primaryColor, 0.3)}`,
                   }}
                 >
                   1
                 </Box>
-                <Typography variant="h6" sx={{ mb: 1, fontWeight: 600, color: isDark ? 'white' : 'black' }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    mb: 1,
+                    fontWeight: typography.h6.weight,
+                    color: getTextColor('primary', isDark),
+                  }}
+                >
                   Ask or Access
                 </Typography>
-                <Typography variant="body2" sx={{ color: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(75,85,99,1)' }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: getTextColor('secondary', isDark),
+                  }}
+                >
                   Chat naturally or open agents directly
                 </Typography>
               </Box>
 
-              <ArrowForward sx={{ 
-                fontSize: 32, 
-                color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(156,163,175,1)',
-                display: { xs: 'none', md: 'block' },
-                transform: { xs: 'rotate(90deg)', md: 'none' }
-              }} />
+              <ArrowForward
+                sx={{
+                  fontSize: 32,
+                  color: getTextColor('muted', isDark),
+                  display: { xs: 'none', md: 'block' },
+                  transform: { xs: 'rotate(90deg)', md: 'none' },
+                }}
+              />
 
+              {/* Step 2 */}
               <Box sx={{ textAlign: 'center', flex: 1 }}>
                 <Box
                   sx={{
                     width: 64,
                     height: 64,
-                    borderRadius: '50%',
-                    background: isDark
-                      ? `linear-gradient(135deg, ${PALETTE.pink.dark} 0%, ${PALETTE.pink.dark}99 100%)`
-                      : `linear-gradient(135deg, ${PALETTE.pink.light} 0%, ${PALETTE.pink.light}BB 100%)`,
+                    borderRadius: borderRadius.full,
+                    background: getGradient(themeConfig.gradients.pink, isDark),
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     mx: 'auto',
                     mb: 2,
-                    color: 'white',
+                    color: '#FFFFFF',
                     fontSize: '1.5rem',
                     fontWeight: 700,
+                    boxShadow: isDark
+                      ? `0 4px 20px ${withOpacity(pinkColor, 0.4)}`
+                      : `0 4px 20px ${withOpacity(pinkColor, 0.3)}`,
                   }}
                 >
                   2
                 </Box>
-                <Typography variant="h6" sx={{ mb: 1, fontWeight: 600, color: isDark ? 'white' : 'black' }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    mb: 1,
+                    fontWeight: typography.h6.weight,
+                    color: getTextColor('primary', isDark),
+                  }}
+                >
                   AI Processes
                 </Typography>
-                <Typography variant="body2" sx={{ color: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(75,85,99,1)' }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: getTextColor('secondary', isDark),
+                  }}
+                >
                   Specialized agents analyze your data
                 </Typography>
               </Box>
 
-              <ArrowForward sx={{ 
-                fontSize: 32, 
-                color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(156,163,175,1)',
-                display: { xs: 'none', md: 'block' },
-                transform: { xs: 'rotate(90deg)', md: 'none' }
-              }} />
+              <ArrowForward
+                sx={{
+                  fontSize: 32,
+                  color: getTextColor('muted', isDark),
+                  display: { xs: 'none', md: 'block' },
+                  transform: { xs: 'rotate(90deg)', md: 'none' },
+                }}
+              />
 
+              {/* Step 3 */}
               <Box sx={{ textAlign: 'center', flex: 1 }}>
                 <Box
                   sx={{
                     width: 64,
                     height: 64,
-                    borderRadius: '50%',
-                    background: isDark
-                      ? `linear-gradient(135deg, ${PALETTE.green.dark} 0%, ${PALETTE.green.dark}99 100%)`
-                      : `linear-gradient(135deg, ${PALETTE.green.light} 0%, ${PALETTE.green.light}BB 100%)`,
+                    borderRadius: borderRadius.full,
+                    background: getGradient(themeConfig.gradients.green, isDark),
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     mx: 'auto',
                     mb: 2,
-                    color: 'white',
+                    color: '#FFFFFF',
                     fontSize: '1.5rem',
                     fontWeight: 700,
+                    boxShadow: isDark
+                      ? `0 4px 20px ${withOpacity(greenColor, 0.4)}`
+                      : `0 4px 20px ${withOpacity(greenColor, 0.3)}`,
                   }}
                 >
                   3
                 </Box>
-                <Typography variant="h6" sx={{ mb: 1, fontWeight: 600, color: isDark ? 'white' : 'black' }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    mb: 1,
+                    fontWeight: typography.h6.weight,
+                    color: getTextColor('primary', isDark),
+                  }}
+                >
                   Get Results
                 </Typography>
-                <Typography variant="body2" sx={{ color: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(75,85,99,1)' }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: getTextColor('secondary', isDark),
+                  }}
+                >
                   Actionable insights and recommendations
                 </Typography>
               </Box>
@@ -428,8 +491,8 @@ export const HowItWorksFeaturesSection: React.FC = () => {
               variant="body1"
               sx={{
                 fontSize: '1.25rem',
-                color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(75, 85, 99, 1)',
-                lineHeight: 1.6,
+                color: getTextColor('secondary', isDark),
+                lineHeight: typography.bodyLarge.lineHeight,
                 fontStyle: 'italic',
               }}
             >
@@ -443,20 +506,22 @@ export const HowItWorksFeaturesSection: React.FC = () => {
           <Typography
             variant="h4"
             sx={{
-              fontSize: { xs: '1.75rem', md: '2.25rem' },
-              fontWeight: 700,
-              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
+              fontSize: typography.h4.size,
+              fontWeight: typography.h4.weight,
+              color: getTextColor('primary', isDark),
               mb: 4,
+              lineHeight: typography.h4.lineHeight,
             }}
           >
             Ready to Get Started?
           </Typography>
 
-          <Stack 
-            direction={{ xs: 'column', sm: 'row' }} 
-            spacing={3} 
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={3}
             sx={{ justifyContent: 'center', alignItems: 'center' }}
           >
+            {/* Primary CTA Button */}
             <Button
               variant="contained"
               size="large"
@@ -467,20 +532,23 @@ export const HowItWorksFeaturesSection: React.FC = () => {
                 py: 2.5,
                 fontSize: '1.125rem',
                 fontWeight: 600,
-                background: isDark
-                  ? `linear-gradient(135deg, ${PALETTE.blue.dark} 0%, ${PALETTE.blue.dark}CC 100%)`
-                  : `linear-gradient(135deg, ${PALETTE.blue.light} 0%, ${PALETTE.blue.light}99 100%)`,
-                borderRadius: 2,
+                background: primaryButtonStyles.background,
+                borderRadius: themeConfig.borderRadius.full,
                 minWidth: 180,
+                color: primaryButtonStyles.text,
+                boxShadow: primaryButtonStyles.shadow,
+                transition: transitions.allNormal,
                 '&:hover': {
                   transform: 'translateY(-2px)',
-                  boxShadow: `0 8px 25px ${getColor(isDark, PALETTE.blue)}44`,
+                  background: primaryButtonHoverStyles.background,
+                  boxShadow: primaryButtonHoverStyles.shadow,
                 },
               }}
             >
               Try Demo
             </Button>
-            
+
+            {/* Secondary CTA Button */}
             <Button
               variant="outlined"
               size="large"
@@ -490,14 +558,18 @@ export const HowItWorksFeaturesSection: React.FC = () => {
                 px: 6,
                 py: 2.5,
                 fontSize: '1.125rem',
-                fontWeight: 600,
-                borderColor: isDark ? `${PALETTE.blue.dark}88` : `${PALETTE.blue.light}66`,
-                color: isDark ? 'rgba(255, 255, 255, 0.9)' : `${PALETTE.blue.light}`,
-                borderRadius: 2,
+                fontWeight: 700,
+                borderColor: outlinedButtonStyles.border,
+                color: outlinedButtonStyles.text,
+                background: outlinedButtonStyles.background,
+                borderRadius: themeConfig.borderRadius.full,
+                borderWidth: 2,
                 minWidth: 180,
+                transition: transitions.allNormal,
                 '&:hover': {
-                  borderColor: isDark ? `${PALETTE.blue.dark}` : `${PALETTE.blue.light}`,
-                  background: isDark ? `${PALETTE.blue.dark}15` : `${PALETTE.blue.light}10`,
+                  borderWidth: 2,
+                  borderColor: outlinedButtonHoverStyles.border,
+                  background: outlinedButtonHoverStyles.background,
                   transform: 'translateY(-2px)',
                 },
               }}

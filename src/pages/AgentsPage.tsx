@@ -3,7 +3,6 @@ import { Box } from '@mui/material';
 import { AppSidebar, Footer, ThemeToggle } from '../components/layout';
 import {
   AgentsHeroSection,
-  AgentsOverviewSection,
   AgentsShowcaseSection,
   BiggerVisionSection,
 } from '../components/agents';
@@ -86,7 +85,7 @@ import { usePageTitle } from '../hooks/usePageTitle';
             }}
           >
             <AgentsHeroSection />
-            <AgentsOverviewSection />
+            {/* <AgentsOverviewSection /> */}
             <AgentsShowcaseSection />
             <BiggerVisionSection />
           </Box>

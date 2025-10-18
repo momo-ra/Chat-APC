@@ -12,12 +12,14 @@ import {
   HorizontalScrollSlider,
   ExpandingBackgroundSlider,
 } from '../components/home';
+import FloatingInput from '../components/home/FloatingInput';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useIsMobile } from '../hooks/use-mobile';
 
 // Register plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -29,8 +31,12 @@ const HomePage: React.FC = () => {
     description: 'ChatAPC: AI-powered assistant for industrial process control. Analyze constraints, optimize operations, and improve plant efficiency with conversational intelligence.',
   });
   const { isDark } = useThemeMode();
+  const isMobile = useIsMobile();
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [isMediumScreen, setIsMediumScreen] = React.useState(false);
+  const [showFloatingInput, setShowFloatingInput] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState('');
+  const [messages, setMessages] = React.useState<any[]>([]);
 
   // ANIMATION LOCK - Prevent scroll and interaction until hero animation is complete
   const [animationComplete, setAnimationComplete] = React.useState(false);
@@ -43,16 +49,19 @@ const HomePage: React.FC = () => {
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
+      document.body.style.top = '0';
     } else {
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.width = '';
+      document.body.style.top = '';
     }
     // Clean up on unmount
     return () => {
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.width = '';
+      document.body.style.top = '';
     };
   }, [animationComplete]);
 
@@ -102,6 +111,62 @@ const HomePage: React.FC = () => {
     };
   }, []);
 
+  // Floating input visibility on mobile - show after scrolling past hero section
+  React.useEffect(() => {
+    if (!isMobile || !animationComplete) {
+      setShowFloatingInput(false);
+      return;
+    }
+
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const heroSectionHeight = window.innerHeight * 0.8;
+          
+          // Show floating input when user scrolls past hero section
+          if (scrollY > Math.min(300, heroSectionHeight)) {
+            setShowFloatingInput(true);
+          } else {
+            setShowFloatingInput(false);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMobile, animationComplete]);
+
+  // Handle sending message from floating input
+  const handleSendMessage = () => {
+    if (!inputValue.trim()) return;
+    
+    // Scroll to top to show the hero section chat
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+
+    // Add message to chat (you may need to pass this to HeroSearchSection)
+    // For now, we'll just clear the input
+    setInputValue('');
+  };
+
+  // Handle key press
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  // Get consistent background that doesn't change
+  const pageBackground = React.useMemo(() => getHomeBackground(isDark), [isDark]);
+
   return (
     <>
       {/* Skip Navigation for Accessibility */}
@@ -129,7 +194,7 @@ const HomePage: React.FC = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          background: getHomeBackground(isDark),
+          background: pageBackground,
           position: 'relative',
           overflow: 'visible',
           transition: 'background 0.3s ease',
@@ -156,7 +221,7 @@ const HomePage: React.FC = () => {
             background: 'transparent',
           }}
         >
-          {/* Hero Section - Always visible */}
+          {/* Hero Section - Always visible, background transparent */}
           <Box
             data-section-theme={isDark ? 'dark' : 'light'}
             data-section-primary={isDark ? '#009BE4' : '#2563EB'}
@@ -174,86 +239,133 @@ const HomePage: React.FC = () => {
             <HeroSearchSection
               setAnimationComplete={setAnimationComplete}
               animationComplete={animationComplete}
+              inputValue={inputValue}
+              setInputValue={setInputValue}
+              messages={messages}
+              setMessages={setMessages}
             />
           </Box>
 
-          {/* Content Sections - Hidden until animation completes */}
-          {animationComplete && (
+          {/* Content Sections - Always rendered but with opacity control */}
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: '100vw',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              zIndex: 2,
+              overflow: 'hidden',
+              opacity: animationComplete ? 1 : 0,
+              visibility: animationComplete ? 'visible' : 'hidden',
+              transform: animationComplete ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 1.2s ease-out, transform 1.2s ease-out, visibility 0s linear 0s',
+              pointerEvents: animationComplete ? 'auto' : 'none',
+            }}
+          >
+            {/* DemoVideoSection */}
             <Box
               sx={{
                 width: '100%',
-                maxWidth: '100vw',
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                zIndex: 2,
-                overflow: 'hidden',
-                animation: 'smoothFadeIn 1.2s ease-out',
-                '@keyframes smoothFadeIn': {
-                  '0%': { 
-                    opacity: 0,
-                    transform: 'translateY(20px)',
-                  },
-                  '100%': { 
-                    opacity: 1,
-                    transform: 'translateY(0)',
-                  },
-                },
+                background: 'transparent',
               }}
             >
-              {/* DemoVideoSection */}
               <DemoVideoSection />
+            </Box>
 
-              {/* ExpandingBackgroundSlider */}
-              {/* <ExpandingBackgroundSlider /> */}
+            {/* ExpandingBackgroundSlider */}
+            {/* <ExpandingBackgroundSlider /> */}
 
-              {/* HorizontalScrollSlider */}
-              {/* <HorizontalScrollSlider /> */}
+            {/* HorizontalScrollSlider */}
+            {/* <HorizontalScrollSlider /> */}
 
-              {/* BenefitsSection */}
+            {/* BenefitsSection */}
+            <Box
+              sx={{
+                width: '100%',
+                background: 'transparent',
+              }}
+            >
               <BenefitsSection />
+            </Box>
 
-              {/* ArchitectureSection */}
+            {/* ArchitectureSection */}
+            <Box
+              sx={{
+                width: '100%',
+                background: 'transparent',
+              }}
+            >
               <ArchitectureSection />
+            </Box>
 
-              {/* TeamSection */}
+            {/* TeamSection */}
+            <Box
+              sx={{
+                width: '100%',
+                background: 'transparent',
+              }}
+            >
               <TeamSection />
+            </Box>
 
-              {/* CTASection */}
+            {/* CTASection */}
+            <Box
+              sx={{
+                width: '100%',
+                background: 'transparent',
+              }}
+            >
               <CTASection />
+            </Box>
 
-              {/* Contact Section */}
+            {/* Contact Section */}
+            <Box
+              sx={{
+                width: '100%',
+                background: 'transparent',
+              }}
+            >
               <ContactSection />
             </Box>
-          )}
+          </Box>
 
-          {/* Footer - Hidden until animation completes */}
-          {animationComplete && (
-            <Box
-              component="footer"
-              sx={{
-                mt: 0,
-                mb: 0,
-                width: '100%',
-                marginLeft: 0,
-                paddingLeft: 0,
-                animation: 'smoothFadeIn 1.2s ease-out 0.2s backwards',
-                '@keyframes smoothFadeIn': {
-                  '0%': { 
-                    opacity: 0,
-                    transform: 'translateY(20px)',
-                  },
-                  '100%': { 
-                    opacity: 1,
-                    transform: 'translateY(0)',
-                  },
-                },
-              }}
-            >
-              <Footer />
-            </Box>
-          )}
+          {/* Footer - Always rendered but with opacity control */}
+          <Box
+            component="footer"
+            sx={{
+              mt: 0,
+              mb: 0,
+              width: '100%',
+              marginLeft: 0,
+              paddingLeft: 0,
+              opacity: animationComplete ? 1 : 0,
+              visibility: animationComplete ? 'visible' : 'hidden',
+              transform: animationComplete ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 1.2s ease-out 0.2s, transform 1.2s ease-out 0.2s, visibility 0s linear 0.2s',
+              pointerEvents: animationComplete ? 'auto' : 'none',
+            }}
+          >
+            <Footer />
+          </Box>
         </Box>
+
+        {/* Floating Input for Mobile - Fixed at bottom of entire page */}
+        {/* {showFloatingInput && animationComplete && isMobile && (
+          <FloatingInput
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleSendMessage={handleSendMessage}
+            handleKeyPress={handleKeyPress}
+            isLoading={false}
+            showAutoDemo={false}
+            demoStep={0}
+            setMessages={setMessages}
+            setShowAutoDemo={() => {}}
+            setDemoStep={() => {}}
+            demoExample={{ user: '', assistant: '' }}
+          />
+        )} */}
       </Box>
     </>
   );

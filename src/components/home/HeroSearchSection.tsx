@@ -1,21 +1,33 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, useTheme, useMediaQuery } from '@mui/material';
 import { useThemeMode } from '../../contexts/ThemeContext';
-import FloatingInput from './FloatingInput';
+// FloatingInput import removed, since it's handled in the home page now
 import { HeroTitleSection, ChatMessage, LoadingIndicator, ChatInput, useChatLogic } from './hero-search-section';
 import gsap from 'gsap';
+import { 
+  themeConfig, 
+  getColor, 
+  getGradient, 
+  getBackground,
+  withOpacity 
+} from '../shared/themeConfig';
 
-
-
+import AnimatedHomeBackground from '../shared/AnimatedHomeBackground';
 
 interface HeroSearchSectionProps {
   animationComplete: boolean;
   setAnimationComplete: (done: boolean) => void;
+  // Optional props: state lifted to HomePage (currently not used here, but accepted for compatibility)
+  inputValue?: string;
+  setInputValue?: (val: string) => void;
+  messages?: any[];
+  setMessages?: React.Dispatch<React.SetStateAction<any[]>> | ((msgs: any[]) => void);
 }
 
 const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
   animationComplete,
   setAnimationComplete,
+  ..._rest
 }) => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const scrollableAreaRef = useRef<HTMLDivElement>(null);
@@ -24,13 +36,20 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
   const firstTitleRef = useRef<HTMLDivElement>(null);
   const secondTitleRef = useRef<HTMLDivElement>(null);
   const subtitleRef = useRef<HTMLDivElement>(null);
-  
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { isDark } = useThemeMode();
   const is13InchScreen = useMediaQuery('(min-width:1360px) and (max-width:1510px)');
 
-  const [showFloatingInput, setShowFloatingInput] = React.useState(false);
+  // Remove any floating input state logic
+  // const [showFloatingInput, setShowFloatingInput] = React.useState(false);
+
+  // Get unified theme values
+  const { colors, gradients, borderRadius, transitions, animations: animConfig } = themeConfig;
+  const primaryColor = getColor(colors.blue, isDark);
+  const cyanColor = getColor(colors.cyan, isDark);
+  const greenColor = getColor(colors.green, isDark);
 
   const {
     messages,
@@ -49,7 +68,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
     setMessages,
   } = useChatLogic();
 
-  // GSAP Animation - Include chatAreaRef in timeline
+  // GSAP Animation
   useEffect(() => {
     const tl = gsap.timeline({
       onComplete: () => {
@@ -57,7 +76,6 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
       }
     });
 
-    const words = firstTitleRef.current?.querySelectorAll('[class^="word-"]');
     const isMobileView = window.innerWidth < 768;
     const isTabletView = window.innerWidth >= 768 && window.innerWidth < 1024;
 
@@ -80,13 +98,8 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
       y: startY,
       scale: startScale,
       opacity: 1,
-      transformOrigin: 'center center'
-    });
-
-    gsap.set(words, {
-      opacity: 0.3,
       filter: 'grayscale(100%) brightness(0.5)',
-      y: 0
+      transformOrigin: 'center center'
     });
 
     // Animation timeline
@@ -94,14 +107,13 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
       .to(firstTitleRef.current, {
         y: 0,
         duration: animationDuration,
-        ease: 'power2.out'
+        ease: animConfig.easing.easeOut,
       })
-      .to(words, {
-        opacity: 1,
+      .to(firstTitleRef.current, {
         filter: 'grayscale(0%) brightness(1)',
+        opacity: 1,
         duration: animationDuration * 0.9,
-        stagger: isMobileView ? 0.08 : 0.1,
-        ease: 'power2.inOut'
+        ease: animConfig.easing.easeInOut,
       }, `-=${animationDuration * 0.9}`)
       .to({}, { duration: isMobileView ? 0.2 : 0.3 })
       .to(firstTitleRef.current, {
@@ -113,25 +125,25 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
         opacity: 1,
         y: 0,
         duration: 0.7,
-        ease: 'power2.out'
+        ease: animConfig.easing.sharp,
       }, '-=0.4')
       .to(subtitleRef.current, {
         opacity: 1,
         y: 0,
         duration: 0.6,
-        ease: 'power2.out'
+        ease: animConfig.easing.sharp,
       }, '-=0.3')
       .to(chatAreaRef.current, {
         opacity: 1,
         y: 0,
         duration: 1,
-        ease: 'power2.out'
+        ease: animConfig.easing.sharp,
       }, '-=0.3');
 
     return () => {
       tl.kill();
     };
-  }, [setAnimationComplete]);
+  }, [setAnimationComplete, animConfig]);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -171,33 +183,8 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
     }
   }, [isTyping]);
 
-  // Floating input visibility on mobile
-  useEffect(() => {
-    if (!isMobile) {
-      setShowFloatingInput(false);
-      return;
-    }
-
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const scrollY = window.scrollY;
-          const heroSectionHeight = window.innerHeight * 0.8;
-          if (scrollY > Math.min(300, heroSectionHeight)) {
-            setShowFloatingInput(true);
-          } else {
-            setShowFloatingInput(false);
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isMobile]);
+  // Remove useEffect related to floating input visibility entirely
+  // Floating input is now handled in the home page
 
   return (
     <>
@@ -227,12 +214,26 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
           alignItems: 'center',
           justifyContent: 'center',
           textAlign: 'center',
-          transition: 'background 0.3s ease',
-          background: isDark
-            ? 'linear-gradient(to bottom, #0a0e2e 0%, #0d1842 50%, #0a0e2e 100%)'
-            : 'linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%)',
+          transition: transitions.normal,
         }}
       >
+        {/* Render AnimatedHomeBackground only on desktop (not mobile) */}
+        {!isMobile && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 0,
+              pointerEvents: 'none',
+            }}
+          >
+            <AnimatedHomeBackground />
+          </Box>
+        )}
+        {/* Foreground content */}
         <Box
           ref={containerRef}
           sx={{
@@ -260,13 +261,13 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
             },
             '&::-webkit-scrollbar-thumb': {
               background: isDark
-                ? 'rgba(255, 255, 255, 0.2)'
-                : 'rgba(0, 0, 0, 0.2)',
-              borderRadius: 4,
+                ? withOpacity('#FFFFFF', 0.2)
+                : withOpacity('#000000', 0.2),
+              borderRadius: borderRadius.sm,
             },
           }}
         >
-          {/* Hero Title - Inline instead of component */}
+          {/* Hero Title - First Line */}
           <Box
             ref={firstTitleRef}
             sx={{
@@ -277,33 +278,31 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
               position: 'relative',
               fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
               display: 'flex',
-              gap: { xs: '0.25rem', sm: '0.4rem', md: '0.5rem' },
               justifyContent: 'center',
               flexWrap: 'wrap',
               transformStyle: 'preserve-3d',
               px: { xs: 1, sm: 2, md: 0 },
+              gap: 0,
             }}
           >
-            {['Chat', 'with', 'your', 'plant.'].map((word, index) => (
-              <Box
-                key={index}
-                component="span"
-                className={`word-${index}`}
-                sx={{
-                  background: isDark
-                    ? 'linear-gradient(135deg, #009BE4 0%, #34D399 100%)'
-                    : 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  display: 'inline-block',
-                }}
-              >
-                {word}
-              </Box>
-            ))}
+            <Box
+              component="span"
+              className="word-0"
+              sx={{
+                background: isDark
+                  ? getGradient(gradients.blueToPurple, isDark)
+                  : getGradient(gradients.blue, isDark),
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                display: 'inline-block',
+              }}
+            >
+              {`Chat with your plant.`}
+            </Box>
           </Box>
 
+          {/* Hero Title - Second Line */}
           <Box
             ref={secondTitleRef}
             component="div"
@@ -328,13 +327,16 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
             Turn data into decisions.
           </Box>
 
+          {/* Subtitle */}
           <Box
             ref={subtitleRef}
             component="div"
             sx={{
               fontSize: { xs: '0.95rem', sm: '1.15rem', md: '1.25rem' },
               fontWeight: 500,
-              color: isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(15, 23, 42, 0.85)',
+              color: isDark 
+                ? withOpacity('#FFFFFF', 0.85) 
+                : withOpacity('#0F172A', 0.85),
               lineHeight: 1.6,
               textAlign: 'center',
               maxWidth: '700px',
@@ -351,8 +353,8 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
                 width: '40px',
                 height: '1px',
                 background: isDark
-                  ? 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)'
-                  : 'linear-gradient(90deg, transparent 0%, rgba(15,23,42,0.4) 50%, transparent 100%)',
+                  ? `linear-gradient(90deg, transparent 0%, ${withOpacity('#FFFFFF', 0.4)} 50%, transparent 100%)`
+                  : `linear-gradient(90deg, transparent 0%, ${withOpacity('#0F172A', 0.4)} 50%, transparent 100%)`,
               },
             }}
           >
@@ -360,8 +362,8 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
               component="span"
               sx={{
                 background: isDark
-                  ? 'linear-gradient(135deg, #009BE4 0%, #34D399 100%)'
-                  : 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
+                  ? getGradient(gradients.blueToBlue, isDark)
+                  : getGradient(gradients.blueToBlue, isDark),
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -389,21 +391,18 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
               background: isDark
                 ? 'linear-gradient(145deg, rgba(10, 14, 46, 0.75) 0%, rgba(17, 24, 39, 0.85) 50%, rgba(13, 20, 51, 0.8) 100%)'
                 : 'linear-gradient(145deg, rgba(255, 255, 255, 0.85) 0%, rgba(250, 251, 254, 0.9) 50%, rgba(248, 250, 252, 0.88) 100%)',
-              backdropFilter: 'blur(24px) saturate(180%)',
+              backdropFilter: 'blur(4px) saturate(180%)',
               border: isDark
-                ? '1px solid rgba(0, 155, 228, 0.15)'
-                : '1px solid rgba(59, 130, 246, 0.2)',
-              borderRadius: '24px',
-              boxShadow: isDark
-                ? '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 155, 228, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)'
-                : '0 25px 50px -12px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(59, 130, 246, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.9)',
+                ? `1px solid ${withOpacity(cyanColor, 0.15)}`
+                : `1px solid ${withOpacity(primaryColor, 0.2)}`,
+              borderRadius: borderRadius.xl,
               padding: 0,
               marginBottom: 1,
               display: 'flex',
               flexDirection: 'column',
               height: is13InchScreen
                 ? '830px'
-                : { xs: '500px', sm: '650px', md: '800px', lg: '850px' },
+                : { xs: '420px', sm: '520px', md: '800px', lg: '850px' },
               position: 'relative',
               overflow: 'hidden',
             }}
@@ -431,13 +430,13 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
                 },
                 '&::-webkit-scrollbar-thumb': {
                   background: isDark
-                    ? 'rgba(255, 255, 255, 0.15)'
-                    : 'rgba(0, 0, 0, 0.15)',
-                  borderRadius: 4,
+                    ? withOpacity('#FFFFFF', 0.15)
+                    : withOpacity('#000000', 0.15),
+                  borderRadius: borderRadius.sm,
                   '&:hover': {
                     background: isDark
-                      ? 'rgba(255, 255, 255, 0.25)'
-                      : 'rgba(0, 0, 0, 0.25)',
+                      ? withOpacity('#FFFFFF', 0.25)
+                      : withOpacity('#000000', 0.25),
                   },
                 },
               }}
@@ -486,22 +485,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
             />
           </Box>
 
-          {/* Floating Input for Mobile */}
-          {showFloatingInput && animationComplete && (
-            <FloatingInput
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-              handleSendMessage={handleSendMessage}
-              handleKeyPress={handleKeyPress}
-              isLoading={isLoading}
-              showAutoDemo={false}
-              demoStep={0}
-              setMessages={setMessages}
-              setShowAutoDemo={() => {}}
-              setDemoStep={() => {}}
-              demoExample={{ user: '', assistant: '' }}
-            />
-          )}
+          {/* Floating Input for Mobile removed since it's moved to home page */}
         </Box>
       </Box>
     </>
