@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://chatapc.ai/</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- About Page -->
+  <url>
+    <loc>https://chatapc.ai/company/about</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Features Page -->
+  <url>
+    <loc>https://chatapc.ai/product/how-it-works</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://chatapc.ai/product/architecture</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://chatapc.ai/product/agents</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://chatapc.ai/product/deployment</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+
+
+  <!-- Roadmap Page -->
+  <url>
+    <loc>https://chatapc.ai/roadmap</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Contact Page -->
+  <url>
+    <loc>https://chatapc.ai/company/contact</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Demo/Trial Page (if exists) -->
+  <url>
+    <loc>https://chatapc.ai/product/demo</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Blog/Resources (if exists) -->
+  <url>
+    <loc>https://chatapc.ai/resources/blog</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Case Studies (if exists) -->
+  <url>
+    <loc>https://chatapc.ai/resources/faq</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Documentation (if exists) -->
+  <url>
+    <loc>https://chatapc.ai/resources/documentation</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://chatapc.ai/resources/privacy</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Terms of Service -->
+  <url>
+    <loc>https://chatapc.ai/resources/terms</loc>
+    <lastmod>2025-10-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+</urlset>
+
+<!-- 
+  INSTRUCTIONS:
+  1. Save this file as "sitemap.xml" in your public folder
+  2. Update lastmod dates when pages change
+  3. Submit to Google Search Console: https://search.google.com/search-console
+  4. Submit to Bing Webmaster Tools: https://www.bing.com/webmasters
+  5. Add sitemap URL to robots.txt
+  6. Update this sitemap whenever you add/remove pages
+  
+  Priority Guidelines:
+  - 1.0: Homepage only
+  - 0.8-0.9: Important pages (Features, Pricing, Contact)
+  - 0.6-0.7: Secondary pages (Roadmap, Blog)
+  - 0.3-0.5: Legal pages (Privacy, Terms)
+  
+  ChangeFreq Guidelines:
+  - always: Real-time data pages
+  - hourly: News/updates
+  - daily: Frequently updated content
+  - weekly: Blog posts
+  - monthly: Product pages
+  - yearly: Static pages (Terms, Privacy)
+  
+  For dynamic sitemap generation, use a tool like:
+  - npm package: sitemap
+  - Example: 
+    import { SitemapStream, streamToPromise } from 'sitemap';
+    import { createWriteStream } from 'fs';
+-->

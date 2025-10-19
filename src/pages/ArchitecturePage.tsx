@@ -13,7 +13,7 @@ import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { usePageTitle } from '../hooks/usePageTitle';
-
+import { SEOHead } from '../components/SEO/SEOHead';
 
 const ArchitecturePage: React.FC = () => {
   const { isDark } = useThemeMode();
@@ -27,6 +27,11 @@ const ArchitecturePage: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  <SEOHead
+    title="Architecture"
+    description="Discover how ChatAPC's powerful architecture connects to your plant systems, organizes knowledge, and delivers AI-driven insights through specialized agents."
+  />
+  
   return (
     <>
       {/* Skip Navigation for Accessibility */}

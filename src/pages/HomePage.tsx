@@ -20,6 +20,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { useIsMobile } from '../hooks/use-mobile';
+import { SEOHead } from '../components/SEO/SEOHead';
 
 // Register plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -166,6 +167,11 @@ const HomePage: React.FC = () => {
 
   // Get consistent background that doesn't change
   const pageBackground = React.useMemo(() => getHomeBackground(isDark), [isDark]);
+  
+  <SEOHead
+    title="ChatAPC"
+    description="ChatAPC: AI-powered assistant for industrial process control. Analyze constraints, optimize operations, and improve plant efficiency with conversational intelligence."
+  />
 
   return (
     <>

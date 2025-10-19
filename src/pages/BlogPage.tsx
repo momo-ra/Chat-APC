@@ -12,6 +12,7 @@ import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { SEOHead } from '../components/SEO/SEOHead';
 
 const BlogPage: React.FC = () => {
   const { isDark } = useThemeMode();
@@ -25,6 +26,11 @@ const BlogPage: React.FC = () => {
     // Scroll to top on mount
     window.scrollTo(0, 0);
   }, []);
+  
+  <SEOHead
+    title="Blog"
+    description="Explore the latest insights on industrial AI, process control optimization, and ChatAPC features from Alpha Process Control experts."
+  />
 
   return (
     <>

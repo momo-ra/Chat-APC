@@ -10,7 +10,7 @@ import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { usePageTitle } from '../hooks/usePageTitle';
-
+import { SEOHead } from '../components/SEO/SEOHead';
 const RoadmapPage: React.FC = () => {
   const { isDark } = useThemeMode();
  
@@ -18,7 +18,11 @@ const RoadmapPage: React.FC = () => {
     title: 'Product Roadmap',
     description: 'Discover the future of ChatAPC with our comprehensive product roadmap, featuring upcoming features, integrations, and innovations in industrial AI.',
   });
-
+  <SEOHead
+    title="Product Roadmap"
+    description="Discover the future of ChatAPC with our comprehensive product roadmap, featuring upcoming features, integrations, and innovations in industrial AI."
+  />
+  
   useEffect(() => {
     // Scroll to top on mount
     window.scrollTo(0, 0);

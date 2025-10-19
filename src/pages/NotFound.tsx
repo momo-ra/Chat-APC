@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { Box, Container, Typography, Button, Link } from '@mui/material';
 import { Home } from '@mui/icons-material';
+import { SEOHead } from '../components/SEO/SEOHead';
 
 const NotFound = () => {
   const location = useLocation();
@@ -10,6 +11,11 @@ const NotFound = () => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
   }, [location.pathname]);
 
+  <SEOHead
+    title="404 Not Found"
+    description="The page you are looking for does not exist. Please check the URL and try again."
+  />
+  
   return (
     <Box
       sx={{

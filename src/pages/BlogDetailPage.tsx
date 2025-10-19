@@ -19,10 +19,15 @@ import { blogService } from '../services/blogService';
 import type { BlogArticle } from '../types/blog';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { applyEntranceAnimation } from '../components/shared/animationHelpers';
+import { SEOHead } from '../components/SEO/SEOHead';
 
 
 // NOTE: All page layouts should follow the structure in RoadmapPage.tsx for consistency
 const BlogDetailPage: React.FC = () => {
+  <SEOHead
+    title="Blog Detail"
+    description="Explore the latest insights on industrial AI, process control optimization, and ChatAPC features from Alpha Process Control experts."
+  />
   usePageTitle({
     title: 'Blog Detail',
     description: 'Explore the latest insights on industrial AI, process control optimization, and ChatAPC features from Alpha Process Control experts.',

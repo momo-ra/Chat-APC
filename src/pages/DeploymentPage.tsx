@@ -16,6 +16,7 @@ import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { SEOHead } from '../components/SEO/SEOHead';
 
 const DeploymentPage: React.FC = () => {
   usePageTitle({
@@ -29,6 +30,11 @@ const DeploymentPage: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  <SEOHead
+    title="Deployment Options"
+    description="Flexible deployment options for ChatAPC. Choose cloud, on-premise, or hybrid solutions with enterprise-grade security and scalability."
+  />
+  
   return (
     <>
       {/* Skip Navigation for Accessibility */}

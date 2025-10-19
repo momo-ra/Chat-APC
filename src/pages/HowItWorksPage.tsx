@@ -10,12 +10,16 @@ import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { usePageTitle } from '../hooks/usePageTitle';
-
+import { SEOHead } from '../components/SEO/SEOHead';
   const HowItWorksPage: React.FC = () => {
   usePageTitle({
     title: 'How ChatAPC Works',
     description: 'Discover how ChatAPC transforms natural language questions into actionable industrial insights through AI-powered agents, process knowledge mapping, and intelligent analysis.',
   });
+  <SEOHead
+    title="How ChatAPC Works"
+    description="Discover how ChatAPC transforms natural language questions into actionable industrial insights through AI-powered agents, process knowledge mapping, and intelligent analysis."
+  />
   const { isDark } = useThemeMode();
 
   useEffect(() => {

@@ -7,6 +7,7 @@ import { theme } from './theme';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { SplashScreen } from './components/shared';
 import ContactPage from './pages/ContactPage';
+import {HelmetProvider} from 'react-helmet-async';
 
 // Lazy load all pages for better performance
 const Index = lazy(() => import("./pages/Index"));
@@ -68,6 +69,7 @@ const App = () => {
 
   // Main app content
   return (
+    <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <MUIThemeProvider theme={theme}>
@@ -102,6 +104,7 @@ const App = () => {
         </MUIThemeProvider>
       </ThemeProvider>
     </QueryClientProvider>
+    </HelmetProvider>
   );
 };
 

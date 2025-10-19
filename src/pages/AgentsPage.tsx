@@ -10,12 +10,17 @@ import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { SEOHead } from '../components/SEO/SEOHead';
 
   const AgentsPage: React.FC = () => {
   usePageTitle({
     title: 'AI Agents',
     description: 'Meet your ecosystem of digital colleagues. ChatAPC\'s specialized AI agents detect, explain, and advise on process operations with interactive, conversational intelligence.',
   });
+  <SEOHead
+    title="AI Agents"
+    description="Meet your ecosystem of digital colleagues. ChatAPC's specialized AI agents detect, explain, and advise on process operations with interactive, conversational intelligence."
+  />
   const { isDark } = useThemeMode();
 
   useEffect(() => {
@@ -25,6 +30,7 @@ import { usePageTitle } from '../hooks/usePageTitle';
 
   return (
     <>
+    
       {/* Skip Navigation for Accessibility */}
       <Box
         component="a"

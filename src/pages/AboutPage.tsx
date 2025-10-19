@@ -14,6 +14,7 @@ import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { SEOHead } from '../components/SEO/SEOHead';
 
   const AboutPage: React.FC = () => {
   usePageTitle({
@@ -27,6 +28,11 @@ import { usePageTitle } from '../hooks/usePageTitle';
     window.scrollTo(0, 0);
   }, []);
 
+  <SEOHead
+    title="Our Story"
+    description="Learn about Alpha Process Control's journey from traditional process control to AI-driven industrial operations with ChatAPC."
+  />
+  
   return (
     <>
       {/* Skip Navigation for Accessibility */}

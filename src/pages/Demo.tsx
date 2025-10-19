@@ -4,6 +4,7 @@ import { ChatLayout } from '@/components/demo';
 import { ChatProvider } from '@/contexts/ChatContext';
 import { HelpPopup } from '@/components/shared';
 import type { HelpPopupButton } from '@/components/shared';
+import { SEOHead } from '../components/SEO/SEOHead';
 
 const Demo: React.FC = () => {
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
@@ -43,6 +44,11 @@ const Demo: React.FC = () => {
     window.scrollTo({ top: 0 });
     setShowWelcomePopup(false);
   };
+  
+  <SEOHead
+    title="Demo"
+    description="ChatAPC is the world's first conversational AI platform for industrial process control. This demo showcases how you can transform complex APC and DCS troubleshooting into simple conversations, reducing problem resolution time by 80% while maximizing plant efficiency. Try asking questions about your industrial processes, request data visualizations, or explore optimization strategies."
+  />
 
   return (
     <ChatProvider>
