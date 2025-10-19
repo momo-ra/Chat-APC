@@ -1,23 +1,27 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Typography, Container, Grid, Link, IconButton } from '@mui/material';
+import { Box, Typography, Container, Grid, Link, IconButton, Divider } from '@mui/material';
 import { 
   Twitter, 
-  LinkedIn
+  LinkedIn,
+  ArrowForward
 } from '@mui/icons-material';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import chatAPCLogo from '../../assets/chatAPC-logo-light-mode.svg';
 import chatAPCLogoDark from '../../assets/chatAPC-logo.svg';
 import alphaProcessLogo from '../../assets/AlphaProcess-logo.png';
-// You might need to replace the path below with your actual ISO certificate image file
 import isoLogo from '../../assets/ISO.png';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Footer: React.FC = () => {
   const { isDark } = useThemeMode();
+  const { containerMaxWidth, containerPadding } = useResponsiveLayout();
   const footerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const footerLinks = {
     product: [
@@ -26,16 +30,16 @@ const Footer: React.FC = () => {
       { label: 'Agents', href: '/product/agents' },
       { label: 'Deployment', href: '/product/deployment' },
     ],
-    roadmap: [
-      { label: 'Home', href: '/' },
-      { label: 'Demo', href: '/demo' },
-      { label: 'Roadmap', href: '/roadmap' },
-    ],
     company: [
       { label: 'About Us', href: '/company/about' },
       { label: 'Careers', href: 'https://www.alphaproc.com/company' },
       { label: "Team", href: 'https://www.alphaproc.com/company' },
       { label: 'Contact', href: '/company/contact' },
+    ],
+    roadmap: [
+      { label: 'Home', href: '/' },
+      { label: 'Demo', href: '/demo' },
+      { label: 'Roadmap', href: '/roadmap' },
     ],
     resources: [
       { label: 'Blog', href: '/resources/blog' },
@@ -46,20 +50,18 @@ const Footer: React.FC = () => {
   const socialLinks = [
     { icon: Twitter, href: 'https://x.com/AlphaProcessCtr', label: 'Twitter' },
     { icon: LinkedIn, href: 'https://www.linkedin.com/company/alphaproc', label: 'LinkedIn' },
-    // {icon: Iso, href:"https://www.alphaproc.com/_files/ugd/6ed5a8_4aebebb1143c48d0b4893d543d880229.pdf", label: 'ISO 9001:2015' },
   ];
 
-  // ISO certificate info
   const isoCertificate = {
     url: "https://www.alphaproc.com/_files/ugd/6ed5a8_4aebebb1143c48d0b4893d543d880229.pdf",
     label: "ISO 9001:2015 Certified",
-    img: isoLogo, // use your iso logo asset here
+    img: isoLogo,
     imgAlt: "ISO 9001:2015 Certificate"
   };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Simple single animation for the entire footer
+      // Animate entire footer on scroll
       gsap.from(footerRef.current, {
         scrollTrigger: {
           trigger: footerRef.current,
@@ -68,7 +70,7 @@ const Footer: React.FC = () => {
         },
         opacity: 0,
         y: 30,
-        duration: 0.5,
+        duration: 0.6,
         ease: 'power2.out',
       });
     }, footerRef);
@@ -98,420 +100,345 @@ const Footer: React.FC = () => {
         sx={{ 
           position: 'relative', 
           zIndex: 1,
-          px: { xs: 2, md: 3 },
-          // Reduce width on medium screens where sidebar is present
-          '@media (min-width: 960px) and (max-width: 1549px)': {
-            maxWidth: '950px',
-            px: 2.5,
-          },
-          '@media (min-width: 1550px)': {
-            maxWidth: '1200px',
-            px: 3,
-          },
+          maxWidth: containerMaxWidth,
+          px: containerPadding,
         }}
       >
         {/* Main Footer Content */}
-        <Box sx={{ 
+        <Box ref={contentRef} sx={{ 
           py: { xs: 8, md: 10 },
           '@media (min-width: 960px) and (max-width: 1549px)': {
             py: 8,
           },
         }}>
-          {/* Now arrange Grid and ISO beside each other (on desktop) */}
-          <Box
-            sx={{
-              display: { xs: 'block', md: 'flex' },
-              alignItems: { md: 'flex-start' },
-              gap: { md: 5, lg: 8 },
-            }}
+          <Grid 
+            container 
+            spacing={{ xs: 4, md: 5 }}
           >
-            {/* The whole Grid (Brand + Links) */}
-            <Grid 
-              container 
-              spacing={4} 
-              sx={{
-                flex: 1,
-                minWidth: 0,
-                '@media (min-width: 960px) and (max-width: 1549px)': {},
-              }}
-            >
-              {/* Brand Section */}
-              <Grid item xs={12} md={4}>
-                <Box sx={{ 
-                  mb: 3,
-                  '@media (min-width: 960px) and (max-width: 1549px)': {
-                    mb: 2.5,
-                  },
-                }}>
-                  <Box
-                    component="img"
-                    src={isDark ? chatAPCLogo : chatAPCLogoDark}
-                    alt="ChatAPC Logo"
-                    sx={{
-                      height: '40px',
-                      width: 'auto',
-                      mb: 3,
-                      filter: isDark ? 'brightness(1.1)' : 'none',
-                      '@media (min-width: 960px) and (max-width: 1549px)': {
-                        height: '36px',
-                        mb: 2.5,
-                      },
-                    }}
-                  />
-                  <Typography
-                    sx={{
-                      fontSize: '0.95rem',
-                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                      lineHeight: 1.7,
-                      mb: 3,
-                      '@media (min-width: 960px) and (max-width: 1549px)': {
-                        fontSize: '0.9rem',
-                        mb: 2.5,
-                      },
-                    }}
-                  >
-                    Your AI advisor for smarter process operations. Built by process engineers, for process engineers.
-                  </Typography>
-
-                  {/* Social Links */}
-                  <Box sx={{ 
-                    display: 'flex', 
-                    gap: 1,
-                    '@media (min-width: 960px) and (max-width: 1549px)': {
-                    },
-                  }}>
-                    {socialLinks.map((social) => {
-                      const Icon = social.icon;
-                      return (
-                        <IconButton
-                          key={social.label}
-                          href={social.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          sx={{
-                            color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-                            border: isDark 
-                              ? '1px solid rgba(255, 255, 255, 0.1)' 
-                              : '1px solid rgba(0, 0, 0, 0.1)',
-                            transition: 'all 0.3s ease',
-                            '&:hover': {
-                              color: isDark ? '#009BE4' : '#2563EB',
-                              borderColor: isDark ? '#009BE4' : '#2563EB',
-                              transform: 'translateY(-2px)',
-                            },
-                          }}
-                        >
-                          <Icon sx={{ 
-                            fontSize: 20,
-                            '@media (min-width: 960px) and (max-width: 1549px)': {
-                              fontSize: 18,
-                            },
-                          }} />
-                        </IconButton>
-                      );
-                    })}
-                  </Box>
-                  
-                </Box>
-                            {/* ISO Certificate Section - moved to be beside the Grid, not inside it */}
-            <Box
-              sx={{
-                mt: { xs: 5, md: 0 },
-                minWidth: { md: '210px' },
-                display: 'flex',
-                alignItems: 'center',
-                '@media (min-width: 960px) and (max-width: 1549px)': {
-                  minWidth: '180px',
-                },
-              }}
-            >
-              <Link 
-                href={isoCertificate.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  textDecoration: 'none',
-                  '&:hover .iso-cert-img': {
-                    opacity: 1,
-                    transform: 'scale(1.05)',
-                  },
-                }}
-              >
+            {/* Brand Section */}
+            <Grid item xs={12} md={4}>
+              <Box>
+                {/* Logo */}
                 <Box
                   component="img"
-                  src={isoCertificate.img}
-                  alt={isoCertificate.imgAlt}
-                  className="iso-cert-img"
+                  src={isDark ? chatAPCLogo : chatAPCLogoDark}
+                  alt="ChatAPC Logo"
                   sx={{
-                    height: { xs: '36px', md: '46px' },
+                    height: '40px',
                     width: 'auto',
-                    opacity: 0.92,
-                    marginRight: 1.6,
-                    transition: 'all 0.3s',
+                    mb: 3,
+                    filter: isDark ? 'brightness(1.1)' : 'none',
                     '@media (min-width: 960px) and (max-width: 1549px)': {
-                      height: '40px',
+                      height: '36px',
                     },
                   }}
                 />
+                
+                {/* Description */}
                 <Typography
                   sx={{
-                    fontSize: { xs: '0.87rem', md: '1rem' },
-                    color: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)',
-                    fontWeight: 500,
-                    letterSpacing: '0.03em',
-                    whiteSpace: 'nowrap',
-                    transition: 'color 0.25s',
-                    '&:hover': {
-                      color: isDark ? '#009BE4': '#2563EB'
-                    }
-                  }}
-                >
-                  {isoCertificate.label}
-                </Typography>
-              </Link>
-            </Box>
-            {/* End ISO beside grid */}
-              </Grid>
-
-              {/* Links Sections */}
-              <Grid 
-                item 
-                xs={6} 
-                sm={6} 
-                md={2}
-              >
-                <Typography
-                  sx={{
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                    color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
-                    mb: 2,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
+                    fontSize: '0.95rem',
+                    color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                    lineHeight: 1.7,
+                    mb: 3,
+                    maxWidth: '350px',
                     '@media (min-width: 960px) and (max-width: 1549px)': {
-                      fontSize: '0.85rem',
-                      mb: 1.5,
+                      fontSize: '0.9rem',
                     },
                   }}
                 >
-                  Product
+                  Your AI advisor for smarter process operations. Built by process engineers, for process engineers.
                 </Typography>
+
+                {/* Social Links */}
                 <Box sx={{ 
                   display: 'flex', 
-                  flexDirection: 'column', 
                   gap: 1.5,
-                  '@media (min-width: 960px) and (max-width: 1549px)': {
-                    gap: 1.25,
-                  },
+                  mb: 4,
                 }}>
-                  {footerLinks.product.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      sx={{
-                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                        textDecoration: 'none',
-                        fontSize: '0.9rem',
-                        transition: 'all 0.2s ease',
-                        '@media (min-width: 960px) and (max-width: 1549px)': {
-                          fontSize: '0.85rem',
-                        },
-                        '&:hover': {
-                          color: isDark ? '#009BE4' : '#2563EB',
-                          transform: 'translateX(4px)',
-                        },
-                      }}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </Box>
-              </Grid>
-
-              <Grid 
-                item 
-                xs={6} 
-                sm={6} 
-                md={2}
-              >
-                <Typography
-                  sx={{
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                    color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
-                    mb: 2,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    '@media (min-width: 960px) and (max-width: 1549px)': {
-                      fontSize: '0.85rem',
-                      mb: 1.5,
-                    },
-                  }}
-                >
-                  Company
-                </Typography>
-                <Box sx={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: 1.5,
-                  '@media (min-width: 960px) and (max-width: 1549px)': {
-                    gap: 1.25,
-                  },
-                }}>
-                  {footerLinks.company.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      sx={{
-                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                        textDecoration: 'none',
-                        fontSize: '0.9rem',
-                        transition: 'all 0.2s ease',
-                        '@media (min-width: 960px) and (max-width: 1549px)': {
-                          fontSize: '0.85rem',
-                        },
-                        '&:hover': {
-                          color: isDark ? '#009BE4' : '#2563EB',
-                          transform: 'translateX(4px)',
-                        },
-                      }}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </Box>
-              </Grid>
-
-              <Grid 
-                item 
-                xs={6} 
-                sm={6} 
-                md={2}
-              >
-                <Typography
-                  sx={{
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                    color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
-                    mb: 2,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    '@media (min-width: 960px) and (max-width: 1549px)': {
-                      fontSize: '0.85rem',
-                      mb: 1.5,
-                    },
-                  }}
-                >
-                  Roadmap
-                </Typography>
-                <Box sx={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: 1.5,
-                  '@media (min-width: 960px) and (max-width: 1549px)': {
-                    gap: 1.25,
-                  },
-                }}>
-                  {footerLinks.roadmap.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      sx={{
-                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                        textDecoration: 'none',
-                        fontSize: '0.9rem',
-                        transition: 'all 0.2s ease',
-                        '@media (min-width: 960px) and (max-width: 1549px)': {
-                          fontSize: '0.85rem',
-                        },
-                        '&:hover': {
-                          color: isDark ? '#009BE4' : '#2563EB',
-                          transform: 'translateX(4px)',
-                        },
-                      }}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </Box>
-              </Grid>
-
-              <Grid 
-                item 
-                xs={6} 
-                sm={6} 
-                md={2}
-              >
-                <Typography
-                  sx={{
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                    color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
-                    mb: 2,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    '@media (min-width: 960px) and (max-width: 1549px)': {
-                      fontSize: '0.85rem',
-                      mb: 1.5,
-                    },
-                  }}
-                >
-                  Resources
-                </Typography>
-                <Box sx={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: 1.5,
-                  '@media (min-width: 960px) and (max-width: 1549px)': {
-                    gap: 1.25,
-                  },
-                }}>
-                  {footerLinks.resources.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      sx={{
-                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                        textDecoration: 'none',
-                        fontSize: '0.9rem',
-                        transition: 'all 0.2s ease',
-                        '@media (min-width: 960px) and (max-width: 1549px)': {
-                          fontSize: '0.85rem',
-                        },
-                        '&:hover': {
-                          color: isDark ? '#009BE4' : '#2563EB',
-                          transform: 'translateX(4px)',
-                        },
-                      }}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                  {socialLinks.map((social) => {
+                    const Icon = social.icon;
+                    return (
+                      <IconButton
+                        key={social.label}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+                          border: isDark 
+                            ? '1px solid rgba(255, 255, 255, 0.1)' 
+                            : '1px solid rgba(0, 0, 0, 0.1)',
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            color: isDark ? '#009BE4' : '#2563EB',
+                            borderColor: isDark ? '#009BE4' : '#2563EB',
+                            transform: 'translateY(-2px)',
+                          },
+                        }}
+                      >
+                        <Icon sx={{ fontSize: 20 }} />
+                      </IconButton>
+                    );
+                  })}
                 </Box>
 
-              </Grid>
+
+              </Box>
             </Grid>
 
-          </Box>
+            {/* Links Sections */}
+            <Grid item xs={6} sm={6} md={2}>
+              <Typography
+                sx={{
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
+                  mb: 2.5,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '0.85rem',
+                  },
+                }}
+              >
+                Product
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                {footerLinks.product.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    sx={{
+                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                      textDecoration: 'none',
+                      fontSize: '0.9rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      transition: 'all 0.2s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '0.85rem',
+                      },
+                      '&:hover': {
+                        color: isDark ? '#009BE4' : '#2563EB',
+                        paddingLeft: '4px',
+                      },
+                      '&:hover .arrow-icon': {
+                        opacity: 1,
+                        transform: 'translateX(0)',
+                      },
+                    }}
+                  >
+                    {link.label}
+                    <ArrowForward
+                      className="arrow-icon"
+                      sx={{
+                        fontSize: 14,
+                        opacity: 0,
+                        transform: 'translateX(-4px)',
+                        transition: 'all 0.2s ease',
+                      }}
+                    />
+                  </Link>
+                ))}
+              </Box>
+            </Grid>
+
+            <Grid item xs={6} sm={6} md={2}>
+              <Typography
+                sx={{
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
+                  mb: 2.5,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '0.85rem',
+                  },
+                }}
+              >
+                Company
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                {footerLinks.company.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    sx={{
+                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                      textDecoration: 'none',
+                      fontSize: '0.9rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      transition: 'all 0.2s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '0.85rem',
+                      },
+                      '&:hover': {
+                        color: isDark ? '#009BE4' : '#2563EB',
+                        paddingLeft: '4px',
+                      },
+                      '&:hover .arrow-icon': {
+                        opacity: 1,
+                        transform: 'translateX(0)',
+                      },
+                    }}
+                  >
+                    {link.label}
+                    <ArrowForward
+                      className="arrow-icon"
+                      sx={{
+                        fontSize: 14,
+                        opacity: 0,
+                        transform: 'translateX(-4px)',
+                        transition: 'all 0.2s ease',
+                      }}
+                    />
+                  </Link>
+                ))}
+              </Box>
+            </Grid>
+
+            <Grid item xs={6} sm={6} md={2}>
+              <Typography
+                sx={{
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
+                  mb: 2.5,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '0.85rem',
+                  },
+                }}
+              >
+                Roadmap
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                {footerLinks.roadmap.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    sx={{
+                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                      textDecoration: 'none',
+                      fontSize: '0.9rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      transition: 'all 0.2s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '0.85rem',
+                      },
+                      '&:hover': {
+                        color: isDark ? '#009BE4' : '#2563EB',
+                        paddingLeft: '4px',
+                      },
+                      '&:hover .arrow-icon': {
+                        opacity: 1,
+                        transform: 'translateX(0)',
+                      },
+                    }}
+                  >
+                    {link.label}
+                    <ArrowForward
+                      className="arrow-icon"
+                      sx={{
+                        fontSize: 14,
+                        opacity: 0,
+                        transform: 'translateX(-4px)',
+                        transition: 'all 0.2s ease',
+                      }}
+                    />
+                  </Link>
+                ))}
+              </Box>
+            </Grid>
+
+            <Grid item xs={6} sm={6} md={2}>
+              <Typography
+                sx={{
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)',
+                  mb: 2.5,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  '@media (min-width: 960px) and (max-width: 1549px)': {
+                    fontSize: '0.85rem',
+                  },
+                }}
+              >
+                Resources
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                {footerLinks.resources.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    sx={{
+                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                      textDecoration: 'none',
+                      fontSize: '0.9rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      transition: 'all 0.2s ease',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        fontSize: '0.85rem',
+                      },
+                      '&:hover': {
+                        color: isDark ? '#009BE4' : '#2563EB',
+                        paddingLeft: '4px',
+                      },
+                      '&:hover .arrow-icon': {
+                        opacity: 1,
+                        transform: 'translateX(0)',
+                      },
+                    }}
+                  >
+                    {link.label}
+                    <ArrowForward
+                      className="arrow-icon"
+                      sx={{
+                        fontSize: 14,
+                        opacity: 0,
+                        transform: 'translateX(-4px)',
+                        transition: 'all 0.2s ease',
+                      }}
+                    />
+                  </Link>
+                ))}
+              </Box>
+            </Grid>
+          </Grid>
         </Box>
+
+        {/* Divider */}
+        <Divider
+          sx={{
+            borderColor: isDark 
+              ? 'rgba(255, 255, 255, 0.08)' 
+              : 'rgba(0, 0, 0, 0.08)',
+          }}
+        />
 
         {/* Bottom Bar */}
         <Box
+          ref={bottomRef}
           sx={{
-            borderTop: isDark 
-              ? '1px solid rgba(255, 255, 255, 0.08)' 
-              : '1px solid rgba(0, 0, 0, 0.08)',
             py: 4,
             display: 'flex',
             flexDirection: { xs: 'column', md: 'row' },
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: 3,
-            '@media (min-width: 960px) and (max-width: 1549px)': {
-              py: 3,
-            },
           }}
         >
           {/* Copyright & Legal Links */}
@@ -521,28 +448,17 @@ const Footer: React.FC = () => {
               flexDirection: { xs: 'column', sm: 'row' },
               alignItems: 'center',
               gap: { xs: 2, sm: 4 },
-              '@media (min-width: 960px) and (max-width: 1549px)': {
-              },
             }}
           >
             <Typography
               sx={{
                 fontSize: '0.875rem',
                 color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-                '@media (min-width: 960px) and (max-width: 1549px)': {
-                  fontSize: '0.825rem',
-                },
               }}
             >
               © {new Date().getFullYear()} ChatAPC. All rights reserved.
             </Typography>
-            <Box sx={{ 
-              display: 'flex', 
-              gap: 3,
-              '@media (min-width: 960px) and (max-width: 1549px)': {
-                gap: 2.5,
-              },
-            }}>
+            <Box sx={{ display: 'flex', gap: 3 }}>
               <Link
                 href="#"
                 sx={{
@@ -550,9 +466,6 @@ const Footer: React.FC = () => {
                   textDecoration: 'none',
                   fontSize: '0.875rem',
                   transition: 'color 0.2s ease',
-                  '@media (min-width: 960px) and (max-width: 1549px)': {
-                    fontSize: '0.825rem',
-                  },
                   '&:hover': {
                     color: isDark ? '#009BE4' : '#2563EB',
                   },
@@ -567,9 +480,6 @@ const Footer: React.FC = () => {
                   textDecoration: 'none',
                   fontSize: '0.875rem',
                   transition: 'color 0.2s ease',
-                  '@media (min-width: 960px) and (max-width: 1549px)': {
-                    fontSize: '0.825rem',
-                  },
                   '&:hover': {
                     color: isDark ? '#009BE4' : '#2563EB',
                   },
@@ -584,9 +494,6 @@ const Footer: React.FC = () => {
                   textDecoration: 'none',
                   fontSize: '0.875rem',
                   transition: 'color 0.2s ease',
-                  '@media (min-width: 960px) and (max-width: 1549px)': {
-                    fontSize: '0.825rem',
-                  },
                   '&:hover': {
                     color: isDark ? '#009BE4' : '#2563EB',
                   },
@@ -597,58 +504,122 @@ const Footer: React.FC = () => {
             </Box>
           </Box>
 
-          {/* Powered By Alpha Process */}
+          {/* Right Side - Powered By & ISO */}
           <Box
             sx={{
               display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
               alignItems: 'center',
-              gap: 2,
-              '@media (min-width: 960px) and (max-width: 1549px)': {
-              },
+              gap: { xs: 2, sm: 4 },
             }}
           >
-            <Typography
-              sx={{
-                fontSize: '0.875rem',
-                color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-                '@media (min-width: 960px) and (max-width: 1549px)': {
-                  fontSize: '0.825rem',
-                },
-              }}
-            >
-              Powered by
-            </Typography>
-            <Link
-              href="https://www.alphaproc.com/"
-              target="_blank"
+            {/* ISO Certificate */}
+            <Link 
+              href={isoCertificate.url} 
+              target="_blank" 
               rel="noopener noreferrer"
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                transition: 'transform 0.3s ease',
+                textDecoration: 'none',
+                gap: 1.2,
+                transition: 'all 0.3s ease',
                 '&:hover': {
-                  transform: 'scale(1.05)',
+                  transform: 'translateY(-2px)',
+                },
+                '&:hover .iso-cert-img': {
+                  opacity: 1,
                 },
               }}
             >
               <Box
                 component="img"
-                src={alphaProcessLogo}
-                alt="Alpha Process Control"
+                src={isoCertificate.img}
+                alt={isoCertificate.imgAlt}
+                className="iso-cert-img"
                 sx={{
-                  height: '24px',
+                  height: { xs: '32px', md: '36px' },
                   width: 'auto',
-                  opacity: 0.7,
-                  transition: 'opacity 0.3s ease',
-                  '@media (min-width: 960px) and (max-width: 1549px)': {
-                    height: '22px',
-                  },
-                  '&:hover': {
-                    opacity: 1,
-                  },
+                  opacity: 0.85,
+                  transition: 'opacity 0.3s',
                 }}
               />
+              <Typography
+                sx={{
+                  fontSize: { xs: '0.8rem', md: '0.875rem' },
+                  color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)',
+                  fontWeight: 500,
+                  letterSpacing: '0.02em',
+                  transition: 'color 0.3s',
+                  whiteSpace: 'nowrap',
+                  '&:hover': {
+                    color: isDark ? '#009BE4': '#2563EB'
+                  }
+                }}
+              >
+                {isoCertificate.label}
+              </Typography>
             </Link>
+
+            {/* Divider */}
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{
+                display: { xs: 'none', sm: 'block' },
+                borderColor: isDark 
+                  ? 'rgba(255, 255, 255, 0.1)' 
+                  : 'rgba(0, 0, 0, 0.1)',
+                height: '24px',
+                alignSelf: 'center',
+              }}
+            />
+
+            {/* Powered By Alpha Process */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.5,
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: '0.875rem',
+                  color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+                }}
+              >
+                Powered by
+              </Typography>
+              <Link
+                href="https://www.alphaproc.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  transition: 'transform 0.3s ease',
+                  '&:hover': {
+                    transform: 'scale(1.05)',
+                  },
+                }}
+              >
+                <Box
+                  component="img"
+                  src={alphaProcessLogo}
+                  alt="Alpha Process Control"
+                  sx={{
+                    height: '24px',
+                    width: 'auto',
+                    opacity: 0.7,
+                    transition: 'opacity 0.3s ease',
+                    '&:hover': {
+                      opacity: 1,
+                    },
+                  }}
+                />
+              </Link>
+            </Box>
           </Box>
         </Box>
       </Container>
@@ -657,4 +628,3 @@ const Footer: React.FC = () => {
 };
 
 export default Footer;
-

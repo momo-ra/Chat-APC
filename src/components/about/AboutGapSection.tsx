@@ -209,69 +209,72 @@ export const AboutGapSection: React.FC = () => {
                   sx={{
                     position: 'relative',
                     height: '100%',
-                    p: { xs: 3, md: 4 },
+                    p: { xs: 4, md: 5 }, 
                     '@media (min-width: 960px) and (max-width: 1549px)': {
-                      p: 3,
+                      p: 4,
                     },
-                    borderRadius: '16px',
-                    background: isDark ? '#1e293b' : '#FFFFFF',
-                    border: isDark ? '1px solid #334155' : '1px solid #E2E8F0',
-                    boxShadow: isDark
-                      ? '0 4px 20px rgba(0, 0, 0, 0.3)'
-                      : '0 4px 20px rgba(0, 0, 0, 0.08)',
-                    transition: 'all 0.3s ease',
+                    borderRadius: '12px',
+                    // Default style: NO background, NO border, just an accent line
+                    background: 'transparent',
+                    border: '1px solid transparent',
+                    boxShadow: 'none',
+                    transition: 'all 0.4s ease',
+                    
+                    // MODERN MINIMALIST HOVER EFFECT
                     '&:hover': {
-                      transform: 'translateY(-8px)',
-                      boxShadow: isDark
-                        ? '0 20px 50px rgba(0, 155, 228, 0.2)'
-                        : '0 20px 50px rgba(37, 99, 235, 0.15)',
-                      border: `1px solid ${item.color}40`,
+                      // Subtle background hover
+                      background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
+                      // Stronger outline glow on hover
+                      boxShadow: `0 0 0 1px ${item.color}40, 0 0 20px ${item.color}10`,
+                      borderRadius: '16px', // Slightly rounder on hover
                     },
                     '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      inset: 0,
-                      borderRadius: '16px',
-                      background: item.gradient,
-                      opacity: 0,
-                      transition: 'opacity 0.3s ease',
-                    },
-                    '&:hover::before': {
-                      opacity: 1,
-                    },
+                      content: 'none', // Remove old gradient hover
+                    }
                   }}
                 >
-                  {/* Icon */}
+                  {/* Icon and Question Container */}
                   <Box
                     sx={{
-                      position: 'relative',
-                      width: 48,
-                      height: 48,
-                      borderRadius: '12px',
-                      background: `linear-gradient(135deg, ${item.color}, ${item.color}dd)`,
                       display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mb: 3,
-                      boxShadow: `0 8px 20px ${item.color}40`,
+                      flexDirection: 'column',
+                      gap: 2,
+                      // The main color accent is here (border-left for visual separation)
+                      borderLeft: `3px solid ${item.color}`, 
+                      pl: 3,
                     }}
                   >
-                    <Icon size={24} style={{ color: '#FFFFFF' }} />
-                  </Box>
+                    {/* Icon - Still strong, but visually decoupled from the text block */}
+                    <Box
+                      sx={{
+                        position: 'relative',
+                        width: 48,
+                        height: 48,
+                        borderRadius: '12px',
+                        background: item.color, // Solid color for a punchier look
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: `0 8px 20px ${item.color}40`,
+                      }}
+                    >
+                      <Icon size={24} style={{ color: '#FFFFFF' }} />
+                    </Box>
 
-                  {/* Question */}
-                  <Typography
-                    sx={{
-                      position: 'relative',
-                      fontSize: bodyLargeFontSize,
-                      fontWeight: 600,
-                      color: isDark ? 'rgba(255, 255, 255, 0.95)' : '#1E293B',
-                      lineHeight: 1.4,
-                      transition: 'color 0.3s ease',
-                    }}
-                  >
-                    "{item.question}"
-                  </Typography>
+                    {/* Question */}
+                    <Typography
+                      sx={{
+                        position: 'relative',
+                        fontSize: bodyLargeFontSize,
+                        fontWeight: 600,
+                        color: isDark ? 'rgba(255, 255, 255, 0.95)' : '#1E293B',
+                        lineHeight: 1.4,
+                        transition: 'color 0.3s ease',
+                      }}
+                    >
+                      "{item.question}"
+                    </Typography>
+                  </Box>
                 </Box>
               </Grid>
             );

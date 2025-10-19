@@ -3,6 +3,7 @@ import { Box, Container, Typography } from '@mui/material';
 import { gsap } from 'gsap';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { getGradient, themeConfig } from '../shared/themeConfig';
 
 const DeploymentHeroSection: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -14,6 +15,7 @@ const DeploymentHeroSection: React.FC = () => {
     bodyLargeFontSize,
     sectionPadding,
   } = useResponsiveLayout();
+  const { gradients, typography } = themeConfig;
 
   const accentColor = { light: '#3B82F6', dark: '#60A5FA' };
 
@@ -51,19 +53,22 @@ const DeploymentHeroSection: React.FC = () => {
       >
         <Box ref={heroRef}>
           {/* Main Heading */}
-          <Typography
-            variant="h1"
+          <Box
+            component="h1"
             sx={{
+              background: getGradient(gradients.blueToPurple, isDark),
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
               fontSize: h1FontSize,
-              fontWeight: 700,
-              color: isDark ? '#FFFFFF' : '#0F172A',
-              mb: 4,
+              fontWeight: typography.h1.weight,
+              mb: 6,
               lineHeight: 1.2,
               maxWidth: 900,
             }}
           >
-            Deploy ChatAPC Anywhere
-          </Typography>
+            Ready to Deploy ChatAPC Anywhere
+            </Box>
 
           {/* Description */}
           <Typography

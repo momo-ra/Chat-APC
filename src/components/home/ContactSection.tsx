@@ -178,11 +178,13 @@ const ModernContactSection: React.FC = () => {
         color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 1)',
         fontSize: '1rem',
       },
-      '& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus': {
+      '& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & .MuiOutlinedInput-root:hover input:-webkit-autofill': {
         WebkitBoxShadow: `0 0 0 1000px ${isDark ? 'rgba(31, 41, 55, 0.6)' : 'rgba(255, 255, 255, 0.9)'} inset`,
         WebkitTextFillColor: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 1)',
         caretColor: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 1)',
         borderRadius: '12px',
+        // Prevent Chrome from flashing default autofill background on hover/focus
+        transition: 'background-color 9999s ease-out 0s, color 0s',
       },
     },
     '& .MuiInputLabel-root': {

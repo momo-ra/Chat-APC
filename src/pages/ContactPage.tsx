@@ -71,7 +71,7 @@ const ContactPage: React.FC = () => {
           <ContactMapSection />
           
           {/* Contact Info */}
-          <ContactInfoSection />
+          {/* <ContactInfoSection /> */}
           
           {/* Footer */}
           <Footer />

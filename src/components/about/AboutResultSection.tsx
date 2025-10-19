@@ -5,6 +5,11 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import {
+  getColor,
+  withOpacity,
+  getTextColor,
+} from '../shared/themeConfig';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,16 +20,51 @@ export const AboutResultSection: React.FC = () => {
   const cardsRef = useRef<HTMLDivElement[]>([]);
   const footerRef = useRef<HTMLDivElement>(null);
   const { isDark } = useThemeMode();
-  const { 
-    sectionPadding, 
-    containerMaxWidth, 
-    containerPadding, 
-    h2FontSize, 
-    h4FontSize, 
-    bodyFontSize, 
-    bodyLargeFontSize 
+  const {
+    sectionPadding,
+    containerMaxWidth,
+    containerPadding,
+    h2FontSize,
+    h4FontSize,
+    bodyFontSize,
+    bodyLargeFontSize
   } = useResponsiveLayout();
 
+  // Color fixes for dark and light mode
+  // Color tokens
+  const surfaceBg = isDark
+    ? 'rgba(30, 41, 59, 0.7)'
+    : 'rgba(245, 249, 255, 0.98)';
+  const cardBorder =
+    isDark
+      ? '1px solid rgba(148, 163, 184, 0.20)'
+      : '1px solid rgba(96, 165, 250, 0.08)';
+  const cardHoverBorder =
+    isDark
+      ? '1px solid rgba(148, 163, 184, 0.40)'
+      : '1px solid rgba(59, 130, 246, 0.15)';
+  const cardShadow =
+    isDark
+      ? '0 20px 60px rgba(59, 130, 246, 0.30)'
+      : '0 8px 30px rgba(96, 165, 250, 0.12)';
+  const cardText = getTextColor('primary', isDark);
+  const secondaryText = getTextColor('secondary', isDark);
+  const badgeText = '#FFF';
+  const badgeBg =
+    'linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899)';
+  const featureTitle = getTextColor('primary', isDark);
+
+  // Decorative background radiants
+  const beforeRadial =
+    isDark
+      ? 'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)'
+      : 'radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%)';
+  const afterRadial =
+    isDark
+      ? 'radial-gradient(circle, rgba(147,51,234,0.10) 0%, transparent 70%)'
+      : 'radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%)';
+
+  // Features gradients unchanged (so they pop in both modes)
   const features = [
     {
       icon: Search,
@@ -101,7 +141,7 @@ export const AboutResultSection: React.FC = () => {
     <Box
       ref={sectionRef}
       component="section"
-      data-section-theme="dark"
+      data-section-theme={isDark ? "dark" : "light"}
       data-section-primary="#60A5FA"
       sx={{
         width: '100%',
@@ -109,6 +149,7 @@ export const AboutResultSection: React.FC = () => {
         background: 'transparent',
         position: 'relative',
         overflow: 'hidden',
+        transition: 'background 0.3s cubic-bezier(.4,1.25,.3,1)',
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -117,8 +158,9 @@ export const AboutResultSection: React.FC = () => {
           width: 384,
           height: 384,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)',
+          background: beforeRadial,
           animation: 'pulse 4s infinite',
+          zIndex: 0,
         },
         '&::after': {
           content: '""',
@@ -128,9 +170,10 @@ export const AboutResultSection: React.FC = () => {
           width: 384,
           height: 384,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%)',
+          background: afterRadial,
           animation: 'pulse 5s infinite',
           animationDelay: '1s',
+          zIndex: 0,
         },
         '@keyframes pulse': {
           '0%, 100%': { opacity: 0.3 },
@@ -138,7 +181,7 @@ export const AboutResultSection: React.FC = () => {
         },
       }}
     >
-      <Container 
+      <Container
         maxWidth="lg"
         sx={{
           position: 'relative',
@@ -148,9 +191,9 @@ export const AboutResultSection: React.FC = () => {
         }}
       >
         {/* Section Header */}
-        <Box 
+        <Box
           ref={headerRef}
-          sx={{ 
+          sx={{
             textAlign: 'center',
             mb: { xs: 6, md: 8 },
             '@media (min-width: 960px) and (max-width: 1549px)': {
@@ -175,9 +218,10 @@ export const AboutResultSection: React.FC = () => {
             sx={{
               fontSize: h2FontSize,
               fontWeight: 700,
-              color: '#FFFFFF',
+              color: cardText,
               mb: 3,
               lineHeight: 1.2,
+              transition: 'color 0.3s',
             }}
           >
             The Result
@@ -200,19 +244,22 @@ export const AboutResultSection: React.FC = () => {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 2,
-              background: 'linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899)',
+              background: badgeBg,
               borderRadius: '50px',
               px: 4,
               py: 2,
-              boxShadow: '0 20px 60px rgba(59, 130, 246, 0.4)',
+              boxShadow: isDark
+                ? '0 20px 60px rgba(59, 130, 246, 0.4)'
+                : '0 8px 30px rgba(59, 130, 246, 0.12)',
+              // adaptive shadow
             }}
           >
-            <Sparkles size={32} style={{ color: '#FFFFFF' }} />
+            <Sparkles size={32} style={{ color: badgeText }} />
             <Typography
               sx={{
                 fontSize: h2FontSize,
                 fontWeight: 700,
-                color: '#FFFFFF',
+                color: badgeText,
               }}
             >
               ChatAPC
@@ -222,7 +269,8 @@ export const AboutResultSection: React.FC = () => {
             sx={{
               mt: 3,
               fontSize: bodyLargeFontSize,
-              color: 'rgba(255, 255, 255, 0.8)',
+              color: secondaryText,
+              transition: 'color 0.3s',
             }}
           >
             An AI advisor built from the ground up to speak the language of operations.
@@ -230,8 +278,8 @@ export const AboutResultSection: React.FC = () => {
         </Box>
 
         {/* Features Grid */}
-        <Grid 
-          container 
+        <Grid
+          container
           spacing={{ xs: 4, md: 6 }}
           sx={{
             mb: { xs: 6, md: 8 },
@@ -260,14 +308,15 @@ export const AboutResultSection: React.FC = () => {
                       p: 4,
                     },
                     borderRadius: '16px',
-                    background: 'rgba(30, 41, 59, 0.5)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                    transition: 'all 0.3s ease',
+                    background: surfaceBg,
+                    backdropFilter: isDark ? 'blur(10px)' : undefined,
+                    border: cardBorder,
+                    transition: 'all 0.3s cubic-bezier(.4,1.25,.3,1)',
+                    boxShadow: isDark ? undefined : '0 2px 12px 0 rgba(0,0,0,.05)',
                     '&:hover': {
                       transform: 'translateY(-8px)',
-                      border: '1px solid rgba(148, 163, 184, 0.4)',
-                      boxShadow: '0 20px 60px rgba(59, 130, 246, 0.3)',
+                      border: cardHoverBorder,
+                      boxShadow: cardShadow,
                     },
                   }}
                 >
@@ -281,22 +330,23 @@ export const AboutResultSection: React.FC = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       mb: 3,
-                      boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
+                      boxShadow: '0 8px 30px rgba(0, 0, 0, 0.18)',
                       transition: 'transform 0.3s ease',
                       '&:hover': {
                         transform: 'scale(1.1) rotate(3deg)',
                       },
                     }}
                   >
-                    <Icon size={28} style={{ color: '#FFFFFF' }} />
+                    <Icon size={28} style={{ color: '#FFF' }} />
                   </Box>
                   <Typography
                     variant="h5"
                     sx={{
                       fontSize: h4FontSize,
                       fontWeight: 700,
-                      color: '#FFFFFF',
+                      color: featureTitle,
                       mb: 2,
+                      transition: 'color 0.3s',
                     }}
                   >
                     {feature.title}
@@ -304,8 +354,9 @@ export const AboutResultSection: React.FC = () => {
                   <Typography
                     sx={{
                       fontSize: bodyFontSize,
-                      color: 'rgba(255, 255, 255, 0.8)',
+                      color: secondaryText,
                       lineHeight: 1.7,
+                      transition: 'color 0.3s',
                     }}
                   >
                     {feature.description}
@@ -321,11 +372,12 @@ export const AboutResultSection: React.FC = () => {
           ref={footerRef}
           sx={{
             fontSize: bodyLargeFontSize,
-            color: 'rgba(255, 255, 255, 0.8)',
+            color: secondaryText,
             textAlign: 'center',
             lineHeight: 1.7,
             maxWidth: 900,
             mx: 'auto',
+            transition: 'color 0.3s',
           }}
         >
           It works just like having a seasoned APC engineer sitting beside you — available 24/7, with instant access to all your process data and the wisdom to

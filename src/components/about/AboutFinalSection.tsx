@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useNavigate } from 'react-router-dom';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { themeConfig, getGradient } from '../shared/themeConfig';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -26,6 +27,7 @@ export const AboutFinalSection: React.FC = () => {
     bodyFontSize, 
     bodyLargeFontSize 
   } = useResponsiveLayout();
+  const { gradients } = themeConfig;
 
   const values = [
     {
@@ -314,8 +316,8 @@ export const AboutFinalSection: React.FC = () => {
                 p: 8,
               },
               textAlign: 'center',
-              background: 'linear-gradient(135deg, #1E293B 0%, #3B82F6 50%, #1E293B 100%)',
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+              background: "transparent",
+              // boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
               border: '1px solid #475569',
             }}
           >

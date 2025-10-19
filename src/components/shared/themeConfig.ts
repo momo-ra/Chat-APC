@@ -331,8 +331,8 @@ export const GRADIENTS: GradientConfig = {
     dark: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)',
   },
   blueToBlue: {
-    light: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
-    dark: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+    light: 'linear-gradient(200deg, #2563EB 0%, #1D4ED8 100%)',
+    dark: 'linear-gradient(200deg, #3B82F6 0%, #2563EB 100%)',
   },
   blueToPurple: {
     light: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',

@@ -11,7 +11,6 @@ import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { usePageTitle } from '../hooks/usePageTitle';
 
-
 const RoadmapPage: React.FC = () => {
   const { isDark } = useThemeMode();
  
@@ -52,7 +51,6 @@ const RoadmapPage: React.FC = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          // UNIFIED SEAMLESS BACKGROUND for entire page (same as home)
           background: getHomeBackground(isDark),
           position: 'relative',
           overflow: 'visible',
@@ -72,10 +70,10 @@ const RoadmapPage: React.FC = () => {
             maxWidth: '100vw',
             overflow: 'hidden',
             position: 'relative',
-            background: 'transparent', // Let page background show through
+            background: 'transparent',
           }}
         >
-          {/* Roadmap Sections - all have transparent backgrounds now */}
+          {/* Roadmap Sections */}
           <Box
             sx={{
               width: '100%',

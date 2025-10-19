@@ -271,7 +271,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
           <Box
             ref={firstTitleRef}
             sx={{
-              fontSize: { xs: '1.6rem', sm: '2.4rem', md: '3.2rem' },
+              fontSize: { xs: '1.6rem', sm: '2.4rem', md: '3rem' },
               fontWeight: 900,
               letterSpacing: '-0.02em',
               textAlign: 'center',
@@ -292,10 +292,20 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
                 background: isDark
                   ? getGradient(gradients.blueToPurple, isDark)
                   : getGradient(gradients.blue, isDark),
+                fontSize: { xs: '1.6rem', sm: '2.4rem', md: '3rem' },
+                fontWeight: 900,
+                letterSpacing: '-0.02em',
+                textAlign: 'center',
+                position: 'relative',
+                fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                display: 'flex',
+                justifyContent: 'center',
+                transformStyle: 'preserve-3d',
+                px: { xs: 1, sm: 2, md: 0 },
+                gap: 0,
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                display: 'inline-block',
               }}
             >
               {`Chat with your plant.`}
@@ -307,7 +317,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
             ref={secondTitleRef}
             component="div"
             sx={{
-              fontSize: { xs: '1.6rem', sm: '2.4rem', md: '3.2rem' },
+              fontSize: { xs: '1.6rem', sm: '2.4rem', md: '2.5rem' },
               fontWeight: 900,
               background: isDark
                 ? 'linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 50%, #E2E8F0 100%)'
@@ -332,7 +342,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
             ref={subtitleRef}
             component="div"
             sx={{
-              fontSize: { xs: '0.95rem', sm: '1.15rem', md: '1.25rem' },
+              fontSize: { xs: '0.95rem', sm: '1.15rem', md: '1rem' },
               fontWeight: 500,
               color: isDark 
                 ? withOpacity('#FFFFFF', 0.85) 
@@ -345,34 +355,18 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
               fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
               px: { xs: 2, sm: 3, md: 0 },
               '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: '-24px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '40px',
-                height: '1px',
-                background: isDark
-                  ? `linear-gradient(90deg, transparent 0%, ${withOpacity('#FFFFFF', 0.4)} 50%, transparent 100%)`
-                  : `linear-gradient(90deg, transparent 0%, ${withOpacity('#0F172A', 0.4)} 50%, transparent 100%)`,
-              },
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: -90,
+                  width: '130%',
+                  height: '100%',
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent)',
+                  transition: transitions.slow,
+                },
             }}
           >
-            <Box
-              component="span"
-              sx={{
-                background: isDark
-                  ? getGradient(gradients.blueToBlue, isDark)
-                  : getGradient(gradients.blueToBlue, isDark),
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                fontWeight: 600,
-              }}
-            >
-              ChatAPC
-            </Box>{' '}
-            blends engineering expertise with AI to deliver clear, reliable insights —
+            ChatAPC blends engineering expertise with AI to deliver clear, reliable insights —
             detecting issues early and revealing profit opportunities.
           </Box>
 

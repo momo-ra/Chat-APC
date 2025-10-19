@@ -9,28 +9,36 @@ import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { AppSidebar, Footer, ThemeToggle } from '../../components/layout';
 import { sidebarItems } from '../../data/layout/sidebarData';
 import { getHomeBackground } from '../../components/shared/pageBackgrounds';
-import { applySlideUp, applyCardGridAnimation, applyScaleUp } from '../../components/shared/animationHelpers';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import { 
+  themeConfig, 
+  getColor, 
+  getGradient, 
+  getTextColor,
+  getCardStyles,
+  getButtonStyles,
+  withOpacity 
+} from '../../components/shared/themeConfig';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const faqCategories = {
+const getFaqCategories = (isDark: boolean) => ({
   general: {
     title: 'General',
-    color: '#3B82F6',
-    gradient: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+    color: getColor(themeConfig.colors.blue, isDark),
+    gradient: getGradient(themeConfig.gradients.blue, isDark),
   },
   technical: {
     title: 'Technical',
-    color: '#10B981',
-    gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+    color: getColor(themeConfig.colors.green, isDark),
+    gradient: getGradient(themeConfig.gradients.green, isDark),
   },
   implementation: {
     title: 'Implementation',
-    color: '#8B5CF6',
-    gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+    color: getColor(themeConfig.colors.purple, isDark),
+    gradient: getGradient(themeConfig.gradients.purple, isDark),
   },
-};
+});
 
 const faqData = [
   {
@@ -80,6 +88,7 @@ const FAQPage: React.FC = () => {
     title: 'FAQ',
     description: 'Frequently asked questions about ChatAPC - AI assistant for industrial process control. Learn about integration, security, and implementation.',
   });
+  
   const sectionRef = useRef<HTMLDivElement>(null);
   const faqRefs = useRef<HTMLDivElement[]>([]);
   const answerRefs = useRef<HTMLDivElement[]>([]);
@@ -96,27 +105,31 @@ const FAQPage: React.FC = () => {
     bodyLargeFontSize,
     containerMaxWidth,
     containerPadding,
-    isMobile
   } = useResponsiveLayout();
 
-  // Fix scroll position on mount (always go to top when page is navigated to)
+  // Get unified theme values
+  const { colors, gradients, typography, animations, transitions, borderRadius, shadows } = themeConfig;
+  const primaryColor = getColor(colors.blue, isDark);
+  const secondaryColor = getColor(colors.cyan, isDark);
+  const faqCategories = getFaqCategories(isDark);
+  const cardStyles = getCardStyles(isDark, 'default');
+  const cardHoverStyles = getCardStyles(isDark, 'hover');
+  const primaryButtonStyles = getButtonStyles('primary', isDark, 'default');
+  const primaryButtonHoverStyles = getButtonStyles('primary', isDark, 'hover');
+
   useEffect(() => {
-    // This makes sure when arriving on FAQ page, scroll is at the top
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   }, []);
 
-  // Configure ScrollTrigger for better performance
   useEffect(() => {
     ScrollTrigger.config({
       limitCallbacks: true,
       syncInterval: 150,
     });
 
-    // Enable smooth scrolling
     document.documentElement.style.scrollBehavior = 'smooth';
 
     return () => {
-      // Clean up on unmount
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
       document.documentElement.style.scrollBehavior = 'auto';
     };
@@ -124,20 +137,58 @@ const FAQPage: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Animate header with unified system
-      applySlideUp(headerRef.current, { startTrigger: 'top 80%' });
+      // Animate header
+      if (headerRef.current) {
+        gsap.from(headerRef.current.children, {
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none none',
+          },
+          y: 40,
+          opacity: 0,
+          duration: animations.duration.normal,
+          stagger: 0.2,
+          ease: animations.easing.easeOut,
+        });
+      }
 
-      // Animate FAQ cards with unified system
-      applyCardGridAnimation(faqRefs.current, sectionRef.current, {
-        staggerDelay: 0.08,
+      // Animate FAQ cards
+      faqRefs.current.forEach((card, index) => {
+        if (card) {
+          gsap.from(card, {
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 85%',
+              toggleActions: 'play none none none',
+            },
+            y: 50,
+            opacity: 0,
+            duration: animations.duration.normal,
+            delay: index * 0.08,
+            ease: animations.easing.sharp,
+          });
+        }
       });
 
-      // Animate CTA with unified system
-      applyScaleUp(ctaRef.current, { startTrigger: 'top 90%' });
+      // Animate CTA
+      if (ctaRef.current) {
+        gsap.from(ctaRef.current, {
+          scrollTrigger: {
+            trigger: ctaRef.current,
+            start: 'top 90%',
+            toggleActions: 'play none none none',
+          },
+          scale: 0.95,
+          opacity: 0,
+          duration: animations.duration.normal,
+          ease: animations.easing.easeOut,
+        });
+      }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [animations]);
 
   const filteredFAQs = activeCategory === 'all' 
     ? faqData 
@@ -150,7 +201,6 @@ const FAQPage: React.FC = () => {
     const isCurrentlyExpanded = expandedFAQ === index;
 
     if (isCurrentlyExpanded) {
-      // Collapse
       gsap.to(answerElement, {
         height: 0,
         opacity: 0,
@@ -161,7 +211,6 @@ const FAQPage: React.FC = () => {
         },
       });
     } else {
-      // Collapse previously expanded FAQ if exists
       if (expandedFAQ !== null && answerRefs.current[expandedFAQ]) {
         gsap.to(answerRefs.current[expandedFAQ], {
           height: 0,
@@ -171,7 +220,6 @@ const FAQPage: React.FC = () => {
         });
       }
 
-      // Expand new FAQ
       setExpandedFAQ(index);
       gsap.set(answerElement, { height: 'auto' });
       const autoHeight = answerElement.offsetHeight;
@@ -190,7 +238,6 @@ const FAQPage: React.FC = () => {
 
   return (
     <>
-      {/* Skip Navigation */}
       <Box
         component="a"
         href="#main-content"
@@ -219,7 +266,7 @@ const FAQPage: React.FC = () => {
           maxWidth: '100vw',
           overflow: 'hidden',
           background: getHomeBackground(isDark),
-          transition: 'background 0.3s ease',
+          transition: transitions.normal,
           position: 'relative',
         }}
       >
@@ -254,18 +301,18 @@ const FAQPage: React.FC = () => {
                 icon={<HelpOutline sx={{ fontSize: '1rem !important' }} />}
                 label="Help Center"
                 sx={{
-                  fontSize: '0.875rem',
+                  fontSize: typography.bodySmall.size,
                   fontWeight: 600,
                   px: 3,
                   py: 1,
                   mb: 3,
                   background: isDark
-                    ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%)'
-                    : 'linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%)',
-                  color: isDark ? '#009BE4' : '#3B82F6',
+                    ? withOpacity(secondaryColor, 0.12)
+                    : withOpacity(primaryColor, 0.12),
+                  color: primaryColor,
                   border: 'none',
                   backdropFilter: 'blur(10px)',
-                  borderRadius: '50px',
+                  borderRadius: borderRadius.full,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                 }}
@@ -275,16 +322,14 @@ const FAQPage: React.FC = () => {
                 variant="h1"
                 sx={{
                   fontSize: h1FontSize,
-                  fontWeight: 800,
-                  background: isDark
-                    ? 'linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 100%)'
-                    : 'linear-gradient(135deg, #0F172A 0%, #475569 100%)',
+                  fontWeight: typography.h1.weight,
+                  background: getGradient(gradients.blueToPurple, isDark),
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   mb: 3,
                   letterSpacing: '-0.02em',
-                  lineHeight: 1.1,
+                  lineHeight: typography.h1.lineHeight,
                 }}
               >
                 Frequently Asked Questions
@@ -293,11 +338,11 @@ const FAQPage: React.FC = () => {
               <Typography
                 sx={{
                   fontSize: bodyLargeFontSize,
-                  color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
+                  color: getTextColor('muted', isDark),
                   maxWidth: 600,
                   mx: 'auto',
-                  lineHeight: 1.6,
-                  fontWeight: 400,
+                  lineHeight: typography.bodyLarge.lineHeight,
+                  fontWeight: typography.bodyLarge.weight,
                 }}
               >
                 Everything you need to know about ChatAPC and how it can transform your industrial processes
@@ -313,39 +358,35 @@ const FAQPage: React.FC = () => {
                   gap: 2,
                   justifyContent: 'center',
                   p: 2,
-                  background: isDark
-                    ? 'rgba(30, 41, 59, 0.6)'
-                    : 'rgba(248, 250, 252, 0.8)',
-                  borderRadius: '20px',
+                  background: cardStyles.background,
+                  borderRadius: borderRadius.xl,
                   backdropFilter: 'blur(10px)',
-                  border: isDark
-                    ? '1px solid rgba(255, 255, 255, 0.06)'
-                    : '1px solid rgba(0, 0, 0, 0.04)',
+                  border: cardStyles.border,
                 }}
               >
                 <Button
                   variant={activeCategory === 'all' ? 'contained' : 'outlined'}
                   onClick={() => setActiveCategory('all')}
                   sx={{
-                    borderRadius: '12px',
+                    borderRadius: borderRadius.lg,
                     px: 3,
                     py: 1,
                     textTransform: 'none',
                     fontWeight: 600,
-                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: transitions.allNormal,
                     willChange: 'transform, background, border-color',
                     ...(activeCategory === 'all' ? {
-                      background: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+                      background: getGradient(gradients.blue, isDark),
                       border: 'none',
-                      color: 'white',
+                      color: '#FFFFFF',
                       transform: 'scale(1.05)',
-                      boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                      boxShadow: `0 4px 12px ${withOpacity(primaryColor, 0.3)}`,
                     } : {
-                      color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
-                      borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                      color: getTextColor('muted', isDark),
+                      borderColor: withOpacity(primaryColor, 0.1),
                       '&:hover': {
-                        borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
-                        background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+                        borderColor: withOpacity(primaryColor, 0.2),
+                        background: withOpacity(primaryColor, 0.05),
                         transform: 'scale(1.02)',
                       },
                     }),
@@ -360,25 +401,25 @@ const FAQPage: React.FC = () => {
                     variant={activeCategory === key ? 'contained' : 'outlined'}
                     onClick={() => setActiveCategory(key)}
                     sx={{
-                      borderRadius: '12px',
+                      borderRadius: borderRadius.lg,
                       px: 3,
                       py: 1,
                       textTransform: 'none',
                       fontWeight: 600,
-                      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                      transition: transitions.allNormal,
                       willChange: 'transform, background, border-color',
                       ...(activeCategory === key ? {
                         background: category.gradient,
                         border: 'none',
-                        color: 'white',
+                        color: '#FFFFFF',
                         transform: 'scale(1.05)',
-                        boxShadow: `0 4px 12px ${category.color}40`,
+                        boxShadow: `0 4px 12px ${withOpacity(category.color, 0.3)}`,
                       } : {
-                        color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
-                        borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                        color: getTextColor('muted', isDark),
+                        borderColor: withOpacity(category.color, 0.1),
                         '&:hover': {
                           borderColor: category.color,
-                          background: `${category.color}10`,
+                          background: withOpacity(category.color, 0.1),
                           color: category.color,
                           transform: 'scale(1.02)',
                         },
@@ -406,28 +447,22 @@ const FAQPage: React.FC = () => {
                     elevation={0}
                     sx={{
                       mb: 3,
-                      background: isDark
-                        ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.7) 100%)'
-                        : 'linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                      background: cardStyles.background,
                       backdropFilter: 'blur(16px)',
                       border: isExpanded 
                         ? `2px solid ${category.color}`
-                        : isDark 
-                          ? '1px solid rgba(255, 255, 255, 0.06)'
-                          : '1px solid rgba(0, 0, 0, 0.04)',
-                      borderRadius: '20px',
+                        : cardStyles.border,
+                      borderRadius: borderRadius.xl,
                       overflow: 'hidden',
-                      transition: 'border 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      transition: transitions.allNormal,
                       cursor: 'pointer',
                       willChange: 'transform',
                       transform: 'translateZ(0)',
                       backfaceVisibility: 'hidden',
                       '&:hover': {
                         transform: 'translateY(-2px) translateZ(0)',
-                        border: `1px solid ${category.color}40`,
-                        boxShadow: isDark
-                          ? `0 12px 40px ${category.color}15`
-                          : `0 12px 40px ${category.color}15`,
+                        border: `1px solid ${withOpacity(category.color, 0.4)}`,
+                        boxShadow: `0 12px 40px ${withOpacity(category.color, 0.15)}`,
                       },
                     }}
                     onClick={() => handleFAQToggle(index)}
@@ -449,7 +484,7 @@ const FAQPage: React.FC = () => {
                               label={category.title}
                               size="small"
                               sx={{
-                                background: `${category.color}15`,
+                                background: withOpacity(category.color, 0.15),
                                 color: category.color,
                                 fontSize: '0.75rem',
                                 fontWeight: 600,
@@ -462,7 +497,7 @@ const FAQPage: React.FC = () => {
                             sx={{
                               fontSize: { xs: '1.1rem', md: '1.25rem' },
                               fontWeight: 600,
-                              color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 1)',
+                              color: getTextColor('primary', isDark),
                               lineHeight: 1.3,
                             }}
                           >
@@ -475,7 +510,7 @@ const FAQPage: React.FC = () => {
                             color: category.color,
                             fontSize: 28,
                             transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                            transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                            transition: transitions.allNormal,
                             willChange: 'transform',
                           }}
                         />
@@ -497,17 +532,15 @@ const FAQPage: React.FC = () => {
                           sx={{
                             px: { xs: 3, sm: 4 },
                             pb: { xs: 3, sm: 4 },
-                            borderTop: isDark
-                              ? '1px solid rgba(255, 255, 255, 0.06)'
-                              : '1px solid rgba(0, 0, 0, 0.04)',
+                            borderTop: cardStyles.border,
                             pt: 3,
                           }}
                         >
                           <Typography
                             sx={{
                               fontSize: { xs: '1rem', md: '1.1rem' },
-                              color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
-                              lineHeight: 1.7,
+                              color: getTextColor('secondary', isDark),
+                              lineHeight: typography.body.lineHeight,
                             }}
                           >
                             {faq.answer}
@@ -526,13 +559,11 @@ const FAQPage: React.FC = () => {
               elevation={0}
               sx={{
                 background: isDark
-                  ? 'linear-gradient(135deg, rgba(0, 155, 228, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%)'
-                  : 'linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%)',
+                  ? withOpacity(secondaryColor, 0.08)
+                  : withOpacity(primaryColor, 0.08),
                 backdropFilter: 'blur(20px)',
-                border: isDark
-                  ? '1px solid rgba(255, 255, 255, 0.08)'
-                  : '1px solid rgba(0, 0, 0, 0.04)',
-                borderRadius: '24px',
+                border: cardStyles.border,
+                borderRadius: borderRadius.xl,
                 p: { xs: 4, md: 6 },
                 textAlign: 'center',
                 willChange: 'transform, opacity',
@@ -544,8 +575,8 @@ const FAQPage: React.FC = () => {
                 variant="h2"
                 sx={{
                   fontSize: h2FontSize,
-                  fontWeight: 700,
-                  color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 1)',
+                  fontWeight: typography.h2.weight,
+                  color: getTextColor('primary', isDark),
                   mb: 2,
                 }}
               >
@@ -555,7 +586,7 @@ const FAQPage: React.FC = () => {
               <Typography
                 sx={{
                   fontSize: bodyLargeFontSize,
-                  color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
+                  color: getTextColor('muted', isDark),
                   mb: 4,
                   maxWidth: 500,
                   mx: 'auto',
@@ -567,28 +598,24 @@ const FAQPage: React.FC = () => {
               <Button
                 variant="contained"
                 size="large"
-                onClick={() => navigate('/contact')}
+                onClick={() => navigate('/company/contact')}
                 endIcon={<ArrowForward />}
                 sx={{
                   px: 4,
                   py: 2,
                   fontSize: '1.125rem',
                   fontWeight: 600,
-                  background: isDark
-                    ? 'linear-gradient(135deg, #009BE4 0%, #8B5CF6 100%)'
-                    : 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
-                  borderRadius: '16px',
+                  background: primaryButtonStyles.background,
+                  color: primaryButtonStyles.text,
+                  borderRadius: borderRadius.full,
                   textTransform: 'none',
-                  boxShadow: isDark
-                    ? '0 12px 40px rgba(0, 155, 228, 0.3)'
-                    : '0 12px 40px rgba(59, 130, 246, 0.3)',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: primaryButtonStyles.shadow,
+                  transition: transitions.allNormal,
                   willChange: 'transform, box-shadow',
                   '&:hover': {
                     transform: 'translateY(-3px) scale(1.02)',
-                    boxShadow: isDark
-                      ? '0 16px 50px rgba(0, 155, 228, 0.45)'
-                      : '0 16px 50px rgba(59, 130, 246, 0.45)',
+                    background: primaryButtonHoverStyles.background,
+                    boxShadow: primaryButtonHoverStyles.shadow,
                   },
                   '&:active': {
                     transform: 'translateY(-1px) scale(0.99)',

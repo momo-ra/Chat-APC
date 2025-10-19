@@ -7,14 +7,11 @@ interface CosmicParticlesOverlayProps {
   speedMultiplier?: number;
 }
 
-/**
- * Cosmic Particles Overlay Component - Optimized Version
- * طبقة جسيمات محسّنة للأداء تتحرك فوق أي خلفية
- */
+
 const CosmicParticlesOverlay: React.FC<CosmicParticlesOverlayProps> = ({ 
   isDark = true,
   particleCount,
-  speedMultiplier = 1,
+  speedMultiplier = 2,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<any[]>([]);
@@ -23,14 +20,14 @@ const CosmicParticlesOverlay: React.FC<CosmicParticlesOverlayProps> = ({
   // Color configurations for light and dark modes
   const colors = {
     dark: [
-      'rgba(0, 155, 228, 0.7)',   // Cyan #009BE4
-      'rgba(139, 92, 246, 0.7)',  // Purple
-      'rgba(59, 130, 246, 0.7)'   // Blue
+      'rgba(0, 156, 228, 0.43)',   // Cyan #009BE4
+      'rgba(138, 92, 246, 0.56)',  // Purple
+      'rgba(59, 131, 246, 0.21)'   // Blue
     ],
     light: [
-      'rgba(37, 99, 235, 0.6)',   // Blue #2563EB
-      'rgba(139, 92, 246, 0.6)',  // Purple
-      'rgba(59, 130, 246, 0.6)'   // Light Blue
+      'rgba(37, 99, 235, 0.6, 0.43)',   // Blue #2563EB
+      'rgba(139, 92, 246, 0.6, 0.56)',  // Purple
+      'rgba(59, 130, 246, 0.6, 0.21)'   // Light Blue
     ]
   };
 
@@ -52,18 +49,18 @@ const CosmicParticlesOverlay: React.FC<CosmicParticlesOverlayProps> = ({
     constructor(canvasWidth: number, canvasHeight: number) {
       this.canvasWidth = canvasWidth;
       this.canvasHeight = canvasHeight;
-      this.fadeThreshold = canvasHeight * 0.5;
+      this.fadeThreshold = canvasHeight * 2;
       this.reset();
     }
 
     reset() {
       this.x = Math.random() * this.canvasWidth;
-      this.y = this.canvasHeight + Math.random() * 50;
-      this.size = Math.random() * 2.5 + 0.8; // Larger particles
+      this.y = this.canvasHeight + Math.random() * 100;
+      this.size = Math.random() * 3 + 2; // Larger particles
       this.speed = (Math.random() * 0.4 + 0.6) * speedMultiplier; // Slightly slower for smoother flow
       this.colorIndex = Math.floor(Math.random() * currentColors.length);
-      this.alpha = 1;
-      this.drift = (Math.random() - 0.5) * 0.15; // More horizontal movement
+      this.alpha = 4;
+      this.drift = (Math.random() - 0.5) * 2; // More horizontal movement
     }
 
     update() {
@@ -135,7 +132,7 @@ const CosmicParticlesOverlay: React.FC<CosmicParticlesOverlayProps> = ({
 
     // Optimized animation loop
     let lastTime = 0;
-    const targetFPS = 60;
+    const targetFPS = 50;
     const frameInterval = 1000 / targetFPS;
 
     const animate = (currentTime: number) => {

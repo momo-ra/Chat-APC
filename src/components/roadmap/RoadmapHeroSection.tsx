@@ -5,16 +5,22 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { getGradient, themeConfig } from '../shared/themeConfig';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export const RoadmapHeroSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const heroContentRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLDivElement>(null);
   const descriptionRef = useRef<HTMLDivElement>(null);
+  const floatingElement1Ref = useRef<HTMLDivElement>(null);
+  const floatingElement2Ref = useRef<HTMLDivElement>(null);
+
   const { isDark } = useThemeMode();
+  const { gradients } = themeConfig;
   const { 
     h1FontSize, 
     h4FontSize, 
@@ -26,60 +32,76 @@ export const RoadmapHeroSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline();
+      // Create timeline for hero sequence
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none none',
+        },
+      });
 
-      // Hero content entrance
-      if (heroContentRef.current) {
-        tl.from(heroContentRef.current, {
+      // Badge entrance
+      if (badgeRef.current) {
+        tl.from(badgeRef.current, {
           opacity: 0,
-          y: 40,
-          duration: 0.8,
-          ease: 'power2.out',
-        });
+          scale: 0.9,
+          duration: 0.6,
+          ease: 'back.out(1.7)',
+        }, 0);
       }
 
-      // Title animation
+      // Title entrance
       if (titleRef.current) {
         tl.from(titleRef.current, {
           opacity: 0,
-          y: 20,
-          duration: 0.6,
-          ease: 'power2.out',
+          y: 30,
+          duration: 0.8,
+          ease: 'power3.out',
         }, 0.2);
       }
 
-      // Subtitle badge animation
+      // Subtitle badge entrance
       if (subtitleRef.current) {
         tl.from(subtitleRef.current, {
           opacity: 0,
-          scale: 0.9,
-          duration: 0.5,
+          scale: 0.95,
+          duration: 0.6,
           ease: 'back.out(1.7)',
         }, 0.4);
       }
 
-      // Description fade in
+      // Description entrance
       if (descriptionRef.current) {
         tl.from(descriptionRef.current, {
           opacity: 0,
-          y: 15,
-          duration: 0.5,
-          ease: 'power2.out',
+          y: 20,
+          duration: 0.6,
+          ease: 'power3.out',
         }, 0.6);
       }
 
-      // Continuous floating animations
-      const floatingElements = sectionRef.current?.querySelectorAll('.floating-element');
-      floatingElements?.forEach((element, index) => {
-        gsap.to(element, {
-          y: -15,
-          duration: 3 + index * 0.5,
+      // Continuous floating animations for background elements
+      if (floatingElement1Ref.current) {
+        gsap.to(floatingElement1Ref.current, {
+          y: 20,
+          duration: 3,
+          ease: 'sine.inOut',
           repeat: -1,
           yoyo: true,
-          ease: 'power2.inOut',
-          delay: index * 0.3,
         });
-      });
+      }
+
+      if (floatingElement2Ref.current) {
+        gsap.to(floatingElement2Ref.current, {
+          y: -20,
+          duration: 3.5,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+          delay: 0.5,
+        });
+      }
     }, sectionRef);
 
     return () => ctx.revert();
@@ -93,19 +115,17 @@ export const RoadmapHeroSection: React.FC = () => {
         position: 'relative',
         overflow: 'hidden',
         py: 'clamp(3rem, 8vw, 5rem)',
-        // TRANSPARENT - let page background show through
         background: 'transparent',
         minHeight: 'clamp(70vh, 90vh, 95vh)',
         display: 'flex',
         alignItems: 'center',
-        // No margins or borders
         margin: 0,
         border: 'none',
       }}
     >
       {/* Subtle Floating Background Elements */}
       <Box
-        className="floating-element"
+        ref={floatingElement1Ref}
         sx={{
           position: 'absolute',
           top: '15%',
@@ -114,15 +134,16 @@ export const RoadmapHeroSection: React.FC = () => {
           height: { xs: 120, md: 200 },
           borderRadius: '50%',
           background: isDark
-            ? 'radial-gradient(circle, rgba(100, 116, 139, 0.08) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(148, 163, 184, 0.12) 0%, transparent 70%)',
+            ? 'radial-gradient(circle, rgba(55, 65, 81, 0.08) 0%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(226, 232, 240, 0.12) 0%, transparent 70%)',
           filter: 'blur(40px)',
           pointerEvents: 'none',
+          willChange: 'transform',
         }}
       />
 
       <Box
-        className="floating-element"
+        ref={floatingElement2Ref}
         sx={{
           position: 'absolute',
           top: '60%',
@@ -131,10 +152,11 @@ export const RoadmapHeroSection: React.FC = () => {
           height: { xs: 100, md: 160 },
           borderRadius: '50%',
           background: isDark
-            ? 'radial-gradient(circle, rgba(71, 85, 105, 0.06) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(100, 116, 139, 0.08) 0%, transparent 70%)',
+            ? 'radial-gradient(circle, rgba(55, 65, 81, 0.06) 0%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(226, 232, 240, 0.08) 0%, transparent 70%)',
           filter: 'blur(35px)',
           pointerEvents: 'none',
+          willChange: 'transform',
         }}
       />
 
@@ -157,31 +179,32 @@ export const RoadmapHeroSection: React.FC = () => {
         >
           {/* Timeline Badge */}
           <Box
+            ref={badgeRef}
             sx={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: 1.5,
               px: 3,
               py: 1.5,
-              borderRadius: '50px',
+              borderRadius: '100px',
               background: isDark
-                ? 'rgba(51, 65, 85, 0.4)'
-                : 'rgba(241, 245, 249, 0.8)',
+                ? 'rgba(31, 41, 55, 0.8)'
+                : 'rgba(255, 255, 255, 0.95)',
               border: isDark
-                ? '1px solid rgba(71, 85, 105, 0.3)'
-                : '1px solid rgba(203, 213, 225, 0.4)',
+                ? '1px solid rgba(55, 65, 81, 0.5)'
+                : '1px solid rgba(226, 232, 240, 0.8)',
               mb: 4,
               backdropFilter: 'blur(20px)',
             }}
           >
             <Timeline sx={{ 
-              color: isDark ? '#94a3b8' : '#475569', 
+              color: isDark ? '#009BE4' : '#171B83',
               fontSize: 18 
             }} />
             <Typography
               variant="body2"
               sx={{
-                color: isDark ? '#94a3b8' : '#475569',
+                color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
                 fontWeight: 600,
                 fontSize: '0.875rem',
                 textTransform: 'uppercase',
@@ -199,8 +222,11 @@ export const RoadmapHeroSection: React.FC = () => {
             component="h1"
             sx={{
               fontSize: h1FontSize,
-              fontWeight: 800,
-              color: isDark ? '#f1f5f9' : '#1e293b',
+              fontWeight: 700,
+              background: getGradient(gradients.blueToPurple, isDark),
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
               mb: 3,
               lineHeight: 1.1,
               letterSpacing: '-0.02em',
@@ -219,41 +245,42 @@ export const RoadmapHeroSection: React.FC = () => {
                 gap: 2,
                 px: 4,
                 py: 2,
-                borderRadius: '50px',
+                borderRadius: '100px',
                 background: isDark
-                  ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.6) 0%, rgba(30, 41, 59, 0.4) 100%)'
-                  : 'linear-gradient(135deg, rgba(241, 245, 249, 0.8) 0%, rgba(248, 250, 252, 0.6) 100%)',
+                  ? 'rgba(31, 41, 55, 0.8)'
+                  : 'rgba(255, 255, 255, 0.95)',
                 border: isDark
-                  ? '1px solid rgba(71, 85, 105, 0.4)'
-                  : '1px solid rgba(203, 213, 225, 0.3)',
+                  ? '1px solid rgba(55, 65, 81, 0.5)'
+                  : '1px solid rgba(226, 232, 240, 0.8)',
                 backdropFilter: 'blur(20px)',
-                transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                transition: 'all 0.3s ease',
                 cursor: 'pointer',
                 '&:hover': {
                   transform: 'translateY(-2px)',
                   boxShadow: isDark
-                    ? '0 8px 30px rgba(0, 0, 0, 0.4)'
-                    : '0 8px 30px rgba(148, 163, 184, 0.15)',
+                    ? '0 20px 50px rgba(0, 155, 228, 0.2)'
+                    : '0 20px 50px rgba(23, 27, 131, 0.15)',
+                  borderColor: isDark ? '#009BE4' : '#171B83',
                 },
               }}
             >
               <Rocket sx={{ 
-                color: isDark ? '#64748b' : '#64748b', 
+                color: isDark ? '#009BE4' : '#171B83',
                 fontSize: 22 
               }} />
               <Typography
                 variant="h4"
                 sx={{
                   fontSize: h4FontSize,
-                  fontWeight: 700,
-                  color: isDark ? '#e2e8f0' : '#334155',
+                  fontWeight: 600,
+                  color: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 1)',
                   transition: 'color 0.3s ease',
                 }}
               >
                 Building the Future, Step by Step
               </Typography>
               <AutoAwesome sx={{ 
-                color: isDark ? '#64748b' : '#64748b', 
+                color: isDark ? '#A855F7' : '#8B5CF6',
                 fontSize: 22 
               }} />
             </Box>
@@ -265,8 +292,9 @@ export const RoadmapHeroSection: React.FC = () => {
             variant="body1"
             sx={{
               fontSize: bodyLargeFontSize,
-              color: isDark ? '#94a3b8' : '#64748b',
+              color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(71, 85, 105, 1)',
               lineHeight: 1.7,
+              fontWeight: 400,
               maxWidth: 650,
               mx: 'auto',
               transition: 'color 0.3s ease',

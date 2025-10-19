@@ -4,6 +4,13 @@ import { useThemeMode } from '../../contexts/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { CalendarToday } from '@mui/icons-material';
+import { 
+  themeConfig, 
+  getColor, 
+  getTextColor,
+  getBorderColor,
+  getButtonStyles,
+} from '../shared/themeConfig';
 
 const DeploymentCTASection: React.FC = () => {
   const { isDark } = useThemeMode();
@@ -15,7 +22,14 @@ const DeploymentCTASection: React.FC = () => {
     sectionPadding,
   } = useResponsiveLayout();
 
-  const ctaColor = { light: '#3B82F6', dark: '#60A5FA' };
+  // Get unified theme values
+  const { colors, gradients, typography, transitions, borderRadius, shadows } = themeConfig;
+  const primaryColor = getColor(colors.blue, isDark);
+  const accentColor = getColor(colors.cyan, isDark);
+  
+  // Get button styles
+  const primaryButtonStyles = getButtonStyles('primary', isDark, 'default');
+  const primaryButtonHoverStyles = getButtonStyles('primary', isDark, 'hover');
 
   return (
     <Box
@@ -36,15 +50,15 @@ const DeploymentCTASection: React.FC = () => {
         <Box
           sx={{
             pt: { xs: 8, md: 10 },
-            borderTop: isDark ? '1px solid rgba(71, 85, 105, 0.3)' : '1px solid rgba(226, 232, 240, 1)',
+            borderTop: `1px solid ${getBorderColor(isDark)}`,
           }}
         >
           <Typography
             sx={{
               fontSize: bodyLargeFontSize,
-              fontWeight: 500,
-              color: isDark ? 'rgba(255, 255, 255, 0.85)' : '#475569',
-              lineHeight: 1.7,
+              fontWeight: typography.bodyLarge.weight,
+              color: getTextColor('secondary', isDark),
+              lineHeight: typography.bodyLarge.lineHeight,
               mb: 5,
               maxWidth: 800,
               mx: 'auto',
@@ -60,21 +74,23 @@ const DeploymentCTASection: React.FC = () => {
               startIcon={<CalendarToday />}
               onClick={() => navigate('/company/contact')}  
               sx={{
-                background: ctaColor[isDark ? 'dark' : 'light'],
-                color: '#FFFFFF',
+                background: primaryButtonStyles.background,
+                color: primaryButtonStyles.text,
                 px: 5,
                 py: 2,
                 fontSize: '1.125rem',
                 fontWeight: 600,
-                borderRadius: 2,
+                borderRadius: borderRadius.full,
                 textTransform: 'none',
-                boxShadow: `0 8px 24px ${ctaColor[isDark ? 'dark' : 'light']}40`,
-                transition: 'all 0.3s ease',
+                boxShadow: primaryButtonStyles.shadow,
+                transition: transitions.allNormal,
                 '&:hover': {
                   transform: 'translateY(-2px)',
-                  boxShadow: `0 12px 32px ${ctaColor[isDark ? 'dark' : 'light']}50`,
-                  background: ctaColor[isDark ? 'dark' : 'light'],
-                  filter: 'brightness(1.1)',
+                  boxShadow: primaryButtonHoverStyles.shadow,
+                  background: primaryButtonHoverStyles.background,
+                },
+                '&:active': {
+                  transform: 'translateY(-1px)',
                 },
               }}
             >

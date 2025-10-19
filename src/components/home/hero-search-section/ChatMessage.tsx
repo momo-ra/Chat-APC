@@ -68,6 +68,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
               color: isDark ? 'rgba(255, 255, 255, 0.92)' : 'rgba(15, 23, 42, 0.92)',
               flex: 1,
               fontWeight: 400,
+              textAlign: 'left',
               fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             }}
           >

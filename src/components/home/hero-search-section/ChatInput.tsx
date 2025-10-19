@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, TextField } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import SendFileIcon from '@mui/icons-material/Send';
 
 interface ChatInputProps {
   inputValue: string;
@@ -164,7 +165,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 : {},
           }}
         >
-          <ArrowUpwardIcon
+          <SendFileIcon
             sx={{
               fontSize: '1.2rem',
               color: canSend

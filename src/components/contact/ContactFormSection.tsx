@@ -1,76 +1,48 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Container, 
-  Card, 
-  CardContent,
+import {
+  Box,
+  Typography,
+  Container,
+  Grid,
   TextField,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Checkbox,
-  FormControlLabel,
-  Grid,
-  Fade
+  InputAdornment,
+  Snackbar,
+  Alert,
+  Fade,
+  CircularProgress,
 } from '@mui/material';
-import { Send, CheckCircle } from '@mui/icons-material';
+import { Person, Email, Business, Send, Message } from '@mui/icons-material';
 import { useThemeMode } from '../../contexts/ThemeContext';
 
-const industries = [
-  'Oil & Gas',
-  'Chemical Processing',
-  'Manufacturing',
-  'Food & Beverage',
-  'Power Generation',
-  'Pharmaceuticals',
-  'Other',
-];
+const mainColor = '#2563EB'; // adjust to match your theme primary
+const gradients = {
+  blueToBlue: 'linear-gradient(90deg, #2563EB 0%, #3B82F6 100%)',
+  blue: 'linear-gradient(90deg, #2563EB 0%, #2563EB 100%)',
+};
+const transitions = { allNormal: 'all 0.25s cubic-bezier(0.4,0,0.2,1) 0ms', normal: 'all 0.25s cubic-bezier(0.4,0,0.2,1) 0ms' };
 
 const ContactFormSection: React.FC = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    firstname: '',
+    lastname: '',
     email: '',
     company: '',
-    phone: '',
-    industry: '',
-    message: '',
-    privacy: false,
+    message: ''
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [toast, setToast] = useState<{ open: boolean; severity: 'success' | 'error'; message: string }>({
+    open: false, severity: 'success', message: ''
+  });
   const { isDark } = useThemeMode();
 
-  const handleInputChange = (field: string) => (event: any) => {
-    setFormData({
-      ...formData,
-      [field]: event.target.value,
-    });
-  };
-
-  const handleCheckboxChange = (field: string) => (event: any) => {
-    setFormData({
-      ...formData,
-      [field]: event.target.checked,
-    });
-  };
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log('Form submitted:', formData);
-    setIsSubmitting(false);
-  };
-
-  const getFieldStyles = (isDark: boolean) => ({
+  // Utility for TextField sx to match @ContactSection.tsx
+  const textFieldSx = {
     '& .MuiOutlinedInput-root': {
       borderRadius: '12px',
       background: isDark ? 'rgba(31, 41, 55, 0.6)' : 'rgba(255, 255, 255, 0.9)',
       backdropFilter: 'blur(10px)',
-      transition: 'all 0.3s ease',
+      transition: transitions.allNormal,
       '& fieldset': {
         borderColor: isDark ? 'rgba(75, 85, 99, 0.3)' : 'rgba(226, 232, 240, 0.8)',
       },
@@ -83,7 +55,16 @@ const ContactFormSection: React.FC = () => {
       },
       '& input, & textarea': {
         color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 1)',
-        fontSize: '1rem',
+        fontSize: { xs: '1rem', md: '1rem' },
+        lineHeight: 1.4,
+      },
+      '& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & .MuiOutlinedInput-root:hover input:-webkit-autofill': {
+        WebkitBoxShadow: `0 0 0 1000px ${isDark ? 'rgba(31, 41, 55, 0.6)' : 'rgba(255, 255, 255, 0.9)'} inset`,
+        WebkitTextFillColor: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 1)',
+        caretColor: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 1)',
+        borderRadius: '12px',
+        // Prevent Chrome from flashing default autofill background on hover/focus
+        transition: 'background-color 9999s ease-out 0s, color 0s',
       },
     },
     '& .MuiInputLabel-root': {
@@ -93,320 +74,350 @@ const ContactFormSection: React.FC = () => {
         color: isDark ? '#3B82F6' : '#2563EB',
       },
     },
-  });
+  };
+
+  const getTextColor = (type: 'primary' | 'secondary', isDark: boolean) => {
+    if (type === 'primary') {
+      return isDark ? '#FFFFFF' : '#1E293B';
+    }
+    return isDark ? 'rgba(199,213,246,0.85)' : '#475569';
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const validate = () => {
+    if (!formData.firstname.trim()) return { ok: false, msg: 'Please enter your first name.' };
+    if (!formData.lastname.trim()) return { ok: false, msg: 'Please enter your last name.' };
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+    if (!emailOk) return { ok: false, msg: 'Please enter a valid email address.' };
+    if (!formData.company.trim()) return { ok: false, msg: 'Please enter your company.' };
+    if (!formData.message.trim()) return { ok: false, msg: 'Please write a short message.' };
+    return { ok: true, msg: '' };
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const v = validate();
+    if (!v.ok) {
+      setToast({ open: true, severity: 'error', message: v.msg });
+      return;
+    }
+
+    setIsLoading(true);
+
+    // Simulate an async submit action, replace with your real submit logic
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+      setToast({ open: true, severity: 'success', message: "Thanks! Your message has been sent successfully." });
+      setFormData({
+        firstname: '', lastname: '', email: '', company: '', message: ''
+      });
+    } catch (err) {
+      setToast({ open: true, severity: 'error', message: 'Something went wrong. Please try again.' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Box
       component="section"
       sx={{
+        width: '100%',
         py: { xs: 8, md: 12 },
+        pb: { xs: 10, md: 12 },
         position: 'relative',
         background: "transparent",
+        transition: transitions.normal,
       }}
     >
-      <Container 
-        maxWidth="md" 
-        sx={{ 
-          px: { xs: 3, md: 4 },
+      <Container
+        maxWidth="md"
+        sx={{
           position: 'relative',
-          zIndex: 2,
+          zIndex: 1,
+          px: { xs: 1.5, md: 4 },
         }}
       >
         {/* Header */}
         <Fade in={true} timeout={800}>
-          <Box sx={{ textAlign: 'center', mb: 8 }}>
+          <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
             <Typography
               variant="h1"
               sx={{
-                fontSize: { xs: '2.5rem', md: '3.2rem' },
+                fontSize: { xs: '2.5rem', md: '3.3rem' },
                 fontWeight: 800,
                 background: isDark
-                  ? 'linear-gradient(135deg, #FFFFFF 0%, #3B82F6 50%, #8B5CF6 100%)'
-                  : 'linear-gradient(135deg, #1E293B 0%, #2563EB 50%, #8B5CF6 100%)',
+                  ? gradients.blueToBlue
+                  : gradients.blueToBlue,
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                mb: 3,
-                lineHeight: 1.1,
-                fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                mb: 2,
+                lineHeight: 1.15,
+                fontFamily: '"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif',
               }}
             >
-              Let's Start a Conversation
+              Let's Talk
             </Typography>
             <Typography
               sx={{
-                fontSize: { xs: '1.1rem', md: '1.25rem' },
-                color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
-                maxWidth: '600px',
+                fontSize: { xs: '1.1rem', md: '1.23rem' },
+                color: getTextColor('secondary', isDark),
+                maxWidth: { xs: 380, md: 700 },
                 mx: 'auto',
-                lineHeight: 1.6,
                 fontWeight: 400,
+                lineHeight: 1.6,
               }}
             >
-              Ready to transform your industrial operations? Tell us about your challenges 
-              and we'll show you what's possible.
+              Ready to optimize your industrial processes? We're here to help you get started with ChatAPC.
             </Typography>
           </Box>
         </Fade>
 
-        {/* Contact Form */}
+        {/* Form */}
         <Fade in={true} timeout={1000}>
-          <Card
-            elevation={0}
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
             sx={{
+              maxWidth: 700,
+              mx: 'auto',
+              mb: { xs: 8, md: 12 },
               borderRadius: '20px',
-              background: isDark
-                ? 'rgba(31, 41, 55, 0.8)'
-                : 'rgba(255, 255, 255, 0.95)',
-              border: isDark
-                ? '1px solid rgba(75, 85, 99, 0.3)'
-                : '1px solid rgba(226, 232, 240, 0.5)',
+              background: "transparent",
+              px: { xs: 1.5, md: 4 },
+              py: { xs: 2.5, md: 5 },
               backdropFilter: 'blur(20px)',
-              boxShadow: isDark
-                ? '0 25px 60px rgba(0, 0, 0, 0.3)'
-                : '0 25px 60px rgba(0, 0, 0, 0.08)',
               position: 'relative',
-              overflow: 'hidden',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: '2px',
-                background: isDark
-                  ? 'linear-gradient(90deg, #3B82F6 0%, #8B5CF6 100%)'
-                  : 'linear-gradient(90deg, #2563EB 0%, #8B5CF6 100%)',
-              },
+              overflow: 'hidden'
             }}
           >
-            <CardContent sx={{ p: { xs: 4, md: 6 } }}>
-              <Box component="form" onSubmit={handleSubmit}>
-                <Grid container spacing={3}>
-                  {/* Name Fields */}
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      required
-                      fullWidth
-                      label="First Name"
-                      value={formData.firstName}
-                      onChange={handleInputChange('firstName')}
-                      sx={getFieldStyles(isDark)}
-                    />
-                  </Grid>
+            <Grid container spacing={{ xs: 2, sm: 3 }}>
+              {/* First Name & Last Name */}
+              <Grid item xs={12} sm={6}>
+                <Typography
+                  sx={{
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    color: getTextColor('primary', isDark),
+                    mb: 1,
+                  }}
+                >
+                  First Name *
+                </Typography>
+                <TextField
+                  fullWidth
+                  name="firstname"
+                  placeholder="John"
+                  value={formData.firstname}
+                  onChange={handleInputChange}
+                  required
+                  autoComplete="given-name"
+                  sx={textFieldSx}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
+                        <Person sx={{ color: mainColor, fontSize: 20 }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography
+                  sx={{
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    color: getTextColor('primary', isDark),
+                    mb: 1,
+                  }}
+                >
+                  Last Name *
+                </Typography>
+                <TextField
+                  fullWidth
+                  name="lastname"
+                  placeholder="Smith"
+                  value={formData.lastname}
+                  onChange={handleInputChange}
+                  required
+                  autoComplete="family-name"
+                  sx={textFieldSx}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
+                        <Person sx={{ color: mainColor, fontSize: 20 }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
 
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      required
-                      fullWidth
-                      label="Last Name"
-                      value={formData.lastName}
-                      onChange={handleInputChange('lastName')}
-                      sx={getFieldStyles(isDark)}
-                    />
-                  </Grid>
+              {/* Email */}
+              <Grid item xs={12} sm={6}>
+                <Typography
+                  sx={{
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    color: getTextColor('primary', isDark),
+                    mb: 1,
+                  }}
+                >
+                  Email *
+                </Typography>
+                <TextField
+                  fullWidth
+                  name="email"
+                  type="email"
+                  placeholder="john.smith@company.com"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  autoComplete="email"
+                  sx={textFieldSx}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
+                        <Email sx={{ color: mainColor, fontSize: 20 }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
 
-                  {/* Contact Fields */}
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      required
-                      fullWidth
-                      type="email"
-                      label="Business Email"
-                      value={formData.email}
-                      onChange={handleInputChange('email')}
-                      sx={getFieldStyles(isDark)}
-                    />
-                  </Grid>
+              {/* Company */}
+              <Grid item xs={12} sm={6}>
+                <Typography
+                  sx={{
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    color: getTextColor('primary', isDark),
+                    mb: 1,
+                  }}
+                >
+                  Company *
+                </Typography>
+                <TextField
+                  fullWidth
+                  name="company"
+                  placeholder="Your company name"
+                  value={formData.company}
+                  onChange={handleInputChange}
+                  required
+                  autoComplete="organization"
+                  sx={textFieldSx}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
+                        <Business sx={{ color: mainColor, fontSize: 20 }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
 
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      fullWidth
-                      type="tel"
-                      label="Phone Number"
-                      value={formData.phone}
-                      onChange={handleInputChange('phone')}
-                      sx={getFieldStyles(isDark)}
-                    />
-                  </Grid>
+              {/* Message */}
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    color: getTextColor('primary', isDark),
+                    mb: 1,
+                  }}
+                >
+                  Message *
+                </Typography>
+                <TextField
+                  fullWidth
+                  name="message"
+                  placeholder="Tell us about your challenges and how we can help..."
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  multiline
+                  rows={4}
+                  required
+                  sx={textFieldSx}
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    sx: { alignItems: 'flex-start' },
+                    startAdornment: (
+                      <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1.5, display: { xs: 'none', sm: 'inline-flex' } }}>
+                        <Message sx={{ color: mainColor, fontSize: 20 }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+            </Grid>
 
-                  {/* Company Fields */}
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      required
-                      fullWidth
-                      label="Company Name"
-                      value={formData.company}
-                      onChange={handleInputChange('company')}
-                      sx={getFieldStyles(isDark)}
-                    />
-                  </Grid>
+            {/* Submit Button */}
+            <Box sx={{ mt: 4, textAlign: 'center' }}>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                endIcon={isLoading ? <CircularProgress size={18} sx={{ color: '#fff' }} /> : <Send />}
+                disabled={isLoading}
+                sx={{
+                  py: 1.75,
+                  px: 6,
+                  fontWeight: 700,
+                  fontSize: '1.1rem',
+                  background: isDark
+                    ? gradients.blueToBlue
+                    : gradients.blueToBlue,
+                  color: '#FFFFFF',
+                  borderRadius: '12px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  boxShadow: isDark
+                    ? '0 8px 32px rgba(59, 130, 246, 0.3)'
+                    : '0 8px 32px rgba(37, 99, 235, 0.3)',
+                  transition: transitions.allNormal,
+                  '&:hover:not(:disabled)': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: isDark
+                      ? '0 12px 40px rgba(59, 130, 246, 0.4)'
+                      : '0 12px 40px rgba(37, 99, 235, 0.4)',
+                  },
+                  '&:disabled': {
+                    opacity: 0.7,
+                    background: '#9CA3AF',
+                  },
+                }}
+              >
+                {isLoading ? 'Sending...' : 'Submit'}
+              </Button>
+            </Box>
 
-                  <Grid item xs={12} md={6}>
-                    <FormControl fullWidth>
-                      <InputLabel
-                        sx={{
-                          color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(100, 116, 139, 1)',
-                          fontWeight: 500,
-                          '&.Mui-focused': {
-                            color: isDark ? '#3B82F6' : '#2563EB',
-                          },
-                        }}
-                      >
-                        Industry
-                      </InputLabel>
-                      <Select
-                        value={formData.industry}
-                        onChange={handleInputChange('industry')}
-                        sx={{
-                          borderRadius: '12px',
-                          background: isDark ? 'rgba(31, 41, 55, 0.6)' : 'rgba(255, 255, 255, 0.9)',
-                          backdropFilter: 'blur(10px)',
-                          '& fieldset': {
-                            borderColor: isDark ? 'rgba(75, 85, 99, 0.3)' : 'rgba(226, 232, 240, 0.8)',
-                          },
-                          '&:hover fieldset': {
-                            borderColor: isDark ? 'rgba(59, 130, 246, 0.5)' : 'rgba(37, 99, 235, 0.5)',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: isDark ? '#3B82F6' : '#2563EB',
-                            borderWidth: '2px',
-                          },
-                          '& .MuiSelect-select': {
-                            color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 1)',
-                            fontSize: '1rem',
-                          },
-                        }}
-                      >
-                        {industries.map((industry) => (
-                          <MenuItem key={industry} value={industry}>
-                            {industry}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-
-                  {/* Message */}
-                  <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
-                      multiline
-                      rows={4}
-                      label="Tell us about your project"
-                      value={formData.message}
-                      onChange={handleInputChange('message')}
-                      placeholder="What challenges are you facing? What are your goals? Any specific requirements we should know about?"
-                      sx={getFieldStyles(isDark)}
-                    />
-                  </Grid>
-
-                  {/* Privacy Checkbox */}
-                  <Grid item xs={12}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          required
-                          checked={formData.privacy}
-                          onChange={handleCheckboxChange('privacy')}
-                          sx={{
-                            color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(100, 116, 139, 1)',
-                            '&.Mui-checked': {
-                              color: isDark ? '#3B82F6' : '#2563EB',
-                            },
-                          }}
-                        />
-                      }
-                      label={
-                        <Typography
-                          sx={{
-                            fontSize: '0.95rem',
-                            color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(71, 85, 105, 1)',
-                            fontWeight: 500,
-                          }}
-                        >
-                          I agree to the Privacy Policy and Terms of Service *
-                        </Typography>
-                      }
-                    />
-                  </Grid>
-
-                  {/* Submit Button */}
-                  <Grid item xs={12}>
-                    <Box 
-                      sx={{ 
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        gap: 3,
-                        mt: 2,
-                      }}
-                    >
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        size="large"
-                        disabled={isSubmitting}
-                        endIcon={<Send />}
-                        sx={{
-                          px: 8,
-                          py: 2,
-                          fontSize: '1.1rem',
-                          fontWeight: 700,
-                          borderRadius: '12px',
-                          background: isDark
-                            ? 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)'
-                            : 'linear-gradient(135deg, #2563EB 0%, #8B5CF6 100%)',
-                          boxShadow: isDark
-                            ? '0 8px 32px rgba(59, 130, 246, 0.3)'
-                            : '0 8px 32px rgba(37, 99, 235, 0.3)',
-                          transition: 'all 0.3s ease',
-                          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                          '&:hover:not(:disabled)': {
-                            transform: 'translateY(-2px)',
-                            boxShadow: isDark
-                              ? '0 12px 40px rgba(59, 130, 246, 0.4)'
-                              : '0 12px 40px rgba(37, 99, 235, 0.4)',
-                          },
-                          '&:disabled': {
-                            opacity: 0.7,
-                          },
-                        }}
-                      >
-                        {isSubmitting ? 'Sending...' : 'Send Message'}
-                      </Button>
-
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(100, 116, 139, 1)',
-                        }}
-                      >
-                        <CheckCircle sx={{ fontSize: 20 }} />
-                        <Box>
-                          <Typography sx={{ 
-                            fontSize: '0.9rem',
-                            fontWeight: 600,
-                          }}>
-                            Quick Response
-                          </Typography>
-                          <Typography sx={{ 
-                            fontSize: '0.8rem',
-                            opacity: 0.8,
-                          }}>
-                            Within 24 hours
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </Box>
-            </CardContent>
-          </Card>
+            {/* Toast Notification */}
+            <Snackbar
+              open={toast.open}
+              autoHideDuration={5000}
+              onClose={() => setToast((t) => ({ ...t, open: false }))}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+              <Alert
+                onClose={() => setToast((t) => ({ ...t, open: false }))}
+                severity={toast.severity}
+                variant="filled"
+                sx={{
+                  width: '100%',
+                  borderRadius: '12px',
+                  fontWeight: 500,
+                }}
+              >
+                {toast.message}
+              </Alert>
+            </Snackbar>
+          </Box>
         </Fade>
       </Container>
     </Box>
