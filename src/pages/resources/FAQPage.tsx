@@ -69,7 +69,7 @@ const faqData = [
   {
     category: 'implementation',
     question: "What training is required for our engineers to use ChatAPC?",
-    answer: "ChatAPC is designed to be intuitive and requires minimal training. Engineers can start using it immediately with natural language questions. We provide a 2-hour onboarding session and ongoing support. The system learns your plant's specific terminology and processes over time, making it even more effective as your team uses it."
+    answer: "ChatAPC is designed to be intuitive and requires minimal training. Engineers can start using it immediately with natural language questions. We provide training sessions and ongoing support."
   },
   {
     category: 'general',

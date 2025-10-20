@@ -253,19 +253,23 @@ export const BiggerVisionSection: React.FC = () => {
                     justifyContent: 'center',
                     transition: transitions.normal,
                     boxShadow: `0 8px 24px ${withOpacity(item.color, 0.19)}`,
-                    mx: { xs: 'auto', md: 0 },
+                    // Center the icon box to the left in mobile (by using align self and margin left 0), keep desktop as before
+                    mx: { xs: 0, md: 0 },
+                    alignSelf: { xs: 'flex-start', md: 'center' },
                   }}
                 >
                   <IconComponent
                     sx={{
                       fontSize: { xs: 32, md: 36 },
                       color: '#FFFFFF',
+                      // Center icon in the icon box for mobile and desktop (flex settings above already do that)
+                      mx: 'auto',
                     }}
                   />
                 </Box>
 
                 {/* Content */}
-                <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                <Box sx={{ textAlign: { xs: 'left', md: 'left' } }}>
                   {/* Title */}
                   <Typography
                     variant="h5"

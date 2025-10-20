@@ -240,19 +240,6 @@ const ModernContactSection: React.FC = () => {
       >
         {/* Header */}
         <Box ref={headerRef} sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
-          <Chip
-            label="Available 24/7"
-            sx={{
-              mb: 2.5,
-              borderRadius: borderRadius.xl,
-              background: withOpacity(mainColor, 0.1),
-              color: mainColor,
-              fontWeight: 600,
-              fontSize: typography.bodySmall.size,
-              px: 1,
-              border: `1px solid ${withOpacity(mainColor, 0.2)}`,
-            }}
-          />
           <Typography
             sx={{
               fontSize: { xs: '2.5rem', md: '3.5rem' },

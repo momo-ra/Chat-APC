@@ -374,7 +374,7 @@ export const AgentsShowcaseSection: React.FC = () => {
               <Box
                 key={tool}
                 sx={{
-                  px: 3,
+                  px: 2,
                   py: 1.5,
                   borderRadius: borderRadius.sm,
                   background: isDark

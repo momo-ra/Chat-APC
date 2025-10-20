@@ -159,7 +159,7 @@ const BlogSubscribeSection: React.FC = () => {
               transition: 'color 0.3s ease',
             }}
           >
-            Join 15,000+ process engineers who trust our insights
+            We trust our insights and we want to share them with you.
           </Typography>
         </Box>
 

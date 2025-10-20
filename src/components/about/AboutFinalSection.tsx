@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useNavigate } from 'react-router-dom';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
-import { themeConfig, getGradient } from '../shared/themeConfig';
+import { themeConfig } from '../shared/themeConfig';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,14 +18,14 @@ export const AboutFinalSection: React.FC = () => {
   const ctaRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { isDark } = useThemeMode();
-  const { 
-    sectionPadding, 
-    containerMaxWidth, 
-    containerPadding, 
-    h2FontSize, 
-    h4FontSize, 
-    bodyFontSize, 
-    bodyLargeFontSize 
+  const {
+    sectionPadding,
+    containerMaxWidth,
+    containerPadding,
+    h2FontSize,
+    h4FontSize,
+    bodyFontSize,
+    bodyLargeFontSize
   } = useResponsiveLayout();
   const { gradients } = themeConfig;
 
@@ -122,7 +122,7 @@ export const AboutFinalSection: React.FC = () => {
         transition: 'background 0.3s ease',
       }}
     >
-      <Container 
+      <Container
         maxWidth="lg"
         sx={{
           position: 'relative',
@@ -132,7 +132,7 @@ export const AboutFinalSection: React.FC = () => {
         }}
       >
         {/* Section Header */}
-        <Box 
+        <Box
           ref={headerRef}
           sx={{ 
             textAlign: 'center',
@@ -326,7 +326,7 @@ export const AboutFinalSection: React.FC = () => {
               sx={{
                 fontSize: h2FontSize,
                 fontWeight: 700,
-                color: '#FFFFFF',
+                color: isDark ? '#FFFFFF' : '#1E293B',
                 mb: 3,
                 lineHeight: 1.2,
               }}
@@ -336,7 +336,7 @@ export const AboutFinalSection: React.FC = () => {
             <Typography
               sx={{
                 fontSize: bodyLargeFontSize,
-                color: 'rgba(255, 255, 255, 0.9)',
+                color: isDark ? 'rgba(255, 255, 255, 0.9)' : '#475569',
                 mb: 4,
                 maxWidth: 640,
                 mx: 'auto',
@@ -387,14 +387,14 @@ export const AboutFinalSection: React.FC = () => {
                   fontSize: '1.125rem',
                   fontWeight: 600,
                   borderRadius: '12px',
-                  color: '#FFFFFF',
-                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                  color: isDark ? '#FFFFFF' : '#1E293B',
+                  borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : '#475569',
                   textTransform: 'none',
                   backdropFilter: 'blur(10px)',
                   transition: 'all 0.3s ease',
                   '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                    // backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : '#EFF6FF',
+                    borderColor: isDark ? 'rgba(255, 255, 255, 0.5)' : '#475569',
                     transform: 'translateY(-2px)',
                   },
                 }}

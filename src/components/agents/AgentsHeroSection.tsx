@@ -132,15 +132,11 @@ export function AgentsHeroSection() {
                 sx={{
                   fontSize: h1FontSize,
                   fontWeight: 700,
-                  lineHeight: 1.1,
                   letterSpacing: '-0.02em',
                   color: isDark ? '#FFFFFF' : '#0F172A',
                   mb: 2,
                 }}
               >
-                <Box component="span" sx={{ display: 'block' }}>
-                  Make AI agents
-                </Box>
                 <Box
                   component="span"
                   sx={{
@@ -153,7 +149,7 @@ export function AgentsHeroSection() {
                     WebkitTextFillColor: 'transparent',
                   }}
                 >
-                  your unfair advantage
+                  Your ecosystem of digital colleagues
                 </Box>
               </Typography>
             </Box>
@@ -169,7 +165,9 @@ export function AgentsHeroSection() {
                 maxWidth: '520px',
               }}
             >
-              With ChatAPC, you can build AI agents that analyze, detect, and optimize your industrial processes more effectively.
+              ChatAPC is built around a team of agents - each focused on a specific
+              part of operations. They detect, explain, and advise. But more importantly:
+              you can interact with them directly.
             </Typography>
 
             {/* CTA Buttons */}
