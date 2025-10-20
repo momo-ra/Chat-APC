@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Drawer,
@@ -43,7 +43,32 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 185 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMediumScreen, setIsMediumScreen] = useState(false);
-  
+const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+const lastScrollY = useRef(0);
+
+useEffect(() => {
+  const handleScroll = () => {
+    const currentScrollY = window.scrollY;
+    
+    // تحديد إذا كان في scroll
+    setIsScrolled(currentScrollY > 10);
+    
+    // إخفاء/إظهار الـheader بناءً على اتجاه الـscroll
+    if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
+      // Scrolling down - hide header
+      setIsHeaderVisible(false);
+    } else {
+      // Scrolling up - show header
+      setIsHeaderVisible(true);
+    }
+    
+    lastScrollY.current = currentScrollY;
+  };
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  return () => window.removeEventListener('scroll', handleScroll);
+}, []);
+
   // Detect if we're on medium screen
   useEffect(() => {
     const checkScreenSize = () => {
@@ -597,7 +622,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 185 }) => {
       </Box>
 
       {/* Auth Buttons - Mobile Only */}
-      {isMobile && (
+      {/* {isMobile && (
         <Box
           sx={{
             position: 'absolute',
@@ -669,7 +694,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 185 }) => {
             </Button>
           </Box>
         </Box>
-      )}
+      )} */}
     </Box>
   );
 
@@ -734,82 +759,100 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ items, width = 185 }) => {
 
       {/* Mobile Header Bar - Logo & Menu Button - Only when sidebar is closed */}
       {isMobile && !mobileOpen && (
-        <Box
-          sx={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 1350,
-            display: { xs: 'flex', md: 'none' },
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '12px 16px',
-            boxSizing: 'border-box',
-            maxWidth: '100vw',
-            backgroundColor: isScrolled
-              ? (isSystemDark
-                  ? 'rgba(10, 14, 46, 0.95)' 
-                  : 'rgba(255, 255, 255, 0.95)')
-              : (isSystemDark
-                  ? 'rgba(10, 14, 46, 0)'
-                  : 'rgba(255, 255, 255, 0)'),
-            backdropFilter: isScrolled ? 'blur(12px)' : 'none',
-            borderBottom: isScrolled
-              ? (isSystemDark
-                  ? '1px solid rgba(255, 255, 255, 0.08)' 
-                  : '1px solid rgba(0, 0, 0, 0.08)')
-              : 'none',
-            boxShadow: isScrolled ? '0 2px 8px rgba(0, 0, 0, 0.08)' : 'none',
-            transition: 'all 0.3s ease',
-          }}
-        >
-          {/* Logo - Clickable to open sidebar */}
-          <Box
-            onClick={handleDrawerToggle}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              cursor: 'pointer',
-              transition: 'transform 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.03)',
-              },
-            }}
-          >
-            <Box
-              component="img"
-              src={isSystemDark ? chatAPCLogo : chatAPCLogoDark}
-              alt="ChatAPC Logo"
-              sx={{
-                height: '32px',
-                width: 'auto',
-                objectFit: 'contain',
-                filter: isSystemDark ? 'brightness(1.1)' : 'none',
-                transition: 'all 0.3s ease',
-              }}
-            />
-          </Box>
+  <Box
+    sx={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 1350,
+      display: { xs: 'flex', md: 'none' },
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '12px 16px',
+      boxSizing: 'border-box',
+      maxWidth: '100vw',
+      // Animation للإخفاء والإظهار
+      transform: isHeaderVisible ? 'translateY(0)' : 'translateY(-100%)',
+      opacity: isHeaderVisible ? 1 : 0,
+      // Background محسّن مع glassmorphism
+      backgroundColor: isScrolled
+        ? (isSystemDark
+            ? 'rgba(10, 22, 46, 0.75)' // أغمق شوية
+            : 'rgba(255, 255, 255, 0.75)') // أفتح شوية
+        : (isSystemDark
+            ? 'rgba(10, 14, 46, 0)'
+            : 'rgba(255, 255, 255, 0)'),
+      backdropFilter: isScrolled ? 'blur(12px) saturate(180%)' : 'none', // blur أقوى
+      WebkitBackdropFilter: isScrolled ? 'blur(12px) saturate(180%)' : 'none', // for Safari
+      borderBottom: isScrolled
+        ? (isSystemDark
+            ? '1px solid rgba(255, 255, 255, 0.12)' 
+            : '1px solid rgba(0, 0, 0, 0.12)')
+        : 'none',
+      // Shadow محسّن
+      boxShadow: isScrolled 
+        ? (isSystemDark
+            ? '0 4px 16px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15)'
+            : '0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)')
+        : 'none',
+      // Transition سلس
+      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+    }}
+  >
+    {/* Logo - Clickable to open sidebar */}
+    <Box
+      onClick={handleDrawerToggle}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        cursor: 'pointer',
+        transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        '&:hover': {
+          transform: 'scale(1.05)',
+        },
+        '&:active': {
+          transform: 'scale(0.98)',
+        },
+      }}
+    >
+      <Box
+        component="img"
+        src={isSystemDark ? chatAPCLogo : chatAPCLogoDark}
+        alt="ChatAPC Logo"
+        sx={{
+          height: '32px',
+          width: 'auto',
+          objectFit: 'contain',
+          filter: isSystemDark ? 'brightness(1.1) drop-shadow(0 2px 4px rgba(0,0,0,0.2))' : 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
+          transition: 'all 0.3s ease',
+        }}
+      />
+    </Box>
 
-          {/* Menu Toggle Button */}
-          <IconButton
-            onClick={handleDrawerToggle}
-            sx={{
-              color: isSystemDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
-              padding: '8px',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                backgroundColor: isSystemDark
-                  ? 'rgba(255, 255, 255, 0.1)'
-                  : 'rgba(0, 0, 0, 0.05)',
-                color: isSystemDark ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 0.9)',
-              },
-            }}
-          >
-            <MenuIcon sx={{ fontSize: 24 }} />
-          </IconButton>
-        </Box>
-      )}
+    {/* Menu Toggle Button */}
+    <IconButton
+      onClick={handleDrawerToggle}
+      sx={{
+        color: isSystemDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.75)',
+        padding: '8px',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        '&:hover': {
+          backgroundColor: isSystemDark
+            ? 'rgba(255, 255, 255, 0.12)'
+            : 'rgba(0, 0, 0, 0.06)',
+          color: isSystemDark ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 0.9)',
+          transform: 'scale(1.05)',
+        },
+        '&:active': {
+          transform: 'scale(0.95)',
+        },
+      }}
+    >
+      <MenuIcon sx={{ fontSize: 24 }} />
+    </IconButton>
+  </Box>
+)}
 
       {/* Desktop Drawer - Permanent */}
       {!isMobile && (
