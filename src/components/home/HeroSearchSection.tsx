@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, useTheme, useMediaQuery } from '@mui/material';
 import { useThemeMode } from '../../contexts/ThemeContext';
-// FloatingInput import removed, since it's handled in the home page now
 import { HeroTitleSection, ChatMessage, LoadingIndicator, ChatInput, useChatLogic } from './hero-search-section';
 import gsap from 'gsap';
 import { 
@@ -17,7 +16,6 @@ import AnimatedHomeBackground from '../shared/AnimatedHomeBackground';
 interface HeroSearchSectionProps {
   animationComplete: boolean;
   setAnimationComplete: (done: boolean) => void;
-  // Optional props: state lifted to HomePage (currently not used here, but accepted for compatibility)
   inputValue?: string;
   setInputValue?: (val: string) => void;
   messages?: any[];
@@ -42,10 +40,6 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
   const { isDark } = useThemeMode();
   const is13InchScreen = useMediaQuery('(min-width:1360px) and (max-width:1510px)');
 
-  // Remove any floating input state logic
-  // const [showFloatingInput, setShowFloatingInput] = React.useState(false);
-
-  // Get unified theme values
   const { colors, gradients, borderRadius, transitions, animations: animConfig } = themeConfig;
   const primaryColor = getColor(colors.blue, isDark);
   const cyanColor = getColor(colors.cyan, isDark);
@@ -68,7 +62,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
     setMessages,
   } = useChatLogic();
 
-  // GSAP Animation
+  // GSAP Animation - FIXED VERSION
   useEffect(() => {
     const tl = gsap.timeline({
       onComplete: () => {
@@ -85,7 +79,10 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
       ? window.innerHeight * 0.3
       : window.innerHeight * 0.35;
 
-    const startScale = isMobileView ? 1.5 : isTabletView ? 1.8 : 2.2;
+    // حجم البداية والنهاية منفصلين تماماً
+    const startFontSize = isMobileView ? '2rem' : isTabletView ? '5.5rem' : '6rem';
+    const endFontSize = isMobileView ? '2rem' : isTabletView ? '2.4rem' : '4.3rem';
+    
     const animationDuration = isMobileView ? 1 : 0.7;
 
     // Set initial states
@@ -96,7 +93,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
 
     gsap.set(firstTitleRef.current, {
       y: startY,
-      scale: startScale,
+      fontSize: startFontSize, 
       opacity: 1,
       filter: 'grayscale(100%) brightness(0.5)',
       transformOrigin: 'center center'
@@ -117,7 +114,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
       }, `-=${animationDuration * 0.9}`)
       .to({}, { duration: isMobileView ? 0.2 : 0.3 })
       .to(firstTitleRef.current, {
-        scale: 1,
+        fontSize: endFontSize,  // ← نزلنا للحجم النهائي
         duration: isMobileView ? 0.8 : 1,
         ease: 'power3.inOut'
       })
@@ -183,9 +180,6 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
     }
   }, [isTyping]);
 
-  // Remove useEffect related to floating input visibility entirely
-  // Floating input is now handled in the home page
-
   return (
     <>
       <style>
@@ -217,7 +211,6 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
           transition: transitions.normal,
         }}
       >
-        {/* Render AnimatedHomeBackground only on desktop (not mobile) */}
         {!isMobile && (
           <Box
             sx={{
@@ -233,7 +226,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
             <AnimatedHomeBackground />
           </Box>
         )}
-        {/* Foreground content */}
+        
         <Box
           ref={containerRef}
           sx={{
@@ -267,11 +260,10 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
             },
           }}
         >
-          {/* Hero Title - First Line */}
+          {/* Hero Title - First Line - شيلنا fontSize من هنا خالص */}
           <Box
             ref={firstTitleRef}
             sx={{
-              fontSize: { xs: '1.6rem', sm: '2.4rem', md: '3rem' },
               fontWeight: 900,
               letterSpacing: '-0.02em',
               textAlign: 'center',
@@ -292,7 +284,6 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
                 background: isDark
                   ? getGradient(gradients.blueToPurple, isDark)
                   : getGradient(gradients.blue, isDark),
-                fontSize: { xs: '1.6rem', sm: '2.4rem', md: '3rem' },
                 fontWeight: 900,
                 letterSpacing: '-0.02em',
                 textAlign: 'center',
@@ -337,39 +328,6 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
             Turn data into decisions.
           </Box>
 
-          {/* Subtitle */}
-          <Box
-            ref={subtitleRef}
-            component="div"
-            sx={{
-              fontSize: { xs: '0.95rem', sm: '1.15rem', md: '1rem' },
-              fontWeight: 500,
-              color: isDark 
-                ? withOpacity('#FFFFFF', 0.85) 
-                : withOpacity('#0F172A', 0.85),
-              lineHeight: 1.6,
-              textAlign: 'center',
-              maxWidth: '700px',
-              margin: '0 auto 1rem auto',
-              position: 'relative',
-              fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-              px: { xs: 2, sm: 3, md: 0 },
-              '&::before': {
-                  content: '""',
-                  position: 'absolute',
-                  top: 0,
-                  left: -90,
-                  width: '130%',
-                  height: '100%',
-                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent)',
-                  transition: transitions.slow,
-                },
-            }}
-          >
-            ChatAPC blends engineering expertise with AI to deliver clear, reliable insights —
-            detecting issues early and revealing profit opportunities.
-          </Box>
-
           {/* Chat Area */}
           <Box
             ref={(el: HTMLDivElement | null) => {
@@ -396,12 +354,11 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
               flexDirection: 'column',
               height: is13InchScreen
                 ? '830px'
-                : { xs: '420px', sm: '520px', md: '800px', lg: '850px' },
+                : { xs: '420px', sm: '520px', md: '850px', lg: '900px' },
               position: 'relative',
               overflow: 'hidden',
             }}
           >
-            {/* Scrollable Messages Area */}
             <Box
               ref={scrollableAreaRef}
               data-scrollable-area="true"
@@ -435,7 +392,6 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
                 },
               }}
             >
-              {/* Messages */}
               {messages.map((message, index) => (
                 <ChatMessage
                   key={message.id}
@@ -461,13 +417,11 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
                 />
               ))}
 
-              {/* Loading State */}
               {isLoading && (
                 <LoadingIndicator isDark={isDark} currentStage={currentStage} />
               )}
             </Box>
 
-            {/* Fixed Input at Bottom */}
             <ChatInput
               inputValue={inputValue}
               isDark={isDark}
@@ -478,8 +432,6 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
               onKeyPress={handleKeyPress}
             />
           </Box>
-
-          {/* Floating Input for Mobile removed since it's moved to home page */}
         </Box>
       </Box>
     </>

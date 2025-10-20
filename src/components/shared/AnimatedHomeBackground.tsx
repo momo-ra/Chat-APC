@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Box } from '@mui/material';
+import { useThemeMode } from '../../contexts/ThemeContext';
 
 interface Particle {
   x: number;
@@ -24,7 +25,14 @@ interface Connection {
   draw: (ctx: CanvasRenderingContext2D) => void;
 }
 
+const CYAN_RGB = '0, 242, 254'; // #00f2fe
+const BLUE_RGB = '18, 82, 185'; //rgb(18, 82, 185)
+
+const CYAN_LINE = '#00f2fe';
+const BLUE_LINE = 'rgb(18, 82, 185)';
+
 const ParticleBackground: React.FC = () => {
+  const { isDark } = useThemeMode();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -43,6 +51,10 @@ const ParticleBackground: React.FC = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
+    // Color logic depending on theme
+    const PARTICLE_RGB = isDark ? CYAN_RGB : BLUE_RGB;
+    const LINE_COLOR = isDark ? CYAN_LINE : BLUE_LINE;
+
     // Particle class
     const createParticle = (): Particle => {
       const particle = {
@@ -59,7 +71,8 @@ const ParticleBackground: React.FC = () => {
           this.size = Math.random() * 2 + 2;
           this.speedX = Math.random() * 0.5 - 0.25;
           this.speedY = Math.random() * 0.5 - 0.25;
-          this.color = `rgba(0, 242, 254, ${Math.random() * 0.4 + 0.1})`;
+          // Use blue in light mode, cyan in dark mode
+          this.color = `rgba(${PARTICLE_RGB}, ${Math.random() * 0.4 + 0.1})`;
           this.alpha = Math.random() * 0.5 + 0.2;
         },
         update: function(width: number, height: number) {
@@ -106,7 +119,7 @@ const ParticleBackground: React.FC = () => {
 
           ctx.save();
           ctx.globalAlpha = this.alpha;
-          ctx.strokeStyle = '#00f2fe';
+          ctx.strokeStyle = LINE_COLOR;
           // Increase line width: originally 0.5, now 1.5
           ctx.lineWidth = 2.5;
           ctx.beginPath();
@@ -180,7 +193,7 @@ const ParticleBackground: React.FC = () => {
       canvas.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [isDark]); // Depend on theme change
 
   return (
     <Box
