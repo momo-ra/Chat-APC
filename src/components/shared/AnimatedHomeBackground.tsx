@@ -1,200 +1,208 @@
 import React, { useEffect, useRef } from 'react';
 import { Box } from '@mui/material';
 
-interface CosmicParticlesOverlayProps {
-  isDark?: boolean;
-  particleCount?: number;
-  speedMultiplier?: number;
+interface Particle {
+  x: number;
+  y: number;
+  size: number;
+  speedX: number;
+  speedY: number;
+  color: string;
+  alpha: number;
+  reset: (width: number, height: number) => void;
+  update: (width: number, height: number) => void;
+  draw: (ctx: CanvasRenderingContext2D) => void;
 }
 
+interface Connection {
+  particle1: Particle;
+  particle2: Particle;
+  distance: number;
+  active: boolean;
+  alpha: number;
+  update: () => void;
+  draw: (ctx: CanvasRenderingContext2D) => void;
+}
 
-const CosmicParticlesOverlay: React.FC<CosmicParticlesOverlayProps> = ({ 
-  isDark = true,
-  particleCount,
-  speedMultiplier = 2,
-}) => {
+const ParticleBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<any[]>([]);
-  const animationFrameRef = useRef<number>();
-
-  // Color configurations for light and dark modes
-  const colors = {
-    dark: [
-      'rgba(0, 156, 228, 0.43)',   // Cyan #009BE4
-      'rgba(138, 92, 246, 0.56)',  // Purple
-      'rgba(59, 131, 246, 0.21)'   // Blue
-    ],
-    light: [
-      'rgba(37, 99, 235, 0.6, 0.43)',   // Blue #2563EB
-      'rgba(139, 92, 246, 0.6, 0.56)',  // Purple
-      'rgba(59, 130, 246, 0.6, 0.21)'   // Light Blue
-    ]
-  };
-
-  const currentColors = isDark ? colors.dark : colors.light;
-
-  // Particle Class - Optimized
-  class Particle {
-    x: number;
-    y: number;
-    size: number;
-    speed: number;
-    colorIndex: number;
-    alpha: number;
-    drift: number;
-    canvasWidth: number;
-    canvasHeight: number;
-    fadeThreshold: number;
-
-    constructor(canvasWidth: number, canvasHeight: number) {
-      this.canvasWidth = canvasWidth;
-      this.canvasHeight = canvasHeight;
-      this.fadeThreshold = canvasHeight * 2;
-      this.reset();
-    }
-
-    reset() {
-      this.x = Math.random() * this.canvasWidth;
-      this.y = this.canvasHeight + Math.random() * 100;
-      this.size = Math.random() * 3 + 2; // Larger particles
-      this.speed = (Math.random() * 0.4 + 0.6) * speedMultiplier; // Slightly slower for smoother flow
-      this.colorIndex = Math.floor(Math.random() * currentColors.length);
-      this.alpha = 4;
-      this.drift = (Math.random() - 0.5) * 2; // More horizontal movement
-    }
-
-    update() {
-      this.y -= this.speed;
-      this.x += this.drift;
-
-      // Optimized fade calculation - starts fading later for longer trails
-      if (this.y < this.fadeThreshold) {
-        this.alpha = Math.pow(this.y / this.fadeThreshold, 0.7); // Smoother fade
-      }
-
-      // Reset when off screen
-      if (this.y < -50 || this.alpha <= 0.05) {
-        this.reset();
-      }
-    }
-
-    draw(ctx: CanvasRenderingContext2D) {
-      const color = currentColors[this.colorIndex];
-      const colorWithAlpha = color.replace(/[\d.]+\)$/, `${this.alpha * 0.8})`); // More visible
-      
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      
-      // Enhanced glow for better visibility
-      ctx.shadowBlur = 8;
-      ctx.shadowColor = colorWithAlpha;
-      ctx.fillStyle = colorWithAlpha;
-      ctx.fill();
-    }
-  }
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d', { 
-      alpha: true,
-      desynchronized: true // Better performance
-    });
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animationId: number;
-
-    // Resize canvas to fill container
+    // Set canvas dimensions
     const resizeCanvas = () => {
-      const dpr = Math.min(window.devicePixelRatio, 2); // Limit DPR for performance
-      const rect = canvas.getBoundingClientRect();
-      
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
-      
-      ctx.scale(dpr, dpr);
-      
-      // Increased particle count for continuous flow
-      const count = particleCount || Math.floor((rect.width * rect.height) / 2500);
-      
-      // Reinitialize particles
-      particlesRef.current = [];
-      for (let i = 0; i < count; i++) {
-        particlesRef.current.push(new Particle(rect.width, rect.height));
-      }
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     };
 
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Optimized animation loop
-    let lastTime = 0;
-    const targetFPS = 50;
-    const frameInterval = 1000 / targetFPS;
+    // Particle class
+    const createParticle = (): Particle => {
+      const particle = {
+        x: 0,
+        y: 0,
+        size: 0,
+        speedX: 0,
+        speedY: 0,
+        color: '',
+        alpha: 0,
+        reset: function(width: number, height: number) {
+          this.x = Math.random() * width;
+          this.y = Math.random() * height;
+          this.size = Math.random() * 2 + 2;
+          this.speedX = Math.random() * 0.5 - 0.25;
+          this.speedY = Math.random() * 0.5 - 0.25;
+          this.color = `rgba(0, 242, 254, ${Math.random() * 0.4 + 0.1})`;
+          this.alpha = Math.random() * 0.5 + 0.2;
+        },
+        update: function(width: number, height: number) {
+          this.x += this.speedX;
+          this.y += this.speedY;
 
-    const animate = (currentTime: number) => {
-      animationId = requestAnimationFrame(animate);
+          if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
+            this.reset(width, height);
+          }
+        },
+        draw: function(ctx: CanvasRenderingContext2D) {
+          ctx.save();
+          ctx.globalAlpha = this.alpha;
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      };
+      particle.reset(canvas.width, canvas.height);
+      return particle;
+    };
 
-      // Frame rate limiting
-      const deltaTime = currentTime - lastTime;
-      if (deltaTime < frameInterval) return;
-      
-      lastTime = currentTime - (deltaTime % frameInterval);
+    // Connection class
+    const createConnection = (p1: Particle, p2: Particle): Connection => {
+      return {
+        particle1: p1,
+        particle2: p2,
+        distance: 0,
+        active: false,
+        alpha: 0,
+        update: function() {
+          const dx = this.particle1.x - this.particle2.x;
+          const dy = this.particle1.y - this.particle2.y;
+          this.distance = Math.sqrt(dx * dx + dy * dy);
+          // Increase segment: originally 150, now 240
+          this.active = this.distance < 240;
+          // Adjust alpha accordingly
+          this.alpha = 0.1 * (1 - this.distance / 240);
+        },
+        draw: function(ctx: CanvasRenderingContext2D) {
+          if (!this.active) return;
 
-      // Clear canvas
+          ctx.save();
+          ctx.globalAlpha = this.alpha;
+          ctx.strokeStyle = '#00f2fe';
+          // Increase line width: originally 0.5, now 1.5
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(this.particle1.x, this.particle1.y);
+          ctx.lineTo(this.particle2.x, this.particle2.y);
+          ctx.stroke();
+          ctx.restore();
+        }
+      };
+    };
+
+    // Create particles and connections
+    const particles: Particle[] = [];
+    const connections: Connection[] = [];
+    const particleCount = 80;
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(createParticle());
+    }
+
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        connections.push(createConnection(particles[i], particles[j]));
+      }
+    }
+
+    // Animation loop
+    let animationFrameId: number;
+    const animate = () => {
+      // Remove background color fill (leave transparent)
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Batch rendering
-      ctx.shadowBlur = 0; // Reset shadow once
-      
-      const particles = particlesRef.current;
-      for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw(ctx);
-      }
-      
-      ctx.shadowBlur = 0; // Reset after all particles
+      // Remove gradient overlay (no background fill at all)
+
+      // Update and draw particles
+      particles.forEach(particle => {
+        particle.update(canvas.width, canvas.height);
+        particle.draw(ctx);
+      });
+
+      // Update and draw connections
+      connections.forEach(connection => {
+        connection.update();
+        connection.draw(ctx);
+      });
+
+      animationFrameId = requestAnimationFrame(animate);
     };
 
-    animate(0);
+    animate();
 
+    // Mouse interaction
+    const handleMouseMove = (e: MouseEvent) => {
+      particles.forEach(particle => {
+        const dx = e.clientX - particle.x;
+        const dy = e.clientY - particle.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 100) {
+          particle.speedX += dx * 0.0001;
+          particle.speedY += dy * 0.0001;
+        }
+      });
+    };
+
+    canvas.addEventListener('mousemove', handleMouseMove);
+
+    // Cleanup
     return () => {
       window.removeEventListener('resize', resizeCanvas);
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(animationFrameId);
     };
-  }, [isDark, particleCount, speedMultiplier]);
+  }, []);
 
   return (
     <Box
       sx={{
         position: 'absolute',
-        inset: 0,
+        top: 0,
+        left: 0,
         width: '100%',
         height: '100%',
-        overflow: 'hidden',
-        zIndex: 2,
-        pointerEvents: 'none',
+        zIndex: -1,
       }}
     >
       <canvas
         ref={canvasRef}
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
+          display: 'block',
           width: '100%',
           height: '100%',
-          display: 'block',
-          willChange: 'transform', // Hardware acceleration hint
         }}
       />
     </Box>
   );
 };
 
-export default CosmicParticlesOverlay;
+export default ParticleBackground;
