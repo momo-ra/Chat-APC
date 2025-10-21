@@ -80,7 +80,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
       : window.innerHeight * 0.35;
 
     // حجم البداية والنهاية منفصلين تماماً
-    const startFontSize = isMobileView ? '2rem' : isTabletView ? '5.5rem' : '6rem';
+    const startFontSize = isMobileView ? '2.2rem' : isTabletView ? '5.5rem' : '6rem';
     const endFontSize = isMobileView ? '2rem' : isTabletView ? '2.4rem' : '4.3rem';
     
     const animationDuration = isMobileView ? 1 : 0.7;
@@ -292,7 +292,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
                 display: 'flex',
                 justifyContent: 'center',
                 transformStyle: 'preserve-3d',
-                px: { xs: 1, sm: 2, md: 0 },
+                px: { xs: 0, sm: 2, md: 0 },
                 gap: 0,
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
