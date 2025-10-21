@@ -1,27 +1,21 @@
 {
-    "name": "ChatAPC - AI Process Control",
-    "short_name": "ChatAPC",
-    "description": "AI-powered industrial process control platform",
-    "start_url": "/",
-    "display": "standalone",
-    "background_color": "#171B83",
-    "theme_color": "#171B83",
-    "orientation": "portrait-primary",
-    "icons": [
-      {
-        "src": "/favicon.ico",
-        "sizes": "192x192",
-        "type": "image/ico",
-        "purpose": "any maskable"
-      },
-      {
-        "src": "/favicon.ico",
-        "sizes": "512x512",
-        "type": "image/ico",
-        "purpose": "any maskable"
-      }
-    ],
-    "categories": ["business", "productivity", "utilities"],
-    "lang": "en-US",
-    "dir": "ltr"
-  }
+  "name": "ChatAPC",
+  "short_name": "ChatAPC",
+  "icons": [
+    {
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
