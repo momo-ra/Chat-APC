@@ -11,9 +11,11 @@ import {
   Alert,
   Fade,
   CircularProgress,
+  Slide,
 } from '@mui/material';
 import { Person, Email, Business, Send, Message } from '@mui/icons-material';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { borderRadius } from '@mui/system';
 
 const mainColor = '#2563EB'; // adjust to match your theme primary
 const gradients = {
@@ -124,6 +126,10 @@ const ContactFormSection: React.FC = () => {
     }
   };
 
+  // --- SNACKBAR LIKE @ContactSection.tsx ---
+  // It should be 'fixed' and centered at the top of the viewport, not inside the form.
+  // Remove custom slideDown animation.
+
   return (
     <Box
       component="section"
@@ -136,6 +142,37 @@ const ContactFormSection: React.FC = () => {
         transition: transitions.normal,
       }}
     >
+      {/* Toast Notification - FIXED to top-center of page, like @ContactSection.tsx */}
+      <Snackbar
+        open={toast.open}
+        autoHideDuration={5000}
+        onClose={() => setToast((t) => ({ ...t, open: false }))}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        TransitionComponent={Slide}
+        TransitionProps={{ direction: "down" } as any}
+        sx={{
+          position: 'fixed',
+          top: { xs: 16, md: 32 },
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: (theme) => theme.zIndex.snackbar + 10,
+        }}
+      >
+        <Alert
+          onClose={() => setToast((t) => ({ ...t, open: false }))}
+          severity={toast.severity}
+          variant="filled"
+          sx={{
+            width: '100%',
+            borderRadius: 2, // flat 16px for consistency
+            fontWeight: 500,
+            boxShadow: '0 8px 24px rgba(30,41,59,0.06)'
+          }}
+        >
+          {toast.message}
+        </Alert>
+      </Snackbar>
+
       <Container
         maxWidth="md"
         sx={{
@@ -396,27 +433,6 @@ const ContactFormSection: React.FC = () => {
                 {isLoading ? 'Sending...' : 'Submit'}
               </Button>
             </Box>
-
-            {/* Toast Notification */}
-            <Snackbar
-              open={toast.open}
-              autoHideDuration={5000}
-              onClose={() => setToast((t) => ({ ...t, open: false }))}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            >
-              <Alert
-                onClose={() => setToast((t) => ({ ...t, open: false }))}
-                severity={toast.severity}
-                variant="filled"
-                sx={{
-                  width: '100%',
-                  borderRadius: '12px',
-                  fontWeight: 500,
-                }}
-              >
-                {toast.message}
-              </Alert>
-            </Snackbar>
           </Box>
         </Fade>
       </Container>

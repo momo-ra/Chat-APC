@@ -9,8 +9,8 @@ import {
   InputAdornment,
   Snackbar,
   Alert,
-  Chip,
-  CircularProgress
+  CircularProgress,
+  Slide,
 } from '@mui/material';
 import {
   Email,
@@ -29,7 +29,6 @@ import {
   getColor, 
   getGradient, 
   getTextColor,
-  withOpacity 
 } from '../shared/themeConfig';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -53,7 +52,6 @@ const ModernContactSection: React.FC = () => {
 
   const { colors, gradients, typography, borderRadius, transitions } = themeConfig;
   const mainColor = getColor(colors.blue, isDark);
-
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
@@ -183,7 +181,6 @@ const ModernContactSection: React.FC = () => {
         WebkitTextFillColor: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 1)',
         caretColor: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 1)',
         borderRadius: '12px',
-        // Prevent Chrome from flashing default autofill background on hover/focus
         transition: 'background-color 9999s ease-out 0s, color 0s',
       },
     },
@@ -229,6 +226,50 @@ const ModernContactSection: React.FC = () => {
         transition: transitions.normal,
       }}
     >
+      {/* Toast Notification - positioned relative to section */}
+      <Snackbar
+        open={toast.open}
+        autoHideDuration={5000}
+        onClose={() => setToast((t) => ({ ...t, open: false }))}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        TransitionComponent={Slide}
+        TransitionProps={{ direction: "down" } as any}
+        sx={{
+          position: 'absolute',
+          top: { xs: '16px', md: '24px' },
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: (theme) => theme.zIndex.snackbar + 10,
+          '& .MuiSnackbarContent-root, & .MuiAlert-root': {
+            animation: 'slideDown 0.4s ease-out',
+          },
+          '@keyframes slideDown': {
+            '0%': {
+              transform: 'translateY(-100%)',
+              opacity: 0,
+            },
+            '100%': {
+              transform: 'translateY(0)',
+              opacity: 1,
+            },
+          },
+        }}
+      >
+        <Alert
+          onClose={() => setToast((t) => ({ ...t, open: false }))}
+          severity={toast.severity}
+          variant="filled"
+          sx={{
+            width: '100%',
+            borderRadius: borderRadius.lg,
+            fontWeight: 500,
+            boxShadow: '0 8px 24px rgba(30,41,59,0.06)'
+          }}
+        >
+          {toast.message}
+        </Alert>
+      </Snackbar>
+
       <Container
         maxWidth="lg"
         sx={{
@@ -245,8 +286,8 @@ const ModernContactSection: React.FC = () => {
               fontSize: { xs: '2.5rem', md: '3.5rem' },
               fontWeight: 800,
               color:isDark
-              ? getGradient(gradients.blueToBlue, isDark)
-              : getGradient(gradients.blueToBlue, isDark),
+                ? getGradient(gradients.blueToBlue, isDark)
+                : getGradient(gradients.blueToBlue, isDark),
               mb: 2,
               lineHeight: 1.2,
               background: isDark
@@ -256,7 +297,6 @@ const ModernContactSection: React.FC = () => {
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
             }}
-
           >
             Let's Talk
           </Typography>
@@ -564,27 +604,6 @@ const ModernContactSection: React.FC = () => {
             );
           })}
         </Grid>
-
-        {/* Toast Notification */}
-        <Snackbar
-          open={toast.open}
-          autoHideDuration={5000}
-          onClose={() => setToast((t) => ({ ...t, open: false }))}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        >
-          <Alert
-            onClose={() => setToast((t) => ({ ...t, open: false }))}
-            severity={toast.severity}
-            variant="filled"
-            sx={{ 
-              width: '100%',
-              borderRadius: borderRadius.lg,
-              fontWeight: 500,
-            }}
-          >
-            {toast.message}
-          </Alert>
-        </Snackbar>
       </Container>
     </Box>
   );
