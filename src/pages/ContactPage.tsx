@@ -11,20 +11,47 @@ import { SEOHead } from '../components/SEO/SEOHead';
 const ContactPage: React.FC = () => {
   usePageTitle({
     title: 'Contact Us',
-    description: 'Contact Alpha Process Control for expert consultation on industrial AI solutions, ChatAPC implementation, and process optimization services. Located in Houston, Texas.',
+    description: 'Contact Alpha Process Control for expert consultation on industrial AI solutions, ChatAPC implementation, and process optimization services.',
   });
+  
   const { isDark } = useThemeMode();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  <SEOHead
-    title="Contact Us"
-    description="Contact Alpha Process Control for expert consultation on industrial AI solutions, ChatAPC implementation, and process optimization services. Located in Houston, Texas."
-  />
   return (
     <>
+      {/* SEO Meta Tags */}
+      <SEOHead
+        title="Contact Us - Get Started with ChatAPC | Alpha Process Control"
+        description="Contact Alpha Process Control for expert consultation on industrial AI solutions, ChatAPC (Chat APC) implementation, and process optimization services."
+        url="https://chatapc.ai/company/contact"
+        keywords="contact ChatAPC, Chat APC contact, Alpha Process Control contact, schedule demo, process control consultation"
+        breadcrumbs={[
+          { name: 'Home', url: 'https://chatapc.ai/' },
+          { name: 'Contact Us', url: 'https://chatapc.ai/company/contact' }
+        ]}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "name": "Contact Alpha Process Control",
+          "description": "Get in touch with Alpha Process Control for ChatAPC consultation and implementation",
+          "url": "https://chatapc.ai/company/contact",
+          "mainEntity": {
+            "@type": "Organization",
+            "name": "Alpha Process Control",
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "Customer Service",
+              "email": "info@chatapc.ai",
+              "telephone": "+39-050-6201704",
+              "availableLanguage": ["English"]
+            }
+          }
+        }}
+      />
+
       {/* Accessibility Skip Link */}
       <Box
         component="a"
@@ -63,6 +90,7 @@ const ContactPage: React.FC = () => {
         <Box
           id="main-content"
           component="main"
+          role="main"
           sx={{
             width: '100%',
             position: 'relative',
@@ -79,7 +107,9 @@ const ContactPage: React.FC = () => {
           {/* <ContactInfoSection /> */}
           
           {/* Footer */}
-          <Footer />
+          <Box component="footer" role="contentinfo">
+            <Footer />
+          </Box>
         </Box>
       </Box>
     </>

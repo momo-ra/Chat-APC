@@ -11,15 +11,13 @@ import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { SEOHead } from '../components/SEO/SEOHead';
-  const HowItWorksPage: React.FC = () => {
+
+const HowItWorksPage: React.FC = () => {
   usePageTitle({
     title: 'How ChatAPC Works',
     description: 'Discover how ChatAPC transforms natural language questions into actionable industrial insights through AI-powered agents, process knowledge mapping, and intelligent analysis.',
   });
-  <SEOHead
-    title="How ChatAPC Works"
-    description="Discover how ChatAPC transforms natural language questions into actionable industrial insights through AI-powered agents, process knowledge mapping, and intelligent analysis."
-  />
+  
   const { isDark } = useThemeMode();
 
   useEffect(() => {
@@ -29,6 +27,44 @@ import { SEOHead } from '../components/SEO/SEOHead';
 
   return (
     <>
+      {/* SEO Meta Tags */}
+      <SEOHead
+        title="How It Works - ChatAPC | AI Process Control Platform"
+        description="Discover how ChatAPC (Chat APC) transforms natural language questions into actionable industrial insights through AI-powered agents, process knowledge mapping, and intelligent analysis."
+        url="https://chatapc.ai/product/how-it-works"
+        keywords="how ChatAPC works, Chat APC process, AI process control workflow, industrial AI platform, natural language processing"
+        breadcrumbs={[
+          { name: 'Home', url: 'https://chatapc.ai/' },
+          { name: 'How It Works', url: 'https://chatapc.ai/product/how-it-works' }
+        ]}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          "name": "How ChatAPC Works",
+          "description": "Learn how ChatAPC transforms natural language questions into actionable industrial insights",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "position": 1,
+              "name": "Connect Your Systems",
+              "text": "ChatAPC integrates with your existing DCS, SCADA, and historian systems"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 2,
+              "name": "Ask Questions",
+              "text": "Use natural language to ask questions about your process"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 3,
+              "name": "Get AI-Powered Insights",
+              "text": "Receive intelligent analysis and recommendations from specialized AI agents"
+            }
+          ]
+        }}
+      />
+
       {/* Skip Navigation for Accessibility */}
       <Box
         component="a"
@@ -67,6 +103,7 @@ import { SEOHead } from '../components/SEO/SEOHead';
         <Box
           id="main-content"
           component="main"
+          role="main"
           sx={{
             width: '100%',
             height: 'auto',
@@ -78,6 +115,7 @@ import { SEOHead } from '../components/SEO/SEOHead';
         >
           {/* How It Works Sections */}
           <Box
+            component="article"
             sx={{
               width: '100%',
               maxWidth: '100vw',
@@ -96,6 +134,7 @@ import { SEOHead } from '../components/SEO/SEOHead';
           {/* Footer */}
           <Box 
             component="footer"
+            role="contentinfo"
             sx={{ 
               mt: 0, 
               mb: 0,

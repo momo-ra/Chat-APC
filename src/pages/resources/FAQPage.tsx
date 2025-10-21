@@ -10,6 +10,7 @@ import { AppSidebar, Footer, ThemeToggle } from '../../components/layout';
 import { sidebarItems } from '../../data/layout/sidebarData';
 import { getHomeBackground } from '../../components/shared/pageBackgrounds';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import { SEOHead } from '../../components/SEO/SEOHead';
 import { 
   themeConfig, 
   getColor, 
@@ -116,6 +117,20 @@ const FAQPage: React.FC = () => {
   const cardHoverStyles = getCardStyles(isDark, 'hover');
   const primaryButtonStyles = getButtonStyles('primary', isDark, 'default');
   const primaryButtonHoverStyles = getButtonStyles('primary', isDark, 'hover');
+
+  // Generate FAQ Schema for SEO
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqData.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
@@ -238,6 +253,19 @@ const FAQPage: React.FC = () => {
 
   return (
     <>
+      {/* SEO Meta Tags with FAQ Schema */}
+      <SEOHead
+        title="FAQ - ChatAPC | Frequently Asked Questions"
+        description="Frequently asked questions about ChatAPC (Chat APC) - AI assistant for industrial process control. Learn about integration, security, implementation, and more."
+        url="https://chatapc.ai/resources/faq"
+        keywords="ChatAPC FAQ, Chat APC questions, industrial AI FAQ, process control questions, ChatAPC help"
+        breadcrumbs={[
+          { name: 'Home', url: 'https://chatapc.ai/' },
+          { name: 'FAQ', url: 'https://chatapc.ai/resources/faq' }
+        ]}
+        schema={faqSchema}
+      />
+
       <Box
         component="a"
         href="#main-content"
@@ -276,6 +304,7 @@ const FAQPage: React.FC = () => {
         <Box
           id="main-content"
           component="main"
+          role="main"
           sx={{
             width: '100%',
             maxWidth: '100vw',
@@ -628,7 +657,9 @@ const FAQPage: React.FC = () => {
           </Container>
         </Box>
 
-        <Footer />
+        <Box component="footer" role="contentinfo">
+          <Footer />
+        </Box>
       </Box>
     </>
   );

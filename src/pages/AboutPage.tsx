@@ -16,11 +16,12 @@ import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { SEOHead } from '../components/SEO/SEOHead';
 
-  const AboutPage: React.FC = () => {
+const AboutPage: React.FC = () => {
   usePageTitle({
     title: 'Our Story',
     description: 'Learn about Alpha Process Control\'s journey from traditional process control to AI-driven industrial operations with ChatAPC.',
   });
+  
   const { isDark } = useThemeMode();
 
   useEffect(() => {
@@ -28,13 +29,32 @@ import { SEOHead } from '../components/SEO/SEOHead';
     window.scrollTo(0, 0);
   }, []);
 
-  <SEOHead
-    title="Our Story"
-    description="Learn about Alpha Process Control's journey from traditional process control to AI-driven industrial operations with ChatAPC."
-  />
-  
   return (
     <>
+      {/* SEO Meta Tags with Breadcrumbs & Schema */}
+      <SEOHead
+        title="Our Story - Alpha Process Control | ChatAPC"
+        description="Learn about Alpha Process Control's journey from traditional process control to AI-driven industrial operations. Discover how we're transforming the industry with ChatAPC (Chat APC)."
+        url="https://chatapc.ai/company/about"
+        keywords="Alpha Process Control, ChatAPC story, Chat APC company, industrial AI history, process control innovation"
+        breadcrumbs={[
+          { name: 'Home', url: 'https://chatapc.ai/' },
+          { name: 'About Us', url: 'https://chatapc.ai/company/about' }
+        ]}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          "name": "About Alpha Process Control",
+          "description": "Learn about Alpha Process Control's journey from traditional process control to AI-driven industrial operations with ChatAPC.",
+          "url": "https://chatapc.ai/company/about",
+          "mainEntity": {
+            "@type": "Organization",
+            "name": "Alpha Process Control",
+            "description": "Professional services firm specialized in Advanced Process Control and AI-powered industrial automation"
+          }
+        }}
+      />
+
       {/* Skip Navigation for Accessibility */}
       <Box
         component="a"
@@ -73,6 +93,7 @@ import { SEOHead } from '../components/SEO/SEOHead';
         <Box
           id="main-content"
           component="main"
+          role="main"
           sx={{
             width: '100%',
             height: 'auto',
@@ -84,6 +105,7 @@ import { SEOHead } from '../components/SEO/SEOHead';
         >
           {/* About Sections */}
           <Box
+            component="article"
             sx={{
               width: '100%',
               maxWidth: '100vw',
@@ -106,6 +128,7 @@ import { SEOHead } from '../components/SEO/SEOHead';
           {/* Footer */}
           <Box 
             component="footer"
+            role="contentinfo"
             sx={{ 
               mt: 0, 
               mb: 0,

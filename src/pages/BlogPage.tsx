@@ -26,14 +26,36 @@ const BlogPage: React.FC = () => {
     // Scroll to top on mount
     window.scrollTo(0, 0);
   }, []);
-  
-  <SEOHead
-    title="Blog"
-    description="Explore the latest insights on industrial AI, process control optimization, and ChatAPC features from Alpha Process Control experts."
-  />
 
   return (
     <>
+      {/* SEO Meta Tags */}
+      <SEOHead
+        title="Blog - ChatAPC | Industrial AI & Process Control Insights"
+        description="Explore the latest insights on industrial AI, process control optimization, and ChatAPC (Chat APC) features from Alpha Process Control experts."
+        url="https://chatapc.ai/resources/blog"
+        keywords="ChatAPC blog, Chat APC insights, industrial AI articles, process control tips, automation insights"
+        breadcrumbs={[
+          { name: 'Home', url: 'https://chatapc.ai/' },
+          { name: 'Blog', url: 'https://chatapc.ai/resources/blog' }
+        ]}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          "name": "ChatAPC Blog",
+          "description": "Latest insights on industrial AI, process control, and ChatAPC platform",
+          "url": "https://chatapc.ai/resources/blog",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Alpha Process Control",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://chatapc.ai/chatAPC-logo-light-mode.svg"
+            }
+          }
+        }}
+      />
+
       {/* Skip Navigation for Accessibility */}
       <Box
         component="a"
@@ -72,6 +94,7 @@ const BlogPage: React.FC = () => {
         <Box
           id="main-content"
           component="main"
+          role="main"
           sx={{
             width: '100%',
             height: 'auto',
@@ -83,6 +106,7 @@ const BlogPage: React.FC = () => {
         >
           {/* Blog Sections */}
           <Box
+            component="article"
             sx={{
               width: '100%',
               maxWidth: '100vw',
@@ -103,6 +127,7 @@ const BlogPage: React.FC = () => {
           {/* Footer */}
           <Box 
             component="footer"
+            role="contentinfo"
             sx={{ 
               mt: 0, 
               mb: 0,

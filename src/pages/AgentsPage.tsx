@@ -12,15 +12,12 @@ import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { SEOHead } from '../components/SEO/SEOHead';
 
-  const AgentsPage: React.FC = () => {
+const AgentsPage: React.FC = () => {
   usePageTitle({
     title: 'AI Agents',
     description: 'Meet your ecosystem of digital colleagues. ChatAPC\'s specialized AI agents detect, explain, and advise on process operations with interactive, conversational intelligence.',
   });
-  <SEOHead
-    title="AI Agents"
-    description="Meet your ecosystem of digital colleagues. ChatAPC's specialized AI agents detect, explain, and advise on process operations with interactive, conversational intelligence."
-  />
+  
   const { isDark } = useThemeMode();
 
   useEffect(() => {
@@ -30,6 +27,43 @@ import { SEOHead } from '../components/SEO/SEOHead';
 
   return (
     <>
+      {/* SEO Meta Tags with Breadcrumbs & Schema */}
+      <SEOHead
+        title="AI Agents - ChatAPC | Intelligent Process Control Agents"
+        description="Meet your ecosystem of digital colleagues. ChatAPC (Chat APC) specialized AI agents detect, explain, and advise on process operations with interactive, conversational intelligence."
+        url="https://chatapc.ai/product/agents"
+        keywords="ChatAPC AI agents, Chat APC agents, constraint agent, optimization agent, process control AI, industrial AI agents"
+        breadcrumbs={[
+          { name: 'Home', url: 'https://chatapc.ai/' },
+          { name: 'AI Agents', url: 'https://chatapc.ai/product/agents' }
+        ]}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          "name": "ChatAPC AI Agents",
+          "description": "Specialized AI agents for industrial process control",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Constraint Agent",
+              "description": "Identifies process bottlenecks and constraints in real-time"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Optimization Agent",
+              "description": "Provides optimization recommendations for process improvement"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Reporting Agent",
+              "description": "Generates comprehensive process control reports"
+            }
+          ]
+        }}
+      />
     
       {/* Skip Navigation for Accessibility */}
       <Box
@@ -69,6 +103,7 @@ import { SEOHead } from '../components/SEO/SEOHead';
         <Box
           id="main-content"
           component="main"
+          role="main"
           sx={{
             width: '100%',
             height: 'auto',
@@ -80,6 +115,7 @@ import { SEOHead } from '../components/SEO/SEOHead';
         >
           {/* Agents Sections */}
           <Box
+            component="article"
             sx={{
               width: '100%',
               maxWidth: '100vw',
@@ -91,7 +127,6 @@ import { SEOHead } from '../components/SEO/SEOHead';
             }}
           >
             <AgentsHeroSection />
-            {/* <AgentsOverviewSection /> */}
             <AgentsShowcaseSection />
             <BiggerVisionSection />
           </Box>
@@ -99,6 +134,7 @@ import { SEOHead } from '../components/SEO/SEOHead';
           {/* Footer */}
           <Box 
             component="footer"
+            role="contentinfo"
             sx={{ 
               mt: 0, 
               mb: 0,

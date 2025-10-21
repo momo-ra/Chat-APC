@@ -3,16 +3,14 @@ import { ThemeProvider as MUIThemeProvider } from '@mui/material/styles';
 import { CssBaseline, GlobalStyles } from '@mui/material';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from 'react-helmet-async';
 import { theme } from './theme';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { SplashScreen } from './components/shared';
-import ContactPage from './pages/ContactPage';
-import { HelmetProvider } from 'react-helmet-async';
 import HubSpotPageTracker from './components/shared/HubSpotPageTracker';
-// import { useHubSpotPageTracking } from './hooks/useHubSpotPageTracking'; // ❌ امسح الـ import ده
 
 // Lazy load all pages for better performance
-const Index = lazy(() => import("./pages/Index"));
+const HomePage = lazy(() => import("./pages/Index")); // HomePage (Index)
 const Demo = lazy(() => import("./pages/Demo"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const SignupPage = lazy(() => import("./pages/auth/SignupPage"));
@@ -25,17 +23,18 @@ const ArchitecturePage = lazy(() => import("./pages/ArchitecturePage"));
 const AgentsPage = lazy(() => import("./pages/AgentsPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const BlogDetailPage = lazy(() => import("./pages/BlogDetailPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
 const App = () => {
-
   const [showSplash, setShowSplash] = useState(() => {
     return !sessionStorage.getItem('splashShown');
   });
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // Lock scroll during splash screen
   useEffect(() => {
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
@@ -62,6 +61,7 @@ const App = () => {
     setIsInitialized(true);
   }, []);
 
+  // Show splash screen
   if (showSplash) {
     return (
       <QueryClientProvider client={queryClient}>
@@ -84,8 +84,6 @@ const App = () => {
     return null;
   }
 
-  // ❌ امسح السطر ده - كان هنا useHubSpotPageTracking();
-  
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
@@ -104,22 +102,37 @@ const App = () => {
               }}
             >
               <Suspense fallback={<SplashScreen onComplete={() => {}} />}>
-                {/* ✅ ده كفاية - موجود جوا الـ Router */}
+                {/* HubSpot Page Tracking */}
                 <HubSpotPageTracker />
+                
                 <Routes>
-                  <Route path="/" element={<Index />} />
+                  {/* Main Pages */}
+                  <Route path="/" element={<HomePage />} />
                   <Route path="/demo" element={<Demo />} />
+                  
+                  {/* Auth Pages */}
                   <Route path="/login" element={<LoginPage />} />
+                  <Route path="/signup" element={<SignupPage />} />
+                  
+                  {/* Product Pages */}
                   <Route path="/product/deployment" element={<DeploymentPage />} />
-                  <Route path="/resources/faq" element={<FAQPage />} />
-                  <Route path="/company/about" element={<AboutPage />} />
-                  <Route path="/roadmap" element={<RoadmapPage />} />
                   <Route path="/product/how-it-works" element={<HowItWorksPage />} />
                   <Route path="/product/architecture" element={<ArchitecturePage />} />
                   <Route path="/product/agents" element={<AgentsPage />} />
+                  
+                  {/* Company Pages */}
+                  <Route path="/company/about" element={<AboutPage />} />
+                  <Route path="/company/contact" element={<ContactPage />} />
+                  
+                  {/* Resources Pages */}
+                  <Route path="/resources/faq" element={<FAQPage />} />
                   <Route path="/resources/blog" element={<BlogPage />} />
                   <Route path="/resources/blog/:id" element={<BlogDetailPage />} />
-                  <Route path="/company/contact" element={<ContactPage />} />
+                  
+                  {/* Other Pages */}
+                  <Route path="/roadmap" element={<RoadmapPage />} />
+                  
+                  {/* 404 Not Found */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>

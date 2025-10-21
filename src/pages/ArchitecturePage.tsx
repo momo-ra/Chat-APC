@@ -22,18 +22,44 @@ const ArchitecturePage: React.FC = () => {
     title: 'Architecture',
     description: 'Discover how ChatAPC\'s powerful architecture connects to your plant systems, organizes knowledge, and delivers AI-driven insights through specialized agents.',
   });
+  
   useEffect(() => {
     // Scroll to top on mount
     window.scrollTo(0, 0);
   }, []);
 
-  <SEOHead
-    title="Architecture"
-    description="Discover how ChatAPC's powerful architecture connects to your plant systems, organizes knowledge, and delivers AI-driven insights through specialized agents."
-  />
-  
   return (
     <>
+      {/* SEO Meta Tags with Breadcrumbs & Schema */}
+      <SEOHead
+        title="Architecture - ChatAPC | Technical Platform Overview"
+        description="Discover how ChatAPC (Chat APC) powerful architecture connects to your plant systems, organizes knowledge, and delivers AI-driven insights through specialized agents."
+        url="https://chatapc.ai/product/architecture"
+        keywords="ChatAPC architecture, Chat APC platform, process control architecture, AI system design, industrial automation platform"
+        breadcrumbs={[
+          { name: 'Home', url: 'https://chatapc.ai/' },
+          { name: 'Architecture', url: 'https://chatapc.ai/product/architecture' }
+        ]}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "TechArticle",
+          "headline": "ChatAPC Platform Architecture",
+          "description": "Technical overview of ChatAPC's architecture including connectors, knowledge base, and AI agents",
+          "author": {
+            "@type": "Organization",
+            "name": "Alpha Process Control"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "Alpha Process Control",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://chatapc.ai/chatAPC-logo-light-mode.svg"
+            }
+          }
+        }}
+      />
+      
       {/* Skip Navigation for Accessibility */}
       <Box
         component="a"
@@ -72,6 +98,7 @@ const ArchitecturePage: React.FC = () => {
         <Box
           id="main-content"
           component="main"
+          role="main"
           sx={{
             width: '100%',
             height: 'auto',
@@ -83,6 +110,7 @@ const ArchitecturePage: React.FC = () => {
         >
           {/* Architecture Sections */}
           <Box
+            component="article"
             sx={{
               width: '100%',
               maxWidth: '100vw',
@@ -104,6 +132,7 @@ const ArchitecturePage: React.FC = () => {
           {/* Footer */}
           <Box 
             component="footer"
+            role="contentinfo"
             sx={{ 
               mt: 0, 
               mb: 0,

@@ -11,6 +11,7 @@ import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { SEOHead } from '../components/SEO/SEOHead';
+
 const RoadmapPage: React.FC = () => {
   const { isDark } = useThemeMode();
  
@@ -18,10 +19,6 @@ const RoadmapPage: React.FC = () => {
     title: 'Product Roadmap',
     description: 'Discover the future of ChatAPC with our comprehensive product roadmap, featuring upcoming features, integrations, and innovations in industrial AI.',
   });
-  <SEOHead
-    title="Product Roadmap"
-    description="Discover the future of ChatAPC with our comprehensive product roadmap, featuring upcoming features, integrations, and innovations in industrial AI."
-  />
   
   useEffect(() => {
     // Scroll to top on mount
@@ -30,6 +27,38 @@ const RoadmapPage: React.FC = () => {
 
   return (
     <>
+      {/* SEO Meta Tags */}
+      <SEOHead
+        title="Product Roadmap - ChatAPC | Future Features & Development"
+        description="Discover the future of ChatAPC (Chat APC) with our comprehensive product roadmap, featuring upcoming features, integrations, and innovations in industrial AI."
+        url="https://chatapc.ai/roadmap"
+        keywords="ChatAPC roadmap, Chat APC future, upcoming features, product development, industrial AI innovation"
+        breadcrumbs={[
+          { name: 'Home', url: 'https://chatapc.ai/' },
+          { name: 'Roadmap', url: 'https://chatapc.ai/roadmap' }
+        ]}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": "ChatAPC Product Roadmap",
+          "description": "Comprehensive roadmap for ChatAPC platform development including near-term, mid-term, and long-term features",
+          "author": {
+            "@type": "Organization",
+            "name": "Alpha Process Control"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "Alpha Process Control",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://chatapc.ai/chatAPC-logo-light-mode.svg"
+            }
+          },
+          "datePublished": "2024-01-01",
+          "dateModified": new Date().toISOString()
+        }}
+      />
+
       {/* Skip Navigation for Accessibility */}
       <Box
         component="a"
@@ -68,6 +97,7 @@ const RoadmapPage: React.FC = () => {
         <Box
           id="main-content"
           component="main"
+          role="main"
           sx={{
             width: '100%',
             height: 'auto',
@@ -79,6 +109,7 @@ const RoadmapPage: React.FC = () => {
         >
           {/* Roadmap Sections */}
           <Box
+            component="article"
             sx={{
               width: '100%',
               maxWidth: '100vw',
@@ -97,6 +128,7 @@ const RoadmapPage: React.FC = () => {
           {/* Footer */}
           <Box 
             component="footer"
+            role="contentinfo"
             sx={{ 
               mt: 0, 
               mb: 0,

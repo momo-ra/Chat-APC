@@ -9,10 +9,7 @@ import {
   DemoVideoSection,
   TeamSection,
   ContactSection,
-  HorizontalScrollSlider,
-  ExpandingBackgroundSlider,
 } from '../components/home';
-import FloatingInput from '../components/home/FloatingInput';
 import { sidebarItems } from '../data/layout/sidebarData';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { getHomeBackground } from '../components/shared/pageBackgrounds';
@@ -31,6 +28,7 @@ const HomePage: React.FC = () => {
     noSuffix: true,
     description: 'ChatAPC: AI-powered assistant for industrial process control. Analyze constraints, optimize operations, and improve plant efficiency with conversational intelligence.',
   });
+  
   const { isDark } = useThemeMode();
   const isMobile = useIsMobile();
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
@@ -38,15 +36,11 @@ const HomePage: React.FC = () => {
   const [showFloatingInput, setShowFloatingInput] = React.useState(false);
   const [inputValue, setInputValue] = React.useState('');
   const [messages, setMessages] = React.useState<any[]>([]);
-
-  // ANIMATION LOCK - Prevent scroll and interaction until hero animation is complete
   const [animationComplete, setAnimationComplete] = React.useState(false);
 
-  // Pass DOWN to HeroSearchSection
-  // We'll block scroll until animationComplete === true
+  // ANIMATION LOCK - Prevent scroll and interaction until hero animation is complete
   React.useEffect(() => {
     if (!animationComplete) {
-      // Lock scroll at body level
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
@@ -57,7 +51,6 @@ const HomePage: React.FC = () => {
       document.body.style.width = '';
       document.body.style.top = '';
     }
-    // Clean up on unmount
     return () => {
       document.body.style.overflow = '';
       document.body.style.position = '';
@@ -68,7 +61,6 @@ const HomePage: React.FC = () => {
 
   // Detect sidebar state based on screen size and user interaction
   React.useEffect(() => {
-    // Initialize from localStorage
     const stored = localStorage.getItem('sidebarCollapsed');
     if (stored !== null) {
       setSidebarCollapsed(stored === 'true');
@@ -76,7 +68,6 @@ const HomePage: React.FC = () => {
 
     const handleResize = () => {
       const width = window.innerWidth;
-      // Detect if we're on medium screen (960-1549px)
       const isMedium = width >= 960 && width <= 1549;
       setIsMediumScreen(isMedium);
     };
@@ -97,22 +88,19 @@ const HomePage: React.FC = () => {
 
   // Configure ScrollTrigger for better performance
   React.useEffect(() => {
-    // Configure ScrollTrigger but don't kill animations
     ScrollTrigger.config({
       limitCallbacks: true,
       syncInterval: 150,
     });
 
-    // Scroll to top on mount
     window.scrollTo(0, 0);
 
     return () => {
-      // Clean up on unmount
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, []);
 
-  // Floating input visibility on mobile - show after scrolling past hero section
+  // Floating input visibility on mobile
   React.useEffect(() => {
     if (!isMobile || !animationComplete) {
       setShowFloatingInput(false);
@@ -126,7 +114,6 @@ const HomePage: React.FC = () => {
           const scrollY = window.scrollY;
           const heroSectionHeight = window.innerHeight * 0.8;
           
-          // Show floating input when user scrolls past hero section
           if (scrollY > Math.min(300, heroSectionHeight)) {
             setShowFloatingInput(true);
           } else {
@@ -142,39 +129,22 @@ const HomePage: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile, animationComplete]);
 
-  // Handle sending message from floating input
-  const handleSendMessage = () => {
-    if (!inputValue.trim()) return;
-    
-    // Scroll to top to show the hero section chat
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-
-    // Add message to chat (you may need to pass this to HeroSearchSection)
-    // For now, we'll just clear the input
-    setInputValue('');
-  };
-
-  // Handle key press
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
-  // Get consistent background that doesn't change
+  // Get consistent background
   const pageBackground = React.useMemo(() => getHomeBackground(isDark), [isDark]);
-  
-  <SEOHead
-    title="ChatAPC"
-    description="ChatAPC: AI-powered assistant for industrial process control. Analyze constraints, optimize operations, and improve plant efficiency with conversational intelligence."
-  />
 
   return (
     <>
+      {/* SEO Meta Tags with SEOHead Component */}
+      <SEOHead
+        title="ChatAPC (Chat APC) - AI-Powered Industrial Process Control"
+        description="ChatAPC (Chat APC, Chat A.P.C) transforms your plant operations with AI agents that understand your process, identify constraints, and discover optimization opportunities. Achieve ROI in under 6 months."
+        url="https://chatapc.ai/"
+        keywords="ChatAPC, Chat APC, Chat A.P.C, AI process control, industrial automation, process optimization, plant operations, constraint identification, AI agents, industrial AI"
+        breadcrumbs={[
+          { name: 'Home', url: 'https://chatapc.ai/' }
+        ]}
+      />
+
       {/* Skip Navigation for Accessibility */}
       <Box
         component="a"
@@ -206,7 +176,7 @@ const HomePage: React.FC = () => {
           transition: 'background 0.3s ease',
         }}
       >
-        {/* Sidebar and Theme Toggle - Will be animated by GSAP */}
+        {/* Sidebar and Theme Toggle */}
         <Box data-sidebar>
           <AppSidebar items={sidebarItems} />
         </Box>
@@ -218,6 +188,7 @@ const HomePage: React.FC = () => {
         <Box
           id="main-content"
           component="main"
+          role="main"
           sx={{
             width: '100%',
             height: 'auto',
@@ -227,7 +198,7 @@ const HomePage: React.FC = () => {
             background: 'transparent',
           }}
         >
-          {/* Hero Section - Always visible, background transparent */}
+          {/* Hero Section */}
           <Box
             data-section-theme={isDark ? 'dark' : 'light'}
             data-section-primary={isDark ? '#009BE4' : '#2563EB'}
@@ -252,7 +223,7 @@ const HomePage: React.FC = () => {
             />
           </Box>
 
-          {/* Content Sections - Always rendered but with opacity control */}
+          {/* Content Sections */}
           <Box
             sx={{
               width: '100%',
@@ -269,76 +240,35 @@ const HomePage: React.FC = () => {
               pointerEvents: animationComplete ? 'auto' : 'none',
             }}
           >
-            {/* DemoVideoSection */}
-            <Box
-              sx={{
-                width: '100%',
-                background: 'transparent',
-              }}
-            >
+            <Box sx={{ width: '100%', background: 'transparent' }}>
               <DemoVideoSection />
             </Box>
 
-            {/* ExpandingBackgroundSlider */}
-            {/* <ExpandingBackgroundSlider /> */}
-
-            {/* HorizontalScrollSlider */}
-            {/* <HorizontalScrollSlider /> */}
-
-            {/* BenefitsSection */}
-            <Box
-              sx={{
-                width: '100%',
-                background: 'transparent',
-              }}
-            >
+            <Box sx={{ width: '100%', background: 'transparent' }}>
               <BenefitsSection />
             </Box>
 
-            {/* ArchitectureSection */}
-            <Box
-              sx={{
-                width: '100%',
-                background: 'transparent',
-              }}
-            >
+            <Box sx={{ width: '100%', background: 'transparent' }}>
               <ArchitectureSection />
             </Box>
 
-            {/* TeamSection */}
-            <Box
-              sx={{
-                width: '100%',
-                background: 'transparent',
-              }}
-            >
+            <Box sx={{ width: '100%', background: 'transparent' }}>
               <TeamSection />
             </Box>
 
-            {/* CTASection */}
-            <Box
-              sx={{
-                width: '100%',
-                background: 'transparent',
-              }}
-            >
+            <Box sx={{ width: '100%', background: 'transparent' }}>
               <CTASection />
             </Box>
 
-            {/* Contact Section */}
-            <Box
-              sx={{
-                width: '100%',
-                background: 'transparent',
-              }}
-            >
+            <Box sx={{ width: '100%', background: 'transparent' }}>
               <ContactSection />
             </Box>
           </Box>
 
-          {/* Footer - Always rendered but with opacity control */}
+          {/* Footer */}
           <Box
             component="footer"
+            role="contentinfo"
             sx={{
               mt: 0,
               mb: 0,
@@ -355,23 +285,6 @@ const HomePage: React.FC = () => {
             <Footer />
           </Box>
         </Box>
-
-        {/* Floating Input for Mobile - Fixed at bottom of entire page */}
-        {/* {showFloatingInput && animationComplete && isMobile && (
-          <FloatingInput
-            inputValue={inputValue}
-            setInputValue={setInputValue}
-            handleSendMessage={handleSendMessage}
-            handleKeyPress={handleKeyPress}
-            isLoading={false}
-            showAutoDemo={false}
-            demoStep={0}
-            setMessages={setMessages}
-            setShowAutoDemo={() => {}}
-            setDemoStep={() => {}}
-            demoExample={{ user: '', assistant: '' }}
-          />
-        )} */}
       </Box>
     </>
   );

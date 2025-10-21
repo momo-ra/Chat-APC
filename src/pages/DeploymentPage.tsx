@@ -23,20 +23,43 @@ const DeploymentPage: React.FC = () => {
     title: 'Deployment Options',
     description: 'Flexible deployment options for ChatAPC. Choose cloud, on-premise, or hybrid solutions with enterprise-grade security and scalability.',
   });
+  
   const { isDark } = useThemeMode();
 
   useEffect(() => {
-    // Scroll to top on mount (to match AgentsPage.tsx)
+    // Scroll to top on mount
     window.scrollTo(0, 0);
   }, []);
 
-  <SEOHead
-    title="Deployment Options"
-    description="Flexible deployment options for ChatAPC. Choose cloud, on-premise, or hybrid solutions with enterprise-grade security and scalability."
-  />
-  
   return (
     <>
+      {/* SEO Meta Tags */}
+      <SEOHead
+        title="Deployment Options - ChatAPC | Flexible Cloud & On-Premise Solutions"
+        description="Flexible deployment options for ChatAPC (Chat APC). Choose cloud, on-premise, or hybrid solutions with enterprise-grade security and scalability."
+        url="https://chatapc.ai/product/deployment"
+        keywords="ChatAPC deployment, Chat APC hosting, cloud deployment, on-premise solution, hybrid deployment, enterprise security"
+        breadcrumbs={[
+          { name: 'Home', url: 'https://chatapc.ai/' },
+          { name: 'Deployment', url: 'https://chatapc.ai/product/deployment' }
+        ]}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "ChatAPC Deployment Services",
+          "description": "Flexible deployment options including cloud, on-premise, and hybrid solutions",
+          "provider": {
+            "@type": "Organization",
+            "name": "Alpha Process Control"
+          },
+          "areaServed": "Worldwide",
+          "availableChannel": {
+            "@type": "ServiceChannel",
+            "serviceUrl": "https://chatapc.ai/product/deployment"
+          }
+        }}
+      />
+      
       {/* Skip Navigation for Accessibility */}
       <Box
         component="a"
@@ -75,6 +98,7 @@ const DeploymentPage: React.FC = () => {
         <Box
           id="main-content"
           component="main"
+          role="main"
           sx={{
             width: '100%',
             height: 'auto',
@@ -85,6 +109,7 @@ const DeploymentPage: React.FC = () => {
           }}
         >
           <Box
+            component="article"
             sx={{
               width: '100%',
               maxWidth: '100vw',
@@ -109,6 +134,7 @@ const DeploymentPage: React.FC = () => {
           {/* Footer */}
           <Box
             component="footer"
+            role="contentinfo"
             sx={{
               mt: 0,
               mb: 0,
