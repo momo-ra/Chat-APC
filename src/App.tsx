@@ -8,6 +8,8 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { SplashScreen } from './components/shared';
 import ContactPage from './pages/ContactPage';
 import { HelmetProvider } from 'react-helmet-async';
+import HubSpotPageTracker from './components/shared/HubSpotPageTracker';
+// import { useHubSpotPageTracking } from './hooks/useHubSpotPageTracking'; // ❌ امسح الـ import ده
 
 // Lazy load all pages for better performance
 const Index = lazy(() => import("./pages/Index"));
@@ -28,21 +30,18 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const queryClient = new QueryClient();
 
 const App = () => {
+
   const [showSplash, setShowSplash] = useState(() => {
-    // Check if splash has been shown in this session
     return !sessionStorage.getItem('splashShown');
   });
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Hide scrollbars globally by applying overflow: hidden to body and html
   useEffect(() => {
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
-    // Optionally hide scrollbars directly, for browsers that show anyway:
     document.documentElement.style.scrollbarWidth = 'none';
     document.body.style.scrollbarWidth = 'none';
 
-    // In case you want to restore scroll on unmount:
     return () => {
       document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
@@ -52,12 +51,10 @@ const App = () => {
   }, []);
 
   const handleSplashComplete = () => {
-    // Mark splash as shown for this session
     sessionStorage.setItem('splashShown', 'true');
     setShowSplash(false);
   };
 
-  // Prevent splash from showing again if already shown and ensure proper initialization
   useEffect(() => {
     if (sessionStorage.getItem('splashShown') === 'true') {
       setShowSplash(false);
@@ -65,13 +62,11 @@ const App = () => {
     setIsInitialized(true);
   }, []);
 
-  // Show splash screen
   if (showSplash) {
     return (
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <MUIThemeProvider theme={theme}>
-            {/* Add GlobalStyles to further ensure scrollbars are hidden */}
             <CssBaseline />
             <GlobalStyles styles={{
               html: { overflow: 'hidden', scrollbarWidth: 'none' },
@@ -85,12 +80,12 @@ const App = () => {
     );
   }
 
-  // Don't render main app until initialized to prevent white flash
   if (!isInitialized) {
     return null;
   }
 
-  // Main app content
+  // ❌ امسح السطر ده - كان هنا useHubSpotPageTracking();
+  
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
@@ -109,11 +104,12 @@ const App = () => {
               }}
             >
               <Suspense fallback={<SplashScreen onComplete={() => {}} />}>
+                {/* ✅ ده كفاية - موجود جوا الـ Router */}
+                <HubSpotPageTracker />
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/demo" element={<Demo />} />
                   <Route path="/login" element={<LoginPage />} />
-                  {/* <Route path="/signup" element={<SignupPage />} /> */}
                   <Route path="/product/deployment" element={<DeploymentPage />} />
                   <Route path="/resources/faq" element={<FAQPage />} />
                   <Route path="/company/about" element={<AboutPage />} />
@@ -124,7 +120,6 @@ const App = () => {
                   <Route path="/resources/blog" element={<BlogPage />} />
                   <Route path="/resources/blog/:id" element={<BlogDetailPage />} />
                   <Route path="/company/contact" element={<ContactPage />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>

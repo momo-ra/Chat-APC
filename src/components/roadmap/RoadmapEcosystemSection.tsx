@@ -41,11 +41,11 @@ export const RoadmapEcosystemSection: React.FC = () => {
   const cardsRef = useRef<HTMLDivElement[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
   const { isDark } = useThemeMode();
-  const { 
-    h2FontSize, 
+  const {
+    h2FontSize,
     h4FontSize,
     containerMaxWidth,
-    containerPadding 
+    containerPadding
   } = useResponsiveLayout();
 
   useEffect(() => {
@@ -152,9 +152,13 @@ export const RoadmapEcosystemSection: React.FC = () => {
           borderRadius: '50%',
           border: isDark
             ? '1px solid rgba(71, 85, 105, 0.2)'
-            : '1px solid rgba(203, 213, 225, 0.3)',
+            : '1px solid rgba(203, 213, 225, 0.33)',
           pointerEvents: 'none',
-          opacity: 0.4,
+          opacity: isDark ? 0.4 : 0.23,
+          background: isDark
+            ? 'none'
+            : 'radial-gradient(circle at 60% 40%, #f1f5f9 40%, #f8fafc00 100%)',
+          zIndex: 0,
         }}
       />
       <Box
@@ -168,13 +172,17 @@ export const RoadmapEcosystemSection: React.FC = () => {
           borderRadius: '50%',
           border: isDark
             ? '1px solid rgba(71, 85, 105, 0.15)'
-            : '1px solid rgba(203, 213, 225, 0.25)',
+            : '1px solid rgba(203, 213, 225, 0.22)',
           pointerEvents: 'none',
-          opacity: 0.3,
+          opacity: isDark ? 0.3 : 0.16,
+          background: isDark
+            ? 'none'
+            : 'radial-gradient(circle at 35% 70%, #e0edfa 35%, #f8fafc00 100%)',
+          zIndex: 0,
         }}
       />
 
-      <Container 
+      <Container
         maxWidth="lg"
         sx={{
           maxWidth: containerMaxWidth,
@@ -202,7 +210,7 @@ export const RoadmapEcosystemSection: React.FC = () => {
               variant="h5"
               sx={{
                 fontSize: 'clamp(1.125rem, 2vw, 1.5rem)',
-                color: isDark ? '#94a3b8' : '#64748b',
+                color: isDark ? '#94a3b8' : '#334155',
                 maxWidth: 600,
                 mx: 'auto',
                 lineHeight: 1.6,
@@ -234,26 +242,29 @@ export const RoadmapEcosystemSection: React.FC = () => {
                 elevation={isDark ? 0 : 2}
                 sx={{
                   height: '100%',
-                  backgroundColor: isDark 
-                    ? 'rgba(30, 41, 59, 0.4)' 
-                    : 'rgba(255, 255, 255, 0.8)',
-                  border: isDark 
-                    ? '1px solid rgba(51, 65, 85, 0.4)' 
-                    : '1px solid rgba(226, 232, 240, 0.6)',
+                  backgroundColor: isDark
+                    ? 'rgba(30, 41, 59, 0.4)'
+                    : 'rgba(246, 249, 252, 0.90)', // ~light blue shade
+                  border: isDark
+                    ? '1px solid rgba(51, 65, 85, 0.4)'
+                    : '1px solid #cbd5e1',
+                  boxShadow: isDark
+                    ? undefined
+                    : '0 1.5px 16px rgba(30,42,60,0.025)',
                   borderRadius: 3,
                   position: 'relative',
                   overflow: 'visible',
                   transition: 'all 0.4s ease',
-                  backdropFilter: 'blur(20px)',
+                  backdropFilter: isDark ? 'blur(20px)' : undefined,
                   cursor: 'pointer',
                   '&:hover': {
                     transform: 'translateY(-8px) scale(1.01)',
                     boxShadow: isDark
                       ? `0 20px 40px rgba(0, 0, 0, 0.4)`
-                      : `0 20px 40px rgba(148, 163, 184, 0.15)`,
+                      : `0 12px 28px rgba(80, 105, 135, 0.08)`,
                     borderColor: feature.color[isDark ? 'dark' : 'light'],
                     '&::before': {
-                      opacity: 0.15,
+                      opacity: 0.16,
                     },
                     '& .feature-icon': {
                       transform: 'scale(1.05)',
@@ -265,7 +276,7 @@ export const RoadmapEcosystemSection: React.FC = () => {
                     inset: -1,
                     background: feature.gradient,
                     borderRadius: 3,
-                    opacity: 0.06,
+                    opacity: isDark ? 0.06 : 0.07,
                     transition: 'opacity 0.4s ease',
                     zIndex: -1,
                   },
@@ -286,7 +297,8 @@ export const RoadmapEcosystemSection: React.FC = () => {
                       mx: 'auto',
                       mb: 3,
                       transition: 'all 0.3s ease',
-                      opacity: 0.9,
+                      opacity: 0.95,
+                      boxShadow: isDark ? undefined : '0 1px 10px 0 rgba(140,170,220,0.12)',
                     }}
                   >
                     <IconComponent sx={{ fontSize: 32, color: 'white' }} />
@@ -313,9 +325,10 @@ export const RoadmapEcosystemSection: React.FC = () => {
                       sx={{
                         fontSize: '1rem',
                         fontWeight: 600,
-                        color: isDark ? '#cbd5e1' : '#475569',
+                        color: isDark ? '#cbd5e1' : '#334155',
                         mb: 2,
                         transition: 'color 0.3s ease',
+                        opacity: 0.96,
                       }}
                     >
                       {feature.subtitle}
@@ -324,9 +337,9 @@ export const RoadmapEcosystemSection: React.FC = () => {
                     <Typography
                       variant="body1"
                       sx={{
-                        color: isDark ? '#94a3b8' : '#64748b',
+                        color: isDark ? '#94a3b8' : '#475569',
                         lineHeight: 1.6,
-                        fontSize: '0.95rem',
+                        fontSize: '0.98rem',
                         flex: 1,
                         transition: 'color 0.3s ease',
                       }}
@@ -345,34 +358,39 @@ export const RoadmapEcosystemSection: React.FC = () => {
           <Card
             elevation={isDark ? 0 : 3}
             sx={{
-              backgroundColor: isDark 
-                ? 'rgba(30, 41, 59, 0.4)' 
-                : 'rgba(255, 255, 255, 0.7)',
-              border: isDark 
-                ? '1px solid rgba(51, 65, 85, 0.4)' 
-                : '1px solid rgba(226, 232, 240, 0.5)',
+              backgroundColor: isDark
+                ? 'rgba(30, 41, 59, 0.4)'
+                : 'rgba(246,249,252,0.95)',
+              border: isDark
+                ? '1px solid rgba(51, 65, 85, 0.4)'
+                : '1.5px solid #cbd5e1',
               borderRadius: 4,
               p: 'clamp(1.5rem, 4vw, 2rem)',
-              backdropFilter: 'blur(20px)',
+              // Less glassy in white mode:
+              backdropFilter: isDark ? 'blur(20px)' : undefined,
               position: 'relative',
               overflow: 'hidden',
+              boxShadow: isDark
+                ? undefined
+                : '0 2px 26px -4px rgba(100,123,172,0.11)',
               '&::before': {
                 content: '""',
                 position: 'absolute',
                 inset: 0,
                 background: isDark
                   ? 'linear-gradient(135deg, rgba(71, 85, 105, 0.1) 0%, rgba(30, 41, 59, 0.05) 100%)'
-                  : 'linear-gradient(135deg, rgba(241, 245, 249, 0.8) 0%, rgba(248, 250, 252, 0.4) 100%)',
+                  : 'linear-gradient(135deg, rgba(241, 245, 249, 0.85) 0%, rgba(236,245,253,0.60) 100%)',
                 pointerEvents: 'none',
+                opacity: 1,
               },
             }}
           >
             <TrendingUp
               sx={{
                 fontSize: 42,
-                color: isDark ? '#64748b' : '#64748b',
+                color: isDark ? '#f1f5f9' : '#3b82f6',
                 mb: 2,
-                opacity: 0.8,
+                opacity: 1,
               }}
             />
             <Typography
@@ -380,7 +398,9 @@ export const RoadmapEcosystemSection: React.FC = () => {
               sx={{
                 fontSize: h4FontSize,
                 fontWeight: 700,
-                color: isDark ? '#f1f5f9' : '#1e293b',
+                opacity: 0.9,
+                zIndex: 10,
+                color: isDark ? '#f1f5f9' : '#172554',
                 mb: 2,
                 transition: 'color 0.3s ease',
               }}
@@ -391,8 +411,9 @@ export const RoadmapEcosystemSection: React.FC = () => {
               variant="body1"
               sx={{
                 fontSize: '1.1rem',
-                color: isDark ? '#94a3b8' : '#64748b',
+                color: isDark ? '#94a3b8' : '#334155',
                 maxWidth: 500,
+                opacity: 0.9,
                 mx: 'auto',
                 lineHeight: 1.6,
                 transition: 'color 0.3s ease',

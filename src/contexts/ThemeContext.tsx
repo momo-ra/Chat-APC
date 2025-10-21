@@ -20,13 +20,26 @@ const getSystemTheme = (): ThemeMode => {
   return 'light';
 };
 
+// 🆕 دالة تغيير الـ favicon
+const updateFavicon = (isDark: boolean) => {
+  const faviconPath = isDark ? '/favicon-dark.png' : '/favicon-light.png';
+  
+  // غيّر كل الـ favicon links
+  const iconLinks = document.querySelectorAll<HTMLLinkElement>(
+    "link[rel='icon'], link[rel='shortcut icon'], link[rel='apple-touch-icon']"
+  );
+  
+  iconLinks.forEach(link => {
+    link.href = faviconPath;
+  });
+};
+
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [preference, setPreferenceState] = useState<ThemePreference>(() => {
-    // Migration: Check old 'theme' key first
     const oldTheme = localStorage.getItem('theme') as ThemeMode | null;
     if (oldTheme) {
-      localStorage.removeItem('theme'); // Clean up old key
-      return 'system'; // Reset to system preference for existing users
+      localStorage.removeItem('theme');
+      return 'system';
     }
     
     const savedPref = localStorage.getItem('themePreference') as ThemePreference | null;
@@ -40,25 +53,26 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return savedPref;
     }
     
-    // Default to system preference
     return getSystemTheme();
   });
 
   useEffect(() => {
-    // Listen for system theme changes
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent) => {
-      // Only update if preference is set to 'system'
       if (preference === 'system') {
-        setMode(e.matches ? 'dark' : 'light');
+        const newMode = e.matches ? 'dark' : 'light';
+        setMode(newMode);
+        updateFavicon(newMode === 'dark'); // 🆕 غيّر الـ favicon
       }
     };
 
-    // Update mode when preference changes
     if (preference === 'system') {
-      setMode(getSystemTheme());
+      const systemMode = getSystemTheme();
+      setMode(systemMode);
+      updateFavicon(systemMode === 'dark'); // 🆕 غيّر الـ favicon
     } else {
       setMode(preference);
+      updateFavicon(preference === 'dark'); // 🆕 غيّر الـ favicon
     }
 
     mediaQuery.addEventListener('change', handleChange);
@@ -66,15 +80,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [preference]);
 
   useEffect(() => {
-    // Save preference to localStorage
     localStorage.setItem('themePreference', preference);
-    
-    // Update document class for global styling
     document.documentElement.setAttribute('data-theme', mode);
+    updateFavicon(mode === 'dark'); // 🆕 غيّر الـ favicon كل ما الـ mode يتغير
   }, [mode, preference]);
 
   const toggleTheme = () => {
-    // Toggle between light and dark (sets manual preference)
     const newMode = mode === 'dark' ? 'light' : 'dark';
     setPreferenceState(newMode);
     setMode(newMode);
@@ -100,4 +111,3 @@ export const useThemeMode = () => {
   }
   return context;
 };
-

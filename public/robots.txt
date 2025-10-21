@@ -4,57 +4,10 @@
 User-agent: *
 Allow: /
 
-# Block access to admin, private, or development areas (if any)
+# Block access to admin, private, or development areas
 Disallow: /admin/
 Disallow: /api/
 Disallow: /private/
-Disallow: /*.json$
-Disallow: /*.xml$
-Disallow: /search?*
 
-# Allow crawling of specific API endpoints if needed for documentation
-# Allow: /api/docs/
-
-# Sitemap location (IMPORTANT - submit to search engines)
+# Sitemap location (MUST be absolute URL)
 Sitemap: https://chatapc.ai/sitemap.xml
-
-# Crawl delay (optional - helps prevent server overload)
-# Crawl-delay: 1
-
-# Specific rules for major search engines
-
-# Google
-User-agent: Googlebot
-Allow: /
-
-User-agent: Googlebot-Image
-Allow: /
-
-# Bing
-User-agent: Bingbot
-Allow: /
-
-# Yandex
-User-agent: Yandex
-Allow: /
-
-# Baidu
-User-agent: Baiduspider
-Allow: /
-
-# Block bad bots (optional - uncomment if needed)
-# User-agent: AhrefsBot
-# Disallow: /
-
-# User-agent: SemrushBot
-# Disallow: /
-
-# User-agent: DotBot
-# Disallow: /
-
-# NOTES:
-# 2. Test your robots.txt in Google Search Console:
-#    https://search.google.com/search-console/robots-txt-tester
-# 3. Update the Sitemap URL after creating your sitemap
-# 4. Allow at least the homepage and important pages
-# 5. Disallow only sensitive or duplicate content areas
