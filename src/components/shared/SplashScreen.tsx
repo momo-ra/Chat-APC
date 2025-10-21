@@ -139,8 +139,8 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
             <Box
               sx={{
                 position: 'absolute',
-                top: '-24px',
-                right: '-32px',
+                top: {xs: '-24px', md: '-32px', lg: '-48px'},
+                right: {xs: '-32px', md: '-40px', lg: '-50px'},
                 animation: 'spinInBounce 1.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards',
                 filter: 'drop-shadow(0 0 40px hsla(197, 100%, 50%, 0.5))',
               }}

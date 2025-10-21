@@ -211,7 +211,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
           transition: transitions.normal,
         }}
       >
-        {!isMobile && (
+        {/* {!isMobile && ( */}
           <Box
             sx={{
               position: 'absolute',
@@ -225,7 +225,7 @@ const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
           >
             <AnimatedHomeBackground />
           </Box>
-        )}
+        {/* )} */}
         
         <Box
           ref={containerRef}
