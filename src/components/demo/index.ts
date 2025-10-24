@@ -6,4 +6,4 @@ export { default as ArtifactsPanel } from './ArtifactsPanel';
 export { default as ChatHistoryView } from './ChatHistoryView';
 export { default as Message } from './Message';
 export { default as MessageList } from './MessageList';
-
+export { default as RequestDemoForm } from './RequestDemoForm';

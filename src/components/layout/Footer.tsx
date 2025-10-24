@@ -32,8 +32,6 @@ const Footer: React.FC = () => {
     ],
     company: [
       { label: 'About Us', href: '/company/about' },
-      { label: 'Careers', href: 'https://www.alphaproc.com/company' },
-      { label: "Team", href: 'https://www.alphaproc.com/company' },
       { label: 'Contact', href: '/company/contact' },
     ],
     roadmap: [

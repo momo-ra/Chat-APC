@@ -4,21 +4,29 @@ interface HubSpotFormData {
   firstname: string;
   lastname: string;
   email: string;
-  phone: string;
   company: string;
-  jobtitle: string;
-  industry: string;
-  plant_size: string;
-  primary_challenge: string;
-  current_systems: string;
   message: string;
+  phone?: string;
+  jobtitle?: string;
+  industry?: string;
+  plant_size?: string;
+  primary_challenge?: string;
+  current_systems?: string;
   website?: string;
-  lead_status: string;
-  lead_source: string;
+  lead_status?: string;
+  lead_source?: string;
+}
+
+interface HubSpotSubmitOptions {
+  portalId?: string;
+  formGuid?: string;
+  region?: string;
+  pageName?: string;
+  pageUri?: string;
 }
 
 interface UseHubSpotReturn {
-  submitToHubSpot: (formData: HubSpotFormData) => Promise<boolean>;
+  submitToHubSpot: (formData: HubSpotFormData, options?: HubSpotSubmitOptions) => Promise<boolean>;
   isLoading: boolean;
   error: string | null;
   success: boolean;
@@ -31,15 +39,16 @@ export const useHubSpot = (): UseHubSpotReturn => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const submitToHubSpot = async (formData: HubSpotFormData): Promise<boolean> => {
+  const submitToHubSpot = async (formData: HubSpotFormData, options?: HubSpotSubmitOptions): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
     setSuccess(false);
 
     try {
-      // HubSpot configuration - hardcoded values
-      const HUBSPOT_PORTAL_ID = '146813965';
-      const HUBSPOT_FORM_GUID = '3ea13446-443c-4daa-ba74-10f0a653dc42';
+      // HubSpot configuration - base values with override support
+      const HUBSPOT_PORTAL_ID = options?.portalId ?? '146813965';
+      const HUBSPOT_FORM_GUID = options?.formGuid ?? '3ea13446-443c-4daa-ba74-10f0a653dc42';
+      const region = options?.region;
 
       // Get HubSpot tracking cookie
       const getHubSpotCookie = () => {
@@ -54,30 +63,41 @@ export const useHubSpot = (): UseHubSpotReturn => {
       };
 
       const hutk = getHubSpotCookie();
-      console.log('HubSpot tracking cookie (hutk):', hutk);
 
       // Try different field name formats based on the error message
+      const fields = [
+        { name: 'firstname', value: formData.firstname?.trim?.() ?? '' },
+        { name: 'lastname', value: formData.lastname?.trim?.() ?? '' },
+        { name: 'email', value: formData.email?.trim?.() ?? '' },
+        { name: 'company', value: formData.company?.trim?.() ?? '' },
+        { name: 'message', value: formData.message?.trim?.() ?? '' },
+      ];
+
+      const optionalFieldMap: Array<{ key: keyof HubSpotFormData; name: string }> = [
+        { key: 'phone', name: '0-2/phone' },
+        { key: 'jobtitle', name: 'jobtitle' },
+        { key: 'industry', name: 'industry' },
+        { key: 'plant_size', name: 'plant_size' },
+        { key: 'primary_challenge', name: 'primary_challenge' },
+        { key: 'current_systems', name: 'current_systems' },
+        { key: 'website', name: 'website' },
+        { key: 'lead_status', name: 'lead_status' },
+        { key: 'lead_source', name: 'lead_source' },
+      ];
+
+      optionalFieldMap.forEach(({ key, name }) => {
+        const value = formData[key];
+        if (typeof value === 'string' && value.trim().length > 0) {
+          fields.push({ name, value: value.trim() });
+        }
+      });
+
       const hubspotData = {
-        fields: [
-          { name: 'firstname', value: formData.firstname },
-          { name: 'lastname', value: formData.lastname },
-          { name: 'email', value: formData.email },
-          { name: '0-2/phone', value: formData.phone },
-          { name: 'company', value: formData.company },
-          { name: 'jobtitle', value: formData.jobtitle },
-          { name: 'industry', value: formData.industry },
-          { name: 'message', value: formData.message },
-          { name: 'plant_size', value: formData.plant_size },
-          { name: 'primary_challenge', value: formData.primary_challenge },
-          { name: 'current_systems', value: formData.current_systems },
-          { name: 'website', value: formData.website || '' },
-          { name: 'lead_status', value: 'new' },
-          { name: 'lead_source', value: 'ChatAPC Website' }
-        ],
+        fields,
         context: {
           hutk: hutk || undefined, // Use undefined instead of empty string
-          pageUri: window.location.href,
-          pageName: 'ChatAPC Landing Page'
+          pageUri: options?.pageUri || window.location.href,
+          pageName: options?.pageName || 'ChatAPC Landing Page'
         }
       };
 
@@ -91,8 +111,10 @@ export const useHubSpot = (): UseHubSpotReturn => {
 
       console.log('Sending data to HubSpot:', hubspotData);
 
+      const baseUrl = region ? `https://api-${region}.hsforms.com` : 'https://api.hsforms.com';
+
       const response = await fetch(
-        `https://api.hsforms.com/submissions/v3/integration/submit/${HUBSPOT_PORTAL_ID}/${HUBSPOT_FORM_GUID}`,
+        `${baseUrl}/submissions/v3/integration/submit/${HUBSPOT_PORTAL_ID}/${HUBSPOT_FORM_GUID}`,
         {
           method: 'POST',
           headers: {

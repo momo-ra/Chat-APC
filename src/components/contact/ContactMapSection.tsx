@@ -13,19 +13,16 @@ const contactInfo = [
     // icon: Phone,
     title: 'Call Us',
     details: ['(+39)0506201704'],
-    subtext: 'Mon-Fri 9AM-6PM EST',
   },
   {
     // icon: Email,
     title: 'Email Us',
     details: ['info@chatapc.ai'],
-    subtext: '24-hour response guarantee',
   },
   {
     // icon: LocationOn,
     title: 'Visit Us',
     details: ['Via Impastato 1, 56122 Pisa, Italy'],
-    subtext: 'By appointment only',
   },
 ];
 
@@ -289,18 +286,6 @@ const ContactMapSection: React.FC = () => {
                       </Typography>
                     ))}
                   </Box>
-
-                  {/* Subtext */}
-                  <Typography
-                    sx={{
-                      fontSize: '0.9rem',
-                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : '#64748B',
-                      fontWeight: 500,
-                      transition: 'color 0.3s ease',
-                    }}
-                  >
-                    {info.subtext}
-                  </Typography>
                 </Box>
               </Grid>
             );

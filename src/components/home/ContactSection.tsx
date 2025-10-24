@@ -107,7 +107,6 @@ const ModernContactSection: React.FC = () => {
     if (!formData.lastname.trim()) return { ok: false, msg: 'Please enter your last name.' };
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
     if (!emailOk) return { ok: false, msg: 'Please enter a valid email address.' };
-    if (!formData.message.trim()) return { ok: false, msg: 'Please write a short message.' };
     if (!formData.company.trim()) return { ok: false, msg: 'Please enter your company.' };
     return { ok: true, msg: '' };
   };
@@ -125,16 +124,8 @@ const ModernContactSection: React.FC = () => {
         firstname: formData.firstname,
         lastname: formData.lastname,
         email: formData.email,
-        phone: '',
         company: formData.company,
-        jobtitle: '',
-        industry: '',
         message: formData.message,
-        plant_size: '',
-        primary_challenge: formData.message,
-        current_systems: '',
-        lead_status: 'new',
-        lead_source: 'Contact Form'
       };
 
       const success = await submitToHubSpot(hubspotData);
@@ -469,7 +460,6 @@ const ModernContactSection: React.FC = () => {
                 onChange={handleInputChange}
                 multiline
                 rows={4}
-                required
                 sx={textFieldSx}
                 InputProps={{
                   startAdornment: (

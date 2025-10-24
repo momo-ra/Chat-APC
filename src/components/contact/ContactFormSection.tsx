@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { Person, Email, Business, Send, Message } from '@mui/icons-material';
 import { useThemeMode } from '../../contexts/ThemeContext';
-import { borderRadius } from '@mui/system';
+import { useHubSpot } from '../../hooks/useHubSpot';
 
 const mainColor = '#2563EB'; // adjust to match your theme primary
 const gradients = {
@@ -32,11 +32,11 @@ const ContactFormSection: React.FC = () => {
     company: '',
     message: ''
   });
-  const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState<{ open: boolean; severity: 'success' | 'error'; message: string }>({
     open: false, severity: 'success', message: ''
   });
   const { isDark } = useThemeMode();
+  const { submitToHubSpot, isLoading, error: hubspotError } = useHubSpot();
 
   // Utility for TextField sx to match @ContactSection.tsx
   const textFieldSx = {
@@ -98,7 +98,6 @@ const ContactFormSection: React.FC = () => {
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
     if (!emailOk) return { ok: false, msg: 'Please enter a valid email address.' };
     if (!formData.company.trim()) return { ok: false, msg: 'Please enter your company.' };
-    if (!formData.message.trim()) return { ok: false, msg: 'Please write a short message.' };
     return { ok: true, msg: '' };
   };
 
@@ -110,19 +109,25 @@ const ContactFormSection: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
-
-    // Simulate an async submit action, replace with your real submit logic
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      setToast({ open: true, severity: 'success', message: "Thanks! Your message has been sent successfully." });
-      setFormData({
-        firstname: '', lastname: '', email: '', company: '', message: ''
+      const success = await submitToHubSpot({
+        firstname: formData.firstname,
+        lastname: formData.lastname,
+        email: formData.email,
+        company: formData.company,
+        message: formData.message
       });
+
+      if (success) {
+        setToast({ open: true, severity: 'success', message: "Thanks! Your message has been sent successfully." });
+        setFormData({
+          firstname: '', lastname: '', email: '', company: '', message: ''
+        });
+      } else {
+        setToast({ open: true, severity: 'error', message: hubspotError || 'Failed to send message. Please try again.' });
+      }
     } catch (err) {
       setToast({ open: true, severity: 'error', message: 'Something went wrong. Please try again.' });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -379,7 +384,6 @@ const ContactFormSection: React.FC = () => {
                   onChange={handleInputChange}
                   multiline
                   rows={4}
-                  required
                   sx={textFieldSx}
                   InputLabelProps={{ shrink: true }}
                   InputProps={{
