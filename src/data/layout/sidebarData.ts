@@ -49,6 +49,7 @@ export const sidebarItems: SidebarItem[] = [
       { label: 'Architecture', path: '/product/architecture' },
       { label: 'Agents', path: '/product/agents' },
       { label: 'Deployment', path: '/product/deployment' },
+      { label: 'Interactive Tour', path: '/product/tour' },
     ]
   },
   { 
@@ -115,4 +116,3 @@ export const articles: Article[] = [
     readTime: "8 min read"
   }
 ];
-

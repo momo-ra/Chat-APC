@@ -8,6 +8,9 @@ import { theme } from './theme';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { SplashScreen } from './components/shared';
 import HubSpotPageTracker from './components/shared/HubSpotPageTracker';
+import ConsentBanner from './components/shared/ConsentBanner';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
 
 // Lazy load all pages for better performance
 const HomePage = lazy(() => import("./pages/Index")); // HomePage (Index)
@@ -25,6 +28,7 @@ const BlogPage = lazy(() => import("./pages/BlogPage"));
 const BlogDetailPage = lazy(() => import("./pages/BlogDetailPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const UserTourPage = lazy(() => import("./pages/UserTourPage"));
 
 const queryClient = new QueryClient();
 
@@ -95,6 +99,8 @@ const App = () => {
               body: { overflow: 'hidden', scrollbarWidth: 'none' },
               '*::-webkit-scrollbar': { display: 'none' },
             }} />
+            <ConsentBanner />
+
             <BrowserRouter
               future={{
                 v7_startTransition: true,
@@ -119,6 +125,7 @@ const App = () => {
                   <Route path="/product/how-it-works" element={<HowItWorksPage />} />
                   <Route path="/product/architecture" element={<ArchitecturePage />} />
                   <Route path="/product/agents" element={<AgentsPage />} />
+                  <Route path="/product/tour" element={<UserTourPage />} />
                   
                   {/* Company Pages */}
                   <Route path="/company/about" element={<AboutPage />} />
@@ -131,6 +138,9 @@ const App = () => {
                   
                   {/* Other Pages */}
                   <Route path="/roadmap" element={<RoadmapPage />} />
+
+                  <Route path="/privacy" element={<PrivacyPage />} />
+                  <Route path="/terms" element={<TermsPage />} />
                   
                   {/* 404 Not Found */}
                   <Route path="*" element={<NotFound />} />

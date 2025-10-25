@@ -3,6 +3,7 @@ import { Box, Container, Typography } from '@mui/material';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import deploymentDiagram from '../../assets/deployment.png';
 // Import the unified animation system helpers
 import {
   applyEntranceAnimation,
@@ -125,7 +126,7 @@ const IntegrationArchitectureSection: React.FC = () => {
             sx={{
               position: 'relative',
               width: '100%',
-              height: { xs: 300, md: 400 },
+              height: { xs: 300, md: 500 },
               borderRadius: 2,
               background: isDark 
                 ? 'rgba(30, 41, 59, 0.4)' 
@@ -141,22 +142,7 @@ const IntegrationArchitectureSection: React.FC = () => {
               overflow: 'hidden',
             }}
           >
-            <AccountTreeIcon 
-              sx={{ 
-                fontSize: 64, 
-                color: `${accentColor[isDark ? 'dark' : 'light']}50`,
-              }} 
-            />
-            <Typography
-              sx={{
-                fontSize: { xs: '1rem', md: '1.25rem' },
-                fontWeight: 500,
-                color: `${accentColor[isDark ? 'dark' : 'light']}80`,
-                textAlign: 'center',
-              }}
-            >
-              Integration Architecture Diagram
-            </Typography>
+            <img src={deploymentDiagram} alt="Deployment Diagram" style={{ width: '100%', height: '140%' }} />
             <Typography
               sx={{
                 fontSize: '0.875rem',

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Box } from '@mui/material';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
 interface Particle {
   x: number;
@@ -34,6 +35,7 @@ const BLUE_LINE = 'rgb(18, 82, 185)';
 const ParticleBackground: React.FC = () => {
   const { isDark } = useThemeMode();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { isMobile } = useResponsiveLayout();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -71,7 +73,6 @@ const ParticleBackground: React.FC = () => {
           this.size = Math.random() * 2 + 2;
           this.speedX = Math.random() * 0.5 - 0.25;
           this.speedY = Math.random() * 0.5 - 0.25;
-          // Use blue in light mode, cyan in dark mode
           this.color = `rgba(${PARTICLE_RGB}, ${Math.random() * 0.4 + 0.1})`;
           this.alpha = Math.random() * 0.5 + 0.2;
         },
@@ -98,7 +99,11 @@ const ParticleBackground: React.FC = () => {
     };
 
     // Connection class
-    const createConnection = (p1: Particle, p2: Particle): Connection => {
+    const createConnection = (
+      p1: Particle,
+      p2: Particle,
+      segmentDistance: number = 240
+    ): Connection => {
       return {
         particle1: p1,
         particle2: p2,
@@ -109,10 +114,8 @@ const ParticleBackground: React.FC = () => {
           const dx = this.particle1.x - this.particle2.x;
           const dy = this.particle1.y - this.particle2.y;
           this.distance = Math.sqrt(dx * dx + dy * dy);
-          // Increase segment: originally 150, now 240
-          this.active = this.distance < 240;
-          // Adjust alpha accordingly
-          this.alpha = 0.1 * (1 - this.distance / 240);
+          this.active = this.distance < segmentDistance;
+          this.alpha = 0.1 * (1 - this.distance / segmentDistance);
         },
         draw: function(ctx: CanvasRenderingContext2D) {
           if (!this.active) return;
@@ -120,7 +123,6 @@ const ParticleBackground: React.FC = () => {
           ctx.save();
           ctx.globalAlpha = this.alpha;
           ctx.strokeStyle = LINE_COLOR;
-          // Increase line width: originally 0.5, now 1.5
           ctx.lineWidth = 2.5;
           ctx.beginPath();
           ctx.moveTo(this.particle1.x, this.particle1.y);
@@ -134,7 +136,10 @@ const ParticleBackground: React.FC = () => {
     // Create particles and connections
     const particles: Particle[] = [];
     const connections: Connection[] = [];
-    const particleCount = 80;
+    // Fewer particles/lines on mobile
+    const particleCount = isMobile ? 40 : 80;
+    // Shorter connection distance on mobile to further reduce segment count
+    const segmentDistance = isMobile ? 110 : 240;
 
     for (let i = 0; i < particleCount; i++) {
       particles.push(createParticle());
@@ -149,10 +154,7 @@ const ParticleBackground: React.FC = () => {
     // Animation loop
     let animationFrameId: number;
     const animate = () => {
-      // Remove background color fill (leave transparent)
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Remove gradient overlay (no background fill at all)
 
       // Update and draw particles
       particles.forEach(particle => {
@@ -193,7 +195,7 @@ const ParticleBackground: React.FC = () => {
       canvas.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isDark]); // Depend on theme change
+  }, [isDark, isMobile]); // Depend on theme mode and layout for re-creation
 
   return (
     <Box

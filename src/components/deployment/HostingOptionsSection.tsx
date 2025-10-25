@@ -205,7 +205,8 @@ const HostingOptionsSection: React.FC = () => {
                     justifyContent: 'center',
                     transition: 'all 0.4s ease',
                     boxShadow: `0 8px 24px ${option.color[isDark ? 'dark' : 'light']}30`,
-                    mx: { xs: 'auto', md: 0 },
+                    mx: { xs: 0, md: 0 }, // Force left-align on mobile, preserve desktop
+                    ml: { xs: 0, md: 0 }, // ensure left on both
                   }}
                 >
                   <IconComponent
@@ -217,7 +218,7 @@ const HostingOptionsSection: React.FC = () => {
                 </Box>
 
                 {/* Content */}
-                <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                <Box sx={{ textAlign: { xs: 'left', md: 'left' } }}>
                   {/* Title */}
                   <Typography
                     variant="h5"
@@ -263,7 +264,7 @@ const HostingOptionsSection: React.FC = () => {
                           display: 'flex',
                           alignItems: 'center',
                           gap: 1.5,
-                          justifyContent: { xs: 'center', md: 'flex-start' },
+                          justifyContent: { xs: 'left', md: 'flex-start' },
                         }}
                       >
                         <Box

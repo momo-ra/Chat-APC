@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Typography, Container, Grid, Link, IconButton, Divider } from '@mui/material';
+import { Box, Typography, Container, Grid, IconButton, Divider } from '@mui/material';
 import { 
   Twitter, 
   LinkedIn,
@@ -12,7 +12,10 @@ import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import chatAPCLogo from '../../assets/chatAPC-logo-light-mode.svg';
 import chatAPCLogoDark from '../../assets/chatAPC-logo.svg';
 import alphaProcessLogo from '../../assets/AlphaProcess-logo.png';
-import isoLogo from '../../assets/ISO.png';
+// import isoLogo from '../../assets/ISO.png';
+import ISOLight from '../../assets/ISO-light.png';
+import ISODark from '../../assets/ISO-dark.png';
+import { Link as RouterLink } from 'react-router-dom';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -53,8 +56,6 @@ const Footer: React.FC = () => {
   const isoCertificate = {
     url: "https://www.alphaproc.com/_files/ugd/6ed5a8_4aebebb1143c48d0b4893d543d880229.pdf",
     label: "ISO 9001:2015 Certified",
-    img: isoLogo,
-    imgAlt: "ISO 9001:2015 Certificate"
   };
 
   useEffect(() => {
@@ -75,6 +76,9 @@ const Footer: React.FC = () => {
 
     return () => ctx.revert();
   }, []);
+
+  // Helper to determine if a link is external
+  const isExternal = (href: string) => /^(http(s?)):|^\/\//.test(href);
 
   return (
     <Box
@@ -116,21 +120,34 @@ const Footer: React.FC = () => {
             {/* Brand Section */}
             <Grid item xs={12} md={4}>
               <Box>
-                {/* Logo */}
+                {/* Logo as a link to home */}
                 <Box
-                  component="img"
-                  src={isDark ? chatAPCLogo : chatAPCLogoDark}
-                  alt="ChatAPC Logo"
+                  component={RouterLink}
+                  to="/"
                   sx={{
-                    height: '40px',
-                    width: 'auto',
+                    display: 'inline-block',
                     mb: 3,
-                    filter: isDark ? 'brightness(1.1)' : 'none',
-                    '@media (min-width: 960px) and (max-width: 1549px)': {
-                      height: '36px',
-                    },
+                    '&:hover img': {
+                      filter: isDark ? 'brightness(1.25)' : 'brightness(0.95)',
+                    }
                   }}
-                />
+                  aria-label="Go to homepage"
+                >
+                  <Box
+                    component="img"
+                    src={isDark ? chatAPCLogo : chatAPCLogoDark}
+                    alt="ChatAPC Logo"
+                    sx={{
+                      height: '40px',
+                      width: 'auto',
+                      filter: isDark ? 'brightness(1.1)' : 'none',
+                      transition: 'filter 0.25s',
+                      '@media (min-width: 960px) and (max-width: 1549px)': {
+                        height: '36px',
+                      },
+                    }}
+                  />
+                </Box>
                 
                 {/* Description */}
                 <Typography
@@ -182,8 +199,6 @@ const Footer: React.FC = () => {
                     );
                   })}
                 </Box>
-
-
               </Box>
             </Grid>
 
@@ -205,43 +220,83 @@ const Footer: React.FC = () => {
                 Product
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                {footerLinks.product.map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    sx={{
-                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                      transition: 'all 0.2s ease',
-                      '@media (min-width: 960px) and (max-width: 1549px)': {
-                        fontSize: '0.85rem',
-                      },
-                      '&:hover': {
-                        color: isDark ? '#009BE4' : '#2563EB',
-                        paddingLeft: '4px',
-                      },
-                      '&:hover .arrow-icon': {
-                        opacity: 1,
-                        transform: 'translateX(0)',
-                      },
-                    }}
-                  >
-                    {link.label}
-                    <ArrowForward
-                      className="arrow-icon"
+                {footerLinks.product.map((link) =>
+                  isExternal(link.href) ? (
+                    <Box
+                      key={link.label}
+                      component="a"
+                      href={link.href}
                       sx={{
-                        fontSize: 14,
-                        opacity: 0,
-                        transform: 'translateX(-4px)',
+                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.5,
                         transition: 'all 0.2s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '0.85rem',
+                        },
+                        '&:hover': {
+                          color: isDark ? '#009BE4' : '#2563EB',
+                          paddingLeft: '4px',
+                        },
+                        '&:hover .arrow-icon': {
+                          opacity: 1,
+                          transform: 'translateX(0)',
+                        },
                       }}
-                    />
-                  </Link>
-                ))}
+                    >
+                      {link.label}
+                      <ArrowForward
+                        className="arrow-icon"
+                        sx={{
+                          fontSize: 14,
+                          opacity: 0,
+                          transform: 'translateX(-4px)',
+                          transition: 'all 0.2s ease',
+                        }}
+                      />
+                    </Box>
+                  ) : (
+                    <Box
+                      key={link.label}
+                      component={RouterLink}
+                      to={link.href}
+                      sx={{
+                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        transition: 'all 0.2s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '0.85rem',
+                        },
+                        '&:hover': {
+                          color: isDark ? '#009BE4' : '#2563EB',
+                          paddingLeft: '4px',
+                        },
+                        '&:hover .arrow-icon': {
+                          opacity: 1,
+                          transform: 'translateX(0)',
+                        },
+                      }}
+                    >
+                      {link.label}
+                      <ArrowForward
+                        className="arrow-icon"
+                        sx={{
+                          fontSize: 14,
+                          opacity: 0,
+                          transform: 'translateX(-4px)',
+                          transition: 'all 0.2s ease',
+                        }}
+                      />
+                    </Box>
+                  )
+                )}
               </Box>
             </Grid>
 
@@ -262,43 +317,83 @@ const Footer: React.FC = () => {
                 Company
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                {footerLinks.company.map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    sx={{
-                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                      transition: 'all 0.2s ease',
-                      '@media (min-width: 960px) and (max-width: 1549px)': {
-                        fontSize: '0.85rem',
-                      },
-                      '&:hover': {
-                        color: isDark ? '#009BE4' : '#2563EB',
-                        paddingLeft: '4px',
-                      },
-                      '&:hover .arrow-icon': {
-                        opacity: 1,
-                        transform: 'translateX(0)',
-                      },
-                    }}
-                  >
-                    {link.label}
-                    <ArrowForward
-                      className="arrow-icon"
+                {footerLinks.company.map((link) =>
+                  isExternal(link.href) ? (
+                    <Box
+                      key={link.label}
+                      component="a"
+                      href={link.href}
                       sx={{
-                        fontSize: 14,
-                        opacity: 0,
-                        transform: 'translateX(-4px)',
+                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.5,
                         transition: 'all 0.2s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '0.85rem',
+                        },
+                        '&:hover': {
+                          color: isDark ? '#009BE4' : '#2563EB',
+                          paddingLeft: '4px',
+                        },
+                        '&:hover .arrow-icon': {
+                          opacity: 1,
+                          transform: 'translateX(0)',
+                        },
                       }}
-                    />
-                  </Link>
-                ))}
+                    >
+                      {link.label}
+                      <ArrowForward
+                        className="arrow-icon"
+                        sx={{
+                          fontSize: 14,
+                          opacity: 0,
+                          transform: 'translateX(-4px)',
+                          transition: 'all 0.2s ease',
+                        }}
+                      />
+                    </Box>
+                  ) : (
+                    <Box
+                      key={link.label}
+                      component={RouterLink}
+                      to={link.href}
+                      sx={{
+                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        transition: 'all 0.2s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '0.85rem',
+                        },
+                        '&:hover': {
+                          color: isDark ? '#009BE4' : '#2563EB',
+                          paddingLeft: '4px',
+                        },
+                        '&:hover .arrow-icon': {
+                          opacity: 1,
+                          transform: 'translateX(0)',
+                        },
+                      }}
+                    >
+                      {link.label}
+                      <ArrowForward
+                        className="arrow-icon"
+                        sx={{
+                          fontSize: 14,
+                          opacity: 0,
+                          transform: 'translateX(-4px)',
+                          transition: 'all 0.2s ease',
+                        }}
+                      />
+                    </Box>
+                  )
+                )}
               </Box>
             </Grid>
 
@@ -319,43 +414,83 @@ const Footer: React.FC = () => {
                 Roadmap
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                {footerLinks.roadmap.map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    sx={{
-                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                      transition: 'all 0.2s ease',
-                      '@media (min-width: 960px) and (max-width: 1549px)': {
-                        fontSize: '0.85rem',
-                      },
-                      '&:hover': {
-                        color: isDark ? '#009BE4' : '#2563EB',
-                        paddingLeft: '4px',
-                      },
-                      '&:hover .arrow-icon': {
-                        opacity: 1,
-                        transform: 'translateX(0)',
-                      },
-                    }}
-                  >
-                    {link.label}
-                    <ArrowForward
-                      className="arrow-icon"
+                {footerLinks.roadmap.map((link) =>
+                  isExternal(link.href) ? (
+                    <Box
+                      key={link.label}
+                      component="a"
+                      href={link.href}
                       sx={{
-                        fontSize: 14,
-                        opacity: 0,
-                        transform: 'translateX(-4px)',
+                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.5,
                         transition: 'all 0.2s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '0.85rem',
+                        },
+                        '&:hover': {
+                          color: isDark ? '#009BE4' : '#2563EB',
+                          paddingLeft: '4px',
+                        },
+                        '&:hover .arrow-icon': {
+                          opacity: 1,
+                          transform: 'translateX(0)',
+                        },
                       }}
-                    />
-                  </Link>
-                ))}
+                    >
+                      {link.label}
+                      <ArrowForward
+                        className="arrow-icon"
+                        sx={{
+                          fontSize: 14,
+                          opacity: 0,
+                          transform: 'translateX(-4px)',
+                          transition: 'all 0.2s ease',
+                        }}
+                      />
+                    </Box>
+                  ) : (
+                    <Box
+                      key={link.label}
+                      component={RouterLink}
+                      to={link.href}
+                      sx={{
+                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        transition: 'all 0.2s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '0.85rem',
+                        },
+                        '&:hover': {
+                          color: isDark ? '#009BE4' : '#2563EB',
+                          paddingLeft: '4px',
+                        },
+                        '&:hover .arrow-icon': {
+                          opacity: 1,
+                          transform: 'translateX(0)',
+                        },
+                      }}
+                    >
+                      {link.label}
+                      <ArrowForward
+                        className="arrow-icon"
+                        sx={{
+                          fontSize: 14,
+                          opacity: 0,
+                          transform: 'translateX(-4px)',
+                          transition: 'all 0.2s ease',
+                        }}
+                      />
+                    </Box>
+                  )
+                )}
               </Box>
             </Grid>
 
@@ -376,43 +511,83 @@ const Footer: React.FC = () => {
                 Resources
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                {footerLinks.resources.map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    sx={{
-                      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                      transition: 'all 0.2s ease',
-                      '@media (min-width: 960px) and (max-width: 1549px)': {
-                        fontSize: '0.85rem',
-                      },
-                      '&:hover': {
-                        color: isDark ? '#009BE4' : '#2563EB',
-                        paddingLeft: '4px',
-                      },
-                      '&:hover .arrow-icon': {
-                        opacity: 1,
-                        transform: 'translateX(0)',
-                      },
-                    }}
-                  >
-                    {link.label}
-                    <ArrowForward
-                      className="arrow-icon"
+                {footerLinks.resources.map((link) =>
+                  isExternal(link.href) ? (
+                    <Box
+                      key={link.label}
+                      component="a"
+                      href={link.href}
                       sx={{
-                        fontSize: 14,
-                        opacity: 0,
-                        transform: 'translateX(-4px)',
+                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.5,
                         transition: 'all 0.2s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '0.85rem',
+                        },
+                        '&:hover': {
+                          color: isDark ? '#009BE4' : '#2563EB',
+                          paddingLeft: '4px',
+                        },
+                        '&:hover .arrow-icon': {
+                          opacity: 1,
+                          transform: 'translateX(0)',
+                        },
                       }}
-                    />
-                  </Link>
-                ))}
+                    >
+                      {link.label}
+                      <ArrowForward
+                        className="arrow-icon"
+                        sx={{
+                          fontSize: 14,
+                          opacity: 0,
+                          transform: 'translateX(-4px)',
+                          transition: 'all 0.2s ease',
+                        }}
+                      />
+                    </Box>
+                  ) : (
+                    <Box
+                      key={link.label}
+                      component={RouterLink}
+                      to={link.href}
+                      sx={{
+                        color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        transition: 'all 0.2s ease',
+                        '@media (min-width: 960px) and (max-width: 1549px)': {
+                          fontSize: '0.85rem',
+                        },
+                        '&:hover': {
+                          color: isDark ? '#009BE4' : '#2563EB',
+                          paddingLeft: '4px',
+                        },
+                        '&:hover .arrow-icon': {
+                          opacity: 1,
+                          transform: 'translateX(0)',
+                        },
+                      }}
+                    >
+                      {link.label}
+                      <ArrowForward
+                        className="arrow-icon"
+                        sx={{
+                          fontSize: 14,
+                          opacity: 0,
+                          transform: 'translateX(-4px)',
+                          transition: 'all 0.2s ease',
+                        }}
+                      />
+                    </Box>
+                  )
+                )}
               </Box>
             </Grid>
           </Grid>
@@ -457,8 +632,9 @@ const Footer: React.FC = () => {
               © {new Date().getFullYear()} ChatAPC. All rights reserved.
             </Typography>
             <Box sx={{ display: 'flex', gap: 3 }}>
-              <Link
-                href="#"
+              <Box
+                component={RouterLink}
+                to="/privacy"
                 sx={{
                   color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
                   textDecoration: 'none',
@@ -470,9 +646,10 @@ const Footer: React.FC = () => {
                 }}
               >
                 Privacy Policy
-              </Link>
-              <Link
-                href="#"
+              </Box>
+              <Box
+                component={RouterLink}
+                to="/terms"
                 sx={{
                   color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
                   textDecoration: 'none',
@@ -484,21 +661,7 @@ const Footer: React.FC = () => {
                 }}
               >
                 Terms of Service
-              </Link>
-              <Link
-                href="#"
-                sx={{
-                  color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-                  textDecoration: 'none',
-                  fontSize: '0.875rem',
-                  transition: 'color 0.2s ease',
-                  '&:hover': {
-                    color: isDark ? '#009BE4' : '#2563EB',
-                  },
-                }}
-              >
-                Cookie Policy
-              </Link>
+              </Box>
             </Box>
           </Box>
 
@@ -512,7 +675,8 @@ const Footer: React.FC = () => {
             }}
           >
             {/* ISO Certificate */}
-            <Link 
+            <Box 
+              component="a"
               href={isoCertificate.url} 
               target="_blank" 
               rel="noopener noreferrer"
@@ -532,8 +696,8 @@ const Footer: React.FC = () => {
             >
               <Box
                 component="img"
-                src={isoCertificate.img}
-                alt={isoCertificate.imgAlt}
+                src={isDark ? ISODark : ISOLight}
+                alt="ISO 9001:2015 Certificate"
                 className="iso-cert-img"
                 sx={{
                   height: { xs: '32px', md: '36px' },
@@ -544,7 +708,7 @@ const Footer: React.FC = () => {
               />
               <Typography
                 sx={{
-                  fontSize: { xs: '0.8rem', md: '0.875rem' },
+                  fontSize: { xs: '0.7rem', md: '0.8rem' },
                   color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)',
                   fontWeight: 500,
                   letterSpacing: '0.02em',
@@ -555,9 +719,9 @@ const Footer: React.FC = () => {
                   }
                 }}
               >
-                {isoCertificate.label}
+                ISO 9001:2015 Certified
               </Typography>
-            </Link>
+            </Box>
 
             {/* Divider */}
             <Divider
@@ -578,18 +742,19 @@ const Footer: React.FC = () => {
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 1.5,
               }}
             >
               <Typography
                 sx={{
-                  fontSize: '0.875rem',
+                  fontSize: '0.8rem',
                   color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+                  mr: 1,
                 }}
               >
                 Powered by
               </Typography>
-              <Link
+              <Box
+                component="a"
                 href="https://www.alphaproc.com/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -616,7 +781,7 @@ const Footer: React.FC = () => {
                     },
                   }}
                 />
-              </Link>
+              </Box>
             </Box>
           </Box>
         </Box>

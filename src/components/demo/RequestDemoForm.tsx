@@ -16,12 +16,18 @@ import {
 import { Person, Email, Business, Send } from '@mui/icons-material';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { useHubSpot } from '../../hooks/useHubSpot';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { getGradient, themeConfig } from '../shared/themeConfig';
+
+// Move hook usage inside the component body to follow React rules of hooks
 
 type ToastState = {
   open: boolean;
   severity: 'success' | 'error';
   message: string;
 };
+
+const { gradients } = themeConfig;
 
 const initialFormState = {
   firstname: '',
@@ -30,9 +36,16 @@ const initialFormState = {
   email: '',
 };
 
-const RequestDemoForm: React.FC = () => {
+interface RequestDemoFormProps {
+  onSuccess?: () => void;
+}
+
+const RequestDemoForm: React.FC<RequestDemoFormProps> = ({ onSuccess }) => {
   const { isDark } = useThemeMode();
   const { submitToHubSpot, isLoading, error: hubspotError } = useHubSpot();
+  // Move useResponsiveLayout hook usage here instead of top-level scope
+  const { h1FontSize } = useResponsiveLayout();
+
   const [formData, setFormData] = useState(initialFormState);
   const [toast, setToast] = useState<ToastState>({
     open: false,
@@ -131,6 +144,9 @@ const RequestDemoForm: React.FC = () => {
         message: 'Thanks! A member of the ChatAPC team will reach out shortly to schedule your demo.',
       });
       setFormData(initialFormState);
+      if (onSuccess) {
+        onSuccess();
+      }
     } else {
       setToast({
         open: true,
@@ -192,19 +208,21 @@ const RequestDemoForm: React.FC = () => {
           <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
             <Typography
               variant="h1"
+              component="h1"
               sx={{
-                fontSize: { xs: '2.45rem', md: '3.2rem' },
-                fontWeight: 800,
-                background: 'linear-gradient(90deg, #2563EB 0%, #3B82F6 100%)',
+                fontSize: h1FontSize,
+                fontWeight: 900,
+                background: getGradient(gradients.blueToPurple, isDark),
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                lineHeight: 1.15,
-                mb: 2,
-                letterSpacing: '-0.01em',
+                mb: 3,
+                lineHeight: 1.1,
+                letterSpacing: '-0.02em',
+                transition: 'color 0.3s ease',
               }}
             >
-              Request a Live ChatAPC Demo
+              Take a Product Tour Now
             </Typography>
             <Typography
               sx={{
@@ -227,14 +245,10 @@ const RequestDemoForm: React.FC = () => {
             sx={{
               maxWidth: 720,
               mx: 'auto',
-              background: isDark ? 'rgba(15, 23, 42, 0.65)' : 'rgba(255, 255, 255, 0.96)',
+              background: "transparent",
               borderRadius: '20px',
               px: { xs: 2, md: 5 },
               py: { xs: 3, md: 5 },
-              boxShadow: isDark
-                ? '0 18px 45px rgba(15, 23, 42, 0.55)'
-                : '0 18px 45px rgba(15, 23, 42, 0.12)',
-              backdropFilter: 'blur(14px)',
             }}
           >
             <Grid container spacing={{ xs: 2, sm: 3 }}>

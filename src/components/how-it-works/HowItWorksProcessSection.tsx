@@ -321,7 +321,7 @@ export const HowItWorksProcessSection: React.FC = () => {
                     top: 'calc(50% - 4rem)',
                     userSelect: 'none',
                     display: { xs: 'none', md: 'block' },
-                    opacity: 0.08,
+                    opacity: 0.6,
                   }}
                 >
                   {step.step}
