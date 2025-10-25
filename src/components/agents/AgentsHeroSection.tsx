@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Typography, Container, Button } from '@mui/material';
-import { PlayArrow, School } from '@mui/icons-material';
+import { Box, Typography, Container } from '@mui/material';
 import { gsap } from 'gsap';
-import AIAnimation from '../../assets/AI animation.gif';
+// import AIAnimation from '../../assets/AI animation.gif';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 // Mock responsive hook for demo
 const useResponsiveLayout = () => ({
@@ -169,74 +169,6 @@ export function AgentsHeroSection() {
               part of operations. They detect, explain, and advise. But more importantly:
               you can interact with them directly.
             </Typography>
-
-            {/* CTA Buttons */}
-            {/* <Box
-              ref={ctaRef}
-              sx={{
-                display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
-                gap: 3,
-              }}
-            >
-              <Button
-                variant="contained"
-                size="large"
-                startIcon={<PlayArrow />}
-                sx={{
-                  background: isDark
-                    ? 'linear-gradient(135deg, #009BE4 0%, #0080C0 100%)'
-                    : 'linear-gradient(135deg, #171B83 0%, #009BE4 100%)',
-                  color: 'white',
-                  px: 5,
-                  py: 2,
-                  fontSize: '1.125rem',
-                  fontWeight: 600,
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  boxShadow: isDark
-                    ? '0 8px 32px rgba(0, 155, 228, 0.3)'
-                    : '0 8px 32px rgba(23, 27, 131, 0.25)',
-                  transition: 'all 0.3s ease',
-
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: isDark
-                      ? '0 12px 48px rgba(0, 155, 228, 0.4)'
-                      : '0 12px 48px rgba(23, 27, 131, 0.35)',
-                  },
-                }}
-              >
-                Start building
-              </Button>
-
-              <Button
-                variant="outlined"
-                size="large"
-                startIcon={<School />}
-                sx={{
-                  borderColor: isDark ? 'rgba(0, 155, 228, 0.5)' : '#171B83',
-                  color: isDark ? '#009BE4' : '#171B83',
-                  px: 5,
-                  py: 2,
-                  fontSize: '1.125rem',
-                  fontWeight: 600,
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  borderWidth: 2,
-                  transition: 'all 0.3s ease',
-
-                  '&:hover': {
-                    borderWidth: 2,
-                    borderColor: isDark ? '#009BE4' : '#171B83',
-                    background: isDark ? 'rgba(0, 155, 228, 0.05)' : 'rgba(23, 27, 131, 0.05)',
-                    transform: 'translateY(-2px)',
-                  },
-                }}
-              >
-                Contact sales
-              </Button>
-            </Box> */}
           </Box>
 
           {/* Right Graphic - Animation GIF */}
@@ -268,16 +200,14 @@ export function AgentsHeroSection() {
                 overflow: 'hidden'
               }}
             >
-              <img
-                src={AIAnimation}
-                alt="AI animation"
+              <DotLottieReact
+                src="/AI_animation.lottie"
+                loop
+                autoplay
                 style={{
                   width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block'
+                  height: '100%'
                 }}
-                draggable={false}
               />
             </Box>
           </Box>

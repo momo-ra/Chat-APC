@@ -39,7 +39,7 @@ export default defineConfig({
             "@emotion/react",
             "@emotion/styled"
           ],
-          "animation-vendor": ["gsap"],
+          "animation-vendor": ["gsap", "@lottiefiles/dotlottie-react"],
         },
       },
     },
@@ -63,6 +63,7 @@ export default defineConfig({
       "@mui/material",
       "gsap"
     ],
-    exclude: [],
+    // Skip dotlottie so Vite serves the module fresh instead of a cached prebundle.
+    exclude: ["@lottiefiles/dotlottie-react"],
   },
 });
